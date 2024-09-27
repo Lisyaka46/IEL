@@ -1,0 +1,10 @@
+﻿<UserControl x:Class="IEL.IELBlockMessage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d">
+    <Border x:Name="BorderMessage" CornerRadius="3,13,13,13" BorderThickness="2,2,2,2" BorderBrush="Black" Padding="5,5,5,5" Background="#FFE4BDBD">
+        <TextBlock x:Name="TextBlockMessage" TextWrapping="Wrap" Text="Hello" MaxWidth="200" TextAlignment="Center" VerticalAlignment="Center" FontFamily="Bahnschrift SemiBold"/>
+    </Border>
+</UserControl>

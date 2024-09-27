@@ -1,0 +1,24 @@
+﻿<UserControl x:Class="IEL.IELImageButtonKey"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="47.885" d:DesignWidth="76.35">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="24"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Border x:Name="ButtonBorder" BorderThickness="3,3,3,3" CornerRadius="10,10,10,10" BorderBrush="Black" Grid.Column="1" Background="White">
+            <Grid>
+                <Image x:Name="ButtonImage" Margin="4,4,4,4" Source="/Windows/WindowsImages/Logo02.png"/>
+                <Image x:Name="ImageMouseButtonsUse" Source="/Windows/WindowsImages/DoubleMouseButton.png" Grid.Column="0" MinWidth="15" MinHeight="15" MaxWidth="25" MaxHeight="25" VerticalAlignment="Top" Width="20" Height="20" HorizontalAlignment="Right" Margin="0,4,4,0" Opacity="0.4"/>
+            </Grid>
+        </Border>
+        <Border x:Name="ButtonBorderKey" BorderBrush="Black" BorderThickness="2,2,2,2" CornerRadius="3,3,3,3" Margin="2,3,2,4" Background="White">
+            <TextBlock x:Name="TextBlockKey" TextWrapping="Wrap" Text="0" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="Cascadia Code"/>
+        </Border>
+
+    </Grid>
+</UserControl>
