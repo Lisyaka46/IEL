@@ -1,6 +1,6 @@
-﻿using IEL.Interfaces.Core;
+﻿using IEL.Classes;
 
-namespace IEL.Classes
+namespace IEL.Interfaces.Core
 {
     public interface IPageDefault : IPage
     {

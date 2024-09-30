@@ -1,14 +1,16 @@
-﻿using System.Windows;
+﻿using IEL.Interfaces.Front;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using System.Windows.Threading;
 
 namespace IEL
 {
     /// <summary>
     /// Логика взаимодействия для IELButtonCommand.xaml
     /// </summary>
-    public partial class IELButtonCommand : UserControl
+    public partial class IELButtonCommand : UserControl, IIELButtonDefault
     {    
         /// <summary>
         /// Перечисление стилей цвета нажатия на кнопку
@@ -138,6 +140,27 @@ namespace IEL
             }
         }
 
+        #region MouseHover
+        /// <summary>
+        /// Длительность задержки в миллисекундах
+        /// </summary>
+        public double IntervalHover
+        {
+            get => TimerBorderInfo.Interval.TotalMilliseconds;
+            set => TimerBorderInfo.Interval = TimeSpan.FromMilliseconds(value);
+        }
+
+        /// <summary>
+        /// Таймер события MouseHover
+        /// </summary>
+        private readonly DispatcherTimer TimerBorderInfo = new();
+
+        /// <summary>
+        /// Событие задержки курсора на элементе
+        /// </summary>
+        public event EventHandler? MouseHover;
+        #endregion
+
         /// <summary>
         /// Текст кнопки
         /// </summary>
@@ -145,6 +168,29 @@ namespace IEL
         {
             get => TextBlockButtonName.Text;
             set => TextBlockButtonName.Text = value;
+        }
+
+        /// <summary>
+        /// Текст команды
+        /// </summary>
+        public string TextCommand
+        {
+            get => TextBlockButtonCommand.Text;
+            set => TextBlockButtonCommand.Text = value;
+        }
+
+        private int _Index;
+        /// <summary>
+        /// Индекс элемента 
+        /// </summary>
+        public int Index
+        {
+            get => _Index;
+            set
+            {
+                TextBlockNumberCommand.Text = $"#{value + 1}";
+                _Index = value;
+            }
         }
 
         /// <summary>
@@ -175,6 +221,15 @@ namespace IEL
         }
 
         /// <summary>
+        /// Толщина границ
+        /// </summary>
+        public Thickness BorderThicknessBlock
+        {
+            get => BorderButton.BorderThickness;
+            set => BorderButton.BorderThickness = value;
+        }
+
+        /// <summary>
         /// Анимация цвета кнопки
         /// </summary>
         private readonly ColorAnimation ButtonAnimationColor;
@@ -195,24 +250,14 @@ namespace IEL
         private bool ButtonActivate = false;
 
         /// <summary>
-        /// Делегат события активации кнопки команды
+        /// Объект события активации кнопки левым щелчком мыши
         /// </summary>
-        public delegate void EventActivate();
+        public IIELButtonDefault.Activate? OnActivateMouseLeft { get; set; }
 
         /// <summary>
-        /// Объект события активации кнопки команды левой кнопкой мыши
+        /// Объект события активации кнопки правым щелчком мыши
         /// </summary>
-        public event EventActivate OnActivateLeftButtonMouse;
-
-        /// <summary>
-        /// Объект события активации кнопки команды правой кнопкой мыши
-        /// </summary>
-        public event EventActivate? OnActivateRightButtonMouse;
-
-        /// <summary>
-        /// Индекс кнопки команды
-        /// </summary>
-        public int IndexElement { get; set; }
+        public IIELButtonDefault.Activate? OnActivateMouseRight { get; set; }
 
         public IELButtonCommand(string Name, string FullTextCommand, int indexBuffer)
         {
@@ -243,7 +288,13 @@ namespace IEL
             Opacity = 0;
             ButtonAnimationOpacity.To = 1;
             BeginAnimation(OpacityProperty, ButtonAnimationOpacity);
-            IndexElement = indexBuffer;
+            Index = indexBuffer;
+            IntervalHover = 1300d;
+            TimerBorderInfo.Tick += (sender, e) =>
+            {
+                MouseHover?.Invoke(this, e);
+                TimerBorderInfo.Stop();
+            };
 
             DefaultBackground = Color.FromRgb(172, 238, 255);
             SelectBackground = Color.FromRgb(101, 193, 241);
@@ -272,13 +323,7 @@ namespace IEL
             {
                 ButtonActivate = true;
                 ClickDownAnimation(ActivateClickColor.Clicked);
-            };
-
-            /*OnActivateLeftButtonMouse += () =>
-            {
-                App.MainWindowApplication.SummarizeCommandStateResult(
-                    ConsoleCommand.ReadAndExecuteCommand(null, [.. App.DataConsoleCommand], App.BufferCommand[IndexElement]));
-            };*/
+            };       
 
             MouseLeftButtonUp += (sender, e) =>
             {
@@ -286,7 +331,7 @@ namespace IEL
                 {
                     ButtonActivate = false;
                     MouseEnterAnimation();
-                    OnActivateLeftButtonMouse.Invoke();
+                    OnActivateMouseLeft?.Invoke();
                 }
             };
 
@@ -296,7 +341,7 @@ namespace IEL
                 {
                     ButtonActivate = false;
                     MouseEnterAnimation();
-                    OnActivateRightButtonMouse?.Invoke();
+                    OnActivateMouseRight?.Invoke();
                 }
             };
 

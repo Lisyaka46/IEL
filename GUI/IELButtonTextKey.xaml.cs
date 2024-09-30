@@ -252,20 +252,20 @@ namespace IEL
             set => TextBlockButton.FontSize = value;
         }
 
-        private bool _CharKeyKeyboardActivate = false;
+        private bool _CharKeyboardActivate = false;
         /// <summary>
         /// Активность видимости символа действия активации кнопки
         /// </summary>
-        public bool CharKeyKeyboardActivate
+        public bool CharKeyboardActivate
         {
-            get => _CharKeyKeyboardActivate;
+            get => _CharKeyboardActivate;
             set
             {
                 ButtonAnimationOpacity.To = value ? 1d : 0d;
                 ButtonAnimationThickness.To = new(!value ? -24 : 0, 0, 0, 0);
                 BorderButton.BeginAnimation(MarginProperty, ButtonAnimationThickness);
                 BorderCharKeyboard.BeginAnimation(OpacityProperty, ButtonAnimationOpacity);
-                _CharKeyKeyboardActivate = value;
+                _CharKeyboardActivate = value;
             }
         }
 

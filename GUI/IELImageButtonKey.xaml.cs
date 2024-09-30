@@ -259,7 +259,7 @@ namespace IEL
         /// <summary>
         /// Активность видимости символа действия активации кнопки
         /// </summary>
-        public bool CharKeyKeyboardActivate
+        public bool CharKeyboardActivate
         {
             get => _CharKeyKeyboardActivate;
             set
@@ -297,7 +297,7 @@ namespace IEL
             ButtonAnimationColor = new();
             AnimationMillisecond = 80;
             ButtonImage.Margin = new Thickness(10, 10, 10, 10);
-            CharKeyKeyboardActivate = false;
+            CharKeyboardActivate = false;
             IntervalHover = 1300d;
             TimerBorderInfo.Tick += (sender, e) =>
             {

@@ -2,18 +2,8 @@
 
 namespace IEL.Interfaces.Front
 {
-    public interface IIELButtonKey : IIELButton
+    public interface IIELButtonKey : IIELButton, IIELObjectKey
     {
-        /// <summary>
-        /// Активность видимости символа действия активации кнопки
-        /// </summary>
-        public bool CharKeyKeyboardActivate { get; set; }
-
-        /// <summary>
-        /// Клавиша отвечающая за активацию кнопки
-        /// </summary>
-        public Key? CharKeyKeyboard { get; set; }
-
         /// <summary>
         /// Объект события активации кнопки левым щелчком мыши
         /// </summary>
