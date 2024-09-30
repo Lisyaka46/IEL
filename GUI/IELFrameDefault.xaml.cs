@@ -69,6 +69,11 @@ namespace IEL
         /// </summary>
         public event IELFrameChangedEventHandler? ChangeElementPage;
 
+        /// <summary>
+        /// Событие открытия фрейма
+        /// </summary>
+        public event IELFrameEventHandler? OpenFrame;
+
         //
         private bool Activate = false;
 
@@ -100,6 +105,7 @@ namespace IEL
                             Activate = true;
                             DoubleAnimateObj.To = 1d;
                             ActualFrame.BeginAnimation(OpacityProperty, DoubleAnimateObj);
+                            OpenFrame?.Invoke();
                             return;
                         }
                     }
@@ -107,8 +113,12 @@ namespace IEL
             }
             catch { }
             PanelVerschachtelung = (PanelVerschachtelung + 1) % 2;
-            
-            Activate = true;
+
+            if (!Activate)
+            {
+                Activate = true;
+                OpenFrame?.Invoke();
+            }
             ActualFrame.Opacity = 0d;
             Canvas.SetZIndex(BackFrame, 0);
             Canvas.SetZIndex(ActualFrame, 1);
@@ -144,7 +154,6 @@ namespace IEL
             {
                 Anim.Completed -= Close;
                 //ActualFrame.Navigate(null);
-                ClosingFrame?.Invoke();
             }
 
             Anim.To = 0d;
@@ -152,6 +161,7 @@ namespace IEL
             Anim.Completed += Close;
             Activate = false;
             ActualFrame.BeginAnimation(OpacityProperty, Anim);
+            ClosingFrame?.Invoke();
         }
     }
 }
