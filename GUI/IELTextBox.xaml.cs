@@ -47,12 +47,75 @@ namespace IEL
         }
 
         /// <summary>
+        /// Смещение контента наименования
+        /// </summary>
+        public Thickness PaddingNaming
+        {
+            get => TextBlockNaming.Padding;
+            set => TextBlockNaming.Padding = value;
+        }
+
+        /// <summary>
+        /// Вертикальная ориентация контента элемента
+        /// </summary>
+        public VerticalAlignment TextBoxVerticalAlignment
+        {
+            get => TextBoxMain.VerticalAlignment;
+            set => TextBoxMain.VerticalAlignment = value;
+        }
+
+        /// <summary>
+        /// Горизонтальная ориентация контента элемента
+        /// </summary>
+        public HorizontalAlignment TextBoxHorizontalAlignment
+        {
+            get => TextBoxMain.HorizontalAlignment;
+            set => TextBoxMain.HorizontalAlignment = value;
+        }
+
+        /// <summary>
         /// Размер текста в элементе
         /// </summary>
         public new double FontSize
         {
             get => TextBoxMain.FontSize;
             set => TextBoxMain.FontSize = value;
+        }
+
+        /// <summary>
+        /// Максимальный горизонтальный размер элемента текста
+        /// </summary>
+        public new double MaxWidth
+        {
+            get => TextBoxMain.MaxWidth;
+            set => TextBoxMain.MaxWidth = value;
+        }
+
+        /// <summary>
+        /// Максимальный вертикальный размер элемента текста
+        /// </summary>
+        public new double MaxHeight
+        {
+            get => TextBoxMain.MaxHeight;
+            set => TextBoxMain.MaxHeight = value;
+        }
+
+        /// <summary>
+        /// Максимальное значение линий
+        /// </summary>
+        public int MaxLines
+        {
+            get => TextBoxMain.MaxLines;
+            set => TextBoxMain.MaxLines = value;
+        }
+
+        /// <summary>
+        /// Минимальное значение линий
+        /// </summary>
+        public int MinLines
+        {
+            get => TextBoxMain.MinLines;
+            set => TextBoxMain.MinLines = value;
         }
 
         #region Default

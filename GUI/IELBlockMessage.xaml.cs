@@ -251,17 +251,18 @@ namespace IEL
         {
             if (!FlagMessage) return;
             FlagMessage = false;
-            DoubleAnimateObj.FillBehavior = FillBehavior.Stop;
-            DoubleAnimateObj.Completed += SetZOne;
-            DoubleAnimateObj.To = 0d;
-            BeginAnimation(OpacityProperty, DoubleAnimateObj);
-            DoubleAnimateObj.FillBehavior = FillBehavior.HoldEnd;
-            DoubleAnimateObj.Completed -= SetZOne;
-        }
-
-        private void SetZOne(object? sender, EventArgs e)
-        {
-            Canvas.SetZIndex(this, -2);
+            DoubleAnimation animation = DoubleAnimateObj.Clone();
+            void SetZOne(object? sender, EventArgs e)
+            {
+                Canvas.SetZIndex(this, -2);
+                animation.FillBehavior = FillBehavior.HoldEnd;
+                animation.Completed -= SetZOne;
+                Opacity = 0d;
+            }
+            animation.FillBehavior = FillBehavior.Stop;
+            animation.Completed += SetZOne;
+            animation.To = 0d;
+            BeginAnimation(OpacityProperty, animation);
         }
         #endregion
 

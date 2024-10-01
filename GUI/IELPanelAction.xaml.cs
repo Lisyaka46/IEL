@@ -34,7 +34,7 @@ namespace IEL
         /// <summary>
         /// Флаг состояния активности панели действий
         /// </summary>
-        public bool FlagPanelActionActivate { get; private set; } = false;
+        public bool PanelActionActivate { get; private set; } = false;
 
         /// <summary>
         /// Состояние правого нажатия в режиме клавиатуры
@@ -166,7 +166,7 @@ namespace IEL
             TextBlockRightButtonIndicatorKey.Opacity = 0d;
             KeyDown += (sender, e) =>
             {
-                if (!FlagPanelActionActivate && BlockWhileEvent) return;
+                if (!PanelActionActivate && BlockWhileEvent) return;
                 else BlockWhileEvent = true;
                 if (e.Key == KeyKeyboardModeActivateRightClick && ActualPage.ModulePage.KeyboardMode && !ActivateRightClickKeyboardMode)
                 {
@@ -190,7 +190,7 @@ namespace IEL
             };
             KeyUp += (sender, e) =>
             {
-                if (!FlagPanelActionActivate && !BlockWhileEvent) return;
+                if (!PanelActionActivate && !BlockWhileEvent) return;
                 else BlockWhileEvent = false;
                 if (e.Key == KeyActivateKeyboardMode)
                 {
@@ -235,7 +235,7 @@ namespace IEL
         /// <param name="Settings">Объект настроек для взаимодействия с панелью действий</param>
         public void UsingPanelAction(SettingsPanelActionFrameworkElement Settings)
         {
-            if (!FlagPanelActionActivate) OpenPanelAction(Settings);
+            if (!PanelActionActivate) OpenPanelAction(Settings);
             else
             {
                 if (!ActiveObject.ElementInPanel.Name.Equals(Settings.ElementInPanel.Name))
@@ -263,7 +263,7 @@ namespace IEL
         [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         private void OpenPanelAction(SettingsPanelActionFrameworkElement Settings)
         {
-            if (FlagPanelActionActivate) return;
+            if (PanelActionActivate) return;
             Focus();
             ActualFrame.Navigate(BufferSearchDefaultPage(Settings.ElementInPanel.Name) ?? Settings.DefaultPageInPanel);
 
@@ -272,7 +272,8 @@ namespace IEL
             AnimationMovePanelAction(PositionAnimActionPanel.Default, Settings.SizedPanel, Settings.ElementInPanel);
             AnimateSizePanelAction(Settings.SizedPanel);
             ActiveObject = Settings;
-            FlagPanelActionActivate = true;
+            PanelActionActivate = true;
+            Canvas.SetZIndex(this, ActiveObject.Z);
         }
 
         /// <summary>
@@ -282,7 +283,7 @@ namespace IEL
         [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         public void ClosePanelAction(PositionAnimActionPanel PositionAnim = PositionAnimActionPanel.Default)
         {
-            if (!FlagPanelActionActivate) return;
+            if (!PanelActionActivate) return;
 
             DoubleAnimateObj.To = 0d;
             if (ActivateRightClickKeyboardMode) ActivateRightClickKeyboardMode = false;
@@ -292,7 +293,7 @@ namespace IEL
             AnimateSizePanelAction(new(0, 0));
             AddBufferElementPageAction(ActiveObject);
             
-            FlagPanelActionActivate = false;
+            PanelActionActivate = false;
             EventClosingPanelAction?.Invoke(ActiveObject.ElementInPanel.Name);
             ClearInformation();
         }
@@ -304,7 +305,7 @@ namespace IEL
         /// <param name="RightAlign">Правая ориентация движения</param>
         public void NextPage([NotNull()] IPageKey Content, bool RightAlign = true)
         {
-            if (!FlagPanelActionActivate) return;
+            if (!PanelActionActivate) return;
             PanelVerschachtelung = (PanelVerschachtelung + 1) % 2;
 
             ActualFrame.Opacity = 0d;
@@ -373,13 +374,25 @@ namespace IEL
         /// <param name="size">Ожидаемый размер панели действий</param>
         private void AnimateSizePanelAction(Size size)
         {
-            DoubleAnimateObj.From = ActualWidth;
-            DoubleAnimateObj.To = size.Width;
-            BeginAnimation(WidthProperty, DoubleAnimateObj);
-            DoubleAnimateObj.From = ActualHeight;
-            DoubleAnimateObj.To = size.Height;
-            BeginAnimation(HeightProperty, DoubleAnimateObj);
-            DoubleAnimateObj.From = null;
+            DoubleAnimation animation = DoubleAnimateObj.Clone();
+            animation.From = ActualWidth;
+            animation.To = size.Width;
+            BeginAnimation(WidthProperty, animation);
+            animation.From = ActualHeight;
+            animation.To = size.Height;
+            if (size.Width == 0 && size.Height == 0)
+            {
+                animation.FillBehavior = FillBehavior.Stop;
+                void SetZOne(object? sender, EventArgs e)
+                {
+                    if (PanelActionActivate) return;
+                    Canvas.SetZIndex(this, -ActiveObject.Z);
+                    animation.FillBehavior = FillBehavior.HoldEnd;
+                    animation.Completed -= SetZOne;
+                }
+                animation.Completed += SetZOne;
+            }
+            BeginAnimation(HeightProperty, animation);
         }
 
         /// <summary>
