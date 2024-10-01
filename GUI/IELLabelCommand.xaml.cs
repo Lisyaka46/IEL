@@ -205,13 +205,25 @@ namespace IEL
 
         public LabelAction Label { get; set; }
 
-        public int Index { get; set; }
+        private int _Index;
+        public int Index
+        {
+            get => _Index;
+            set
+            {
+                TextBlockIndex.Text = $"{value + 1}";
+                _Index = value;
+            }
+        }
 
         public IELLabelCommand(LabelAction Label, int Index = 0)
         {
             InitializeComponent();
             this.Label = Label;
             this.Index = Index;
+
+            TextBlockName.Text = this.Label.Name;
+
             AnimationMillisecond = 200;
             IntervalHover = 1300d;
             TimerBorderInfo.Tick += (sender, e) =>
@@ -225,9 +237,6 @@ namespace IEL
 
             TextBlockName.Foreground = new SolidColorBrush(Colors.Black);
             TextBlockName.Foreground = new SolidColorBrush(Colors.Black);
-
-            TextBlockName.Text = this.Label.Name;
-            TextBlockIndex.Text = $"{Index + 1}";
 
             DefaultBackground = Color.FromRgb(128, 179, 189);
             DefaultBorderBrush = Color.FromRgb(69, 98, 127);

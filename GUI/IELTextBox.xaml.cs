@@ -6,9 +6,9 @@ using System.Windows.Media.Animation;
 namespace IEL
 {
     /// <summary>
-    /// Логика взаимодействия для IELTextBoxCommand.xaml
+    /// Логика взаимодействия для IELTextBox.xaml
     /// </summary>
-    public partial class IELTextBoxCommand : UserControl
+    public partial class IELTextBox : UserControl
     {
         /// <summary>
         /// Скруглённость границ объекта
@@ -194,7 +194,7 @@ namespace IEL
         /// </summary>
         private bool FocusText = false;
 
-        public IELTextBoxCommand()
+        public IELTextBox()
         {
             InitializeComponent();
 
@@ -216,11 +216,6 @@ namespace IEL
             NotEnabledBorderBrush = Colors.Brown;
             NotEnabledBackground = Colors.IndianRed;
             NotEnabledForeground = Colors.DarkRed;
-
-            BorderThicknessBlock = new(2, 2, 2, 2);
-            CornerRadius = new(4, 4, 4, 4);
-            FontSize = 14;
-            TextBoxMain.ContextMenu = null;
 
             GotKeyboardFocus += (sender, e) =>
             {
@@ -263,6 +258,11 @@ namespace IEL
                 TextBoxBorder.Background.BeginAnimation(SolidColorBrush.ColorProperty, ButtonAnimationColor);
                 ButtonAnimationColor.To = Foreground;
                 TextBoxMain.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, ButtonAnimationColor);
+            };
+
+            MouseDown += (sender, e) =>
+            {
+                TextBoxMain.Focus();
             };
         }
 
