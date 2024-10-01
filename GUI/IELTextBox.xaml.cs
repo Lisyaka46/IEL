@@ -11,6 +11,24 @@ namespace IEL
     public partial class IELTextBox : UserControl
     {
         /// <summary>
+        /// Цвет текста наименования
+        /// </summary>
+        public Brush ForgroundNaming
+        {
+            get => TextBlockNaming.Foreground;
+            set => TextBlockNaming.Foreground = value;
+        }
+
+        /// <summary>
+        /// Цвет фона наименования
+        /// </summary>
+        public Brush BackgroundNaming
+        {
+            get => TextBlockNaming.Background;
+            set => TextBlockNaming.Background = value;
+        }
+
+        /// <summary>
         /// Скруглённость границ объекта
         /// </summary>
         public CornerRadius CornerRadius
@@ -161,6 +179,15 @@ namespace IEL
         /// Анимация цвета
         /// </summary>
         private readonly ColorAnimation ButtonAnimationColor;
+
+        /// <summary>
+        /// Объект анимации для управления double значением
+        /// </summary>
+        private static readonly DoubleAnimation DoubleAnimateObj = new(0, TimeSpan.FromMilliseconds(250d))
+        {
+            DecelerationRatio = 0.2d,
+            EasingFunction = new QuinticEase() { EasingMode = EasingMode.EaseOut }
+        };
         #endregion
 
         /// <summary>
@@ -170,6 +197,30 @@ namespace IEL
         {
             get => TextBoxMain.Text;
             set => TextBoxMain.Text = value;
+        }
+
+        /// <summary>
+        /// Текст наименования
+        /// </summary>
+        public string TextName
+        {
+            get => TextBlockNaming.Text;
+            set => TextBlockNaming.Text = value;
+        }
+
+        private bool _ShowNameText;
+        /// <summary>
+        /// Состояние видимости текста наименования
+        /// </summary>
+        public bool ShowNameText
+        {
+            get => _ShowNameText;
+            set
+            {
+                DoubleAnimateObj.To = value ? 1d : 0d;
+                TextBlockNaming.BeginAnimation(OpacityProperty, DoubleAnimateObj);
+                _ShowNameText = value;
+            }
         }
 
         /// <summary>
@@ -197,6 +248,10 @@ namespace IEL
         public IELTextBox()
         {
             InitializeComponent();
+
+            TextName = string.Empty;
+            ShowNameText = false;
+            TextBoxMain.ContextMenu = null;
 
             ButtonAnimationColor = new();
             AnimationMillisecond = 80;
