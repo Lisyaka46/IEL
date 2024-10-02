@@ -6,69 +6,16 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using IEL.Classes;
 
 namespace IEL.Interfaces.Front
 {
     public interface IIELButton : IIELObject
     {
-        #region Default
         /// <summary>
-        /// Цвет границы
+        /// Обект настройки поведения анимации цвета
         /// </summary>
-        public Color DefaultBorderBrush { get; set; }
-
-        /// <summary>
-        /// Цвет фона
-        /// </summary>
-        public Color DefaultBackground { get; set; }
-        #endregion
-
-
-        #region Select
-        /// <summary>
-        /// Выделенный цвет границы
-        /// </summary>
-        public Color SelectBorderBrush { get; set; }
-
-        /// <summary>
-        /// Выделенный цвет фона
-        /// </summary>
-        public Color SelectBackground { get; set; }
-        #endregion
-
-
-        #region Clicked
-        /// <summary>
-        /// Нажатый цвет границы
-        /// </summary>
-        public Color ClickedBorderBrush { get; set; }
-
-        /// <summary>
-        /// Нажатый цвет фона
-        /// </summary>
-        public Color ClickedBackground { get; set; }
-        #endregion
-
-
-        #region NotEnabled
-        /// <summary>
-        /// Выключенный цвет границы
-        /// </summary>
-        public Color NotEnabledBorderBrush { get; set; }
-
-        /// <summary>
-        /// Выключенный цвет фона
-        /// </summary>
-        public Color NotEnabledBackground { get; set; }
-        #endregion
-
-
-        #region AnimationMillisecond
-        /// <summary>
-        /// Количество миллисекунд для анимации
-        /// </summary>
-        public int AnimationMillisecond { get; set; }
-        #endregion
+        public IELSettingAnimate SettingAnimate { get; set; }
 
         /// <summary>
         /// Скругление границ

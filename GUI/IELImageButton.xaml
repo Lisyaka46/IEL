@@ -6,8 +6,8 @@
              mc:Ignorable="d" 
              d:DesignHeight="32.988" d:DesignWidth="87.835" Cursor="Hand">
     <Grid>
-        <Border x:Name="ButtonBorder" BorderThickness="1" CornerRadius="10,10,10,10" BorderBrush="Black">
-            <Image x:Name="ButtonImage" Margin="10,7,10,7"/>
+        <Border x:Name="BorderButton" BorderThickness="1" CornerRadius="10,10,10,10" BorderBrush="Black">
+            <Image x:Name="ImageButton" Margin="10,7,10,7"/>
         </Border>
 
     </Grid>

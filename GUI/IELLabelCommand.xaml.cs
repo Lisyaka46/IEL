@@ -14,97 +14,10 @@ namespace IEL
     /// </summary>
     public partial class IELLabelCommand : UserControl, IIELButtonDefault
     {
-
-        private Color? _DefaultBorderBrush;
         /// <summary>
-        /// Цвет границы кнопки
+        /// Обект настройки поведения анимации цвета
         /// </summary>
-        public Color DefaultBorderBrush
-        {
-            get => _DefaultBorderBrush ?? Colors.Gold;
-            set
-            {
-                SolidColorBrush color = new(value);
-                BorderMain.BorderBrush = color;
-                _DefaultBorderBrush = value;
-            }
-        }
-
-        private Color? _DefaultBackground;
-        /// <summary>
-        /// Цвет фона кнопки
-        /// </summary>
-        public Color DefaultBackground
-        {
-            get => _DefaultBackground ?? Colors.Gold;
-            set
-            {
-                SolidColorBrush color = new(value);
-                BorderMain.Background = color;
-                _DefaultBackground = value;
-            }
-        }
-
-        private Color? _DefaultForeground;
-        /// <summary>
-        /// Цвет текста в кнопке
-        /// </summary>
-        public Color DefaultForeground
-        {
-            get => _DefaultForeground ?? Colors.Gold;
-            set
-            {
-                SolidColorBrush color = new(value);
-                TextBlockIndex.Foreground = color;
-                TextBlockName.Foreground = color;
-                _DefaultForeground = value;
-            }
-        }
-
-        /// <summary>
-        /// Выделенный цвет границы кнопки
-        /// </summary>
-        public Color SelectBorderBrush { get; set; }
-
-        /// <summary>
-        /// Выделенный цвет фона кнопки
-        /// </summary>
-        public Color SelectBackground { get; set; }
-
-        /// <summary>
-        /// Выделенный цвет текста в кнопке
-        /// </summary>
-        public Color SelectForeground { get; set; }
-
-        /// <summary>
-        /// Нажатый цвет границы кнопки
-        /// </summary>
-        public Color ClickedBorderBrush { get; set; }
-
-        /// <summary>
-        /// Нажатый цвет фона кнопки
-        /// </summary>
-        public Color ClickedBackground { get; set; }
-
-        /// <summary>
-        /// Нажатый цвет текста в кнопке
-        /// </summary>
-        public Color ClickedForeground { get; set; }
-
-        /// <summary>
-        /// Выключенный цвет границы кнопки
-        /// </summary>
-        public Color NotEnabledBorderBrush { get; set; }
-
-        /// <summary>
-        /// Выключенный цвет фона кнопки
-        /// </summary>
-        public Color NotEnabledBackground { get; set; }
-
-        /// <summary>
-        /// Выключенный цвет текста в кнопке
-        /// </summary>
-        public Color NotEnabledForeground { get; set; }
+        public IELSettingAnimate SettingAnimate { get; set; }
 
         /// <summary>
         /// Объект события активации кнопки левым щелчком мыши
@@ -165,26 +78,6 @@ namespace IEL
         };
         #endregion
 
-        #region AnimationMillisecond
-        private int _AnimationMillisecond;
-        /// <summary>
-        /// Длительность анимации в миллисекундах
-        /// </summary>
-        public int AnimationMillisecond
-        {
-            get => _AnimationMillisecond;
-            set
-            {
-                TimeSpan time = TimeSpan.FromMilliseconds(value);
-                ButtonAnimationColor.Duration = time;
-                ButtonAnimationDouble.Duration = time;
-                ButtonAnimationThickness.Duration = time;
-                _AnimationMillisecond = value;
-
-            }
-        }
-        #endregion
-
         /// <summary>
         /// Толщина границ
         /// </summary>
@@ -203,6 +96,39 @@ namespace IEL
             set => BorderMain.CornerRadius = value;
         }
 
+        /// <summary>
+        /// Данные изображения объекта
+        /// </summary>
+        public ImageSource ImageSource
+        {
+            get => ImageElement.Source;
+            set => ImageElement.Source = value;
+        }
+
+        /// <summary>
+        /// Данные изображения тега
+        /// </summary>
+        public ImageSource ImageTagSource
+        {
+            get => ImageTag.Source;
+            set => ImageTag.Source = value;
+        }
+
+        private bool _ImageTagVisible;
+        /// <summary>
+        /// Видимость изображения тега
+        /// </summary>
+        public bool ImageTagVisible
+        {
+            get => _ImageTagVisible;
+            set
+            {
+                ButtonAnimationDouble.To = value ? 1d : 0d;
+                ImageTag.BeginAnimation(OpacityProperty, ButtonAnimationDouble);
+                _ImageTagVisible = value;
+            }
+        }
+
         public LabelAction Label { get; set; }
 
         private int _Index;
@@ -216,15 +142,41 @@ namespace IEL
             }
         }
 
+        private readonly Thickness StartMarginImageElement;
+
         public IELLabelCommand(LabelAction Label, int Index = 0)
         {
             InitializeComponent();
             this.Label = Label;
             this.Index = Index;
 
-            TextBlockName.Text = this.Label.Name;
+            TimeSpan AnimTime = TimeSpan.FromMilliseconds(80d);
+            BrushSettingDNSU.ChangeSpectrumEventHandler ChangeBackground = (Element, Value) =>
+            {
+                Brush brush = new SolidColorBrush(Value);
+                BorderMain.Background = brush;
+            };
+            BrushSettingDNSU.ChangeSpectrumEventHandler ChangeBorderBrush = (Element, Value) =>
+            {
+                Brush brush = new SolidColorBrush(Value);
+                BorderMain.BorderBrush = brush;
+            };
+            BrushSettingDNSU.ChangeSpectrumEventHandler ChangeForeground = (Element, Value) =>
+            {
+                Brush brush = new SolidColorBrush(Value);
+                TextBlockName.Foreground = brush;
+                TextBlockIndex.Foreground = brush;
+            };
+            SettingAnimate = new(
+                new BrushSettingDNSU(Color.FromRgb(128, 179, 189), Color.FromRgb(111, 199, 173), Color.FromRgb(69, 154, 101), Color.FromRgb(181, 102, 102), AnimTime, ChangeBackground),
+                new BrushSettingDNSU(Color.FromRgb(69, 98, 127), Color.FromRgb(69, 98, 127), Color.FromRgb(69, 127, 83), Color.FromRgb(255, 90, 90), AnimTime, ChangeBorderBrush),
+                new BrushSettingDNSU(Colors.Black, Color.FromRgb(0, 80, 60), Color.FromRgb(40, 60, 41), Colors.Black, AnimTime, ChangeForeground)
+                );
 
-            AnimationMillisecond = 200;
+            StartMarginImageElement = ImageElement.Margin;
+            TextBlockName.Text = this.Label.Name;
+            ImageTagVisible = false;
+
             IntervalHover = 1300d;
             TimerBorderInfo.Tick += (sender, e) =>
             {
@@ -238,28 +190,12 @@ namespace IEL
             TextBlockName.Foreground = new SolidColorBrush(Colors.Black);
             TextBlockName.Foreground = new SolidColorBrush(Colors.Black);
 
-            DefaultBackground = Color.FromRgb(128, 179, 189);
-            DefaultBorderBrush = Color.FromRgb(69, 98, 127);
-            DefaultForeground = Colors.Black;
-
-            SelectBackground = Color.FromRgb(111, 199, 173);
-            SelectBorderBrush = Color.FromRgb(69, 98, 127);
-            SelectForeground = Color.FromRgb(0, 80, 60);
-
-            ClickedBackground = Color.FromRgb(69, 154, 101);
-            ClickedBorderBrush = Color.FromRgb(69, 127, 83);
-            ClickedForeground = Color.FromRgb(40, 60, 41);
-
-            NotEnabledBackground = Color.FromRgb(181, 102, 102);
-            NotEnabledBorderBrush = Color.FromRgb(255, 90, 90);
-            NotEnabledForeground = Colors.Black;
-
             IsEnabledChanged += (sender, e) =>
             {
                 Color
-                Foreground = (bool)e.NewValue ? DefaultForeground : NotEnabledForeground,
-                Background = (bool)e.NewValue ? DefaultBackground : NotEnabledBackground,
-                BorderBrush = (bool)e.NewValue ? DefaultBorderBrush : NotEnabledBorderBrush;
+                Foreground = (bool)e.NewValue ? SettingAnimate.ForegroundDNSU.Default : SettingAnimate.ForegroundDNSU.NotEnabled,
+                Background = (bool)e.NewValue ? SettingAnimate.BackgroundDNSU.Default : SettingAnimate.BackgroundDNSU.NotEnabled,
+                BorderBrush = (bool)e.NewValue ? SettingAnimate.BorderBrushDNSU.Default : SettingAnimate.BorderBrushDNSU.NotEnabled;
 
                 ButtonAnimationColor.To = Background;
                 BorderMain.Background.BeginAnimation(SolidColorBrush.ColorProperty, ButtonAnimationColor);
@@ -324,17 +260,19 @@ namespace IEL
         /// </summary>
         private void MouseEnterAnimation()
         {
-            ButtonAnimationColor.To = SelectBackground;
+            ButtonAnimationColor.To = SettingAnimate.BackgroundDNSU.Select;
             BorderMain.Background.BeginAnimation(SolidColorBrush.ColorProperty, ButtonAnimationColor);
 
-            ButtonAnimationColor.To = SelectBorderBrush;
+            ButtonAnimationColor.To = SettingAnimate.BorderBrushDNSU.Select;
             BorderMain.BorderBrush.BeginAnimation(GradientStop.ColorProperty, ButtonAnimationColor);
 
-            ButtonAnimationColor.To = SelectForeground;
+            ButtonAnimationColor.To = SettingAnimate.ForegroundDNSU.Select;
             TextBlockIndex.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, ButtonAnimationColor);
             TextBlockName.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, ButtonAnimationColor);
 
-            ButtonAnimationThickness.To = new(8);
+            ButtonAnimationThickness.To = new(
+                StartMarginImageElement.Left - 3, StartMarginImageElement.Top - 3,
+                StartMarginImageElement.Right - 3, StartMarginImageElement.Bottom - 3);
             ImageElement.BeginAnimation(MarginProperty, ButtonAnimationThickness);
         }
 
@@ -343,17 +281,17 @@ namespace IEL
         /// </summary>
         private void MouseLeaveAnimation()
         {
-            ButtonAnimationColor.To = DefaultBackground;
+            ButtonAnimationColor.To = SettingAnimate.BackgroundDNSU.Default;
             BorderMain.Background.BeginAnimation(SolidColorBrush.ColorProperty, ButtonAnimationColor);
 
-            ButtonAnimationColor.To = DefaultBorderBrush;
+            ButtonAnimationColor.To = SettingAnimate.BorderBrushDNSU.Default;
             BorderMain.BorderBrush.BeginAnimation(GradientStop.ColorProperty, ButtonAnimationColor);
 
-            ButtonAnimationColor.To = DefaultForeground;
+            ButtonAnimationColor.To = SettingAnimate.ForegroundDNSU.Default;
             TextBlockIndex.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, ButtonAnimationColor);
             TextBlockName.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, ButtonAnimationColor);
 
-            ButtonAnimationThickness.To = new(10);
+            ButtonAnimationThickness.To = StartMarginImageElement;
             ImageElement.BeginAnimation(MarginProperty, ButtonAnimationThickness);
         }
 
@@ -363,17 +301,19 @@ namespace IEL
         /// <param name="StyleClickColor">Стиль нажатия на кнопку</param>
         private void ClickDownAnimation()
         {
-            ButtonAnimationColor.To = ClickedBackground;
+            ButtonAnimationColor.To = SettingAnimate.BackgroundDNSU.Used;
             BorderMain.Background.BeginAnimation(SolidColorBrush.ColorProperty, ButtonAnimationColor);
 
-            ButtonAnimationColor.To = ClickedBorderBrush;
+            ButtonAnimationColor.To = SettingAnimate.BorderBrushDNSU.Used;
             BorderMain.BorderBrush.BeginAnimation(GradientStop.ColorProperty, ButtonAnimationColor);
 
-            ButtonAnimationColor.To = ClickedForeground;
+            ButtonAnimationColor.To = SettingAnimate.ForegroundDNSU.Used;
             TextBlockIndex.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, ButtonAnimationColor);
             TextBlockName.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, ButtonAnimationColor);
 
-            ButtonAnimationThickness.To = new(9);
+            ButtonAnimationThickness.To = new(
+                StartMarginImageElement.Left + 2, StartMarginImageElement.Top + 2,
+                StartMarginImageElement.Right + 2, StartMarginImageElement.Bottom + 2);
             ImageElement.BeginAnimation(MarginProperty, ButtonAnimationThickness);
         }
     }
