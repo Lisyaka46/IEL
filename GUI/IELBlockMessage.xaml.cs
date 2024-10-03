@@ -254,6 +254,7 @@ namespace IEL
             DoubleAnimation animation = DoubleAnimateObj.Clone();
             void SetZOne(object? sender, EventArgs e)
             {
+                if (FlagMessage) return;
                 Canvas.SetZIndex(this, -2);
                 animation.FillBehavior = FillBehavior.HoldEnd;
                 animation.Completed -= SetZOne;
