@@ -18,7 +18,7 @@ namespace IEL
         /// <summary>
         /// Обект настройки поведения анимации цвета
         /// </summary>
-        public IELSettingAnimate SettingAnimate { get; set; }
+        public IELSettingAnimate SettingAnimate { get; private set; }
 
         #region animateObjects
         /// <summary>
@@ -200,7 +200,7 @@ namespace IEL
             {
                 if (IsEnabled) MouseLeaveDetect();
             };
-            IsEnabledChanged += (sender, e) =>
+            /*IsEnabledChanged += (sender, e) =>
             {
                 Color
                 Background = (bool)e.NewValue ? SettingAnimate.BackgroundDNSU.Default : SettingAnimate.BackgroundDNSU.NotEnabled,
@@ -217,9 +217,9 @@ namespace IEL
 
                 ButtonAnimationColor.To = Foreground;
                 TextBlockKey.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, ButtonAnimationColor);
-            };
+            };*/
 
-            MouseDown += (sender, e) =>
+            /*MouseDown += (sender, e) =>
             {
                 if (IsEnabled)
                 {
@@ -232,7 +232,7 @@ namespace IEL
                         TextBlockKey.Foreground = new SolidColorBrush(SettingAnimate.ForegroundDNSU.Used);
                     }
                 }
-            };
+            };*/
 
             MouseLeftButtonUp += (sender, e) =>
             {
@@ -258,7 +258,7 @@ namespace IEL
         /// </summary>
         private void MouseEnterDetect()
         {
-            ButtonAnimationColor.To = SettingAnimate.BorderBrushDNSU.Select;
+            /*ButtonAnimationColor.To = SettingAnimate.BorderBrushDNSU.Select;
             BorderButton.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, ButtonAnimationColor);
 
             ButtonAnimationColor.To = SettingAnimate.BackgroundDNSU.Select;
@@ -280,7 +280,7 @@ namespace IEL
                     ImageMouseButtonsUse.BeginAnimation(OpacityProperty, ButtonAnimationDouble);
                 }
             }
-            EnterButton = true;
+            EnterButton = true;*/
         }
 
         /// <summary>
@@ -288,7 +288,7 @@ namespace IEL
         /// </summary>
         private void MouseLeaveDetect()
         {
-            ButtonAnimationColor.To = SettingAnimate.BorderBrushDNSU.Default;
+            /*ButtonAnimationColor.To = SettingAnimate.BorderBrushDNSU.Default;
             BorderButton.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, ButtonAnimationColor);
 
             ButtonAnimationColor.To = SettingAnimate.BackgroundDNSU.Default;
@@ -300,7 +300,7 @@ namespace IEL
 
             ButtonAnimationDouble.To = 0d;
             ImageMouseButtonsUse.BeginAnimation(OpacityProperty, ButtonAnimationDouble);
-            EnterButton = false;
+            EnterButton = false;*/
         }
 
         /// <summary>
@@ -309,7 +309,7 @@ namespace IEL
         [MTAThread()]
         public void BlinkAnimation()
         {
-            ButtonAnimationColor.SpeedRatio = 0.6d;
+            /*ButtonAnimationColor.SpeedRatio = 0.6d;
             ButtonAnimationColor.From = Colors.White;
             ButtonAnimationColor.To = EnterButton ? SettingAnimate.BorderBrushDNSU.Select : SettingAnimate.BorderBrushDNSU.Default;
             BorderButton.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, ButtonAnimationColor);
@@ -325,7 +325,7 @@ namespace IEL
             TextBlockKey.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, ButtonAnimationColor);
 
             ButtonAnimationColor.SpeedRatio = 1;
-            ButtonAnimationColor.From = null;
+            ButtonAnimationColor.From = null;*/
         }
     }
 }

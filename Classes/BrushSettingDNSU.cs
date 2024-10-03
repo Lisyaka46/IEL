@@ -47,6 +47,18 @@ namespace IEL.Classes
         /// </summary>
         internal event ChangeColorEventHandler? SpectrumChange;
 
+        /// <summary>
+        /// Состояние активности элемента
+        /// </summary>
+        /// <remarks>
+        /// При отключённой активности будут доступны только спектры цвета <b>Default</b> или <b>NotEnabled</b>
+        /// <code></code>
+        /// <b>События недоступных спектров также будут отключены.</b>
+        /// <code></code>
+        /// При попытке вызова отключённого спектра будет выводится спектр <b>Default</b>
+        /// </remarks>
+        internal bool IsEnabled { get; set; }
+
         #region Default
         private Color _Default;
         /// <summary>
@@ -86,11 +98,11 @@ namespace IEL.Classes
         /// </summary>
         public Color Select
         {
-            get => _Select;
+            get => IsEnabled ? _Select : _Default;
             set
             {
                 _Select = value;
-                SpectrumChange?.Invoke(SpectrumElement.Select, value);
+                if (IsEnabled) SpectrumChange?.Invoke(SpectrumElement.Select, value);
             }
         }
         #endregion
@@ -102,29 +114,31 @@ namespace IEL.Classes
         /// </summary>
         public Color Used
         {
-            get => _Used;
+            get => IsEnabled ? _Used : _Default;
             set
             {
                 _Used = value;
-                SpectrumChange?.Invoke(SpectrumElement.Used, value);
+                if (IsEnabled) SpectrumChange?.Invoke(SpectrumElement.Used, value);
             }
         }
         #endregion
 
-        public BrushSettingDNSU()
+        internal BrushSettingDNSU()
         {
             Select = Colors.Black;
             Used = Colors.Black;
             NotEnabled = Colors.Black;
             Default = Colors.Black;
+            IsEnabled = false;
         }
 
-        public BrushSettingDNSU(Color Default, Color Select, Color Used, Color NotEnabled)
+        internal BrushSettingDNSU(Color Default, Color Select, Color Used, Color NotEnabled)
         {
             this.Select = Select;
             this.Used = Used;
             this.NotEnabled = NotEnabled;
             this.Default = Default;
+            IsEnabled = true;
         }
     }
 }

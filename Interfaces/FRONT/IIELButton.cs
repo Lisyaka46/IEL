@@ -15,7 +15,7 @@ namespace IEL.Interfaces.Front
         /// <summary>
         /// Обект настройки поведения анимации цвета
         /// </summary>
-        public IELSettingAnimate SettingAnimate { get; set; }
+        public IELSettingAnimate SettingAnimate { get; }
 
         /// <summary>
         /// Скругление границ

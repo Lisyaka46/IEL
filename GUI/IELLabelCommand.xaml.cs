@@ -17,7 +17,7 @@ namespace IEL
         /// <summary>
         /// Обект настройки поведения анимации цвета
         /// </summary>
-        public IELSettingAnimate SettingAnimate { get; set; }
+        public IELSettingAnimate SettingAnimate { get; private set; }
 
         /// <summary>
         /// Объект события активации кнопки левым щелчком мыши
@@ -170,7 +170,7 @@ namespace IEL
             TextBlockName.Foreground = new SolidColorBrush(Colors.Black);
             TextBlockName.Foreground = new SolidColorBrush(Colors.Black);
 
-            IsEnabledChanged += (sender, e) =>
+            /*IsEnabledChanged += (sender, e) =>
             {
                 Color
                 Foreground = (bool)e.NewValue ? SettingAnimate.ForegroundDNSU.Default : SettingAnimate.ForegroundDNSU.NotEnabled,
@@ -186,7 +186,7 @@ namespace IEL
                 ButtonAnimationColor.To = Foreground;
                 TextBlockIndex.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, ButtonAnimationColor);
                 TextBlockName.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, ButtonAnimationColor);
-            };
+            };*/
 
             MouseEnter += (sender, e) =>
             {
@@ -240,7 +240,7 @@ namespace IEL
         /// </summary>
         private void MouseEnterAnimation()
         {
-            ButtonAnimationColor.To = SettingAnimate.BackgroundDNSU.Select;
+            /*ButtonAnimationColor.To = SettingAnimate.BackgroundDNSU.Select;
             BorderMain.Background.BeginAnimation(SolidColorBrush.ColorProperty, ButtonAnimationColor);
 
             ButtonAnimationColor.To = SettingAnimate.BorderBrushDNSU.Select;
@@ -253,7 +253,7 @@ namespace IEL
             ButtonAnimationThickness.To = new(
                 StartMarginImageElement.Left - 3, StartMarginImageElement.Top - 3,
                 StartMarginImageElement.Right - 3, StartMarginImageElement.Bottom - 3);
-            ImageElement.BeginAnimation(MarginProperty, ButtonAnimationThickness);
+            ImageElement.BeginAnimation(MarginProperty, ButtonAnimationThickness);*/
         }
 
         /// <summary>
@@ -261,7 +261,7 @@ namespace IEL
         /// </summary>
         private void MouseLeaveAnimation()
         {
-            ButtonAnimationColor.To = SettingAnimate.BackgroundDNSU.Default;
+            /*ButtonAnimationColor.To = SettingAnimate.BackgroundDNSU.Default;
             BorderMain.Background.BeginAnimation(SolidColorBrush.ColorProperty, ButtonAnimationColor);
 
             ButtonAnimationColor.To = SettingAnimate.BorderBrushDNSU.Default;
@@ -272,7 +272,7 @@ namespace IEL
             TextBlockName.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, ButtonAnimationColor);
 
             ButtonAnimationThickness.To = StartMarginImageElement;
-            ImageElement.BeginAnimation(MarginProperty, ButtonAnimationThickness);
+            ImageElement.BeginAnimation(MarginProperty, ButtonAnimationThickness);*/
         }
 
         /// <summary>
@@ -281,7 +281,7 @@ namespace IEL
         /// <param name="StyleClickColor">Стиль нажатия на кнопку</param>
         private void ClickDownAnimation()
         {
-            ButtonAnimationColor.To = SettingAnimate.BackgroundDNSU.Used;
+            /*ButtonAnimationColor.To = SettingAnimate.BackgroundDNSU.Used;
             BorderMain.Background.BeginAnimation(SolidColorBrush.ColorProperty, ButtonAnimationColor);
 
             ButtonAnimationColor.To = SettingAnimate.BorderBrushDNSU.Used;
@@ -294,7 +294,7 @@ namespace IEL
             ButtonAnimationThickness.To = new(
                 StartMarginImageElement.Left + 2, StartMarginImageElement.Top + 2,
                 StartMarginImageElement.Right + 2, StartMarginImageElement.Bottom + 2);
-            ImageElement.BeginAnimation(MarginProperty, ButtonAnimationThickness);
+            ImageElement.BeginAnimation(MarginProperty, ButtonAnimationThickness);*/
         }
     }
 }

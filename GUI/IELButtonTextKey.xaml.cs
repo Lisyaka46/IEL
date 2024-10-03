@@ -73,7 +73,7 @@ namespace IEL
         /// <summary>
         /// Обект настройки поведения анимации цвета
         /// </summary>
-        public IELSettingAnimate SettingAnimate { get; set; }
+        public IELSettingAnimate SettingAnimate { get; private set; }
 
         #region MouseHover
         /// <summary>
@@ -293,7 +293,7 @@ namespace IEL
                 }
             };
 
-            IsEnabledChanged += (sender, e) =>
+            /*IsEnabledChanged += (sender, e) =>
             {
                 EnterButton = false;
                 Color
@@ -331,7 +331,7 @@ namespace IEL
 
                 ButtonAnimationOpacity.To = 0d;
                 ImageMouseButtonsUse.BeginAnimation(OpacityProperty, ButtonAnimationOpacity);
-            };
+            };*/
         }
 
         /// <summary>
@@ -340,7 +340,7 @@ namespace IEL
         /// <param name="StyleClickColor">Стиль нажатия на кнопку</param>
         private void ClickDownAnimation(ActivateClickColor StyleClickColor)
         {
-            Color
+            /*Color
             Foreground = StyleClickColor == ActivateClickColor.Clicked ? SettingAnimate.ForegroundDNSU.Used : SettingAnimate.ForegroundDNSU.NotEnabled,
             Background = StyleClickColor == ActivateClickColor.Clicked ? SettingAnimate.BackgroundDNSU.Used : SettingAnimate.BackgroundDNSU.NotEnabled,
             BorderBrush = StyleClickColor == ActivateClickColor.Clicked ? SettingAnimate.BorderBrushDNSU.Used : SettingAnimate.BorderBrushDNSU.NotEnabled;
@@ -360,7 +360,7 @@ namespace IEL
 
             BorderButton.BorderBrush = new SolidColorBrush(BorderBrush);
             BorderButton.Background = new SolidColorBrush(Background);
-            TextBlockButton.Foreground = new SolidColorBrush(Foreground);
+            TextBlockButton.Foreground = new SolidColorBrush(Foreground);*/
         }
 
         /// <summary>
@@ -368,7 +368,7 @@ namespace IEL
         /// </summary>
         private void MouseEnterAnimation()
         {
-            if (StateVisualizationButton != StateButton.Default)
+            /*if (StateVisualizationButton != StateButton.Default)
             {
                 ButtonAnimationThickness.To = new(
                     StateVisualizationButton == StateButton.RightArrow ? -3 : 0,
@@ -415,7 +415,7 @@ namespace IEL
                     ImageMouseButtonsUse.EndInit();
                     ImageMouseButtonsUse.BeginAnimation(OpacityProperty, ButtonAnimationOpacity);
                 }
-            }
+            }*/
         }
 
         /// <summary>
@@ -423,7 +423,7 @@ namespace IEL
         /// </summary>
         private void MouseLeaveAnimation()
         {
-            if (StateVisualizationButton != StateButton.Default)
+            /*if (StateVisualizationButton != StateButton.Default)
             {
                 ButtonAnimationThickness.To = new(0);
                 if (StateVisualizationButton == StateButton.LeftArrow)
@@ -450,7 +450,7 @@ namespace IEL
             TextBlockCharKey.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, ButtonAnimationColor);
 
             ButtonAnimationOpacity.To = 0d;
-            ImageMouseButtonsUse.BeginAnimation(OpacityProperty, ButtonAnimationOpacity);
+            ImageMouseButtonsUse.BeginAnimation(OpacityProperty, ButtonAnimationOpacity);*/
         }
 
         /// <summary>
@@ -459,7 +459,7 @@ namespace IEL
         [MTAThread()]
         public void BlinkAnimation()
         {
-            ButtonAnimationColor.SpeedRatio = 0.6d;
+            /*ButtonAnimationColor.SpeedRatio = 0.6d;
             ButtonAnimationColor.From = Colors.White;
             ButtonAnimationColor.To = EnterButton ? SettingAnimate.BorderBrushDNSU.Select : SettingAnimate.BorderBrushDNSU.NotEnabled;
             BorderButton.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, ButtonAnimationColor);
@@ -476,7 +476,7 @@ namespace IEL
             TextBlockCharKey.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, ButtonAnimationColor);
 
             ButtonAnimationColor.SpeedRatio = 1;
-            ButtonAnimationColor.From = null;
+            ButtonAnimationColor.From = null;*/
         }
     }
 }
