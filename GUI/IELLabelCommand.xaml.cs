@@ -203,6 +203,39 @@ namespace IEL
             set => BorderMain.CornerRadius = value;
         }
 
+        /// <summary>
+        /// Данные изображения объекта
+        /// </summary>
+        public ImageSource ImageSource
+        {
+            get => ImageElement.Source;
+            set => ImageElement.Source = value;
+        }
+
+        /// <summary>
+        /// Данные изображения тега
+        /// </summary>
+        public ImageSource ImageTagSource
+        {
+            get => ImageTag.Source;
+            set => ImageTag.Source = value;
+        }
+
+        private bool _ImageTagVisible;
+        /// <summary>
+        /// Видимость изображения тега
+        /// </summary>
+        public bool ImageTagVisible
+        {
+            get => _ImageTagVisible;
+            set
+            {
+                ButtonAnimationDouble.To = value ? 1d : 0d;
+                ImageTag.BeginAnimation(OpacityProperty, ButtonAnimationDouble);
+                _ImageTagVisible = value;
+            }
+        }
+
         public LabelAction Label { get; set; }
 
         private int _Index;
@@ -215,6 +248,8 @@ namespace IEL
                 _Index = value;
             }
         }
+
+        private readonly Thickness StartMarginImageElement;
 
         public IELLabelCommand(LabelAction Label, int Index = 0)
         {
@@ -253,6 +288,9 @@ namespace IEL
             NotEnabledBackground = Color.FromRgb(181, 102, 102);
             NotEnabledBorderBrush = Color.FromRgb(255, 90, 90);
             NotEnabledForeground = Colors.Black;
+
+            StartMarginImageElement = ImageElement.Margin;
+            ImageTagVisible = false;
 
             IsEnabledChanged += (sender, e) =>
             {
@@ -334,7 +372,9 @@ namespace IEL
             TextBlockIndex.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, ButtonAnimationColor);
             TextBlockName.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, ButtonAnimationColor);
 
-            ButtonAnimationThickness.To = new(8);
+            ButtonAnimationThickness.To = new(
+                StartMarginImageElement.Left - 3, StartMarginImageElement.Top - 3,
+                StartMarginImageElement.Right - 3, StartMarginImageElement.Bottom - 3);
             ImageElement.BeginAnimation(MarginProperty, ButtonAnimationThickness);
         }
 
@@ -353,7 +393,7 @@ namespace IEL
             TextBlockIndex.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, ButtonAnimationColor);
             TextBlockName.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, ButtonAnimationColor);
 
-            ButtonAnimationThickness.To = new(10);
+            ButtonAnimationThickness.To = StartMarginImageElement;
             ImageElement.BeginAnimation(MarginProperty, ButtonAnimationThickness);
         }
 
@@ -373,7 +413,9 @@ namespace IEL
             TextBlockIndex.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, ButtonAnimationColor);
             TextBlockName.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, ButtonAnimationColor);
 
-            ButtonAnimationThickness.To = new(9);
+            ButtonAnimationThickness.To = new(
+                StartMarginImageElement.Left + 2, StartMarginImageElement.Top + 2,
+                StartMarginImageElement.Right + 2, StartMarginImageElement.Bottom + 2);
             ImageElement.BeginAnimation(MarginProperty, ButtonAnimationThickness);
         }
     }
