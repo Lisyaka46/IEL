@@ -12,20 +12,20 @@ namespace IEL.Classes
         /// <summary>
         /// Объект управления цветом фона
         /// </summary>
-        public BrushSettingDNSU BackgroundDNSU { get; internal set; }
+        public BrushSettingDNSU BackgroundDNSU { get; set; }
 
         /// <summary>
         /// Объект управления цветом границ
         /// </summary>
-        public BrushSettingDNSU BorderBrushDNSU { get; internal set; }
+        public BrushSettingDNSU BorderBrushDNSU { get; set; }
 
         /// <summary>
         /// Объект управления цветом текста
         /// </summary>
-        public BrushSettingDNSU ForegroundDNSU { get; internal set; }
+        public BrushSettingDNSU ForegroundDNSU { get; set; }
 
 
-        internal IELSettingAnimate()
+        public IELSettingAnimate()
         {
             BackgroundDNSU = new();
             BorderBrushDNSU = new();

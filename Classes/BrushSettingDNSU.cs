@@ -60,7 +60,7 @@ namespace IEL.Classes
         public Color Default
         {
             get => _Default;
-            internal set
+            set
             {
                 _Default = value;
                 SpectrumDefaultChange?.Invoke(value);
@@ -76,7 +76,7 @@ namespace IEL.Classes
         public Color NotEnabled
         {
             get => _NotEnabled;
-            internal set
+            set
             {
                 _NotEnabled = value;
             }
@@ -91,7 +91,7 @@ namespace IEL.Classes
         public Color Select
         {
             get => IsEnabled ? _Select : _Default;
-            internal set
+            set
             {
                 _Select = value;
             }
@@ -106,20 +106,20 @@ namespace IEL.Classes
         public Color Used
         {
             get => IsEnabled ? _Used : _Default;
-            internal set
+            set
             {
                 _Used = value;
             }
         }
         #endregion
 
-        internal BrushSettingDNSU()
+        public BrushSettingDNSU()
         {
             Select = Colors.Black;
             Used = Colors.Black;
             NotEnabled = Colors.Black;
             Default = Colors.Black;
-            IsEnabled = false;
+            IsEnabled = true;
         }
 
         internal BrushSettingDNSU(Color Default, Color Select, Color Used, Color NotEnabled, ChangeSpectrumDefaultEventHandler? changeSpectrum = null)

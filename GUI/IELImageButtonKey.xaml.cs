@@ -18,7 +18,7 @@ namespace IEL
         /// <summary>
         /// Обект настройки поведения анимации цвета
         /// </summary>
-        public IELSettingAnimate SettingAnimate { get; private set; }
+        public IELSettingAnimate SettingAnimate { get; set; }
 
         #region AnimationMillisecond
         private int _AnimationMillisecond;
@@ -31,7 +31,9 @@ namespace IEL
             set
             {
                 TimeSpan time = TimeSpan.FromMilliseconds(value);
-                ButtonAnimationColor.Duration = time;
+                AnimationColor.Duration = time;
+                AnimationDouble.Duration = time;
+                AnimationThickness.Duration = TimeSpan.FromMilliseconds(value * 1.4d);
                 _AnimationMillisecond = value;
 
             }
@@ -40,19 +42,30 @@ namespace IEL
 
         #region animateObjects
         /// <summary>
-        /// Анимация цвета
+        /// Анимация color значения
         /// </summary>
-        private readonly ColorAnimation ButtonAnimationColor;
+        private readonly ColorAnimation AnimationColor = new()
+        {
+            DecelerationRatio = 0.2d,
+            EasingFunction = new CubicEase() { EasingMode = EasingMode.EaseOut }
+        };
 
         /// <summary>
-        /// Анимация цвета
+        /// Анимация thickness значения
         /// </summary>
-        private readonly DoubleAnimation ButtonAnimationDouble;
+        private readonly ThicknessAnimation AnimationThickness = new()
+        {
+            EasingFunction = new QuinticEase() { EasingMode = EasingMode.EaseOut }
+        };
 
         /// <summary>
-        /// Анимация позиции
+        /// Анимация double значения
         /// </summary>
-        private readonly ThicknessAnimation ButtonAnimationThickness;
+        private readonly DoubleAnimation AnimationDouble = new()
+        {
+            DecelerationRatio = 0.2d,
+            EasingFunction = new QuinticEase() { EasingMode = EasingMode.EaseOut }
+        };
         #endregion
 
         #region MouseHover
@@ -145,8 +158,8 @@ namespace IEL
                 _VisibleMouseImaging = value;
                 if (EnterButton)
                 {
-                    ButtonAnimationDouble.To = value ? 0.4d : 0d;
-                    ImageMouseButtonsUse.BeginAnimation(OpacityProperty, ButtonAnimationDouble);
+                    AnimationDouble.To = value ? 0.4d : 0d;
+                    ImageMouseButtonsUse.BeginAnimation(OpacityProperty, AnimationDouble);
                 }
             }
         }
@@ -165,10 +178,10 @@ namespace IEL
             get => _CharKeyKeyboardActivate;
             set
             {
-                ButtonAnimationDouble.To = value ? 1d : 0d;
-                ButtonAnimationThickness.To = new(!value ? -24 : 0, 0, 0, 0);
-                BorderButton.BeginAnimation(MarginProperty, ButtonAnimationThickness);
-                BorderButtonKey.BeginAnimation(OpacityProperty, ButtonAnimationDouble);
+                AnimationDouble.To = value ? 1d : 0d;
+                AnimationThickness.To = new(!value ? -24 : 0, 0, 0, 0);
+                BorderButton.BeginAnimation(MarginProperty, AnimationThickness);
+                BorderButtonKey.BeginAnimation(OpacityProperty, AnimationDouble);
                 _CharKeyKeyboardActivate = value;
             }
         }
@@ -193,12 +206,29 @@ namespace IEL
         public IELImageButtonKey()
         {
             InitializeComponent();
-            ButtonAnimationThickness = new();
-            ButtonAnimationDouble = new();
-            ButtonAnimationColor = new();
 
-            TimeSpan AnimTime = TimeSpan.FromMilliseconds(80d);
-            SettingAnimate = new();
+            AnimationMillisecond = 100;
+            BrushSettingDNSU BackgroundDNSU = new(BrushSettingDNSU.CreateStyle.Background,
+                (Value) =>
+                {
+                    SolidColorBrush color = new(Value);
+                    BorderButton.Background = color;
+                    BorderButtonKey.Background = color;
+                });
+            BrushSettingDNSU BorderBrushDNSU = new(BrushSettingDNSU.CreateStyle.BorderBrush,
+                (Value) =>
+                {
+                    SolidColorBrush color = new(Value);
+                    BorderButton.BorderBrush = color;
+                    BorderButtonKey.BorderBrush = color;
+                });
+            BrushSettingDNSU ForegroundDNSU = new(BrushSettingDNSU.CreateStyle.Foreground,
+                (Value) =>
+                {
+                    SolidColorBrush color = new(Value);
+                    TextBlockKey.Foreground = color;
+                });
+            SettingAnimate = new(BackgroundDNSU, BorderBrushDNSU, ForegroundDNSU);
 
             ImageButton.Margin = new Thickness(10, 10, 10, 10);
             CharKeyboardActivate = false;
@@ -218,39 +248,35 @@ namespace IEL
             {
                 if (IsEnabled) MouseLeaveDetect();
             };
-            /*IsEnabledChanged += (sender, e) =>
+
+            IsEnabledChanged += (sender, e) =>
             {
                 Color
                 Background = (bool)e.NewValue ? SettingAnimate.BackgroundDNSU.Default : SettingAnimate.BackgroundDNSU.NotEnabled,
                 BorderBrush = (bool)e.NewValue ? SettingAnimate.BorderBrushDNSU.Default : SettingAnimate.BorderBrushDNSU.NotEnabled,
                 Foreground = (bool)e.NewValue ? SettingAnimate.ForegroundDNSU.Default : SettingAnimate.ForegroundDNSU.NotEnabled;
 
-                ButtonAnimationColor.To = BorderBrush;
-                BorderButton.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, ButtonAnimationColor);
-                BorderButtonKey.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, ButtonAnimationColor);
+                AnimationColor.To = BorderBrush;
+                BorderButton.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
+                BorderButtonKey.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
 
-                ButtonAnimationColor.To = Background;
-                BorderButton.Background.BeginAnimation(SolidColorBrush.ColorProperty, ButtonAnimationColor);
-                BorderButtonKey.Background.BeginAnimation(SolidColorBrush.ColorProperty, ButtonAnimationColor);
+                AnimationColor.To = Background;
+                BorderButton.Background.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
+                BorderButtonKey.Background.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
 
-                ButtonAnimationColor.To = Foreground;
-                TextBlockKey.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, ButtonAnimationColor);
-            };*/
+                AnimationColor.To = Foreground;
+                TextBlockKey.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
+            };
 
-            /*MouseDown += (sender, e) =>
+            MouseDown += (sender, e) =>
             {
                 if (IsEnabled)
                 {
                     if (
                     (e.LeftButton == MouseButtonState.Pressed && OnActivateMouseLeft != null) ||
-                    (e.RightButton == MouseButtonState.Pressed && OnActivateMouseRight != null))
-                    {
-                        BorderButton.BorderBrush = new SolidColorBrush(SettingAnimate.BorderBrushDNSU.Used);
-                        BorderButton.Background = new SolidColorBrush(SettingAnimate.BackgroundDNSU.Used);
-                        TextBlockKey.Foreground = new SolidColorBrush(SettingAnimate.ForegroundDNSU.Used);
-                    }
+                    (e.RightButton == MouseButtonState.Pressed && OnActivateMouseRight != null)) ClickDownAnimation();
                 }
-            };*/
+            };
 
             MouseLeftButtonUp += (sender, e) =>
             {
@@ -272,33 +298,52 @@ namespace IEL
         }
 
         /// <summary>
+        /// Анимировать нажатие на кнопку (Down)
+        /// </summary>
+        private void ClickDownAnimation()
+        {
+            Color
+                Background = SettingAnimate.BackgroundDNSU.Used,
+                BorderBrush = SettingAnimate.BorderBrushDNSU.Used,
+                Foreground = SettingAnimate.ForegroundDNSU.Used;
+
+            BorderButton.BorderBrush = new SolidColorBrush(BorderBrush);
+            BorderButton.Background = new SolidColorBrush(Background);
+            TextBlockKey.Foreground = new SolidColorBrush(Foreground);
+        }
+
+        /// <summary>
         /// Событие прихода курсора в видимую область кнопки
         /// </summary>
         private void MouseEnterDetect()
         {
-            /*ButtonAnimationColor.To = SettingAnimate.BorderBrushDNSU.Select;
-            BorderButton.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, ButtonAnimationColor);
+            Color
+                Foreground = SettingAnimate.ForegroundDNSU.Select,
+                Background = SettingAnimate.BackgroundDNSU.Select,
+                BorderBrush = SettingAnimate.BorderBrushDNSU.Select;
+            AnimationColor.To = BorderBrush;
+            BorderButton.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
 
-            ButtonAnimationColor.To = SettingAnimate.BackgroundDNSU.Select;
-            BorderButton.Background.BeginAnimation(SolidColorBrush.ColorProperty, ButtonAnimationColor);
-            BorderButtonKey.Background.BeginAnimation(SolidColorBrush.ColorProperty, ButtonAnimationColor);
+            AnimationColor.To = Background;
+            BorderButton.Background.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
+            BorderButtonKey.Background.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
 
-            ButtonAnimationColor.To = SettingAnimate.ForegroundDNSU.Select;
-            TextBlockKey.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, ButtonAnimationColor);
+            AnimationColor.To = Foreground;
+            TextBlockKey.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
 
             if (VisibleMouseImaging)
             {
                 ImageMouse = IIELObject.ImageMouseButton(OnActivateMouseLeft != null, OnActivateMouseRight != null);
                 if (ImageMouse != null)
                 {
-                    ButtonAnimationDouble.To = 0.4d;
+                    AnimationDouble.To = 0.4d;
                     ImageMouseButtonsUse.BeginInit();
                     ImageMouseButtonsUse.Source = ImageMouse;
                     ImageMouseButtonsUse.EndInit();
-                    ImageMouseButtonsUse.BeginAnimation(OpacityProperty, ButtonAnimationDouble);
+                    ImageMouseButtonsUse.BeginAnimation(OpacityProperty, AnimationDouble);
                 }
             }
-            EnterButton = true;*/
+            EnterButton = true;
         }
 
         /// <summary>
@@ -306,19 +351,23 @@ namespace IEL
         /// </summary>
         private void MouseLeaveDetect()
         {
-            /*ButtonAnimationColor.To = SettingAnimate.BorderBrushDNSU.Default;
-            BorderButton.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, ButtonAnimationColor);
+            Color
+                Foreground = SettingAnimate.ForegroundDNSU.Default,
+                Background = SettingAnimate.BackgroundDNSU.Default,
+                BorderBrush = SettingAnimate.BorderBrushDNSU.Default;
+            AnimationColor.To = BorderBrush;
+            BorderButton.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
 
-            ButtonAnimationColor.To = SettingAnimate.BackgroundDNSU.Default;
-            BorderButton.Background.BeginAnimation(SolidColorBrush.ColorProperty, ButtonAnimationColor);
-            BorderButtonKey.Background.BeginAnimation(SolidColorBrush.ColorProperty, ButtonAnimationColor);
+            AnimationColor.To = Background;
+            BorderButton.Background.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
+            BorderButtonKey.Background.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
 
-            ButtonAnimationColor.To = SettingAnimate.ForegroundDNSU.Default;
-            TextBlockKey.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, ButtonAnimationColor);
+            AnimationColor.To = Foreground;
+            TextBlockKey.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
 
-            ButtonAnimationDouble.To = 0d;
-            ImageMouseButtonsUse.BeginAnimation(OpacityProperty, ButtonAnimationDouble);
-            EnterButton = false;*/
+            AnimationDouble.To = 0d;
+            ImageMouseButtonsUse.BeginAnimation(OpacityProperty, AnimationDouble);
+            EnterButton = false;
         }
 
         /// <summary>
@@ -327,23 +376,23 @@ namespace IEL
         [MTAThread()]
         public void BlinkAnimation()
         {
-            /*ButtonAnimationColor.SpeedRatio = 0.6d;
-            ButtonAnimationColor.From = Colors.White;
-            ButtonAnimationColor.To = EnterButton ? SettingAnimate.BorderBrushDNSU.Select : SettingAnimate.BorderBrushDNSU.Default;
-            BorderButton.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, ButtonAnimationColor);
-            BorderButtonKey.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, ButtonAnimationColor);
+            AnimationColor.SpeedRatio = 0.6d;
+            AnimationColor.From = SettingAnimate.BorderBrushDNSU.Used;
+            AnimationColor.To = EnterButton ? SettingAnimate.BorderBrushDNSU.Select : SettingAnimate.BorderBrushDNSU.Default;
+            BorderButton.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
+            BorderButtonKey.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
 
-            ButtonAnimationColor.From = Colors.White;
-            ButtonAnimationColor.To = EnterButton ? SettingAnimate.BackgroundDNSU.Select : SettingAnimate.BackgroundDNSU.Default;
-            BorderButton.Background.BeginAnimation(SolidColorBrush.ColorProperty, ButtonAnimationColor);
-            BorderButtonKey.Background.BeginAnimation(SolidColorBrush.ColorProperty, ButtonAnimationColor);
+            AnimationColor.From = SettingAnimate.BackgroundDNSU.Used;
+            AnimationColor.To = EnterButton ? SettingAnimate.BackgroundDNSU.Select : SettingAnimate.BackgroundDNSU.Default;
+            BorderButton.Background.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
+            BorderButtonKey.Background.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
 
-            ButtonAnimationColor.From = Colors.White;
-            ButtonAnimationColor.To = EnterButton ? SettingAnimate.ForegroundDNSU.Select : SettingAnimate.ForegroundDNSU.Default;
-            TextBlockKey.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, ButtonAnimationColor);
+            AnimationColor.From = SettingAnimate.ForegroundDNSU.Used;
+            AnimationColor.To = EnterButton ? SettingAnimate.ForegroundDNSU.Select : SettingAnimate.ForegroundDNSU.Default;
+            TextBlockKey.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
 
-            ButtonAnimationColor.SpeedRatio = 1;
-            ButtonAnimationColor.From = null;*/
+            AnimationColor.SpeedRatio = 1;
+            AnimationColor.From = null;
         }
     }
 }

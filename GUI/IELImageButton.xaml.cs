@@ -17,7 +17,7 @@ namespace IEL
         /// <summary>
         /// Обект настройки поведения анимации цвета
         /// </summary>
-        public IELSettingAnimate SettingAnimate { get; private set; }
+        public IELSettingAnimate SettingAnimate { get; set; }
 
         #region AnimationMillisecond
         private int _AnimationMillisecond;
@@ -30,7 +30,7 @@ namespace IEL
             set
             {
                 TimeSpan time = TimeSpan.FromMilliseconds(value);
-                ButtonAnimationColor.Duration = time;
+                AnimationColor.Duration = time;
                 _AnimationMillisecond = value;
 
             }
@@ -39,9 +39,13 @@ namespace IEL
 
         #region animateObjects
         /// <summary>
-        /// Анимация цвета
+        /// Анимация color значения
         /// </summary>
-        private readonly ColorAnimation ButtonAnimationColor;
+        private readonly ColorAnimation AnimationColor = new()
+        {
+            DecelerationRatio = 0.2d,
+            EasingFunction = new CubicEase() { EasingMode = EasingMode.EaseOut }
+        };
         #endregion
 
         #region MouseHover
@@ -123,10 +127,21 @@ namespace IEL
         public IELImageButton()
         {
             InitializeComponent();
-            ButtonAnimationColor = new();
-
-            TimeSpan AnimTime = TimeSpan.FromMilliseconds(80d);
-            SettingAnimate = new();
+            AnimationMillisecond = 100;
+            BrushSettingDNSU BackgroundDNSU = new(BrushSettingDNSU.CreateStyle.Background,
+                (Value) =>
+                {
+                    SolidColorBrush color = new(Value);
+                    BorderButton.Background = color;
+                });
+            BrushSettingDNSU BorderBrushDNSU = new(BrushSettingDNSU.CreateStyle.BorderBrush,
+                (Value) =>
+                {
+                    SolidColorBrush color = new(Value);
+                    BorderButton.BorderBrush = color;
+                });
+            BrushSettingDNSU ForegroundDNSU = new();
+            SettingAnimate = new(BackgroundDNSU, BorderBrushDNSU, ForegroundDNSU);
 
             ImageButton.Margin = new Thickness(10, 10, 10, 10);
             IntervalHover = 1300d;
@@ -144,31 +159,28 @@ namespace IEL
             {
                 if (IsEnabled) MouseLeaveDetect();
             };
-            /*IsEnabledChanged += (sender, e) =>
+
+            IsEnabledChanged += (sender, e) =>
             {
                 Color
-                Background = (bool)e.NewValue ? SettingAnimate.BackgroundDNSU.Default : SettingAnimate.BackgroundDNSU.NotEnabled,
-                BorderBrush = (bool)e.NewValue ? SettingAnimate.BorderBrushDNSU.Default : SettingAnimate.BorderBrushDNSU.NotEnabled;
+                    Background = (bool)e.NewValue ? SettingAnimate.BackgroundDNSU.Default : SettingAnimate.BackgroundDNSU.NotEnabled,
+                    BorderBrush = (bool)e.NewValue ? SettingAnimate.BorderBrushDNSU.Default : SettingAnimate.BorderBrushDNSU.NotEnabled;
 
-                ButtonAnimationColor.To = BorderBrush;
-                BorderButton.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, ButtonAnimationColor);
-                ButtonAnimationColor.To = Background;
-                BorderButton.Background.BeginAnimation(SolidColorBrush.ColorProperty, ButtonAnimationColor);
-            };*/
+                AnimationColor.To = BorderBrush;
+                BorderButton.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
+                AnimationColor.To = Background;
+                BorderButton.Background.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
+            };
 
-            /*MouseDown += (sender, e) =>
+            MouseDown += (sender, e) =>
             {
                 if (IsEnabled)
                 {
                     if (
                     (e.LeftButton == MouseButtonState.Pressed && OnActivateMouseLeft != null) ||
-                    (e.RightButton == MouseButtonState.Pressed && OnActivateMouseRight != null))
-                    {
-                        BorderButton.BorderBrush = new SolidColorBrush(SettingAnimate.BorderBrushDNSU.Used);
-                        BorderButton.Background = new SolidColorBrush(SettingAnimate.BackgroundDNSU.Used);
-                    }
+                    (e.RightButton == MouseButtonState.Pressed && OnActivateMouseRight != null)) ClickDownAnimation();
                 }
-            };*/
+            };
 
             MouseLeftButtonUp += (sender, e) =>
             {
@@ -190,15 +202,32 @@ namespace IEL
         }
 
         /// <summary>
+        /// Анимировать нажатие на кнопку (Down)
+        /// </summary>
+        private void ClickDownAnimation()
+        {
+            Color
+                Background = SettingAnimate.BackgroundDNSU.Used,
+                BorderBrush = SettingAnimate.BorderBrushDNSU.Used;
+
+            BorderButton.BorderBrush = new SolidColorBrush(BorderBrush);
+            BorderButton.Background = new SolidColorBrush(Background);
+        }
+
+        /// <summary>
         /// Событие прихода курсора в видимую область кнопки
         /// </summary>
         private void MouseEnterDetect()
         {
-            /*ButtonAnimationColor.To = SettingAnimate.BorderBrushDNSU.Select;
-            BorderButton.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, ButtonAnimationColor);
+            Color
+                Background = SettingAnimate.BackgroundDNSU.Select,
+                BorderBrush = SettingAnimate.BorderBrushDNSU.Select;
 
-            ButtonAnimationColor.To = SettingAnimate.BackgroundDNSU.Select;
-            BorderButton.Background.BeginAnimation(SolidColorBrush.ColorProperty, ButtonAnimationColor);*/
+            AnimationColor.To = BorderBrush;
+            BorderButton.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
+
+            AnimationColor.To = Background;
+            BorderButton.Background.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
         }
 
         /// <summary>
@@ -206,11 +235,15 @@ namespace IEL
         /// </summary>
         private void MouseLeaveDetect()
         {
-            /*ButtonAnimationColor.To = SettingAnimate.BorderBrushDNSU.Default;
-            BorderButton.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, ButtonAnimationColor);
+            Color
+                Background = SettingAnimate.BackgroundDNSU.Default,
+                BorderBrush = SettingAnimate.BorderBrushDNSU.Default;
 
-            ButtonAnimationColor.To = SettingAnimate.BackgroundDNSU.Default;
-            BorderButton.Background.BeginAnimation(SolidColorBrush.ColorProperty, ButtonAnimationColor);*/
+            AnimationColor.To = BorderBrush;
+            BorderButton.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
+
+            AnimationColor.To = Background;
+            BorderButton.Background.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
         }
     }
 }
