@@ -131,11 +131,6 @@ namespace IEL
         private readonly ColorAnimation ButtonAnimationColor;
 
         /// <summary>
-        /// Анимация позиции стрелок кнопки
-        /// </summary>
-        private readonly ThicknessAnimation ButtonAnimationThickness;
-
-        /// <summary>
         /// Анимация прозрачности для символа клавиатуры
         /// </summary>
         private readonly DoubleAnimation ButtonAnimationOpacity;
@@ -144,11 +139,6 @@ namespace IEL
         /// Активация действия кнопки
         /// </summary>
         private bool ButtonActivate = false;
-
-        /// <summary>
-        /// Состояние выделения кнопки
-        /// </summary>
-        private bool EnterButton = false;
 
         /// <summary>
         /// Объект события активации кнопки левым щелчком мыши
@@ -191,10 +181,6 @@ namespace IEL
             {
                 Duration = TimeSpan.FromMilliseconds(AnimationMillisecond)
             };
-            ButtonAnimationThickness = new()
-            {
-                Duration = TimeSpan.FromMilliseconds(AnimationMillisecond)
-            };
             ButtonAnimationColor = new()
             {
                 Duration = TimeSpan.FromMilliseconds(AnimationMillisecond)
@@ -223,13 +209,11 @@ namespace IEL
 
             MouseEnter += (sender, e) =>
             {
-                EnterButton = true;
                 MouseEnterAnimation();
             };
 
             MouseLeave += (sender, e) =>
             {
-                EnterButton = false;
                 ButtonActivate = false;
                 MouseLeaveAnimation();
             };
