@@ -142,6 +142,24 @@ namespace IEL
             }
         }
 
+        #region AnimationMillisecond
+        private int _AnimationMillisecond;
+        /// <summary>
+        /// Длительность анимации в миллисекундах
+        /// </summary>
+        public int AnimationMillisecond
+        {
+            get => _AnimationMillisecond;
+            set
+            {
+                TimeSpan time = TimeSpan.FromMilliseconds(value);
+                ButtonAnimationColor.Duration = time;
+                _AnimationMillisecond = value;
+
+            }
+        }
+        #endregion
+
         private readonly Thickness StartMarginImageElement;
 
         public IELLabelCommand(LabelAction Label, int Index = 0)

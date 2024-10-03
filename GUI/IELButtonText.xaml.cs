@@ -36,22 +36,6 @@ namespace IEL
             RightArrow = 2,
         }
 
-        /// <summary>
-        /// Перечисление стилей цвета нажатия на кнопку
-        /// </summary>
-        private enum ActivateClickColor
-        {
-            /// <summary>
-            /// Обычный цвет нажатия на кнопку
-            /// </summary>
-            Clicked = 0,
-
-            /// <summary>
-            /// Отключённый цвет нажатия на кнопку
-            /// </summary>
-            IsNotEnabled = 1
-        }
-
         private StateButton _StateVisualizationButton = StateButton.LeftArrow;
         /// <summary>
         /// Состояние отображения кнопки
@@ -74,6 +58,45 @@ namespace IEL
         /// Обект настройки поведения анимации цвета
         /// </summary>
         public IELSettingAnimate SettingAnimate { get; private set; }
+
+        #region AnimationMillisecond
+        private int _AnimationMillisecond;
+        /// <summary>
+        /// Длительность анимации в миллисекундах
+        /// </summary>
+        public int AnimationMillisecond
+        {
+            get => _AnimationMillisecond;
+            set
+            {
+                TimeSpan time = TimeSpan.FromMilliseconds(value);
+                ButtonAnimationColor.Duration = time;
+                _AnimationMillisecond = value;
+
+            }
+        }
+        #endregion
+
+        #region MouseHover
+        /// <summary>
+        /// Длительность задержки в миллисекундах
+        /// </summary>
+        public double IntervalHover
+        {
+            get => TimerBorderInfo.Interval.TotalMilliseconds;
+            set => TimerBorderInfo.Interval = TimeSpan.FromMilliseconds(value);
+        }
+
+        /// <summary>
+        /// Таймер события MouseHover
+        /// </summary>
+        private readonly DispatcherTimer TimerBorderInfo = new();
+
+        /// <summary>
+        /// Событие задержки курсора на элементе
+        /// </summary>
+        public event EventHandler? MouseHover;
+        #endregion
 
         /// <summary>
         /// Текст кнопки
@@ -137,26 +160,6 @@ namespace IEL
         private readonly DoubleAnimation ButtonAnimationOpacity;
         #endregion
 
-        #region MouseHover
-        /// <summary>
-        /// Длительность задержки в миллисекундах
-        /// </summary>
-        public double IntervalHover
-        {
-            get => TimerBorderInfo.Interval.TotalMilliseconds;
-            set => TimerBorderInfo.Interval = TimeSpan.FromMilliseconds(value);
-        }
-
-        /// <summary>
-        /// Таймер события MouseHover
-        /// </summary>
-        private readonly DispatcherTimer TimerBorderInfo = new();
-
-        /// <summary>
-        /// Событие задержки курсора на элементе
-        /// </summary>
-        public event EventHandler? MouseHover;
-        #endregion
 
         /// <summary>
         /// Объект события активации кнопки левым щелчком мыши
@@ -205,8 +208,26 @@ namespace IEL
             ButtonAnimationThickness = new();
             ButtonAnimationColor = new();
 
-            TimeSpan AnimTime = TimeSpan.FromMilliseconds(80d);
-            SettingAnimate = new();
+            AnimationMillisecond = 80;
+            BrushSettingDNSU BackgroundDNSU = new(BrushSettingDNSU.CreateStyle.Background,
+                (Value) =>
+                {
+                    SolidColorBrush color = new(Value);
+                    BorderButton.Background = color;
+                });
+            BrushSettingDNSU BorderBrushDNSU = new(BrushSettingDNSU.CreateStyle.BorderBrush,
+                (Value) =>
+                {
+                    SolidColorBrush color = new(Value);
+                    BorderButton.BorderBrush = color;
+                });
+            BrushSettingDNSU ForegroundDNSU = new(BrushSettingDNSU.CreateStyle.Foreground,
+                (Value) =>
+                {
+                    SolidColorBrush color = new(Value);
+                    TextBlockButton.Foreground = color;
+                });
+            SettingAnimate = new(BackgroundDNSU, BorderBrushDNSU, ForegroundDNSU);
 
             IntervalHover = 1300d;
             TimerBorderInfo.Tick += (sender, e) =>
@@ -235,8 +256,8 @@ namespace IEL
             {
                 if (IsEnabled)
                 {
-                    if (e.LeftButton == MouseButtonState.Pressed && OnActivateMouseLeft != null) ClickDownAnimation(ActivateClickColor.Clicked);
-                    else if (e.RightButton == MouseButtonState.Pressed && OnActivateMouseRight != null) ClickDownAnimation(ActivateClickColor.Clicked);
+                    if (e.LeftButton == MouseButtonState.Pressed && OnActivateMouseLeft != null) ClickDownAnimation();
+                    else if (e.RightButton == MouseButtonState.Pressed && OnActivateMouseRight != null) ClickDownAnimation();
                 }
             };
 
@@ -294,8 +315,7 @@ namespace IEL
         /// <summary>
         /// Анимировать нажатие на кнопку (Down)
         /// </summary>
-        /// <param name="StyleClickColor">Стиль нажатия на кнопку</param>
-        private void ClickDownAnimation(ActivateClickColor StyleClickColor)
+        private void ClickDownAnimation()
         {
             /*Color
                 Foreground = StyleClickColor == ActivateClickColor.Clicked ? SettingAnimate.ForegroundDNSU.Used : SettingAnimate.ForegroundDNSU.NotEnabled,

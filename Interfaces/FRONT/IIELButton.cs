@@ -18,6 +18,11 @@ namespace IEL.Interfaces.Front
         public IELSettingAnimate SettingAnimate { get; }
 
         /// <summary>
+        /// Количество миллисекунд для анимации
+        /// </summary>
+        public int AnimationMillisecond { get; set; }
+
+        /// <summary>
         /// Скругление границ
         /// </summary>
         public CornerRadius CornerRadius { get; set; }

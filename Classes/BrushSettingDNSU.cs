@@ -12,48 +12,41 @@ namespace IEL.Classes
     public class BrushSettingDNSU
     {
         /// <summary>
-        /// Перечисление всех видов спектров
+        /// Стили создания цветов
         /// </summary>
-        internal enum SpectrumElement
+        internal enum CreateStyle
         {
             /// <summary>
-            /// Спектр обычного цвета
+            /// Стиль фонового цвета
             /// </summary>
-            Default = 0,
+            Background = 0,
 
             /// <summary>
-            /// Спектр выделенного цвета
+            /// Стиль цвета границ
             /// </summary>
-            Select = 1,
+            BorderBrush = 1,
 
             /// <summary>
-            /// Спектр использованного цвета
+            /// Стиль цвета текста
             /// </summary>
-            Used = 2,
-
-            /// <summary>
-            /// Спектр отключённого цвета
-            /// </summary>
-            NotEnabled = 3,
+            Foreground = 2,
         }
 
         /// <summary>
         /// Делегат события изменения спектра цвета
         /// </summary>
-        internal delegate void ChangeColorEventHandler(SpectrumElement Element, Color Value);
+        internal delegate void ChangeSpectrumDefaultEventHandler(Color Value);
 
         /// <summary>
         /// Событие изменения спектра
         /// </summary>
-        internal event ChangeColorEventHandler? SpectrumChange;
+        internal event ChangeSpectrumDefaultEventHandler? SpectrumDefaultChange;
 
         /// <summary>
         /// Состояние активности элемента
         /// </summary>
         /// <remarks>
         /// При отключённой активности будут доступны только спектры цвета <b>Default</b> или <b>NotEnabled</b>
-        /// <code></code>
-        /// <b>События недоступных спектров также будут отключены.</b>
         /// <code></code>
         /// При попытке вызова отключённого спектра будет выводится спектр <b>Default</b>
         /// </remarks>
@@ -67,10 +60,10 @@ namespace IEL.Classes
         public Color Default
         {
             get => _Default;
-            set
+            internal set
             {
                 _Default = value;
-                SpectrumChange?.Invoke(SpectrumElement.Default, value);
+                SpectrumDefaultChange?.Invoke(value);
             }
         }
         #endregion
@@ -83,10 +76,9 @@ namespace IEL.Classes
         public Color NotEnabled
         {
             get => _NotEnabled;
-            set
+            internal set
             {
                 _NotEnabled = value;
-                SpectrumChange?.Invoke(SpectrumElement.NotEnabled, value);
             }
         }
         #endregion
@@ -99,10 +91,9 @@ namespace IEL.Classes
         public Color Select
         {
             get => IsEnabled ? _Select : _Default;
-            set
+            internal set
             {
                 _Select = value;
-                if (IsEnabled) SpectrumChange?.Invoke(SpectrumElement.Select, value);
             }
         }
         #endregion
@@ -115,10 +106,9 @@ namespace IEL.Classes
         public Color Used
         {
             get => IsEnabled ? _Used : _Default;
-            set
+            internal set
             {
                 _Used = value;
-                if (IsEnabled) SpectrumChange?.Invoke(SpectrumElement.Used, value);
             }
         }
         #endregion
@@ -132,13 +122,41 @@ namespace IEL.Classes
             IsEnabled = false;
         }
 
-        internal BrushSettingDNSU(Color Default, Color Select, Color Used, Color NotEnabled)
+        internal BrushSettingDNSU(Color Default, Color Select, Color Used, Color NotEnabled, ChangeSpectrumDefaultEventHandler? changeSpectrum = null)
         {
+            IsEnabled = true;
+            SpectrumDefaultChange = changeSpectrum;
+            this.Default = Default;
             this.Select = Select;
             this.Used = Used;
             this.NotEnabled = NotEnabled;
-            this.Default = Default;
+        }
+
+        internal BrushSettingDNSU(CreateStyle Style, ChangeSpectrumDefaultEventHandler? changeSpectrum = null)
+        {
             IsEnabled = true;
+            SpectrumDefaultChange = changeSpectrum;
+            switch (Style)
+            {
+                case CreateStyle.Background:
+                    Default = Color.FromRgb(58, 143, 108);
+                    Select = Color.FromRgb(59, 172, 109);
+                    Used = Color.FromRgb(150, 198, 140);
+                    NotEnabled = Color.FromRgb(197, 97, 104);
+                    break;
+                case CreateStyle.BorderBrush:
+                    Default = Color.FromRgb(0, 0, 0);
+                    Select = Color.FromRgb(26, 53, 30);
+                    Used = Color.FromRgb(101, 82, 76);
+                    NotEnabled = Color.FromRgb(152, 29, 54);
+                    break;
+                case CreateStyle.Foreground:
+                    Default = Color.FromRgb(0, 0, 0);
+                    Select = Color.FromRgb(28, 54, 24);
+                    Used = Color.FromRgb(61, 98, 94);
+                    NotEnabled = Color.FromRgb(148, 0, 46);
+                    break;
+            }
         }
     }
 }

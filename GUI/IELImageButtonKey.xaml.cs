@@ -20,6 +20,24 @@ namespace IEL
         /// </summary>
         public IELSettingAnimate SettingAnimate { get; private set; }
 
+        #region AnimationMillisecond
+        private int _AnimationMillisecond;
+        /// <summary>
+        /// Длительность анимации в миллисекундах
+        /// </summary>
+        public int AnimationMillisecond
+        {
+            get => _AnimationMillisecond;
+            set
+            {
+                TimeSpan time = TimeSpan.FromMilliseconds(value);
+                ButtonAnimationColor.Duration = time;
+                _AnimationMillisecond = value;
+
+            }
+        }
+        #endregion
+
         #region animateObjects
         /// <summary>
         /// Анимация цвета

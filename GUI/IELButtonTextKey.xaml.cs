@@ -36,22 +36,6 @@ namespace IEL
             RightArrow = 2,
         }
 
-        /// <summary>
-        /// Перечисление стилей цвета нажатия на кнопку
-        /// </summary>
-        private enum ActivateClickColor
-        {
-            /// <summary>
-            /// Обычный цвет нажатия на кнопку
-            /// </summary>
-            Clicked = 0,
-
-            /// <summary>
-            /// Отключённый цвет нажатия на кнопку
-            /// </summary>
-            IsNotEnabled = 1
-        }
-
         private StateButton _StateVisualizationButton = StateButton.LeftArrow;
         /// <summary>
         /// Состояние отображения кнопки
@@ -74,6 +58,24 @@ namespace IEL
         /// Обект настройки поведения анимации цвета
         /// </summary>
         public IELSettingAnimate SettingAnimate { get; private set; }
+
+        #region AnimationMillisecond
+        private int _AnimationMillisecond;
+        /// <summary>
+        /// Длительность анимации в миллисекундах
+        /// </summary>
+        public int AnimationMillisecond
+        {
+            get => _AnimationMillisecond;
+            set
+            {
+                TimeSpan time = TimeSpan.FromMilliseconds(value);
+                ButtonAnimationColor.Duration = time;
+                _AnimationMillisecond = value;
+
+            }
+        }
+        #endregion
 
         #region MouseHover
         /// <summary>
@@ -270,8 +272,8 @@ namespace IEL
             {
                 if (IsEnabled)
                 {
-                    if (e.LeftButton == MouseButtonState.Pressed && OnActivateMouseLeft != null) ClickDownAnimation(ActivateClickColor.Clicked);
-                    else if (e.RightButton == MouseButtonState.Pressed && OnActivateMouseRight != null) ClickDownAnimation(ActivateClickColor.Clicked);
+                    if (e.LeftButton == MouseButtonState.Pressed && OnActivateMouseLeft != null) ClickDownAnimation();
+                    else if (e.RightButton == MouseButtonState.Pressed && OnActivateMouseRight != null) ClickDownAnimation();
                 }
             };
 
@@ -337,8 +339,7 @@ namespace IEL
         /// <summary>
         /// Анимировать нажатие на кнопку (Down)
         /// </summary>
-        /// <param name="StyleClickColor">Стиль нажатия на кнопку</param>
-        private void ClickDownAnimation(ActivateClickColor StyleClickColor)
+        private void ClickDownAnimation()
         {
             /*Color
             Foreground = StyleClickColor == ActivateClickColor.Clicked ? SettingAnimate.ForegroundDNSU.Used : SettingAnimate.ForegroundDNSU.NotEnabled,
