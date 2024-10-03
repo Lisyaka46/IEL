@@ -32,6 +32,7 @@ namespace IEL.Interfaces.Front
         /// </summary>
         public double IntervalHover { get; set; }
 
+
         /// <summary>
         /// Событие задержки курсора на элементе
         /// </summary>

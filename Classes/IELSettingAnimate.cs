@@ -12,34 +12,19 @@ namespace IEL.Classes
         /// <summary>
         /// Объект управления цветом фона
         /// </summary>
-        public BrushSettingDNSU BackgroundDNSU { get; set; }
+        public BrushSettingDNSU? BackgroundDNSU { get; set; }
 
         /// <summary>
         /// Объект управления цветом границ
         /// </summary>
-        public BrushSettingDNSU BorderBrushDNSU { get; set; }
+        public BrushSettingDNSU? BorderBrushDNSU { get; set; }
 
         /// <summary>
         /// Объект управления цветом текста
         /// </summary>
-        public BrushSettingDNSU ForegroundDNSU { get; set; }
+        public BrushSettingDNSU? ForegroundDNSU { get; set; }
 
-        public IELSettingAnimate()
-        {
-            TimeSpan MainDuration = TimeSpan.FromMilliseconds(80d);
-            BackgroundDNSU = new(MainDuration);
-            BorderBrushDNSU = new(MainDuration);
-            ForegroundDNSU = new(MainDuration);
-        }
-
-        public IELSettingAnimate(TimeSpan BackgroundDuration, TimeSpan BorderBrushDuration, TimeSpan ForegroundDuration)
-        {
-            BackgroundDNSU = new(BackgroundDuration);
-            BorderBrushDNSU = new(BorderBrushDuration);
-            ForegroundDNSU = new(ForegroundDuration);
-        }
-
-        public IELSettingAnimate(BrushSettingDNSU BG, BrushSettingDNSU BR, BrushSettingDNSU FG)
+        public IELSettingAnimate(BrushSettingDNSU? BG = null, BrushSettingDNSU? BR = null, BrushSettingDNSU? FG = null)
         {
             BackgroundDNSU = BG;
             BorderBrushDNSU = BR;

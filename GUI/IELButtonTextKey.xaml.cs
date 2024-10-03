@@ -237,33 +237,7 @@ namespace IEL
             ButtonAnimationColor = new();
 
             TimeSpan AnimTime = TimeSpan.FromMilliseconds(80d);
-            BrushSettingDNSU.ChangeSpectrumEventHandler ChangeBackground = (Element, Value) =>
-            {
-                Brush brush = new SolidColorBrush(Value);
-                BorderButton.Background = brush;
-                BorderCharKeyboard.Background = brush;
-            };
-            BrushSettingDNSU.ChangeSpectrumEventHandler ChangeBorderBrush = (Element, Value) =>
-            {
-                Brush brush = new SolidColorBrush(Value);
-                BorderButton.BorderBrush = brush;
-                BorderCharKeyboard.BorderBrush = brush;
-                BorderRightArrow.BorderBrush = brush;
-                BorderLeftArrow.BorderBrush = brush;
-            };
-            BrushSettingDNSU.ChangeSpectrumEventHandler ChangeForeground = (Element, Value) =>
-            {
-                Brush brush = new SolidColorBrush(Value);
-                TextBlockButton.Foreground = brush;
-                TextBlockLeftArrow.Foreground = brush;
-                TextBlockRightArrow.Foreground = brush;
-                TextBlockCharKey.Foreground = brush;
-            };
-            SettingAnimate = new(
-                new BrushSettingDNSU(Color.FromRgb(172, 238, 255), Color.FromRgb(101, 193, 241), Colors.White, Colors.IndianRed, AnimTime, ChangeBackground),
-                new BrushSettingDNSU(Color.FromRgb(105, 71, 101), Color.FromRgb(158, 130, 155), Color.FromRgb(136, 93, 130), Colors.Brown, AnimTime, ChangeBorderBrush),
-                new BrushSettingDNSU(Colors.Black, Color.FromRgb(28, 33, 32), Color.FromRgb(0, 49, 34), Colors.DarkRed, AnimTime, ChangeForeground)
-                );
+            SettingAnimate = new();
 
             IntervalHover = 1300d;
             TimerBorderInfo.Tick += (sender, e) =>

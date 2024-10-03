@@ -151,27 +151,7 @@ namespace IEL
             this.Index = Index;
 
             TimeSpan AnimTime = TimeSpan.FromMilliseconds(80d);
-            BrushSettingDNSU.ChangeSpectrumEventHandler ChangeBackground = (Element, Value) =>
-            {
-                Brush brush = new SolidColorBrush(Value);
-                BorderMain.Background = brush;
-            };
-            BrushSettingDNSU.ChangeSpectrumEventHandler ChangeBorderBrush = (Element, Value) =>
-            {
-                Brush brush = new SolidColorBrush(Value);
-                BorderMain.BorderBrush = brush;
-            };
-            BrushSettingDNSU.ChangeSpectrumEventHandler ChangeForeground = (Element, Value) =>
-            {
-                Brush brush = new SolidColorBrush(Value);
-                TextBlockName.Foreground = brush;
-                TextBlockIndex.Foreground = brush;
-            };
-            SettingAnimate = new(
-                new BrushSettingDNSU(Color.FromRgb(128, 179, 189), Color.FromRgb(111, 199, 173), Color.FromRgb(69, 154, 101), Color.FromRgb(181, 102, 102), AnimTime, ChangeBackground),
-                new BrushSettingDNSU(Color.FromRgb(69, 98, 127), Color.FromRgb(69, 98, 127), Color.FromRgb(69, 127, 83), Color.FromRgb(255, 90, 90), AnimTime, ChangeBorderBrush),
-                new BrushSettingDNSU(Colors.Black, Color.FromRgb(0, 80, 60), Color.FromRgb(40, 60, 41), Colors.Black, AnimTime, ChangeForeground)
-                );
+            SettingAnimate = new();
 
             StartMarginImageElement = ImageElement.Margin;
             TextBlockName.Text = this.Label.Name;

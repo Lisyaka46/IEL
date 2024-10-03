@@ -144,6 +144,11 @@ namespace IEL
         private bool ButtonActivate = false;
 
         /// <summary>
+        /// Состояние выделения кнопки
+        /// </summary>
+        private bool EnterButton = false;
+
+        /// <summary>
         /// Объект события активации кнопки левым щелчком мыши
         /// </summary>
         public IIELButtonDefault.Activate? OnActivateMouseLeft { get; set; }
@@ -158,6 +163,33 @@ namespace IEL
             InitializeComponent();
 
             TimeSpan AnimTime = TimeSpan.FromMilliseconds(80d);
+            BrushSettingDNSU BackgroundDNSU = new(Color.FromRgb(172, 238, 255), Color.FromRgb(101, 193, 241), Colors.White, Colors.IndianRed);
+            BrushSettingDNSU BorderBrushDNSU = new(Color.FromRgb(105, 71, 101), Color.FromRgb(158, 130, 155), Color.FromRgb(136, 93, 130), Colors.Brown);
+            BrushSettingDNSU ForegroundDNSU = new(Colors.Black, Color.FromRgb(28, 33, 32), Color.FromRgb(0, 49, 34), Colors.DarkRed);
+
+            BackgroundDNSU.SpectrumChange += (Spectrum, Value) =>
+            {
+                switch (Spectrum)
+                {
+                    case BrushSettingDNSU.SpectrumElement.Default:
+                        if (!IsEnabled || EnterButton || ButtonActivate) return;
+                        BorderButton.Background = new SolidColorBrush(Value);
+                        break;
+                    case BrushSettingDNSU.SpectrumElement.Select:
+                        if (!IsEnabled || !EnterButton || ButtonActivate) return;
+                        BorderButton.Background = new SolidColorBrush(Value);
+                        break;
+                    case BrushSettingDNSU.SpectrumElement.Used:
+                        if (!IsEnabled || !EnterButton || !ButtonActivate) return;
+                        BorderButton.Background = new SolidColorBrush(Value);
+                        break;
+                    case BrushSettingDNSU.SpectrumElement.NotEnabled:
+                        if (IsEnabled || EnterButton || ButtonActivate) return;
+                        BorderButton.Background = new SolidColorBrush(Value);
+                        break;
+                }  
+            };
+
             BrushSettingDNSU.ChangeSpectrumEventHandler ChangeBackground = (Element, Value) => BorderButton.Background = new SolidColorBrush(Value);
             BrushSettingDNSU.ChangeSpectrumEventHandler ChangeBorderBrush = (Element, Value) => BorderButton.BorderBrush = new SolidColorBrush(Value);
             BrushSettingDNSU.ChangeSpectrumEventHandler ChangeForeground = (Element, Value) =>
@@ -168,9 +200,9 @@ namespace IEL
                 TextBlockNumberCommand.Foreground = brush;
             };
             SettingAnimate = new(
-                new BrushSettingDNSU(Color.FromRgb(172, 238, 255), Color.FromRgb(101, 193, 241), Colors.White, Colors.IndianRed, AnimTime, ChangeBackground),
-                new BrushSettingDNSU(Color.FromRgb(105, 71, 101), Color.FromRgb(158, 130, 155), Color.FromRgb(136, 93, 130), Colors.Brown, AnimTime, ChangeBorderBrush),
-                new BrushSettingDNSU(Colors.Black, Color.FromRgb(28, 33, 32), Color.FromRgb(0, 49, 34), Colors.DarkRed, AnimTime, ChangeForeground)
+                new BrushSettingDNSU(Color.FromRgb(172, 238, 255), Color.FromRgb(101, 193, 241), Colors.White, Colors.IndianRed),
+                new BrushSettingDNSU(Color.FromRgb(105, 71, 101), Color.FromRgb(158, 130, 155), Color.FromRgb(136, 93, 130), Colors.Brown),
+                new BrushSettingDNSU(Colors.Black, Color.FromRgb(28, 33, 32), Color.FromRgb(0, 49, 34), Colors.DarkRed)
                 );
 
             ButtonAnimationOpacity = new()
@@ -207,10 +239,15 @@ namespace IEL
                 TimerBorderInfo.Stop();
             };
 
-            MouseEnter += (sender, e) => MouseEnterAnimation();
+            MouseEnter += (sender, e) =>
+            {
+                EnterButton = true;
+                MouseEnterAnimation();
+            };
 
             MouseLeave += (sender, e) =>
             {
+                EnterButton = false;
                 ButtonActivate = false;
                 MouseLeaveAnimation();
             };

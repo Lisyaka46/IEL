@@ -12,27 +12,27 @@ namespace IEL.Classes
     public class BrushSettingDNSU
     {
         /// <summary>
-        /// Перечисление элементов DNSU
+        /// Перечисление всех видов спектров
         /// </summary>
-        public enum ElementColorSpectrum
+        internal enum SpectrumElement
         {
             /// <summary>
-            /// Обычный цвет
+            /// Спектр обычного цвета
             /// </summary>
             Default = 0,
 
             /// <summary>
-            /// Выделенный цвет
+            /// Спектр выделенного цвета
             /// </summary>
             Select = 1,
 
             /// <summary>
-            /// Использованный цвет
+            /// Спектр использованного цвета
             /// </summary>
             Used = 2,
 
             /// <summary>
-            /// Отключённый цвет
+            /// Спектр отключённого цвета
             /// </summary>
             NotEnabled = 3,
         }
@@ -40,14 +40,12 @@ namespace IEL.Classes
         /// <summary>
         /// Делегат события изменения спектра цвета
         /// </summary>
-        /// <param name="Element">Элемент спектра</param>
-        /// <param name="Value">Новое значение цвета</param>
-        public delegate void ChangeSpectrumEventHandler(ElementColorSpectrum Element, Color Value);
+        internal delegate void ChangeColorEventHandler(SpectrumElement Element, Color Value);
 
         /// <summary>
         /// Событие изменения спектра
         /// </summary>
-        public event ChangeSpectrumEventHandler? ChangeSpectrum;
+        internal event ChangeColorEventHandler? SpectrumChange;
 
         #region Default
         private Color _Default;
@@ -60,7 +58,7 @@ namespace IEL.Classes
             set
             {
                 _Default = value;
-                ChangeSpectrum?.Invoke(ElementColorSpectrum.Default, value);
+                SpectrumChange?.Invoke(SpectrumElement.Default, value);
             }
         }
         #endregion
@@ -76,13 +74,13 @@ namespace IEL.Classes
             set
             {
                 _NotEnabled = value;
-                ChangeSpectrum?.Invoke(ElementColorSpectrum.NotEnabled, value);
+                SpectrumChange?.Invoke(SpectrumElement.NotEnabled, value);
             }
         }
         #endregion
 
         #region Select
-        private Color _Select = Colors.Black;
+        private Color _Select;
         /// <summary>
         /// Цвет выделенного состояния
         /// </summary>
@@ -92,13 +90,13 @@ namespace IEL.Classes
             set
             {
                 _Select = value;
-                ChangeSpectrum?.Invoke(ElementColorSpectrum.Select, value);
+                SpectrumChange?.Invoke(SpectrumElement.Select, value);
             }
         }
         #endregion
 
         #region Used
-        private Color _Used = Colors.Black;
+        private Color _Used;
         /// <summary>
         /// Цвет нажатого или использованого состояния
         /// </summary>
@@ -108,40 +106,24 @@ namespace IEL.Classes
             set
             {
                 _Used = value;
-                ChangeSpectrum?.Invoke(ElementColorSpectrum.Used, value);
+                SpectrumChange?.Invoke(SpectrumElement.Used, value);
             }
         }
         #endregion
 
-        /// <summary>
-        /// Время анимации
-        /// </summary>
-        public TimeSpan Duration { get; set; }
-
-        /// <summary>
-        /// Анимация цвета в спектре
-        /// </summary>
-        public readonly ColorAnimation ColorAnimate;
-
-        public BrushSettingDNSU(TimeSpan duration, ChangeSpectrumEventHandler? ChangeSpectrum = null)
+        public BrushSettingDNSU()
         {
-            Duration = duration;
-            ColorAnimate = new(Colors.Black, Duration);
             Select = Colors.Black;
             Used = Colors.Black;
             NotEnabled = Colors.Black;
-            this.ChangeSpectrum = ChangeSpectrum;
             Default = Colors.Black;
         }
 
-        public BrushSettingDNSU(Color Default, Color Select, Color Used, Color NotEnabled, TimeSpan duration, ChangeSpectrumEventHandler? ChangeSpectrum = null)
+        public BrushSettingDNSU(Color Default, Color Select, Color Used, Color NotEnabled)
         {
-            Duration = duration;
-            ColorAnimate = new(Colors.Black, Duration);
             this.Select = Select;
             this.Used = Used;
             this.NotEnabled = NotEnabled;
-            this.ChangeSpectrum = ChangeSpectrum;
             this.Default = Default;
         }
     }
