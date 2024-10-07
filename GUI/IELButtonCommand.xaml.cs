@@ -12,12 +12,71 @@ namespace IEL
     /// <summary>
     /// Логика взаимодействия для IELButtonCommand.xaml
     /// </summary>
-    public partial class IELButtonCommand : UserControl, IIELButtonDefault
-    {    
+    public partial class IELButtonCommand : UserControl, IIELObject
+    {
+        #region Default
+        /// <summary>
+        /// Цвет обычного состояния фона
+        /// </summary>
+        public Color BackgroundDefault
+        {
+            get => SettingAnimate.BackgroundSUN.Default;
+            set
+            {
+                SolidColorBrush color = new(value);
+                BorderButton.Background = color;
+                SettingAnimate.BackgroundSUN.Default = value;
+            }
+        }
+
+        /// <summary>
+        /// Цвет обычного состояния границы
+        /// </summary>
+        public Color BorderBrushDefault
+        {
+            get => SettingAnimate.BorderBrushSUN.Default;
+            set
+            {
+                SolidColorBrush color = new(value);
+                BorderButton.BorderBrush = color;
+                SettingAnimate.BorderBrushSUN.Default = value;
+            }
+        }
+
+        /// <summary>
+        /// Цвет обычного состояния текста
+        /// </summary>
+        public Color ForegroundDefault
+        {
+            get => SettingAnimate.ForegroundSUN.Default;
+            set
+            {
+                SolidColorBrush color = new(value);
+                TextBlockButtonCommand.Foreground = color;
+                TextBlockButtonName.Foreground = color;
+                TextBlockNumberCommand.Foreground = color;
+                SettingAnimate.ForegroundSUN.Default = value;
+            }
+        }
+        #endregion
+
+        #region SettingAnimate
+        private IELSettingAnimate _SettingAnimate = new();
         /// <summary>
         /// Обект настройки поведения анимации цвета
         /// </summary>
-        public IELSettingAnimate SettingAnimate { get; set; }
+        public IELSettingAnimate SettingAnimate
+        {
+            get => _SettingAnimate;
+            set
+            {
+                BorderBrushDefault = value.BorderBrushSUN.Default;
+                BackgroundDefault = value.BackgroundSUN.Default;
+                ForegroundDefault = value.ForegroundSUN.Default;
+                _SettingAnimate = value;
+            }
+        }
+        #endregion
 
         #region AnimationMillisecond
         private int _AnimationMillisecond;
@@ -167,27 +226,13 @@ namespace IEL
             InitializeComponent();
 
             AnimationMillisecond = 100;
-            BrushSettingDNSU BackgroundDNSU = new(BrushSettingDNSU.CreateStyle.Background,
-                (Value) =>
-                {
-                    SolidColorBrush color = new(Value);
-                    BorderButton.Background = color;
-                });
-            BrushSettingDNSU BorderBrushDNSU = new(BrushSettingDNSU.CreateStyle.BorderBrush,
-                (Value) =>
-                {
-                    SolidColorBrush color = new(Value);
-                    BorderButton.BorderBrush = color;
-                });
-            BrushSettingDNSU ForegroundDNSU = new(BrushSettingDNSU.CreateStyle.Foreground,
-                (Value) =>
-                {
-                    SolidColorBrush color = new(Value);
-                    TextBlockButtonCommand.Foreground = color;
-                    TextBlockButtonName.Foreground = color;
-                    TextBlockNumberCommand.Foreground = color;
-                });
-            SettingAnimate = new(BackgroundDNSU, BorderBrushDNSU, ForegroundDNSU);
+            BrushSettingSUN BackgroundSUN = new(BrushSettingSUN.CreateStyle.Background);
+            BrushSettingSUN BorderBrushSUN = new(BrushSettingSUN.CreateStyle.BorderBrush);
+            BrushSettingSUN ForegroundSUN = new(BrushSettingSUN.CreateStyle.Foreground);
+            SettingAnimate = new(BackgroundSUN, BorderBrushSUN, ForegroundSUN);
+            BorderBrushDefault = SettingAnimate.BorderBrushSUN.Default;
+            BackgroundDefault = SettingAnimate.BackgroundSUN.Default;
+            ForegroundDefault = SettingAnimate.ForegroundSUN.Default;
 
             TextFontFamily = new FontFamily("Arial");
             TextFontSize = 14;
@@ -259,9 +304,9 @@ namespace IEL
             IsEnabledChanged += (sender, e) =>
             {
                 Color
-                    Foreground = (bool)e.NewValue ? SettingAnimate.ForegroundDNSU.Default : SettingAnimate.ForegroundDNSU.NotEnabled,
-                    Background = (bool)e.NewValue ? SettingAnimate.BackgroundDNSU.Default : SettingAnimate.BackgroundDNSU.NotEnabled,
-                    BorderBrush = (bool)e.NewValue ? SettingAnimate.BorderBrushDNSU.Default : SettingAnimate.BorderBrushDNSU.NotEnabled;
+                    Foreground = (bool)e.NewValue ? ForegroundDefault : SettingAnimate.ForegroundSUN.NotEnabled,
+                    Background = (bool)e.NewValue ? BackgroundDefault : SettingAnimate.BackgroundSUN.NotEnabled,
+                    BorderBrush = (bool)e.NewValue ? BorderBrushDefault : SettingAnimate.BorderBrushSUN.NotEnabled;
                 BorderButton.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, null);
                 BorderButton.Background.BeginAnimation(SolidColorBrush.ColorProperty, null);
                 TextBlockButtonName.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, null);
@@ -279,9 +324,9 @@ namespace IEL
         private void ClickDownAnimation()
         {
             Color
-                Foreground = SettingAnimate.ForegroundDNSU.Used,
-                Background = SettingAnimate.BackgroundDNSU.Used,
-                BorderBrush = SettingAnimate.BorderBrushDNSU.Used;
+                Foreground = SettingAnimate.ForegroundSUN.Used,
+                Background = SettingAnimate.BackgroundSUN.Used,
+                BorderBrush = SettingAnimate.BorderBrushSUN.Used;
             BorderButton.BorderBrush = new SolidColorBrush(BorderBrush);
             BorderButton.Background = new SolidColorBrush(Background);
             TextBlockButtonName.Foreground = new SolidColorBrush(Foreground);
@@ -294,9 +339,9 @@ namespace IEL
         private void MouseEnterAnimation()
         {
             Color
-                Foreground = SettingAnimate.ForegroundDNSU.Select,
-                Background = SettingAnimate.BackgroundDNSU.Select,
-                BorderBrush = SettingAnimate.BorderBrushDNSU.Select;
+                Foreground = SettingAnimate.ForegroundSUN.Select,
+                Background = SettingAnimate.BackgroundSUN.Select,
+                BorderBrush = SettingAnimate.BorderBrushSUN.Select;
             AnimationColor.To = BorderBrush;
             BorderButton.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
 
@@ -314,9 +359,9 @@ namespace IEL
         private void MouseLeaveAnimation()
         {
             Color
-                Foreground = SettingAnimate.ForegroundDNSU.Default,
-                Background = SettingAnimate.BackgroundDNSU.Default,
-                BorderBrush = SettingAnimate.BorderBrushDNSU.Default;
+                Foreground = ForegroundDefault,
+                Background = BackgroundDefault,
+                BorderBrush = BorderBrushDefault;
             AnimationColor.To = BorderBrush;
             BorderButton.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
 

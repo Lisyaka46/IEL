@@ -12,31 +12,31 @@ namespace IEL.Classes
         /// <summary>
         /// Объект управления цветом фона
         /// </summary>
-        public BrushSettingDNSU BackgroundDNSU { get; set; }
+        public BrushSettingSUN BackgroundSUN { get; set; }
 
         /// <summary>
         /// Объект управления цветом границ
         /// </summary>
-        public BrushSettingDNSU BorderBrushDNSU { get; set; }
+        public BrushSettingSUN BorderBrushSUN { get; set; }
 
         /// <summary>
         /// Объект управления цветом текста
         /// </summary>
-        public BrushSettingDNSU ForegroundDNSU { get; set; }
+        public BrushSettingSUN ForegroundSUN { get; set; }
 
 
         public IELSettingAnimate()
         {
-            BackgroundDNSU = new();
-            BorderBrushDNSU = new();
-            ForegroundDNSU = new();
+            BackgroundSUN = new();
+            BorderBrushSUN = new();
+            ForegroundSUN = new();
         }
 
-        internal IELSettingAnimate(BrushSettingDNSU BG, BrushSettingDNSU BR, BrushSettingDNSU FG)
+        public IELSettingAnimate(BrushSettingSUN Background, BrushSettingSUN BorderBrush, BrushSettingSUN Foreground)
         {
-            BackgroundDNSU = BG;
-            BorderBrushDNSU = BR;
-            ForegroundDNSU = FG;
+            BackgroundSUN = Background;
+            BorderBrushSUN = BorderBrush;
+            ForegroundSUN = Foreground;
         }
     }
 }

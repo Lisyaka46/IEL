@@ -1,17 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using IEL.Classes;
 using System.Windows;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using IEL.Classes;
 
 namespace IEL.Interfaces.Front
 {
     public interface IIELButton : IIELObject
     {
+        /// <summary>
+        /// Перечисление состояний отображения кнопки
+        /// </summary>
+        public enum StateButton
+        {
+            /// <summary>
+            /// Обычное отображение кнопки
+            /// </summary>
+            Default = 0,
+
+            /// <summary>
+            /// Отображение кнопки с левосторонней стрелкой
+            /// </summary>
+            LeftArrow = 1,
+
+            /// <summary>
+            /// Отображение кнопки с правосторонней стрелкой
+            /// </summary>
+            RightArrow = 2,
+        }
+
         /// <summary>
         /// Обект настройки поведения анимации цвета
         /// </summary>
@@ -37,6 +51,10 @@ namespace IEL.Interfaces.Front
         /// </summary>
         public double IntervalHover { get; set; }
 
+        /// <summary>
+        /// Состояние отображения кнопки
+        /// </summary>
+        public StateButton StateVisualizationButton { get; }
 
         /// <summary>
         /// Событие задержки курсора на элементе

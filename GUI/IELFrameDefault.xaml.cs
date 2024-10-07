@@ -1,23 +1,10 @@
 ﻿using IEL.Interfaces.Core;
-using System;
-using System.Collections.Generic;
+using IEL.Interfaces.Front;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Animation;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using IEL.Interfaces.Front;
 using static IEL.Interfaces.Front.IIELFrame;
-using System.Diagnostics;
 
 namespace IEL
 {

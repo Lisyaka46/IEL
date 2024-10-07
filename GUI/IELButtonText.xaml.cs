@@ -7,6 +7,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using IEL.Classes;
 using IEL.Interfaces.Front;
+using static IEL.Interfaces.Front.IIELButton;
 
 namespace IEL
 {
@@ -15,27 +16,6 @@ namespace IEL
     /// </summary>
     public partial class IELButtonText : UserControl, IIELButtonDefault
     {
-        /// <summary>
-        /// Перечисление состояний отображения кнопки
-        /// </summary>
-        public enum StateButton
-        {
-            /// <summary>
-            /// Обычное отображение кнопки
-            /// </summary>
-            Default = 0,
-
-            /// <summary>
-            /// Отображение кнопки с левосторонней стрелкой
-            /// </summary>
-            LeftArrow = 1,
-
-            /// <summary>
-            /// Отображение кнопки с правосторонней стрелкой
-            /// </summary>
-            RightArrow = 2,
-        }
-
         private StateButton _StateVisualizationButton = StateButton.LeftArrow;
         /// <summary>
         /// Состояние отображения кнопки
@@ -54,10 +34,69 @@ namespace IEL
             }
         }
 
+        #region Default
+        /// <summary>
+        /// Цвет обычного состояния фона
+        /// </summary>
+        public Color BackgroundDefault
+        {
+            get => SettingAnimate.BackgroundSUN.Default;
+            set
+            {
+                SolidColorBrush color = new(value);
+                BorderButton.Background = color;
+                SettingAnimate.BackgroundSUN.Default = value;
+            }
+        }
+
+        /// <summary>
+        /// Цвет обычного состояния границы
+        /// </summary>
+        public Color BorderBrushDefault
+        {
+            get => SettingAnimate.BorderBrushSUN.Default;
+            set
+            {
+                SolidColorBrush color = new(value);
+                BorderButton.BorderBrush = color;
+                SettingAnimate.BorderBrushSUN.Default = value;
+            }
+        }
+
+        /// <summary>
+        /// Цвет обычного состояния текста
+        /// </summary>
+        public Color ForegroundDefault
+        {
+            get => SettingAnimate.ForegroundSUN.Default;
+            set
+            {
+                SolidColorBrush color = new(value);
+                TextBlockButton.Foreground = color;
+                TextBlockLeftArrow.Foreground = color;
+                TextBlockRightArrow.Foreground = color;
+                SettingAnimate.ForegroundSUN.Default = value;
+            }
+        }
+        #endregion
+
+        #region SettingAnimate
+        private IELSettingAnimate _SettingAnimate = new();
         /// <summary>
         /// Обект настройки поведения анимации цвета
         /// </summary>
-        public IELSettingAnimate SettingAnimate { get; set; }
+        public IELSettingAnimate SettingAnimate
+        {
+            get => _SettingAnimate;
+            set
+            {
+                BorderBrushDefault = value.BorderBrushSUN.Default;
+                BackgroundDefault = value.BackgroundSUN.Default;
+                ForegroundDefault = value.ForegroundSUN.Default;
+                _SettingAnimate = value;
+            }
+        }
+        #endregion
 
         #region AnimationMillisecond
         private int _AnimationMillisecond;
@@ -217,25 +256,10 @@ namespace IEL
             StateVisualizationButton = StateButton.Default;
 
             AnimationMillisecond = 100;
-            BrushSettingDNSU BackgroundDNSU = new(BrushSettingDNSU.CreateStyle.Background,
-                (Value) =>
-                {
-                    SolidColorBrush color = new(Value);
-                    BorderButton.Background = color;
-                });
-            BrushSettingDNSU BorderBrushDNSU = new(BrushSettingDNSU.CreateStyle.BorderBrush,
-                (Value) =>
-                {
-                    SolidColorBrush color = new(Value);
-                    BorderButton.BorderBrush = color;
-                });
-            BrushSettingDNSU ForegroundDNSU = new(BrushSettingDNSU.CreateStyle.Foreground,
-                (Value) =>
-                {
-                    SolidColorBrush color = new(Value);
-                    TextBlockButton.Foreground = color;
-                });
-            SettingAnimate = new(BackgroundDNSU, BorderBrushDNSU, ForegroundDNSU);
+            BrushSettingSUN BackgroundSUN = new(BrushSettingSUN.CreateStyle.Background);
+            BrushSettingSUN BorderBrushSUN = new(BrushSettingSUN.CreateStyle.BorderBrush);
+            BrushSettingSUN ForegroundSUN = new(BrushSettingSUN.CreateStyle.Foreground);
+            SettingAnimate = new(BackgroundSUN, BorderBrushSUN, ForegroundSUN);
 
             IntervalHover = 1300d;
             TimerBorderInfo.Tick += (sender, e) =>
@@ -291,9 +315,9 @@ namespace IEL
             IsEnabledChanged += (sender, e) =>
             {
                 Color
-                Foreground = (bool)e.NewValue ? SettingAnimate.ForegroundDNSU.Default : SettingAnimate.ForegroundDNSU.NotEnabled,
-                Background = (bool)e.NewValue ? SettingAnimate.BackgroundDNSU.Default : SettingAnimate.BackgroundDNSU.NotEnabled,
-                BorderBrush = (bool)e.NewValue ? SettingAnimate.BorderBrushDNSU.Default : SettingAnimate.BorderBrushDNSU.NotEnabled;
+                Foreground = (bool)e.NewValue ? ForegroundDefault : SettingAnimate.ForegroundSUN.NotEnabled,
+                Background = (bool)e.NewValue ? BackgroundDefault : SettingAnimate.BackgroundSUN.NotEnabled,
+                BorderBrush = (bool)e.NewValue ? BorderBrushDefault : SettingAnimate.BorderBrushSUN.NotEnabled;
                 if (StateVisualizationButton != StateButton.Default)
                 {
                     if (StateVisualizationButton == StateButton.LeftArrow)
@@ -327,9 +351,9 @@ namespace IEL
         private void ClickDownAnimation()
         {
             Color
-                Foreground = SettingAnimate.ForegroundDNSU.Used,
-                Background = SettingAnimate.BackgroundDNSU.Used,
-                BorderBrush = SettingAnimate.BorderBrushDNSU.Used;
+                Foreground = SettingAnimate.ForegroundSUN.Used,
+                Background = SettingAnimate.BackgroundSUN.Used,
+                BorderBrush = SettingAnimate.BorderBrushSUN.Used;
             if (StateVisualizationButton != StateButton.Default)
             {
                 (StateVisualizationButton == StateButton.LeftArrow ? TextBlockLeftArrow : TextBlockRightArrow)
@@ -352,9 +376,9 @@ namespace IEL
         private void MouseEnterAnimation()
         {
             Color
-                Foreground = SettingAnimate.ForegroundDNSU.Select,
-                Background = SettingAnimate.BackgroundDNSU.Select,
-                BorderBrush = SettingAnimate.BorderBrushDNSU.Select;
+                Foreground = SettingAnimate.ForegroundSUN.Select,
+                Background = SettingAnimate.BackgroundSUN.Select,
+                BorderBrush = SettingAnimate.BorderBrushSUN.Select;
             if (StateVisualizationButton != StateButton.Default)
             {
                 AnimationThickness.To = new(
@@ -409,9 +433,9 @@ namespace IEL
         private void MouseLeaveAnimation()
         {
             Color
-                Foreground = SettingAnimate.ForegroundDNSU.Default,
-                Background = SettingAnimate.BackgroundDNSU.Default,
-                BorderBrush = SettingAnimate.BorderBrushDNSU.Default;
+                Foreground = ForegroundDefault,
+                Background = BackgroundDefault,
+                BorderBrush = BorderBrushDefault;
             EnterButton = false;
             if (StateVisualizationButton != StateButton.Default)
             {

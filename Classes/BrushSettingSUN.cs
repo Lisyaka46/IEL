@@ -9,12 +9,12 @@ using System.Windows.Media.Animation;
 
 namespace IEL.Classes
 {
-    public class BrushSettingDNSU
+    public class BrushSettingSUN
     {
         /// <summary>
         /// Стили создания цветов
         /// </summary>
-        internal enum CreateStyle
+        public enum CreateStyle
         {
             /// <summary>
             /// Стиль фонового цвета
@@ -33,16 +33,6 @@ namespace IEL.Classes
         }
 
         /// <summary>
-        /// Делегат события изменения спектра цвета
-        /// </summary>
-        internal delegate void ChangeSpectrumDefaultEventHandler(Color Value);
-
-        /// <summary>
-        /// Событие изменения спектра
-        /// </summary>
-        internal event ChangeSpectrumDefaultEventHandler? SpectrumDefaultChange;
-
-        /// <summary>
         /// Состояние активности элемента
         /// </summary>
         /// <remarks>
@@ -55,15 +45,14 @@ namespace IEL.Classes
         #region Default
         private Color _Default;
         /// <summary>
-        /// Цвет обычного состояния
+        /// Цвет отключённого состояния состояния
         /// </summary>
-        public Color Default
+        internal Color Default
         {
-            get => _Default;
+            get => IsEnabled ? _Default : _NotEnabled;
             set
             {
                 _Default = value;
-                SpectrumDefaultChange?.Invoke(value);
             }
         }
         #endregion
@@ -90,7 +79,7 @@ namespace IEL.Classes
         /// </summary>
         public Color Select
         {
-            get => IsEnabled ? _Select : _Default;
+            get => IsEnabled ? _Select : _NotEnabled;
             set
             {
                 _Select = value;
@@ -105,7 +94,7 @@ namespace IEL.Classes
         /// </summary>
         public Color Used
         {
-            get => IsEnabled ? _Used : _Default;
+            get => IsEnabled ? _Used : _NotEnabled;
             set
             {
                 _Used = value;
@@ -113,45 +102,43 @@ namespace IEL.Classes
         }
         #endregion
 
-        public BrushSettingDNSU()
+        public BrushSettingSUN()
         {
+            IsEnabled = true;
+            _Default = Colors.Black;
             Select = Colors.Black;
             Used = Colors.Black;
             NotEnabled = Colors.Black;
-            Default = Colors.Black;
-            IsEnabled = true;
         }
 
-        internal BrushSettingDNSU(Color Default, Color Select, Color Used, Color NotEnabled, ChangeSpectrumDefaultEventHandler? changeSpectrum = null)
+        public BrushSettingSUN(Color Default, Color Select, Color Used, Color NotEnabled)
         {
             IsEnabled = true;
-            SpectrumDefaultChange = changeSpectrum;
-            this.Default = Default;
+            _Default = Default;
             this.Select = Select;
             this.Used = Used;
             this.NotEnabled = NotEnabled;
         }
 
-        internal BrushSettingDNSU(CreateStyle Style, ChangeSpectrumDefaultEventHandler? changeSpectrum = null)
+        public BrushSettingSUN(CreateStyle Style)
         {
             IsEnabled = true;
-            SpectrumDefaultChange = changeSpectrum;
             switch (Style)
             {
                 case CreateStyle.Background:
-                    Default = Color.FromRgb(58, 143, 108);
+                    _Default = Color.FromRgb(58, 143, 108);
                     Select = Color.FromRgb(59, 172, 109);
                     Used = Color.FromRgb(150, 198, 140);
                     NotEnabled = Color.FromRgb(197, 97, 104);
                     break;
                 case CreateStyle.BorderBrush:
-                    Default = Color.FromRgb(0, 0, 0);
+                    _Default = Color.FromRgb(0, 0, 0);
                     Select = Color.FromRgb(26, 53, 30);
                     Used = Color.FromRgb(101, 82, 76);
                     NotEnabled = Color.FromRgb(152, 29, 54);
                     break;
                 case CreateStyle.Foreground:
-                    Default = Color.FromRgb(0, 0, 0);
+                    _Default = Color.FromRgb(0, 0, 0);
                     Select = Color.FromRgb(28, 54, 24);
                     Used = Color.FromRgb(61, 98, 94);
                     NotEnabled = Color.FromRgb(148, 0, 46);
