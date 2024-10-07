@@ -208,39 +208,6 @@ namespace IEL
             }
         }
 
-        /// <summary>
-        /// Данные изображения объекта
-        /// </summary>
-        public ImageSource ImageSource
-        {
-            get => ImageElement.Source;
-            set => ImageElement.Source = value;
-        }
-
-        /// <summary>
-        /// Данные изображения тега
-        /// </summary>
-        public ImageSource ImageTagSource
-        {
-            get => ImageTag.Source;
-            set => ImageTag.Source = value;
-        }
-
-        private bool _ImageTagVisible;
-        /// <summary>
-        /// Видимость изображения тега
-        /// </summary>
-        public bool ImageTagVisible
-        {
-            get => _ImageTagVisible;
-            set
-            {
-                ButtonAnimationDouble.To = value ? 1d : 0d;
-                ImageTag.BeginAnimation(OpacityProperty, ButtonAnimationDouble);
-                _ImageTagVisible = value;
-            }
-        }
-
         public LabelAction Label { get; set; }
 
         private int _Index;
@@ -263,27 +230,25 @@ namespace IEL
             this.Index = Index;
 
             AnimationMillisecond = 100;
-            BorderMain.Background = new SolidColorBrush(Colors.Black);
-            BorderMain.BorderBrush = new RadialGradientBrush(Colors.White, Colors.Black);
-
-            TextBlockName.Foreground = new SolidColorBrush(Colors.Black);
-            TextBlockName.Foreground = new SolidColorBrush(Colors.Black);
-
-            DefaultBackground = Color.FromRgb(128, 179, 189);
-            DefaultBorderBrush = Color.FromRgb(69, 98, 127);
-            DefaultForeground = Colors.Black;
-
-            SelectBackground = Color.FromRgb(111, 199, 173);
-            SelectBorderBrush = Color.FromRgb(69, 98, 127);
-            SelectForeground = Color.FromRgb(0, 80, 60);
-
-            ClickedBackground = Color.FromRgb(69, 154, 101);
-            ClickedBorderBrush = Color.FromRgb(69, 127, 83);
-            ClickedForeground = Color.FromRgb(40, 60, 41);
-
-            NotEnabledBackground = Color.FromRgb(181, 102, 102);
-            NotEnabledBorderBrush = Color.FromRgb(255, 90, 90);
-            NotEnabledForeground = Colors.Black;
+            BackgroundChangeDefaultColor = (Value) =>
+            {
+                SolidColorBrush color = new(Value);
+                BorderButton.Background = color;
+            };
+            BorderBrushChangeDefaultColor = (Value) =>
+            {
+                SolidColorBrush color = new(Value);
+                BorderButton.BorderBrush = color;
+            };
+            ForegroundChangeDefaultColor = (Value) =>
+            {
+                SolidColorBrush color = new(Value);
+                TextBlockName.Foreground = color;
+                TextBlockIndex.Foreground = color;
+            };
+            BackgroundSetting = new(BrushSettingQ.CreateStyle.Background);
+            BorderBrushSetting = new(BrushSettingQ.CreateStyle.BorderBrush);
+            ForegroundSetting = new(BrushSettingQ.CreateStyle.Foreground);
 
             StartMarginImageElement = ImageElement.Margin;
             TextBlockName.Text = this.Label.Name;
