@@ -1,5 +1,6 @@
 ﻿using IEL.Classes;
 using System.Windows;
+using System.Windows.Media;
 
 namespace IEL.Interfaces.Front
 {
@@ -26,10 +27,20 @@ namespace IEL.Interfaces.Front
             RightArrow = 2,
         }
 
+        #region Color Setting
         /// <summary>
-        /// Обект настройки поведения анимации цвета
+        /// Объект обычного состояния фона
         /// </summary>
-        public IELSettingAnimate SettingAnimate { get; }
+        public BrushSettingQ BackgroundSetting { get; }
+        /// <summary>
+        /// Объект обычного состояния границы
+        /// </summary>
+        public BrushSettingQ BorderBrushSetting { get; }
+        /// <summary>
+        /// Объект обычного состояния текста
+        /// </summary>
+        public BrushSettingQ ForegroundSetting { get; }
+        #endregion
 
         /// <summary>
         /// Количество миллисекунд для анимации

@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
+﻿using System.Windows.Media;
 
 namespace IEL.Classes
 {
-    public class BrushSettingSUN
+    /// <summary>
+    /// Класс настройки поведения цвета при разных состояниях объекта
+    /// </summary>
+    public class BrushSettingQ
     {
         /// <summary>
         /// Стили создания цветов
@@ -33,6 +29,17 @@ namespace IEL.Classes
         }
 
         /// <summary>
+        /// Делегат события изменения обычного цвета
+        /// </summary>
+        /// <param name="Value">Новое значение цвета</param>
+        internal delegate void ColorDefaultChangeEventHandler(Color Value);
+
+        /// <summary>
+        /// Событие изменения цвета обычного состояния
+        /// </summary>
+        internal event ColorDefaultChangeEventHandler? ColorDefaultChange;
+
+        /// <summary>
         /// Состояние активности элемента
         /// </summary>
         /// <remarks>
@@ -47,12 +54,13 @@ namespace IEL.Classes
         /// <summary>
         /// Цвет отключённого состояния состояния
         /// </summary>
-        internal Color Default
+        public Color Default
         {
             get => IsEnabled ? _Default : _NotEnabled;
             set
             {
                 _Default = value;
+                if (IsEnabled) ColorDefaultChange?.Invoke(value);
             }
         }
         #endregion
@@ -102,7 +110,7 @@ namespace IEL.Classes
         }
         #endregion
 
-        public BrushSettingSUN()
+        public BrushSettingQ()
         {
             IsEnabled = true;
             _Default = Colors.Black;
@@ -111,7 +119,7 @@ namespace IEL.Classes
             NotEnabled = Colors.Black;
         }
 
-        public BrushSettingSUN(Color Default, Color Select, Color Used, Color NotEnabled)
+        internal BrushSettingQ(Color Default, Color Select, Color Used, Color NotEnabled)
         {
             IsEnabled = true;
             _Default = Default;
@@ -120,25 +128,25 @@ namespace IEL.Classes
             this.NotEnabled = NotEnabled;
         }
 
-        public BrushSettingSUN(CreateStyle Style)
+        internal BrushSettingQ(CreateStyle Style)
         {
             IsEnabled = true;
             switch (Style)
             {
                 case CreateStyle.Background:
-                    _Default = Color.FromRgb(58, 143, 108);
+                    Default = Color.FromRgb(58, 143, 108);
                     Select = Color.FromRgb(59, 172, 109);
                     Used = Color.FromRgb(150, 198, 140);
                     NotEnabled = Color.FromRgb(197, 97, 104);
                     break;
                 case CreateStyle.BorderBrush:
-                    _Default = Color.FromRgb(0, 0, 0);
+                    Default = Color.FromRgb(0, 0, 0);
                     Select = Color.FromRgb(26, 53, 30);
                     Used = Color.FromRgb(101, 82, 76);
                     NotEnabled = Color.FromRgb(152, 29, 54);
                     break;
                 case CreateStyle.Foreground:
-                    _Default = Color.FromRgb(0, 0, 0);
+                    Default = Color.FromRgb(0, 0, 0);
                     Select = Color.FromRgb(28, 54, 24);
                     Used = Color.FromRgb(61, 98, 94);
                     NotEnabled = Color.FromRgb(148, 0, 46);
