@@ -4,19 +4,30 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
-             d:DesignHeight="47.885" d:DesignWidth="76.35" Cursor="Hand">
+             d:DesignHeight="38.818" d:DesignWidth="123.81" Cursor="Hand">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="24"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <Border x:Name="ButtonBorder" BorderThickness="3,3,3,3" CornerRadius="10,10,10,10" BorderBrush="Black" Grid.Column="1" Background="White">
+        <Border x:Name="BorderButton" BorderThickness="3,3,3,3" CornerRadius="10,10,10,10" BorderBrush="Black" Grid.Column="1" Background="White">
             <Grid>
-                <Image x:Name="ButtonImage" Margin="4,4,4,4" Source="/Windows/WindowsImages/Logo02.png"/>
-                <Image x:Name="ImageMouseButtonsUse" Source="/Windows/WindowsImages/DoubleMouseButton.png" Grid.Column="0" MinWidth="15" MinHeight="15" MaxWidth="25" MaxHeight="25" VerticalAlignment="Top" Width="20" Height="20" HorizontalAlignment="Right" Margin="0,4,4,0" Opacity="0.4"/>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition x:Name="ColumnLeftArrow" Width="25"/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition x:Name="ColumnRightArrow" Width="25"/>
+                </Grid.ColumnDefinitions>
+                <Image x:Name="ImageButton" Margin="2,2,2,2" Grid.Column="1"/>
+                <Border x:Name="BorderLeftArrow" BorderBrush="Black" BorderThickness="2,2,2,2" CornerRadius="6,6,6,6" Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Right">
+                    <TextBlock x:Name="TextBlockLeftArrow" TextWrapping="Wrap" Text="&lt;" HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="Arial Black" FontSize="14" Padding="0,0.7,1,0"/>
+                </Border>
+                <Border x:Name="BorderRightArrow" BorderBrush="Black" BorderThickness="2,2,2,2" CornerRadius="6,6,6,6" Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Left" Grid.Column="2">
+                    <TextBlock x:Name="TextBlockRightArrow" TextWrapping="Wrap" Text="&gt;" HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="Arial Black" FontSize="14" Padding="1,0.7,0,0"/>
+                </Border>
+                <Image x:Name="ImageMouseButtonsUse" Source="/Windows/WindowsImages/DoubleMouseButton.png" Grid.Column="1" MinWidth="15" MinHeight="15" MaxWidth="25" MaxHeight="25" VerticalAlignment="Top" Width="20" Height="20" HorizontalAlignment="Right" Margin="0,4,4,0" Opacity="0.4" Grid.ColumnSpan="2"/>
             </Grid>
         </Border>
-        <Border x:Name="ButtonBorderKey" BorderBrush="Black" BorderThickness="2,2,2,2" CornerRadius="3,3,3,3" Margin="2,3,2,4" Background="White">
+        <Border x:Name="BorderButtonKey" BorderBrush="Black" BorderThickness="2,2,2,2" CornerRadius="3,3,3,3" Margin="2,3,2,4" Background="White">
             <TextBlock x:Name="TextBlockKey" TextWrapping="Wrap" Text="0" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="Cascadia Code"/>
         </Border>
 

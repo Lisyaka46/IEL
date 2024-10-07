@@ -1,74 +1,51 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using IEL.Classes;
 using System.Windows;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 
 namespace IEL.Interfaces.Front
 {
     public interface IIELButton : IIELObject
     {
-        #region Default
         /// <summary>
-        /// Цвет границы
+        /// Перечисление состояний отображения кнопки
         /// </summary>
-        public Color DefaultBorderBrush { get; set; }
+        public enum StateButton
+        {
+            /// <summary>
+            /// Обычное отображение кнопки
+            /// </summary>
+            Default = 0,
 
+            /// <summary>
+            /// Отображение кнопки с левосторонней стрелкой
+            /// </summary>
+            LeftArrow = 1,
+
+            /// <summary>
+            /// Отображение кнопки с правосторонней стрелкой
+            /// </summary>
+            RightArrow = 2,
+        }
+
+        #region Color Setting
         /// <summary>
-        /// Цвет фона
+        /// Объект обычного состояния фона
         /// </summary>
-        public Color DefaultBackground { get; set; }
+        public BrushSettingQ BackgroundSetting { get; }
+        /// <summary>
+        /// Объект обычного состояния границы
+        /// </summary>
+        public BrushSettingQ BorderBrushSetting { get; }
+        /// <summary>
+        /// Объект обычного состояния текста
+        /// </summary>
+        public BrushSettingQ ForegroundSetting { get; }
         #endregion
 
-
-        #region Select
-        /// <summary>
-        /// Выделенный цвет границы
-        /// </summary>
-        public Color SelectBorderBrush { get; set; }
-
-        /// <summary>
-        /// Выделенный цвет фона
-        /// </summary>
-        public Color SelectBackground { get; set; }
-        #endregion
-
-
-        #region Clicked
-        /// <summary>
-        /// Нажатый цвет границы
-        /// </summary>
-        public Color ClickedBorderBrush { get; set; }
-
-        /// <summary>
-        /// Нажатый цвет фона
-        /// </summary>
-        public Color ClickedBackground { get; set; }
-        #endregion
-
-
-        #region NotEnabled
-        /// <summary>
-        /// Выключенный цвет границы
-        /// </summary>
-        public Color NotEnabledBorderBrush { get; set; }
-
-        /// <summary>
-        /// Выключенный цвет фона
-        /// </summary>
-        public Color NotEnabledBackground { get; set; }
-        #endregion
-
-
-        #region AnimationMillisecond
         /// <summary>
         /// Количество миллисекунд для анимации
         /// </summary>
         public int AnimationMillisecond { get; set; }
-        #endregion
 
         /// <summary>
         /// Скругление границ
@@ -84,6 +61,11 @@ namespace IEL.Interfaces.Front
         /// Длительность задержки в миллисекундах
         /// </summary>
         public double IntervalHover { get; set; }
+
+        /// <summary>
+        /// Состояние отображения кнопки
+        /// </summary>
+        public StateButton StateVisualizationButton { get; }
 
         /// <summary>
         /// Событие задержки курсора на элементе
