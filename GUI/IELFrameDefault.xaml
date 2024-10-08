@@ -7,6 +7,6 @@
              d:DesignHeight="283.227" d:DesignWidth="289.617">
     <Grid>
         <Frame x:Name="FrameActionPanelLeft" Grid.ColumnSpan="1" Panel.ZIndex="1" NavigationUIVisibility="Hidden"/>
-        <Frame x:Name="FrameActionPanelRight" Grid.ColumnSpan="1" NavigationUIVisibility="Hidden"/>
+        <Frame x:Name="FrameActionPanelRight" Grid.ColumnSpan="1" Panel.ZIndex="1" NavigationUIVisibility="Hidden"/>
     </Grid>
 </UserControl>

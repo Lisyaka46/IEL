@@ -301,10 +301,13 @@ namespace IEL
             {
                 if (IsEnabled)
                 {
-                    TimerBorderInfo.Stop();
                     if (
                     (e.LeftButton == MouseButtonState.Pressed && OnActivateMouseLeft != null) ||
-                    (e.RightButton == MouseButtonState.Pressed && OnActivateMouseRight != null)) ClickDownAnimation();
+                    (e.RightButton == MouseButtonState.Pressed && OnActivateMouseRight != null))
+                    {
+                        ClickDownAnimation();
+                        TimerBorderInfo.Stop();
+                    }
                 }
             };
 

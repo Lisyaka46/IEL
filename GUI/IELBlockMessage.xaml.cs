@@ -292,7 +292,7 @@ namespace IEL
         /// <param name="Orientation">Привязка к позиционированию панели</param>
         private Point SetPositionOrientation(FrameworkElement Element, OrientationBorderInfo Orientation)
         {
-            Point ElementPos = Element.TransformToVisual((Visual)VisualParent).Transform(new(0, 0));
+            Point ElementPos = Element.TransformToAncestor((Visual)VisualParent).TransformBounds(new Rect(Element.RenderSize)).Location;
             return Orientation switch
             {
                 OrientationBorderInfo.LeftDown => new(ElementPos.X - BorderMessage.ActualWidth, ElementPos.Y + Element.ActualHeight),

@@ -228,7 +228,6 @@ namespace IEL
             BorderBrushSetting = new(BrushSettingQ.CreateStyle.BorderBrush);
             ForegroundSetting = new(BrushSettingQ.CreateStyle.Foreground);
 
-            ImageButton.Margin = new Thickness(10, 10, 10, 10);
             IntervalHover = 1300d;
             TimerBorderInfo.Tick += (sender, e) =>
             {
@@ -238,11 +237,19 @@ namespace IEL
 
             BorderButton.MouseEnter += (sender, e) =>
             {
-                if (IsEnabled) MouseEnterDetect();
+                if (IsEnabled)
+                {
+                    MouseEnterDetect();
+                    TimerBorderInfo.Start();
+                }
             };
             BorderButton.MouseLeave += (sender, e) =>
             {
-                if (IsEnabled) MouseLeaveDetect();
+                if (IsEnabled)
+                {
+                    MouseLeaveDetect();
+                    TimerBorderInfo.Stop();
+                }
             };
 
             IsEnabledChanged += (sender, e) =>
@@ -267,7 +274,11 @@ namespace IEL
                 {
                     if (
                     (e.LeftButton == MouseButtonState.Pressed && OnActivateMouseLeft != null) ||
-                    (e.RightButton == MouseButtonState.Pressed && OnActivateMouseRight != null)) ClickDownAnimation();
+                    (e.RightButton == MouseButtonState.Pressed && OnActivateMouseRight != null))
+                    {
+                        ClickDownAnimation();
+                        TimerBorderInfo.Stop();
+                    }
                 }
             };
 

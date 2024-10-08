@@ -107,9 +107,6 @@ namespace IEL
                 OpenFrame?.Invoke();
             }
             ActualFrame.Opacity = 0d;
-            Canvas.SetZIndex(BackFrame, 0);
-            Canvas.SetZIndex(ActualFrame, 1);
-            BackFrame.Navigate(null);
             BackFrame.IsEnabled = false;
             ActualFrame.IsEnabled = true;
             ActualFrame.BeginAnimation(MarginProperty, null);

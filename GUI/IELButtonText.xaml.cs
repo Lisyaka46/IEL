@@ -292,12 +292,20 @@ namespace IEL
 
             MouseEnter += (sender, e) =>
             {
-                if (IsEnabled) MouseEnterAnimation();
+                if (IsEnabled)
+                {
+                    MouseEnterAnimation();
+                    TimerBorderInfo.Start();
+                }
             };
 
             MouseLeave += (sender, e) =>
             {
-                if (IsEnabled) MouseLeaveAnimation();
+                if (IsEnabled)
+                {
+                    MouseLeaveAnimation();
+                    TimerBorderInfo.Stop();
+                }
             };
 
             MouseDown += (sender, e) =>
@@ -306,7 +314,11 @@ namespace IEL
                 {
                     if (
                     (e.LeftButton == MouseButtonState.Pressed && OnActivateMouseLeft != null) ||
-                    (e.RightButton == MouseButtonState.Pressed && OnActivateMouseRight != null)) ClickDownAnimation();
+                    (e.RightButton == MouseButtonState.Pressed && OnActivateMouseRight != null))
+                    {
+                        ClickDownAnimation();
+                        TimerBorderInfo.Stop();
+                    }
                 }
             };
 
