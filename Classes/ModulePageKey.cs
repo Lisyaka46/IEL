@@ -6,17 +6,12 @@ using IEL.Interfaces.Front;
 
 namespace IEL.Classes
 {
-    public class ModulePageKey(string Name) : IModulePageKey
+    public class ModulePageKey() : IModulePageKey
     {
         /// <summary>
         /// Объект данных режима клавиатуры
         /// </summary>
         private bool _KeyboardMode;
-
-        /// <summary>
-        /// Имя страницы
-        /// </summary>
-        public string ModuleName { get; } = Name;
 
         /// <summary>
         /// Режим клавиатуры
