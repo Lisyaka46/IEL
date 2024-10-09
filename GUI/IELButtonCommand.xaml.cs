@@ -24,7 +24,7 @@ namespace IEL
             get => _BackgroundSetting ?? new();
             set
             {
-                BackgroundChangeDefaultColor.Invoke(value.Default);
+                BackgroundChangeDefaultColor.Invoke(BrushSettingQ.StateSpectrum.Default, value.Default);
                 value.ColorDefaultChange += BackgroundChangeDefaultColor;
                 _BackgroundSetting = value;
             }
@@ -39,7 +39,7 @@ namespace IEL
             get => _BorderBrushSetting ?? new();
             set
             {
-                BorderBrushChangeDefaultColor.Invoke(value.Default);
+                BorderBrushChangeDefaultColor.Invoke(BrushSettingQ.StateSpectrum.Default, value.Default);
                 value.ColorDefaultChange += BorderBrushChangeDefaultColor;
                 _BorderBrushSetting = value;
             }
@@ -54,7 +54,7 @@ namespace IEL
             get => _ForegroundSetting ?? new();
             set
             {
-                ForegroundChangeDefaultColor.Invoke(value.Default);
+                ForegroundChangeDefaultColor.Invoke(BrushSettingQ.StateSpectrum.Default, value.Default);
                 value.ColorDefaultChange += ForegroundChangeDefaultColor;
                 _ForegroundSetting = value;
             }
@@ -226,18 +226,24 @@ namespace IEL
             InitializeComponent();
 
             AnimationMillisecond = 100; 
-            BackgroundChangeDefaultColor = (Value) =>
+            BackgroundChangeDefaultColor = (Spectrum, Value) =>
             {
+                if ((Spectrum == BrushSettingQ.StateSpectrum.Default && !IsEnabled) ||
+                (Spectrum == BrushSettingQ.StateSpectrum.NotEnabled && IsEnabled)) return;
                 SolidColorBrush color = new(Value);
                 BorderButton.Background = color;
             };
-            BorderBrushChangeDefaultColor = (Value) =>
+            BorderBrushChangeDefaultColor = (Spectrum, Value) =>
             {
+                if ((Spectrum == BrushSettingQ.StateSpectrum.Default && !IsEnabled) ||
+                (Spectrum == BrushSettingQ.StateSpectrum.NotEnabled && IsEnabled)) return;
                 SolidColorBrush color = new(Value);
                 BorderButton.BorderBrush = color;
             };
-            ForegroundChangeDefaultColor = (Value) =>
+            ForegroundChangeDefaultColor = (Spectrum, Value) =>
             {
+                if ((Spectrum == BrushSettingQ.StateSpectrum.Default && !IsEnabled) ||
+                (Spectrum == BrushSettingQ.StateSpectrum.NotEnabled && IsEnabled)) return;
                 SolidColorBrush color = new(Value);
                 TextBlockButtonCommand.Foreground = color;
                 TextBlockButtonName.Foreground = color;

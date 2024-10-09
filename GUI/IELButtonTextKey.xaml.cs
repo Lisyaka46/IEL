@@ -44,7 +44,7 @@ namespace IEL
             get => _BackgroundSetting ?? new();
             set
             {
-                BackgroundChangeDefaultColor.Invoke(value.Default);
+                BackgroundChangeDefaultColor.Invoke(BrushSettingQ.StateSpectrum.Default, value.Default);
                 value.ColorDefaultChange += BackgroundChangeDefaultColor;
                 _BackgroundSetting = value;
             }
@@ -59,7 +59,7 @@ namespace IEL
             get => _BorderBrushSetting ?? new();
             set
             {
-                BorderBrushChangeDefaultColor.Invoke(value.Default);
+                BorderBrushChangeDefaultColor.Invoke(BrushSettingQ.StateSpectrum.Default, value.Default);
                 value.ColorDefaultChange += BorderBrushChangeDefaultColor;
                 _BorderBrushSetting = value;
             }
@@ -74,7 +74,7 @@ namespace IEL
             get => _ForegroundSetting ?? new();
             set
             {
-                ForegroundChangeDefaultColor.Invoke(value.Default);
+                ForegroundChangeDefaultColor.Invoke(BrushSettingQ.StateSpectrum.Default, value.Default);
                 value.ColorDefaultChange += ForegroundChangeDefaultColor;
                 _ForegroundSetting = value;
             }
@@ -197,19 +197,15 @@ namespace IEL
         /// <summary>
         /// Шрифт текста в кнопке
         /// </summary>
-        public FontFamily TextFontFamily
+        public new FontFamily FontFamily
         {
-            get => TextBlockButton.FontFamily;
-            set => TextBlockButton.FontFamily = value;
-        }
-
-        /// <summary>
-        /// Размер текста в кнопке
-        /// </summary>
-        public double TextFontSize
-        {
-            get => TextBlockButton.FontSize;
-            set => TextBlockButton.FontSize = value;
+            get => base.FontFamily;
+            set
+            {
+                TextBlockCharKey.FontFamily = value;
+                TextBlockButton.FontFamily = value;
+                base.FontFamily = value;
+            }
         }
 
         private bool _CharKeyboardActivate = false;
@@ -288,22 +284,28 @@ namespace IEL
             StateVisualizationButton = StateButton.Default;
 
             AnimationMillisecond = 100;
-            BackgroundChangeDefaultColor = (Value) =>
+            BackgroundChangeDefaultColor = (Spectrum, Value) =>
             {
+                if ((Spectrum == BrushSettingQ.StateSpectrum.Default && !IsEnabled) ||
+                (Spectrum == BrushSettingQ.StateSpectrum.NotEnabled && IsEnabled)) return;
                 SolidColorBrush color = new(Value);
                 BorderButton.Background = color;
                 BorderCharKeyboard.Background = color;
             };
-            BorderBrushChangeDefaultColor = (Value) =>
+            BorderBrushChangeDefaultColor = (Spectrum, Value) =>
             {
+                if ((Spectrum == BrushSettingQ.StateSpectrum.Default && !IsEnabled) ||
+                (Spectrum == BrushSettingQ.StateSpectrum.NotEnabled && IsEnabled)) return;
                 SolidColorBrush color = new(Value);
                 BorderButton.BorderBrush = color;
                 BorderCharKeyboard.BorderBrush = color;
                 BorderLeftArrow.BorderBrush = color;
                 BorderRightArrow.BorderBrush = color;
             };
-            ForegroundChangeDefaultColor = (Value) =>
+            ForegroundChangeDefaultColor = (Spectrum, Value) =>
             {
+                if ((Spectrum == BrushSettingQ.StateSpectrum.Default && !IsEnabled) ||
+                (Spectrum == BrushSettingQ.StateSpectrum.NotEnabled && IsEnabled)) return;
                 SolidColorBrush color = new(Value);
                 TextBlockCharKey.Foreground = color;
                 TextBlockButton.Foreground = color;
@@ -324,8 +326,6 @@ namespace IEL
             BorderButton.Margin = new(-24, 0, 0, 0);
             BorderCharKeyboard.Opacity = 0d;
             ImageMouseButtonsUse.Opacity = 0d;
-            TextFontFamily = new FontFamily("Arial");
-            TextFontSize = 12;
             Text = "Text";
             CornerRadius = new CornerRadius(10);
 

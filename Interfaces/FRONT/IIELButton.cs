@@ -4,7 +4,7 @@ using System.Windows.Media;
 
 namespace IEL.Interfaces.Front
 {
-    public interface IIELButton : IIELObject
+    public interface IIELButton : IIELObject, IIELControl
     {
         /// <summary>
         /// Перечисление состояний отображения кнопки
@@ -26,26 +26,6 @@ namespace IEL.Interfaces.Front
             /// </summary>
             RightArrow = 2,
         }
-
-        #region Color Setting
-        /// <summary>
-        /// Объект обычного состояния фона
-        /// </summary>
-        public BrushSettingQ BackgroundSetting { get; }
-        /// <summary>
-        /// Объект обычного состояния границы
-        /// </summary>
-        public BrushSettingQ BorderBrushSetting { get; }
-        /// <summary>
-        /// Объект обычного состояния текста
-        /// </summary>
-        public BrushSettingQ ForegroundSetting { get; }
-        #endregion
-
-        /// <summary>
-        /// Количество миллисекунд для анимации
-        /// </summary>
-        public int AnimationMillisecond { get; set; }
 
         /// <summary>
         /// Скругление границ

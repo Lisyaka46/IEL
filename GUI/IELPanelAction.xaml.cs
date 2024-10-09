@@ -119,6 +119,11 @@ namespace IEL
         readonly List<(IPageKey, string)> BufferPages = [];
 
         /// <summary>
+        /// Имя объекта страницы
+        /// </summary>
+        public string NameFrameElement => ActiveObject.ElementInPanel?.Name ?? string.Empty;
+
+        /// <summary>
         /// Объект актуальной страницы
         /// </summary>
         private IPageKey ActualPage => (IPageKey)ActualFrame.Content;
