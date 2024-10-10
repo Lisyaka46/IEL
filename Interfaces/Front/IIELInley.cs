@@ -10,8 +10,13 @@ namespace IEL.Interfaces.Front
     public interface IIELInley : IIELButtonDefault
     {
         /// <summary>
-        /// Страница заголовка
+        /// Данные об странице заголовка
         /// </summary>
-        public IPageDefault Page { get; }
+        public IPageDefault? Page { get; }
+
+        /// <summary>
+        /// Объект страницы
+        /// </summary>
+        protected object Content { get; }
     }
 }

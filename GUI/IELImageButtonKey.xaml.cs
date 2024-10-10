@@ -16,23 +16,25 @@ namespace IEL
     /// </summary>
     public partial class IELImageButtonKey : UserControl, IIELButtonKey
     {
-        private StateButton _StateVisualizationButton = StateButton.LeftArrow;
+        #region StateVisualization
+        private StateVisual _StateVisualization = StateVisual.LeftArrow;
         /// <summary>
-        /// Состояние отображения кнопки
+        /// Состояние отображения направления
         /// </summary>
-        public StateButton StateVisualizationButton
+        public StateVisual StateVisualization
         {
-            get => _StateVisualizationButton;
+            get => _StateVisualization;
             set
             {
-                if (_StateVisualizationButton == value) return;
-                ColumnLeftArrow.Width = new(value == StateButton.LeftArrow ? 25 : 0);
-                ColumnRightArrow.Width = new(value == StateButton.RightArrow ? 25 : 0);
-                BorderLeftArrow.Opacity = value == StateButton.LeftArrow ? 1d : 0d;
-                BorderRightArrow.Opacity = value == StateButton.RightArrow ? 1d : 0d;
-                _StateVisualizationButton = value;
+                if (_StateVisualization == value) return;
+                ColumnLeftArrow.Width = new(value == StateVisual.LeftArrow ? 25 : 0);
+                ColumnRightArrow.Width = new(value == StateVisual.RightArrow ? 25 : 0);
+                BorderLeftArrow.Opacity = value == StateVisual.LeftArrow ? 1d : 0d;
+                BorderRightArrow.Opacity = value == StateVisual.RightArrow ? 1d : 0d;
+                _StateVisualization = value;
             }
         }
+        #endregion
 
         #region Color Setting
         private BrushSettingQ? _BackgroundSetting;
@@ -210,12 +212,12 @@ namespace IEL
         }
 
         /// <summary>
-        /// Объект события активации кнопки левым щелчком мыши
+        /// Объект события активации левым щелчком мыши
         /// </summary>
         public IIELButtonKey.Activate? OnActivateMouseLeft { get; set; }
 
         /// <summary>
-        /// Объект события активации кнопки правым щелчком мыши
+        /// Объект события активации правым щелчком мыши
         /// </summary>
         public IIELButtonKey.Activate? OnActivateMouseRight { get; set; }
 
@@ -284,7 +286,7 @@ namespace IEL
         public IELImageButtonKey()
         {
             InitializeComponent();
-            StateVisualizationButton = StateButton.Default;
+            StateVisualization = StateVisual.Default;
 
             AnimationMillisecond = 100;
             BackgroundChangeDefaultColor = (Spectrum, Value) =>

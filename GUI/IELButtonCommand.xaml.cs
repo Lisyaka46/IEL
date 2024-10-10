@@ -212,12 +212,12 @@ namespace IEL
         private bool ButtonActivate = false;
 
         /// <summary>
-        /// Объект события активации кнопки левым щелчком мыши
+        /// Объект события активации левым щелчком мыши
         /// </summary>
         public IIELButtonDefault.Activate? OnActivateMouseLeft { get; set; }
 
         /// <summary>
-        /// Объект события активации кнопки правым щелчком мыши
+        /// Объект события активации правым щелчком мыши
         /// </summary>
         public IIELButtonDefault.Activate? OnActivateMouseRight { get; set; }
 

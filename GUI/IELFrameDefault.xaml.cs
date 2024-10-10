@@ -84,7 +84,7 @@ namespace IEL
             {
                 if (ActualFrame.Content != null)
                 {
-                    if (((IPageDefault)ActualFrame.Content).ModulePage.ModuleName.Equals(Content.ModulePage.ModuleName))
+                    if (((IPageDefault)ActualFrame.Content).PageName.Equals(Content.PageName))
                     {
                         if (Activate) return;
                         else
@@ -128,7 +128,7 @@ namespace IEL
             ActualFrame.BeginAnimation(OpacityProperty, DoubleAnimateObj);
             ThicknessAnimate.To = new(0);
             ActualFrame.BeginAnimation(MarginProperty, ThicknessAnimate);
-            ChangeElementPage?.Invoke(Content.ModulePage.ModuleName);
+            ChangeElementPage?.Invoke(Content.PageName);
         }
 
         /// <summary>
