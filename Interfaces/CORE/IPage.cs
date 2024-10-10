@@ -10,8 +10,8 @@ namespace IEL.Interfaces.Core
     public interface IPage
     {
         /// <summary>
-        /// Главная страница компонента
+        /// Имя страницы
         /// </summary>
-        public Grid MainGrid { get; }
+        public string PageName { get; }
     }
 }
