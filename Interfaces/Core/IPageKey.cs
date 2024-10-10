@@ -90,16 +90,16 @@ namespace IEL.Interfaces.Core
         /// <summary>
         /// Активировать кнопку в данном элементе типа "IIELButtonKey" с помощью клавиши
         /// </summary>
-        /// <param name="VisualObject">Объект интерфейса в котором находится элемент</param>
+        /// <param name="SearchPage">Объект интерфейса в котором находится элемент</param>
         /// <param name="key">Клавиша которую нажали</param>
         /// <param name="ElementAction">Событие которое нужно совершить над объектом</param>
         /// <param name="Orientation">Ориентация нажатия на кнопку</param>
         /// <remarks>Производится поиск и реализация действия над объектом</remarks>
         /// <returns>Выполнилось удачно или нет</returns>
-        internal virtual bool ActivateElementKey<T>(Visual VisualObject, Key key, ActionButton ElementAction,
+        internal virtual bool ActivateElementKey<T>(Page SearchPage, Key key, ActionButton ElementAction,
             OrientationActivate Orientation = OrientationActivate.LeftButton) where T : IIELButtonKey
         {
-            T? Button = SearchButton<T>(VisualObject, key);
+            T? Button = SearchButton<T>((Visual)SearchPage.Content, key);
             if (Button == null) return false;
             switch (ElementAction)
             {
