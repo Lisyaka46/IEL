@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace IEL.Interfaces.Front
 {
-    public interface IIELBrowserPage : IIELObject
+    public interface IIELBrowserPage : IIELObject, IIELControl
     {
 
     }

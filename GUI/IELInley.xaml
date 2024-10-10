@@ -1,13 +1,13 @@
-﻿<UserControl x:Class="IEL.GUI.IELInley"
+﻿<UserControl x:Class="IEL.IELInley"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:IEL.GUI"
+             xmlns:local="clr-namespace:IEL"
              mc:Ignorable="d" 
-             d:DesignHeight="69.136" d:DesignWidth="160" MinHeight="50" MinWidth="160">
+             d:DesignHeight="48.605" d:DesignWidth="162.933">
     <Border x:Name="BorderMain">
-        <Grid >
+        <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition x:Name="ColumnLeftArrow" Width="25"/>
                 <ColumnDefinition/>
@@ -19,15 +19,15 @@
             <Border x:Name="BorderRightArrow" BorderBrush="Black" BorderThickness="2,2,2,2" CornerRadius="6,6,6,6" Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Left" Grid.Column="2">
                 <TextBlock x:Name="TextBlockRightArrow" TextWrapping="Wrap" Text="&gt;" HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="Arial Black" FontSize="14" Padding="1,0.7,0,0"/>
             </Border>
-            <Grid Grid.Column="1">
+            <Grid x:Name="GridMain" Grid.Column="1">
                 <Grid.RowDefinitions>
                     <RowDefinition/>
-                    <RowDefinition Height="25"/>
+                    <RowDefinition x:Name="SignatureRowColumn" Height="25" MaxHeight="25"/>
                 </Grid.RowDefinitions>
-                <Border x:Name="BorderSignature" BorderBrush="Black" BorderThickness="1" Grid.Row="1" VerticalAlignment="Center" Margin="3,3,3,3" CornerRadius="2,2,2,2" ClipToBounds="True">
-                    <TextBlock x:Name="TextBlockSignature" TextWrapping="WrapWithOverflow" Text="Signature" Padding="2,0.5,2,0" FontSize="14" FontFamily="Cascadia Code" HorizontalAlignment="Left"/>
+                <Border x:Name="BorderSignature" Grid.Row="1" BorderThickness="2,0,2,0" BorderBrush="Black" Margin="2,3,2,3">
+                    <TextBlock x:Name="TextBlockSignature" Text="TextBlock" FontSize="14" HorizontalAlignment="Left"/>
                 </Border>
-                <TextBlock HorizontalAlignment="Center" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Center"/>
+                <TextBlock x:Name="TextBlockHead" Text="Head" FontSize="16" TextWrapping="WrapWithOverflow" TextTrimming="WordEllipsis" HorizontalAlignment="Center" VerticalAlignment="Center" AutomationProperties.IsRowHeader="True"/>
             </Grid>
         </Grid>
     </Border>

@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.Eventing.Reader;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
@@ -71,7 +72,7 @@ namespace IEL
         }
 
         /// <summary>
-        /// Код клавиши активирующий праввое нажатие в режиме клавиатуры в панели действий
+        /// Код клавиши активирующий правое нажатие в режиме клавиатуры в панели действий
         /// </summary>
         public Key KeyKeyboardModeActivateRightClick
         {
@@ -173,15 +174,18 @@ namespace IEL
             {
                 if (!PanelActionActivate && BlockWhileEvent) return;
                 else BlockWhileEvent = true;
-                if (e.Key == KeyKeyboardModeActivateRightClick && ActualPage.KeyboardMode && !ActivateRightClickKeyboardMode)
+                if (e.Key == KeyKeyboardModeActivateRightClick)
                 {
-                    AnimTextBlockRightClick(true);
-                    if (SelectButtonKeyboardMode) SelectButtonKeyboardMode = false;
+                    if (ActualPage.KeyboardMode && !ActivateRightClickKeyboardMode)
+                    {
+                        AnimTextBlockRightClick(true);
+                        if (SelectButtonKeyboardMode) SelectButtonKeyboardMode = false;
+                    }
+                    else return;
                 }
                 else if (e.Key == KeyCloseElement)
                 {
-                    SelectButtonKeyboardMode = false;
-                    AnimateSizePanelAction(new(ActiveObject.SizedPanel.Width + 10, ActiveObject.SizedPanel.Height + 10));
+                    AnimateSizePanelAction(new(ActiveObject.SizedPanel.Width + 16, ActiveObject.SizedPanel.Height + 16));
                 }
                 else
                 {
@@ -376,16 +380,16 @@ namespace IEL
         /// <summary>
         /// Метод аниммирования размера панели действий
         /// </summary>
-        /// <param name="size">Ожидаемый размер панели действий</param>
-        private void AnimateSizePanelAction(Size size)
+        /// <param name="Sized">Ожидаемый размер панели действий</param>
+        private void AnimateSizePanelAction(Size Sized)
         {
             DoubleAnimation animation = DoubleAnimateObj.Clone();
             animation.From = ActualWidth;
-            animation.To = size.Width;
+            animation.To = Sized.Width;
             BeginAnimation(WidthProperty, animation);
             animation.From = ActualHeight;
-            animation.To = size.Height;
-            if (size.Width == 0 && size.Height == 0)
+            animation.To = Sized.Height;
+            if (Sized.Width == 0 && Sized.Height == 0)
             {
                 animation.FillBehavior = FillBehavior.Stop;
                 void SetZOne(object? sender, EventArgs e)
@@ -408,6 +412,7 @@ namespace IEL
         /// <param name="Element">Элемент в котором будет находиться панель</param>
         private void AnimationMovePanelAction(PositionAnimActionPanel StylePositionToAnimate, Size ActionPanelSize, FrameworkElement Element)
         {
+            ThicknessAnimation animation = ThicknessAnimate.Clone();
             if (StylePositionToAnimate == PositionAnimActionPanel.Default)
             {
                 Point MousePoint = Mouse.GetPosition((IInputElement)VisualParent);
@@ -416,17 +421,17 @@ namespace IEL
                     MousePoint.X = Element.ActualWidth + OffsetPosElement.X - ActionPanelSize.Width - 1;
                 if (MousePoint.Y + ActionPanelSize.Height > Element.ActualHeight + OffsetPosElement.Y)
                     MousePoint.Y = Element.ActualHeight + OffsetPosElement.Y - ActionPanelSize.Height - 1;
-                ThicknessAnimate.To = new Thickness(MousePoint.X, MousePoint.Y, 0, 0);
+                animation.To = new Thickness(MousePoint.X, MousePoint.Y, 0, 0);
             }
             else if (StylePositionToAnimate == PositionAnimActionPanel.CenterObject)
             {
-                ThicknessAnimate.To =
+                animation.To =
                     new Thickness(
                         Margin.Left + Width / 2,
                         Margin.Top + Height / 2,
                         0, 0);
             }
-            BeginAnimation(MarginProperty, ThicknessAnimate);
+            BeginAnimation(MarginProperty, animation);
         }
     }
 }
