@@ -16,7 +16,7 @@ namespace IEL
     /// <summary>
     /// Логика взаимодействия для IELInley.xaml
     /// </summary>
-    public partial class IELInley : UserControl, IIELInley
+    public partial class IELInlay : UserControl, IIELInley
     {
         #region StateVisualization
         private StateVisual _StateVisualization = StateVisual.LeftArrow;
@@ -222,10 +222,28 @@ namespace IEL
             }
         }
 
+        private bool _IsAnimatedSignatureText = false;
         /// <summary>
         /// Состояние анимирования текста подписи если он выходит за границы
         /// </summary>
-        private bool IsAnimatedSignatureText = false;
+        public bool IsAnimatedSignatureText
+        {
+            get => _IsAnimatedSignatureText;
+            set
+            {
+                if (value)
+                {
+                    if (_TextSignature.Length > 0) SignatureAnimateStart(true);
+                    TextBlockSignature.TextTrimming = TextTrimming.None;
+                }
+                else
+                {
+                    SignatureAnimateStop();
+                    TextBlockSignature.TextTrimming = TextTrimming.CharacterEllipsis;
+                }
+                _IsAnimatedSignatureText = value;
+            }
+        }
 
         private string _TextSignature = string.Empty;
         /// <summary>
@@ -236,11 +254,18 @@ namespace IEL
             get => _TextSignature;
             set
             {
-                bool AnimateStart = true;
+                bool AnimatedStart = true;
                 if ((value.Length > 0 && _TextSignature.Length == 0) ||
-                    (value.Length == 0 && _TextSignature.Length > 0))
+                    (value.Length == 0 && _TextSignature.Length > 0) ||
+                    (value.Length == 0 && SignatureRowColumn.MaxHeight > 0))
                 {
-                    if (value.Length > 0) TextBlockSignature.Text = value;
+                    if (value.Length > 0)
+                    {
+                        TextBlockSignature.Text = value;
+                        AnimatedStart = false;
+                    }
+                    else if (IsAnimatedSignatureText) SignatureAnimateStop();
+                    _TextSignature = value;
                     DoubleAnimation animation = AnimationDouble.Clone();
                     animation.To = value.Length > 0 ? 25 : 0;
                     animation.Duration = TimeSpan.FromMilliseconds(700d);
@@ -249,17 +274,17 @@ namespace IEL
                     Storyboard.SetTarget(animation, SignatureRowColumn);
                     Storyboard.SetTargetProperty(animation, new PropertyPath("(RowDefinition.MaxHeight)"));
                     storyboard.Begin();
-                    _TextSignature = value;
-                    AnimateStart = false;
                 }
                 else
                 {
                     _TextSignature = value;
                     TextBlockSignature.Text = value;
                 }
-                if (!IsAnimatedSignatureText && TextBlockSignature.ActualWidth >= BorderSignature.ActualWidth)
-                    SignatureAnimateStart(AnimateStart);
-                else if (IsAnimatedSignatureText) SignatureAnimateStop();
+                BorderSignature.UpdateLayout();
+                if (IsAnimatedSignatureText && value.Length > 0)
+                {
+                    SignatureAnimateStart(AnimatedStart);
+                }
             }
         }
 
@@ -272,10 +297,11 @@ namespace IEL
             set => TextBlockHead.Text = value;
         }
 
-        public IELInley()
+        internal IELInlay()
         {
             InitializeComponent();
             StateVisualization = StateVisual.Default;
+            TextBlockSignature.TextTrimming = TextTrimming.CharacterEllipsis;
             Page = null;
             Content = null;
 
@@ -346,7 +372,7 @@ namespace IEL
                     (e.LeftButton == MouseButtonState.Pressed && OnActivateMouseLeft != null) ||
                     (e.RightButton == MouseButtonState.Pressed && OnActivateMouseRight != null))
                     {
-                        //ClickDownAnimation();
+                        ClickDownAnimation();
                         TimerBorderInfo.Stop();
                     }
                 }
@@ -399,6 +425,39 @@ namespace IEL
                 TextBlockSignature.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
                 TextBlockHead.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
             };
+        }
+
+        /// <summary>
+        /// Анимировать нажатие (Down)
+        /// </summary>
+        private void ClickDownAnimation()
+        {
+            SolidColorBrush
+                Foreground = new(ForegroundSetting.Used),
+                Background = new(BackgroundSetting.Used),
+                BorderBrush = new(BorderBrushSetting.Used);
+            if (StateVisualization != StateVisual.Default)
+            {
+                (StateVisualization == StateVisual.LeftArrow ? TextBlockLeftArrow : TextBlockRightArrow)
+                    .Foreground = Foreground;
+                AnimationThickness.To = new(
+                    StateVisualization == StateVisual.RightArrow ? 5 : 0, 0,
+                    StateVisualization == StateVisual.LeftArrow ? 5 : 0, 0);
+                (StateVisualization == StateVisual.LeftArrow ? BorderLeftArrow : BorderRightArrow)
+                    .BeginAnimation(MarginProperty, AnimationThickness);
+            }
+
+            BorderMain.BorderBrush = BorderBrush;
+            BorderSignature.BorderBrush = BorderBrush;
+            BorderLeftArrow.BorderBrush = BorderBrush;
+            BorderRightArrow.BorderBrush = BorderBrush;
+
+            BorderMain.Background = Background;
+
+            TextBlockHead.Foreground = Foreground;
+            TextBlockSignature.Foreground = Foreground;
+            TextBlockLeftArrow.Foreground = Foreground;
+            TextBlockRightArrow.Foreground = Foreground;
         }
 
         /// <summary>
@@ -487,36 +546,36 @@ namespace IEL
         /// <param name="AnimateStart">Создать анимацию старта или нет</param>
         private void SignatureAnimateStart(bool AnimateStart)
         {
-            if (TextBlockSignature.ActualWidth > BorderSignature.ActualWidth)
+            if (AnimateStart)
             {
-                IsAnimatedSignatureText = true;
-                if (AnimateStart)
+                if (BorderSignature.ActualWidth == 0) TextBlockSignature.Opacity = 0d;
+                ThicknessAnimation animation = AnimationThickness.Clone();
+                animation.To = new(BorderSignature.ActualWidth, 0, 0, 0);
+                animation.FillBehavior = FillBehavior.Stop;
+                animation.Duration = TimeSpan.FromMilliseconds(600d);
+                animation.Completed += (sender, e) =>
                 {
-                    ThicknessAnimation animation = AnimationThickness.Clone();
-                    animation.To = new(BorderSignature.ActualWidth, 0, 0, 0);
-                    animation.FillBehavior = FillBehavior.Stop;
-                    animation.Duration = TimeSpan.FromMilliseconds(600d);
-                    animation.Completed += (sender, e) =>
+                    if (IsAnimatedSignatureText)
                     {
-                        if (TextBlockSignature.ActualWidth <= BorderSignature.ActualWidth) return;
-                        TextBlockSignature.Text = _TextSignature;
+                        TextBlockSignature.Opacity = 1d;
                         Animate();
-                    };
-                    TextBlockSignature.BeginAnimation(MarginProperty, animation);
-                }
-                else Animate();
-                void Animate()
-                {
-                    int Millisecond = 300 * TextBlockSignature.Text.Length;
-                    ThicknessAnimation animationForever = AnimationThickness.Clone();
-                    animationForever.EasingFunction = null;
-                    animationForever.From = new(BorderSignature.ActualWidth, 0, 0, 0);
-                    animationForever.To = new(-TextBlockSignature.ActualWidth, 0, 0, 0);
-                    animationForever.RepeatBehavior = RepeatBehavior.Forever;
-                    animationForever.Duration = TimeSpan.FromMilliseconds(Millisecond);
-                    animationForever.FillBehavior = FillBehavior.HoldEnd;
-                    TextBlockSignature.BeginAnimation(MarginProperty, animationForever);
-                }
+                    }
+                };
+                TextBlockSignature.BeginAnimation(MarginProperty, animation);
+            }
+            else Animate();
+            void Animate()
+            {
+                int Millisecond = 300 * TextBlockSignature.Text.Length;
+                if (Millisecond < 2500) Millisecond = 2500;
+                ThicknessAnimation animationForever = AnimationThickness.Clone();
+                animationForever.EasingFunction = null;
+                animationForever.From = new(BorderSignature.ActualWidth + 10, 0, 0, 0);
+                animationForever.To = new(-TextBlockSignature.ActualWidth - 10, 0, 0, 0);
+                animationForever.RepeatBehavior = RepeatBehavior.Forever;
+                animationForever.Duration = TimeSpan.FromMilliseconds(Millisecond);
+                animationForever.FillBehavior = FillBehavior.HoldEnd;
+                TextBlockSignature.BeginAnimation(MarginProperty, animationForever);
             }
         }
 
@@ -525,15 +584,11 @@ namespace IEL
         /// </summary>
         private void SignatureAnimateStop()
         {
-            if (IsAnimatedSignatureText)
-            {
-                IsAnimatedSignatureText = false;
-                ThicknessAnimation animation = AnimationThickness.Clone();
-                animation.To = new(0);
-                animation.FillBehavior = FillBehavior.HoldEnd;
-                animation.Duration = TimeSpan.FromMilliseconds(600d);
-                TextBlockSignature.BeginAnimation(MarginProperty, animation);
-            }
+            ThicknessAnimation animation = AnimationThickness.Clone();
+            animation.To = new(0);
+            animation.FillBehavior = FillBehavior.HoldEnd;
+            animation.Duration = TimeSpan.FromMilliseconds(600d);
+            TextBlockSignature.BeginAnimation(MarginProperty, animation);
         }
 
         /// <summary>
