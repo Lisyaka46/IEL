@@ -297,9 +297,31 @@ namespace IEL
             set => TextBlockHead.Text = value;
         }
 
-        internal IELInlay()
+        private bool _UsedState;
+        /// <summary>
+        /// Состояние использования
+        /// </summary>
+        public bool UsedState
+        {
+            get => _UsedState;
+            set
+            {
+                if (_UsedState == value) return;
+                _UsedState = value;
+                int Offset = value ? 2 : -2;
+                AnimationThickness.To = new(
+                    BorderMain.BorderThickness.Left + Offset, BorderMain.BorderThickness.Top + Offset,
+                    BorderMain.BorderThickness.Right + Offset, BorderMain.BorderThickness.Bottom + Offset);
+                AnimationThickness.Duration = TimeSpan.FromMilliseconds(800d);
+                BorderMain.BeginAnimation(BorderThicknessProperty, AnimationThickness);
+                MouseLeaveAnimation();
+            }
+        }
+
+        public IELInlay()
         {
             InitializeComponent();
+            _UsedState = false;
             StateVisualization = StateVisual.Default;
             TextBlockSignature.TextTrimming = TextTrimming.CharacterEllipsis;
             Page = null;
@@ -511,9 +533,9 @@ namespace IEL
         private void MouseLeaveAnimation()
         {
             Color
-                Foreground = ForegroundSetting.Default,
-                Background = BackgroundSetting.Default,
-                BorderBrush = BorderBrushSetting.Default;
+                Foreground = UsedState ? ForegroundSetting.Used : ForegroundSetting.Default,
+                Background = UsedState ? BackgroundSetting.Used : BackgroundSetting.Default,
+                BorderBrush = UsedState ? BorderBrushSetting.Used : BorderBrushSetting.Default;
 
             if (StateVisualization != StateVisual.Default)
             {

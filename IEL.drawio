@@ -35,7 +35,7 @@
     </mxGraphModel>
   </diagram>
   <diagram id="-gB4cSZo6_3nMkcXz_vv" name="FRONT Диаграмма">
-    <mxGraphModel dx="3734" dy="1398" grid="0" gridSize="10" guides="0" tooltips="1" connect="0" arrows="1" fold="1" page="0" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="3647" dy="1348" grid="0" gridSize="10" guides="0" tooltips="1" connect="0" arrows="1" fold="1" page="0" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -55,7 +55,7 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="M7uNiLFjUKpO2VLpQJOE-6" value="IIELButtonDefault" style="rounded=1;whiteSpace=wrap;fontSize=18;fontColor=#70967C;fontFamily=Lucida Console;" parent="1" vertex="1">
-          <mxGeometry x="-1193" y="682" width="210" height="80" as="geometry" />
+          <mxGeometry x="-1134" y="679" width="210" height="80" as="geometry" />
         </mxCell>
         <mxCell id="M7uNiLFjUKpO2VLpQJOE-7" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;endFill=0;startArrow=none;startFill=0;dashed=1;dashPattern=12 12;flowAnimation=1;strokeWidth=2;" parent="1" source="M7uNiLFjUKpO2VLpQJOE-9" target="M7uNiLFjUKpO2VLpQJOE-4" edge="1">
           <mxGeometry relative="1" as="geometry" />
@@ -108,7 +108,7 @@
         <mxCell id="M7uNiLFjUKpO2VLpQJOE-27" value="IIELTextBox" style="rounded=1;whiteSpace=wrap;fontSize=18;fontColor=#70967C;fontFamily=Lucida Console;" parent="1" vertex="1">
           <mxGeometry x="-1831" y="286" width="180" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="-Rgj35H5AiT4zdLkTLmI-2" style="edgeStyle=none;shape=connector;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;dashPattern=12 12;strokeColor=default;strokeWidth=2;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=11;fontColor=default;labelBackgroundColor=default;endArrow=none;endFill=0;flowAnimation=1;" edge="1" parent="1" source="M7uNiLFjUKpO2VLpQJOE-28" target="M7uNiLFjUKpO2VLpQJOE-24">
+        <mxCell id="-Rgj35H5AiT4zdLkTLmI-2" style="edgeStyle=none;shape=connector;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;dashPattern=12 12;strokeColor=default;strokeWidth=2;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=11;fontColor=default;labelBackgroundColor=default;endArrow=none;endFill=0;flowAnimation=1;" parent="1" source="M7uNiLFjUKpO2VLpQJOE-28" target="M7uNiLFjUKpO2VLpQJOE-24" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="M7uNiLFjUKpO2VLpQJOE-28" value="IIELBrowserPage" style="rounded=1;whiteSpace=wrap;fontSize=18;fontColor=#70967C;fontFamily=Lucida Console;" parent="1" vertex="1">
@@ -124,7 +124,7 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="K43k8vFx2dthZbpcqFvg-1" value="IIELInlay" style="rounded=1;whiteSpace=wrap;fontSize=18;fontColor=#70967C;fontFamily=Lucida Console;" parent="1" vertex="1">
-          <mxGeometry x="-943" y="821" width="180" height="80" as="geometry" />
+          <mxGeometry x="-1496" y="738" width="180" height="80" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
