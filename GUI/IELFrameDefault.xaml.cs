@@ -140,6 +140,9 @@ namespace IEL
             void Close(object? sender, EventArgs e)
             {
                 Anim.Completed -= Close;
+                if (Activate) return;
+                ActualFrame.Navigate(null);
+                BackFrame.Navigate(null);
                 //ActualFrame.Navigate(null);
             }
 

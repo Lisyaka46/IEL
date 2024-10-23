@@ -397,6 +397,7 @@ namespace IEL
         {
             int Index = IELInlays.IndexOf(inlay),
                 IndexNext = NextIndex(Index, InlaysCount);
+            if (Index == -1) return;
             IELInlay ActualInlay = IELInlays[Index];
             Canvas.SetZIndex(ActualInlay, 0);
 
