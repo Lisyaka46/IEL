@@ -259,6 +259,8 @@ namespace IEL
                 (Spectrum == BrushSettingQ.StateSpectrum.NotEnabled && IsEnabled)) return;
                 SolidColorBrush color = new(Value);
                 BorderButton.Background = color;
+                BorderRightArrow.Background = color;
+                BorderLeftArrow.Background = color;
             };
             BorderBrushChangeDefaultColor = (Spectrum, Value) =>
             {
@@ -266,6 +268,8 @@ namespace IEL
                 (Spectrum == BrushSettingQ.StateSpectrum.NotEnabled && IsEnabled)) return;
                 SolidColorBrush color = new(Value);
                 BorderButton.BorderBrush = color;
+                BorderRightArrow.BorderBrush = color;
+                BorderLeftArrow.BorderBrush = color;
             };
             ForegroundChangeDefaultColor = (Spectrum, Value) =>
             {
