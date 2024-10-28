@@ -49,6 +49,25 @@ namespace IEL.Classes
         /// </remarks>
         internal bool IsEnabled { get; set; }
 
+        private bool _UsedState;
+        /// <summary>
+        /// Состояние навигации использования
+        /// </summary>
+        /// <remarks>
+        /// При включённом состоянии цвет обычного состояния становится использованным, а использованный обычным
+        /// <code></code>
+        /// <b>Default <![CDATA[<]]>=<![CDATA[>]]> Used</b>
+        /// </remarks>
+        public bool UsedState
+        {
+            get => _UsedState;
+            set
+            {
+                _UsedState = value;
+                if (IsEnabled) ColorDefaultChange?.Invoke(StateSpectrum.Default, value ? _Used : _Default);
+            }
+        }
+
         #region Default
         private Color _Default;
         /// <summary>
@@ -56,7 +75,7 @@ namespace IEL.Classes
         /// </summary>
         public Color Default
         {
-            get => IsEnabled ? _Default : _NotEnabled;
+            get => IsEnabled ? (UsedState ? _Used : _Default) : _NotEnabled;
             set
             {
                 _Default = value;
@@ -102,7 +121,7 @@ namespace IEL.Classes
         /// </summary>
         public Color Used
         {
-            get => IsEnabled ? _Used : _NotEnabled;
+            get => IsEnabled ? (UsedState ? _Default : _Used) : _NotEnabled;
             set
             {
                 _Used = value;
@@ -122,6 +141,7 @@ namespace IEL.Classes
         internal BrushSettingQ(Color Default, Color Select, Color Used, Color NotEnabled)
         {
             IsEnabled = true;
+            _UsedState = false;
             _Default = Default;
             this.Select = Select;
             this.Used = Used;
@@ -131,6 +151,7 @@ namespace IEL.Classes
         internal BrushSettingQ(CreateStyle Style)
         {
             IsEnabled = true;
+            _UsedState = false;
             switch (Style)
             {
                 case CreateStyle.Background:
