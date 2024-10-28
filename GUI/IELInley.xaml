@@ -1,0 +1,34 @@
+﻿<UserControl x:Class="IEL.IELInlay"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:IEL"
+             mc:Ignorable="d" 
+             d:DesignHeight="48.605" d:DesignWidth="162.933">
+    <Border x:Name="BorderMain">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition x:Name="ColumnLeftArrow" Width="25"/>
+                <ColumnDefinition/>
+                <ColumnDefinition x:Name="ColumnRightArrow" Width="25"/>
+            </Grid.ColumnDefinitions>
+            <Border x:Name="BorderLeftArrow" BorderBrush="Black" BorderThickness="2,2,2,2" CornerRadius="6,6,6,6" Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Right">
+                <TextBlock x:Name="TextBlockLeftArrow" TextWrapping="Wrap" Text="&lt;" HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="Arial Black" FontSize="14" Padding="0,0.7,1,0"/>
+            </Border>
+            <Border x:Name="BorderRightArrow" BorderBrush="Black" BorderThickness="2,2,2,2" CornerRadius="6,6,6,6" Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Left" Grid.Column="2">
+                <TextBlock x:Name="TextBlockRightArrow" TextWrapping="Wrap" Text="&gt;" HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="Arial Black" FontSize="14" Padding="1,0.7,0,0"/>
+            </Border>
+            <Grid x:Name="GridMain" Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition x:Name="SignatureRowColumn" Height="25" MaxHeight="25"/>
+                </Grid.RowDefinitions>
+                <Border x:Name="BorderSignature" Grid.Row="1" BorderThickness="2,0,2,0" BorderBrush="Black" Margin="2,3,2,3" ClipToBounds="True">
+                    <TextBlock x:Name="TextBlockSignature" FontSize="14" HorizontalAlignment="Left" Text="Text"/>
+                </Border>
+                <TextBlock x:Name="TextBlockHead" Text="Head" FontSize="16" TextWrapping="WrapWithOverflow" TextTrimming="WordEllipsis" HorizontalAlignment="Center" VerticalAlignment="Center" AutomationProperties.IsRowHeader="True"/>
+            </Grid>
+        </Grid>
+    </Border>
+</UserControl>

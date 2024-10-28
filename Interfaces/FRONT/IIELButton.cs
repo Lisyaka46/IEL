@@ -7,22 +7,22 @@ namespace IEL.Interfaces.Front
     public interface IIELButton : IIELObject, IIELControl
     {
         /// <summary>
-        /// Перечисление состояний отображения кнопки
+        /// Перечисление состояний отображения
         /// </summary>
-        public enum StateButton
+        public enum StateVisual
         {
             /// <summary>
-            /// Обычное отображение кнопки
+            /// Обычное отображение
             /// </summary>
             Default = 0,
 
             /// <summary>
-            /// Отображение кнопки с левосторонней стрелкой
+            /// Отображение с левосторонней стрелкой
             /// </summary>
             LeftArrow = 1,
 
             /// <summary>
-            /// Отображение кнопки с правосторонней стрелкой
+            /// Отображение с правосторонней стрелкой
             /// </summary>
             RightArrow = 2,
         }
@@ -43,9 +43,9 @@ namespace IEL.Interfaces.Front
         public double IntervalHover { get; set; }
 
         /// <summary>
-        /// Состояние отображения кнопки
+        /// Состояние отображения
         /// </summary>
-        public StateButton StateVisualizationButton { get; }
+        public StateVisual StateVisualization { get; }
 
         /// <summary>
         /// Событие задержки курсора на элементе
