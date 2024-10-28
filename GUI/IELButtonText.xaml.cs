@@ -426,15 +426,13 @@ namespace IEL
 
             AnimationColor.To = BorderBrush;
             BorderButton.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
-            if (StateVisualization != StateVisual.Default)
-            {
-                if (StateVisualization == StateVisual.LeftArrow)
-                    BorderLeftArrow.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
-                else BorderRightArrow.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
-            }
+            BorderLeftArrow.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
+            BorderRightArrow.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
 
             AnimationColor.To = Background;
             BorderButton.Background.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
+            BorderLeftArrow.Background.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
+            BorderRightArrow.Background.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
 
             AnimationColor.To = Foreground;
             TextBlockButton.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
@@ -473,25 +471,28 @@ namespace IEL
             if (StateVisualization != StateVisual.Default)
             {
                 AnimationThickness.To = new(0);
-                if (StateVisualization == StateVisual.LeftArrow)
-                    BorderLeftArrow.BeginAnimation(MarginProperty, AnimationThickness);
-                else BorderRightArrow.BeginAnimation(MarginProperty, AnimationThickness);
+                (StateVisualization == StateVisual.LeftArrow ? BorderLeftArrow : BorderRightArrow)
+                    .BeginAnimation(MarginProperty, AnimationThickness);
             }
 
             AnimationColor.To = BorderBrush;
             BorderButton.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
-            if (StateVisualization != StateVisual.Default)
-            {
-                if (StateVisualization == StateVisual.LeftArrow)
-                    BorderLeftArrow.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
-                else BorderRightArrow.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
-            }
+            BorderRightArrow.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
+            BorderLeftArrow.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
 
             AnimationColor.To = Background;
             BorderButton.Background.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
+            BorderRightArrow.Background.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
+            BorderLeftArrow.Background.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
 
             AnimationColor.To = Foreground;
             TextBlockButton.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
+            if (StateVisualization != StateVisual.Default)
+            {
+                if (StateVisualization == StateVisual.LeftArrow)
+                    TextBlockLeftArrow.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
+                else TextBlockRightArrow.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
+            }
 
             AnimationDouble.To = 0d;
             ImageMouseButtonsUse.BeginAnimation(OpacityProperty, AnimationDouble);
