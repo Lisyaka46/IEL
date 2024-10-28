@@ -9,7 +9,7 @@ namespace IEL.Interfaces.Front
         /// <summary>
         /// Перечисление состояний отображения
         /// </summary>
-        public enum StateVisual
+        public enum StateButton
         {
             /// <summary>
             /// Обычное отображение
@@ -45,7 +45,7 @@ namespace IEL.Interfaces.Front
         /// <summary>
         /// Состояние отображения
         /// </summary>
-        public StateVisual StateVisualization { get; }
+        public StateButton StateVisualizationButton { get; }
 
         /// <summary>
         /// Событие задержки курсора на элементе

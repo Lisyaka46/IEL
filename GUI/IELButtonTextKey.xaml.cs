@@ -16,22 +16,22 @@ namespace IEL
     /// </summary>
     public partial class IELButtonTextKey : UserControl, IIELButtonKey
     {
-        #region StateVisualization
-        private StateVisual _StateVisualization = StateVisual.LeftArrow;
+        #region StateVisualizationButton
+        private StateButton _StateVisualizationButton = StateButton.LeftArrow;
         /// <summary>
         /// Состояние отображения направления
         /// </summary>
-        public StateVisual StateVisualization
+        public StateButton StateVisualizationButton
         {
-            get => _StateVisualization;
+            get => _StateVisualizationButton;
             set
             {
-                if (_StateVisualization == value) return;
-                ColumnLeftArrow.Width = new(value == StateVisual.LeftArrow ? 25 : 0);
-                ColumnRightArrow.Width = new(value == StateVisual.RightArrow ? 25 : 0);
-                BorderLeftArrow.Opacity = value == StateVisual.LeftArrow ? 1d : 0d;
-                BorderRightArrow.Opacity = value == StateVisual.RightArrow ? 1d : 0d;
-                _StateVisualization = value;
+                if (_StateVisualizationButton == value) return;
+                ColumnLeftArrow.Width = new(value == StateButton.LeftArrow ? 25 : 0);
+                ColumnRightArrow.Width = new(value == StateButton.RightArrow ? 25 : 0);
+                BorderLeftArrow.Opacity = value == StateButton.LeftArrow ? 1d : 0d;
+                BorderRightArrow.Opacity = value == StateButton.RightArrow ? 1d : 0d;
+                _StateVisualizationButton = value;
             }
         }
         #endregion
@@ -283,7 +283,7 @@ namespace IEL
         public IELButtonTextKey()
         {
             InitializeComponent();
-            StateVisualization = StateVisual.Default;
+            StateVisualizationButton = StateButton.Default;
 
             AnimationMillisecond = 100;
             BackgroundChangeDefaultColor = (Spectrum, Value) =>
@@ -395,7 +395,7 @@ namespace IEL
                 BorderButton.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
 
                 BorderCharKeyboard.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
-                if (StateVisualization == StateVisual.LeftArrow)
+                if (StateVisualizationButton == StateButton.LeftArrow)
                 {
                     BorderLeftArrow.BeginAnimation(MarginProperty, null);
                     BorderLeftArrow.Margin = new(0);
@@ -439,14 +439,14 @@ namespace IEL
             Foreground = ForegroundSetting.Used,
             Background = BackgroundSetting.Used,
             BorderBrush = BorderBrushSetting.Used;
-            if (StateVisualization != StateVisual.Default)
+            if (StateVisualizationButton != StateButton.Default)
             {
-                (StateVisualization == StateVisual.LeftArrow ? TextBlockLeftArrow : TextBlockRightArrow)
+                (StateVisualizationButton == StateButton.LeftArrow ? TextBlockLeftArrow : TextBlockRightArrow)
                     .Foreground = new SolidColorBrush(Foreground);
                 AnimationThickness.To = new(
-                    StateVisualization == StateVisual.RightArrow ? 5 : 0, 0,
-                    StateVisualization == StateVisual.LeftArrow ? 5 : 0, 0);
-                (StateVisualization == StateVisual.LeftArrow ? BorderLeftArrow : BorderRightArrow)
+                    StateVisualizationButton == StateButton.RightArrow ? 5 : 0, 0,
+                    StateVisualizationButton == StateButton.LeftArrow ? 5 : 0, 0);
+                (StateVisualizationButton == StateButton.LeftArrow ? BorderLeftArrow : BorderRightArrow)
                     .BeginAnimation(MarginProperty, AnimationThickness);
             }
             BorderCharKeyboard.BorderBrush = new SolidColorBrush(BorderBrush);
@@ -474,14 +474,14 @@ namespace IEL
                 Foreground = ForegroundSetting.Select,
                 Background = BackgroundSetting.Select,
                 BorderBrush = BorderBrushSetting.Select;
-            if (StateVisualization != StateVisual.Default)
+            if (StateVisualizationButton != StateButton.Default)
             {
                 AnimationThickness.To = new(
-                    StateVisualization == StateVisual.RightArrow ? -3 : 0,
+                    StateVisualizationButton == StateButton.RightArrow ? -3 : 0,
                     0,
-                    StateVisualization == StateVisual.LeftArrow ? -3 : 0,
+                    StateVisualizationButton == StateButton.LeftArrow ? -3 : 0,
                     0);
-                if (StateVisualization == StateVisual.LeftArrow)
+                if (StateVisualizationButton == StateButton.LeftArrow)
                     BorderLeftArrow.BeginAnimation(MarginProperty, AnimationThickness);
                 else BorderRightArrow.BeginAnimation(MarginProperty, AnimationThickness);
             }
@@ -529,10 +529,10 @@ namespace IEL
                 Foreground = ForegroundSetting.Default,
                 Background = BackgroundSetting.Default,
                 BorderBrush = BorderBrushSetting.Default;
-            if (StateVisualization != StateVisual.Default)
+            if (StateVisualizationButton != StateButton.Default)
             {
                 AnimationThickness.To = new(0);
-                if (StateVisualization == StateVisual.LeftArrow)
+                if (StateVisualizationButton == StateButton.LeftArrow)
                     BorderLeftArrow.BeginAnimation(MarginProperty, AnimationThickness);
                 else BorderRightArrow.BeginAnimation(MarginProperty, AnimationThickness);
             }

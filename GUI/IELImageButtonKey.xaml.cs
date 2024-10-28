@@ -16,22 +16,22 @@ namespace IEL
     /// </summary>
     public partial class IELImageButtonKey : UserControl, IIELButtonKey
     {
-        #region StateVisualization
-        private StateVisual _StateVisualization = StateVisual.LeftArrow;
+        #region StateVisualizationButton
+        private StateButton _StateVisualizationButton = StateButton.LeftArrow;
         /// <summary>
         /// Состояние отображения направления
         /// </summary>
-        public StateVisual StateVisualization
+        public StateButton StateVisualizationButton
         {
-            get => _StateVisualization;
+            get => _StateVisualizationButton;
             set
             {
-                if (_StateVisualization == value) return;
-                ColumnLeftArrow.Width = new(value == StateVisual.LeftArrow ? 25 : 0);
-                ColumnRightArrow.Width = new(value == StateVisual.RightArrow ? 25 : 0);
-                BorderLeftArrow.Opacity = value == StateVisual.LeftArrow ? 1d : 0d;
-                BorderRightArrow.Opacity = value == StateVisual.RightArrow ? 1d : 0d;
-                _StateVisualization = value;
+                if (_StateVisualizationButton == value) return;
+                ColumnLeftArrow.Width = new(value == StateButton.LeftArrow ? 25 : 0);
+                ColumnRightArrow.Width = new(value == StateButton.RightArrow ? 25 : 0);
+                BorderLeftArrow.Opacity = value == StateButton.LeftArrow ? 1d : 0d;
+                BorderRightArrow.Opacity = value == StateButton.RightArrow ? 1d : 0d;
+                _StateVisualizationButton = value;
             }
         }
         #endregion
@@ -286,7 +286,7 @@ namespace IEL
         public IELImageButtonKey()
         {
             InitializeComponent();
-            StateVisualization = StateVisual.Default;
+            StateVisualizationButton = StateButton.Default;
 
             AnimationMillisecond = 100;
             BackgroundChangeDefaultColor = (Spectrum, Value) =>

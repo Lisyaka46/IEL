@@ -18,22 +18,22 @@ namespace IEL
     /// </summary>
     public partial class IELInlay : UserControl, IIELInley
     {
-        #region StateVisualization
-        private StateVisual _StateVisualization = StateVisual.LeftArrow;
+        #region StateVisualizationButton
+        private StateButton _StateVisualizationButton = StateButton.LeftArrow;
         /// <summary>
         /// Состояние отображения направления
         /// </summary>
-        public StateVisual StateVisualization
+        public StateButton StateVisualizationButton
         {
-            get => _StateVisualization;
+            get => _StateVisualizationButton;
             set
             {
-                if (_StateVisualization == value) return;
-                ColumnLeftArrow.Width = new(value == StateVisual.LeftArrow ? 25 : 0);
-                ColumnRightArrow.Width = new(value == StateVisual.RightArrow ? 25 : 0);
-                BorderLeftArrow.Opacity = value == StateVisual.LeftArrow ? 1d : 0d;
-                BorderRightArrow.Opacity = value == StateVisual.RightArrow ? 1d : 0d;
-                _StateVisualization = value;
+                if (_StateVisualizationButton == value) return;
+                ColumnLeftArrow.Width = new(value == StateButton.LeftArrow ? 25 : 0);
+                ColumnRightArrow.Width = new(value == StateButton.RightArrow ? 25 : 0);
+                BorderLeftArrow.Opacity = value == StateButton.LeftArrow ? 1d : 0d;
+                BorderRightArrow.Opacity = value == StateButton.RightArrow ? 1d : 0d;
+                _StateVisualizationButton = value;
             }
         }
         #endregion
@@ -322,7 +322,7 @@ namespace IEL
         {
             InitializeComponent();
             _UsedState = false;
-            StateVisualization = StateVisual.Default;
+            StateVisualizationButton = StateButton.Default;
             TextBlockSignature.TextTrimming = TextTrimming.CharacterEllipsis;
             Page = null;
             Content = null;
@@ -424,9 +424,9 @@ namespace IEL
                 Foreground = (bool)e.NewValue ? ForegroundSetting.Default : ForegroundSetting.NotEnabled,
                 Background = (bool)e.NewValue ? BackgroundSetting.Default : BackgroundSetting.NotEnabled,
                 BorderBrush = (bool)e.NewValue ? BorderBrushSetting.Default : BorderBrushSetting.NotEnabled;
-                if (StateVisualization != StateVisual.Default)
+                if (StateVisualizationButton != StateButton.Default)
                 {
-                    if (StateVisualization == StateVisual.LeftArrow)
+                    if (StateVisualizationButton == StateButton.LeftArrow)
                     {
                         AnimationColor.To = Foreground;
                         TextBlockLeftArrow.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
@@ -458,14 +458,14 @@ namespace IEL
                 Foreground = new(ForegroundSetting.Used),
                 Background = new(BackgroundSetting.Used),
                 BorderBrush = new(BorderBrushSetting.Used);
-            if (StateVisualization != StateVisual.Default)
+            if (StateVisualizationButton != StateButton.Default)
             {
-                (StateVisualization == StateVisual.LeftArrow ? TextBlockLeftArrow : TextBlockRightArrow)
+                (StateVisualizationButton == StateButton.LeftArrow ? TextBlockLeftArrow : TextBlockRightArrow)
                     .Foreground = Foreground;
                 AnimationThickness.To = new(
-                    StateVisualization == StateVisual.RightArrow ? 5 : 0, 0,
-                    StateVisualization == StateVisual.LeftArrow ? 5 : 0, 0);
-                (StateVisualization == StateVisual.LeftArrow ? BorderLeftArrow : BorderRightArrow)
+                    StateVisualizationButton == StateButton.RightArrow ? 5 : 0, 0,
+                    StateVisualizationButton == StateButton.LeftArrow ? 5 : 0, 0);
+                (StateVisualizationButton == StateButton.LeftArrow ? BorderLeftArrow : BorderRightArrow)
                     .BeginAnimation(MarginProperty, AnimationThickness);
             }
 
@@ -492,23 +492,23 @@ namespace IEL
                 Background = BackgroundSetting.Select,
                 BorderBrush = BorderBrushSetting.Select;
 
-            if (StateVisualization != StateVisual.Default)
+            if (StateVisualizationButton != StateButton.Default)
             {
                 AnimationThickness.To = new(
-                    StateVisualization == StateVisual.RightArrow ? -3 : 0,
+                    StateVisualizationButton == StateButton.RightArrow ? -3 : 0,
                     0,
-                    StateVisualization == StateVisual.LeftArrow ? -3 : 0,
+                    StateVisualizationButton == StateButton.LeftArrow ? -3 : 0,
                     0);
-                if (StateVisualization == StateVisual.LeftArrow)
+                if (StateVisualizationButton == StateButton.LeftArrow)
                     BorderLeftArrow.BeginAnimation(MarginProperty, AnimationThickness);
                 else BorderRightArrow.BeginAnimation(MarginProperty, AnimationThickness);
             }
 
             AnimationColor.To = BorderBrush;
             BorderMain.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
-            if (StateVisualization != StateVisual.Default)
+            if (StateVisualizationButton != StateButton.Default)
             {
-                if (StateVisualization == StateVisual.LeftArrow)
+                if (StateVisualizationButton == StateButton.LeftArrow)
                     BorderLeftArrow.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
                 else BorderRightArrow.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
             }
@@ -519,9 +519,9 @@ namespace IEL
             AnimationColor.To = Foreground;
             TextBlockSignature.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
             TextBlockHead.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
-            if (StateVisualization != StateVisual.Default)
+            if (StateVisualizationButton != StateButton.Default)
             {
-                if (StateVisualization == StateVisual.LeftArrow)
+                if (StateVisualizationButton == StateButton.LeftArrow)
                     TextBlockLeftArrow.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
                 else TextBlockRightArrow.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
             }
@@ -537,19 +537,19 @@ namespace IEL
                 Background = UsedState ? BackgroundSetting.Used : BackgroundSetting.Default,
                 BorderBrush = UsedState ? BorderBrushSetting.Used : BorderBrushSetting.Default;
 
-            if (StateVisualization != StateVisual.Default)
+            if (StateVisualizationButton != StateButton.Default)
             {
                 AnimationThickness.To = new(0);
-                if (StateVisualization == StateVisual.LeftArrow)
+                if (StateVisualizationButton == StateButton.LeftArrow)
                     BorderLeftArrow.BeginAnimation(MarginProperty, AnimationThickness);
                 else BorderRightArrow.BeginAnimation(MarginProperty, AnimationThickness);
             }
 
             AnimationColor.To = BorderBrush;
             BorderMain.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
-            if (StateVisualization != StateVisual.Default)
+            if (StateVisualizationButton != StateButton.Default)
             {
-                if (StateVisualization == StateVisual.LeftArrow)
+                if (StateVisualizationButton == StateButton.LeftArrow)
                     BorderLeftArrow.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
                 else BorderRightArrow.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
             }
