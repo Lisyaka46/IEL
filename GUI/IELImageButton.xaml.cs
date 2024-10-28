@@ -216,6 +216,8 @@ namespace IEL
                 (Spectrum == BrushSettingQ.StateSpectrum.NotEnabled && IsEnabled)) return;
                 SolidColorBrush color = new(Value);
                 BorderButton.Background = color;
+                BorderRightArrow.Background = color;
+                BorderLeftArrow.Background = color;
             };
             BorderBrushChangeDefaultColor = (Spectrum, Value) =>
             {
@@ -223,6 +225,8 @@ namespace IEL
                 (Spectrum == BrushSettingQ.StateSpectrum.NotEnabled && IsEnabled)) return;
                 SolidColorBrush color = new(Value);
                 BorderButton.BorderBrush = color;
+                BorderRightArrow.BorderBrush = color;
+                BorderLeftArrow.BorderBrush = color;
             };
             ForegroundChangeDefaultColor = (Spectrum, Value) =>
             {
@@ -269,24 +273,32 @@ namespace IEL
 
                 AnimationColor.To = BorderBrush;
                 BorderButton.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
+                BorderRightArrow.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
+                BorderLeftArrow.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
                 AnimationColor.To = Background;
                 BorderButton.Background.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
+                BorderRightArrow.Background.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
+                BorderLeftArrow.Background.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
                 AnimationColor.To = Foreground;
                 TextBlockLeftArrow.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
                 TextBlockRightArrow.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
             };
 
-            MouseDown += (sender, e) =>
+            MouseLeftButtonDown += (sender, e) =>
             {
-                if (IsEnabled)
+                if (IsEnabled && OnActivateMouseLeft != null)
                 {
-                    if (
-                    (e.LeftButton == MouseButtonState.Pressed && OnActivateMouseLeft != null) ||
-                    (e.RightButton == MouseButtonState.Pressed && OnActivateMouseRight != null))
-                    {
-                        ClickDownAnimation();
-                        TimerBorderInfo.Stop();
-                    }
+                    ClickDownAnimation();
+                    TimerBorderInfo.Stop();
+                }
+            };
+
+            MouseRightButtonDown += (sender, e) =>
+            {
+                if (IsEnabled && OnActivateMouseRight != null)
+                {
+                    ClickDownAnimation();
+                    TimerBorderInfo.Stop();
                 }
             };
 
@@ -314,15 +326,21 @@ namespace IEL
         /// </summary>
         private void ClickDownAnimation()
         {
-            Color
-                Background = BackgroundSetting.Used,
-                BorderBrush = BorderBrushSetting.Used,
-                Foreground = ForegroundSetting.Used;
+            SolidColorBrush
+                Background = new(BackgroundSetting.Used),
+                BorderBrush = new(BorderBrushSetting.Used),
+                Foreground = new(ForegroundSetting.Used);
 
-            BorderButton.BorderBrush = new SolidColorBrush(BorderBrush);
-            BorderButton.Background = new SolidColorBrush(Background);
-            TextBlockLeftArrow.Foreground = new SolidColorBrush(Foreground);
-            TextBlockRightArrow.Foreground = new SolidColorBrush(Foreground);
+            BorderButton.BorderBrush = BorderBrush;
+            BorderRightArrow.BorderBrush = BorderBrush;
+            BorderLeftArrow.BorderBrush = BorderBrush;
+
+            BorderButton.Background = Background;
+            BorderRightArrow.Background = Background;
+            BorderLeftArrow.Background = Background;
+
+            TextBlockLeftArrow.Foreground = Foreground;
+            TextBlockRightArrow.Foreground = Foreground;
         }
 
         /// <summary>
@@ -337,9 +355,13 @@ namespace IEL
 
             AnimationColor.To = BorderBrush;
             BorderButton.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
+            BorderRightArrow.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
+            BorderLeftArrow.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
 
             AnimationColor.To = Background;
             BorderButton.Background.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
+            BorderRightArrow.Background.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
+            BorderLeftArrow.Background.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
 
             AnimationColor.To = Foreground;
             TextBlockLeftArrow.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
@@ -353,9 +375,13 @@ namespace IEL
         {
             AnimationColor.To = BorderBrushSetting.Default;
             BorderButton.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
+            BorderRightArrow.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
+            BorderLeftArrow.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
 
             AnimationColor.To = BackgroundSetting.Default;
             BorderButton.Background.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
+            BorderRightArrow.Background.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
+            BorderLeftArrow.Background.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
 
             AnimationColor.To = ForegroundSetting.Default;
             TextBlockLeftArrow.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
