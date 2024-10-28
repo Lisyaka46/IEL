@@ -4,48 +4,28 @@ using System.Windows.Media;
 
 namespace IEL.Interfaces.Front
 {
-    public interface IIELButton : IIELObject
+    public interface IIELButton : IIELObject, IIELControl
     {
         /// <summary>
-        /// Перечисление состояний отображения кнопки
+        /// Перечисление состояний отображения
         /// </summary>
-        public enum StateButton
+        public enum StateVisual
         {
             /// <summary>
-            /// Обычное отображение кнопки
+            /// Обычное отображение
             /// </summary>
             Default = 0,
 
             /// <summary>
-            /// Отображение кнопки с левосторонней стрелкой
+            /// Отображение с левосторонней стрелкой
             /// </summary>
             LeftArrow = 1,
 
             /// <summary>
-            /// Отображение кнопки с правосторонней стрелкой
+            /// Отображение с правосторонней стрелкой
             /// </summary>
             RightArrow = 2,
         }
-
-        #region Color Setting
-        /// <summary>
-        /// Объект обычного состояния фона
-        /// </summary>
-        public BrushSettingQ BackgroundSetting { get; }
-        /// <summary>
-        /// Объект обычного состояния границы
-        /// </summary>
-        public BrushSettingQ BorderBrushSetting { get; }
-        /// <summary>
-        /// Объект обычного состояния текста
-        /// </summary>
-        public BrushSettingQ ForegroundSetting { get; }
-        #endregion
-
-        /// <summary>
-        /// Количество миллисекунд для анимации
-        /// </summary>
-        public int AnimationMillisecond { get; set; }
 
         /// <summary>
         /// Скругление границ
@@ -63,9 +43,9 @@ namespace IEL.Interfaces.Front
         public double IntervalHover { get; set; }
 
         /// <summary>
-        /// Состояние отображения кнопки
+        /// Состояние отображения
         /// </summary>
-        public StateButton StateVisualizationButton { get; }
+        public StateVisual StateVisualization { get; }
 
         /// <summary>
         /// Событие задержки курсора на элементе

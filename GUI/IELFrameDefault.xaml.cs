@@ -84,7 +84,7 @@ namespace IEL
             {
                 if (ActualFrame.Content != null)
                 {
-                    if (((IPageDefault)ActualFrame.Content).ModulePage.ModuleName.Equals(Content.ModulePage.ModuleName))
+                    if (((IPageDefault)ActualFrame.Content).PageName.Equals(Content.PageName))
                     {
                         if (Activate) return;
                         else
@@ -107,9 +107,9 @@ namespace IEL
                 OpenFrame?.Invoke();
             }
             ActualFrame.Opacity = 0d;
-            Canvas.SetZIndex(BackFrame, 0);
-            Canvas.SetZIndex(ActualFrame, 1);
-            BackFrame.Navigate(null);
+            Grid.SetZIndex(ActualFrame, 1);
+            Grid.SetZIndex(BackFrame, 0);
+
             BackFrame.IsEnabled = false;
             ActualFrame.IsEnabled = true;
             ActualFrame.BeginAnimation(MarginProperty, null);
@@ -128,7 +128,7 @@ namespace IEL
             ActualFrame.BeginAnimation(OpacityProperty, DoubleAnimateObj);
             ThicknessAnimate.To = new(0);
             ActualFrame.BeginAnimation(MarginProperty, ThicknessAnimate);
-            ChangeElementPage?.Invoke(Content.ModulePage.ModuleName);
+            ChangeElementPage?.Invoke(Content.PageName);
         }
 
         /// <summary>
@@ -140,6 +140,9 @@ namespace IEL
             void Close(object? sender, EventArgs e)
             {
                 Anim.Completed -= Close;
+                if (Activate) return;
+                ActualFrame.Navigate(null);
+                BackFrame.Navigate(null);
                 //ActualFrame.Navigate(null);
             }
 

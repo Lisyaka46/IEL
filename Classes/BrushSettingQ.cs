@@ -29,10 +29,36 @@ namespace IEL.Classes
         }
 
         /// <summary>
+        /// Перечисление спектров цвета
+        /// </summary>
+        public enum StateSpectrum
+        {
+            /// <summary>
+            /// Спектр обычного состояния
+            /// </summary>
+            Default = 0,
+
+            /// <summary>
+            /// Спектр выделенного состояния
+            /// </summary>
+            Select = 1,
+
+            /// <summary>
+            /// Спектр использованного цвета
+            /// </summary>
+            Used = 2,
+
+            /// <summary>
+            /// Спектр отключённого цвета
+            /// </summary>
+            NotEnabled = 3,
+        }
+
+        /// <summary>
         /// Делегат события изменения обычного цвета
         /// </summary>
         /// <param name="Value">Новое значение цвета</param>
-        internal delegate void ColorDefaultChangeEventHandler(Color Value);
+        internal delegate void ColorDefaultChangeEventHandler(StateSpectrum Spectrum, Color Value);
 
         /// <summary>
         /// Событие изменения цвета обычного состояния
@@ -79,7 +105,7 @@ namespace IEL.Classes
             set
             {
                 _Default = value;
-                if (IsEnabled) ColorDefaultChange?.Invoke(value);
+                if (IsEnabled) ColorDefaultChange?.Invoke(StateSpectrum.Default, value);
             }
         }
         #endregion
@@ -95,6 +121,7 @@ namespace IEL.Classes
             set
             {
                 _NotEnabled = value;
+                ColorDefaultChange?.Invoke(StateSpectrum.NotEnabled, value);
             }
         }
         #endregion

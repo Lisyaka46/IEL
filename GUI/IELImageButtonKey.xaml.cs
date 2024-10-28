@@ -16,23 +16,25 @@ namespace IEL
     /// </summary>
     public partial class IELImageButtonKey : UserControl, IIELButtonKey
     {
-        private StateButton _StateVisualizationButton = StateButton.LeftArrow;
+        #region StateVisualization
+        private StateVisual _StateVisualization = StateVisual.LeftArrow;
         /// <summary>
-        /// Состояние отображения кнопки
+        /// Состояние отображения направления
         /// </summary>
-        public StateButton StateVisualizationButton
+        public StateVisual StateVisualization
         {
-            get => _StateVisualizationButton;
+            get => _StateVisualization;
             set
             {
-                if (_StateVisualizationButton == value) return;
-                ColumnLeftArrow.Width = new(value == StateButton.LeftArrow ? 25 : 0);
-                ColumnRightArrow.Width = new(value == StateButton.RightArrow ? 25 : 0);
-                BorderLeftArrow.Opacity = value == StateButton.LeftArrow ? 1d : 0d;
-                BorderRightArrow.Opacity = value == StateButton.RightArrow ? 1d : 0d;
-                _StateVisualizationButton = value;
+                if (_StateVisualization == value) return;
+                ColumnLeftArrow.Width = new(value == StateVisual.LeftArrow ? 25 : 0);
+                ColumnRightArrow.Width = new(value == StateVisual.RightArrow ? 25 : 0);
+                BorderLeftArrow.Opacity = value == StateVisual.LeftArrow ? 1d : 0d;
+                BorderRightArrow.Opacity = value == StateVisual.RightArrow ? 1d : 0d;
+                _StateVisualization = value;
             }
         }
+        #endregion
 
         #region Color Setting
         private BrushSettingQ? _BackgroundSetting;
@@ -44,7 +46,7 @@ namespace IEL
             get => _BackgroundSetting ?? new();
             set
             {
-                BackgroundChangeDefaultColor.Invoke(value.Default);
+                BackgroundChangeDefaultColor.Invoke(BrushSettingQ.StateSpectrum.Default, value.Default);
                 value.ColorDefaultChange += BackgroundChangeDefaultColor;
                 _BackgroundSetting = value;
             }
@@ -59,7 +61,7 @@ namespace IEL
             get => _BorderBrushSetting ?? new();
             set
             {
-                BorderBrushChangeDefaultColor.Invoke(value.Default);
+                BorderBrushChangeDefaultColor.Invoke(BrushSettingQ.StateSpectrum.Default, value.Default);
                 value.ColorDefaultChange += BorderBrushChangeDefaultColor;
                 _BorderBrushSetting = value;
             }
@@ -74,7 +76,7 @@ namespace IEL
             get => _ForegroundSetting ?? new();
             set
             {
-                ForegroundChangeDefaultColor.Invoke(value.Default);
+                ForegroundChangeDefaultColor.Invoke(BrushSettingQ.StateSpectrum.Default, value.Default);
                 value.ColorDefaultChange += ForegroundChangeDefaultColor;
                 _ForegroundSetting = value;
             }
@@ -210,12 +212,12 @@ namespace IEL
         }
 
         /// <summary>
-        /// Объект события активации кнопки левым щелчком мыши
+        /// Объект события активации левым щелчком мыши
         /// </summary>
         public IIELButtonKey.Activate? OnActivateMouseLeft { get; set; }
 
         /// <summary>
-        /// Объект события активации кнопки правым щелчком мыши
+        /// Объект события активации правым щелчком мыши
         /// </summary>
         public IIELButtonKey.Activate? OnActivateMouseRight { get; set; }
 
@@ -284,25 +286,31 @@ namespace IEL
         public IELImageButtonKey()
         {
             InitializeComponent();
-            StateVisualizationButton = StateButton.Default;
+            StateVisualization = StateVisual.Default;
 
             AnimationMillisecond = 100;
-            BackgroundChangeDefaultColor = (Value) =>
+            BackgroundChangeDefaultColor = (Spectrum, Value) =>
             {
+                if ((Spectrum == BrushSettingQ.StateSpectrum.Default && !IsEnabled) ||
+                (Spectrum == BrushSettingQ.StateSpectrum.NotEnabled && IsEnabled)) return;
                 SolidColorBrush color = new(Value);
                 BorderButton.Background = color;
                 BorderButtonKey.Background = color;
             };
-            BorderBrushChangeDefaultColor = (Value) =>
+            BorderBrushChangeDefaultColor = (Spectrum, Value) =>
             {
+                if ((Spectrum == BrushSettingQ.StateSpectrum.Default && !IsEnabled) ||
+                (Spectrum == BrushSettingQ.StateSpectrum.NotEnabled && IsEnabled)) return;
                 SolidColorBrush color = new(Value);
                 BorderButton.BorderBrush = color;
                 BorderButtonKey.BorderBrush = color;
                 BorderLeftArrow.BorderBrush = color;
                 BorderRightArrow.BorderBrush = color;
             };
-            ForegroundChangeDefaultColor = (Value) =>
+            ForegroundChangeDefaultColor = (Spectrum, Value) =>
             {
+                if ((Spectrum == BrushSettingQ.StateSpectrum.Default && !IsEnabled) ||
+                (Spectrum == BrushSettingQ.StateSpectrum.NotEnabled && IsEnabled)) return;
                 SolidColorBrush color = new(Value);
                 TextBlockKey.Foreground = color;
                 TextBlockLeftArrow.Foreground = color;
@@ -324,11 +332,19 @@ namespace IEL
             ImageMouseButtonsUse.Opacity = 0d;
             BorderButton.MouseEnter += (sender, e) =>
             {
-                if (IsEnabled) MouseEnterDetect();
+                if (IsEnabled)
+                {
+                    MouseEnterDetect();
+                    TimerBorderInfo.Start();
+                }
             };
             BorderButton.MouseLeave += (sender, e) =>
             {
-                if (IsEnabled) MouseLeaveDetect();
+                if (IsEnabled)
+                {
+                    MouseLeaveDetect();
+                    TimerBorderInfo.Stop();
+                }
             };
 
             IsEnabledChanged += (sender, e) =>
@@ -356,7 +372,11 @@ namespace IEL
                 {
                     if (
                     (e.LeftButton == MouseButtonState.Pressed && OnActivateMouseLeft != null) ||
-                    (e.RightButton == MouseButtonState.Pressed && OnActivateMouseRight != null)) ClickDownAnimation();
+                    (e.RightButton == MouseButtonState.Pressed && OnActivateMouseRight != null))
+                    {
+                        ClickDownAnimation();
+                        TimerBorderInfo.Stop();
+                    }
                 }
             };
 
