@@ -210,6 +210,7 @@ namespace IEL
             StateVisualizationButton = StateButton.Default;
 
             AnimationMillisecond = 100;
+            BorderThicknessBlock = new(3, 3, 3, 3);
             BackgroundChangeDefaultColor = (Spectrum, Value) =>
             {
                 if ((Spectrum == BrushSettingQ.StateSpectrum.Default && !IsEnabled) ||
