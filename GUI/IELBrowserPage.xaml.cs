@@ -329,14 +329,12 @@ namespace IEL
             Canvas.SetZIndex(Inlay, 1);
 
             ThicknessAnimation animationThickness = AnimationThickness.Clone();
-            //animationThickness.BeginTime = TimeSpan.FromMilliseconds(800d);
             if (MarginStart != null) animationThickness.From = MarginStart.Value;
             animationThickness.To = MarginActivateInlay;
             animationThickness.Duration = TimeSpan.FromMilliseconds(800d);
             Inlay.BeginAnimation(MarginProperty, animationThickness);
 
             DoubleAnimation animationDouble = AnimationDouble.Clone();
-            //animationDouble.BeginTime = TimeSpan.FromMilliseconds(800d);
             animationDouble.To = 1d;
             animationDouble.Duration = TimeSpan.FromMilliseconds(800d);
             Inlay.BeginAnimation(OpacityProperty, animationDouble);
@@ -399,6 +397,7 @@ namespace IEL
                 IndexNext = NextIndex(Index, InlaysCount);
             if (Index == -1) return;
             IELInlay ActualInlay = IELInlays[Index];
+            ActualInlay.SetPage<IPageDefault>(null);
             Canvas.SetZIndex(ActualInlay, 0);
 
             ThicknessAnimation AanimationThickness = AnimationThickness.Clone();

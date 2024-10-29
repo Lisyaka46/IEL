@@ -303,8 +303,9 @@ namespace IEL
             AddBufferElementPageAction(ActiveObject);
             
             PanelActionActivate = false;
-            EventClosingPanelAction?.Invoke(ActiveObject.ElementInPanel.Name);
+            string NamePanel = ActiveObject.ElementInPanel.Name;
             ClearInformation();
+            EventClosingPanelAction?.Invoke(NamePanel);
         }
 
         /// <summary>

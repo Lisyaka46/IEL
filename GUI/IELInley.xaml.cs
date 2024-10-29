@@ -617,7 +617,7 @@ namespace IEL
         /// Установить вкладке объект страницы
         /// </summary>
         /// <param name="page">Объект страницы</param>
-        internal void SetPage<T>(T page) where T : IPageDefault
+        internal void SetPage<T>(T? page) where T : IPageDefault
         {
             Page = page;
             Content = Page;
