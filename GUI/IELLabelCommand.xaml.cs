@@ -208,7 +208,24 @@ namespace IEL
             }
         }
 
-        public LabelAction Label { get; set; }
+        private LabelAction _Label = LabelAction.Empty;
+        /// <summary>
+        /// Ярлык который выполняется объектом
+        /// </summary>
+        public LabelAction Label
+        {
+            get => _Label;
+            set
+            {
+                _Label = value;
+                if (value == LabelAction.Empty) IsEnabled = false;
+                else
+                {
+                    if (!IsEnabled) IsEnabled = true;
+                    TextBlockName.Text = _Label.Name;
+                }
+            }
+        }
 
         private int _Index;
         public int Index
