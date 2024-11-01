@@ -164,6 +164,21 @@ namespace IEL
         /// </summary>
         private readonly CounterScrollBar ScrollBar;
 
+        /// <summary>
+        /// Делегат события без параметров
+        /// </summary>
+        public delegate void DelegateVoidHandler();
+
+        /// <summary>
+        /// Событие закрытия всех вкладок браузера
+        /// </summary>
+        public event DelegateVoidHandler? EventCloseBrowser;
+
+        /// <summary>
+        /// Событие изменения активной вкладки
+        /// </summary>
+        public event DelegateVoidHandler? EventChangeActiveInlay;
+
         public IELBrowserPage()
         {
             InitializeComponent();
@@ -208,7 +223,13 @@ namespace IEL
             };
         }
 
-        //
+        /// <summary>
+        /// Создать вкладку в браузере
+        /// </summary>
+        /// <param name="Content">Страница ссылки</param>
+        /// <param name="Head">Заголовок вкладки</param>
+        /// <param name="Signature">Сигнатура-описание вкладки</param>
+        /// <returns>Созданная вкладка</returns>
         private IELInlay CreateInlay(IPageDefault Content, string Head, string? Signature = null)
         {
             IELInlay Inlay = new()
@@ -307,6 +328,7 @@ namespace IEL
             IELFrameBrowser.NextPage(Page, index.Value < ActivateIndex ? IIELFrame.OrientationMove.Left : IIELFrame.OrientationMove.Right);
             ActivateIndex = index.Value;
             ScrollBar.Value = index.Value;
+            EventChangeActiveInlay?.Invoke();
         }
 
         /// <summary>
@@ -391,6 +413,10 @@ namespace IEL
             }
         }
 
+        /// <summary>
+        /// Удалить вкладку в браузере
+        /// </summary>
+        /// <param name="inlay">Объект вкладки</param>
         private void DeleteInlayPage(IELInlay inlay)
         {
             int Index = IELInlays.IndexOf(inlay),
@@ -421,6 +447,7 @@ namespace IEL
             {
                 ActivateIndex = -1;
                 IELFrameBrowser.CloseFrame();
+                EventCloseBrowser?.Invoke();
             }
             else
             {

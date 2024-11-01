@@ -1,5 +1,6 @@
 ﻿using IEL.Interfaces.Core;
 using IEL.Interfaces.Front;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows;
 using System.Windows.Controls;
@@ -110,13 +111,9 @@ namespace IEL
             Grid.SetZIndex(ActualFrame, 1);
             Grid.SetZIndex(BackFrame, 0);
 
-            BackFrame.IsEnabled = false;
-            ActualFrame.IsEnabled = true;
             ActualFrame.BeginAnimation(MarginProperty, null);
             ActualFrame.Margin = Orientation == OrientationMove.Left ? new(-20, -20, 40, -3) : new(40, -10, -20, -3);
 
-            //Content.ModulePage.KeyboardMode = BackPage.ModulePage.KeyboardMode;
-            //BackPage.ModulePage.KeyboardMode = false;
             ActualFrame.Navigate(Content);
 
             DoubleAnimateObj.To = 0d;
@@ -136,21 +133,11 @@ namespace IEL
         /// </summary>
         public void CloseFrame()
         {
-            DoubleAnimation Anim = DoubleAnimateObj.Clone();
-            void Close(object? sender, EventArgs e)
-            {
-                Anim.Completed -= Close;
-                if (Activate) return;
-                ActualFrame.Navigate(null);
-                BackFrame.Navigate(null);
-                //ActualFrame.Navigate(null);
-            }
-
-            Anim.To = 0d;
-            Anim.FillBehavior = FillBehavior.Stop;
-            Anim.Completed += Close;
+            BackFrame.Navigate(null);
+            BackFrame.Source = null;
+            ActualFrame.Navigate(null);
+            ActualFrame.Source = null;
             Activate = false;
-            ActualFrame.BeginAnimation(OpacityProperty, Anim);
             ClosingFrame?.Invoke();
         }
     }
