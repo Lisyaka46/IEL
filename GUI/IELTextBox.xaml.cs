@@ -295,6 +295,15 @@ namespace IEL
         }
 
         /// <summary>
+        /// Событие изменения текста
+        /// </summary>
+        public event TextChangedEventHandler? TextChanged
+        {
+            add => TextBoxMain.TextChanged += value;
+            remove => TextBoxMain.TextChanged -= value;
+        }
+
+        /// <summary>
         /// Фокусировка текста
         /// </summary>
         public bool IsFocus { get; private set; } = false;
@@ -302,7 +311,6 @@ namespace IEL
         public IELTextBox()
         {
             InitializeComponent();
-
             TextName = string.Empty;
             ShowNameText = false;
             TextBoxMain.ContextMenu = null;
