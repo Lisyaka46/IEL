@@ -18,18 +18,17 @@
                 <IEL:IELFrameDefault x:Name="IELFrameBrowser"/>
             </Grid>
             <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="60"/>
-                    <ColumnDefinition/>
-                    <ColumnDefinition Width="60"/>
-                </Grid.ColumnDefinitions>
-                <Border x:Name="BorderMainPage" Grid.Column="1">
-                    <Grid Grid.Column="1">
-                        <Grid x:Name="GridMainInlays"/>
+                <Border x:Name="BorderMainPage" Grid.Column="1" BorderThickness="0,0,0,2" BorderBrush="Black">
+                    <Grid>
+                        <Grid x:Name="GridMainButtons">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="50" MaxWidth="50" MinWidth="50"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid x:Name="GridMainInlays"/>
+                        </Grid>
                     </Grid>
                 </Border>
-                <TextBlock x:Name="TextBlockLeftNameInlay" HorizontalAlignment="Center" Text="Left" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" TextWrapping="Wrap"/>
-                <TextBlock x:Name="TextBlockRightNameInlay" Grid.Column="2" TextWrapping="Wrap" Text="Right" HorizontalAlignment="Center" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
             </Grid>
             <TextBlock HorizontalAlignment="Left" Margin="748,225,0,0" Grid.Row="1" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top"/>
         </Grid>

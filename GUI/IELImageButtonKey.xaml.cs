@@ -281,6 +281,15 @@ namespace IEL
         }
 
         /// <summary>
+        /// Смещение контента в объекте
+        /// </summary>
+        public Thickness PaddingContent
+        {
+            get => BorderButton.Padding;
+            set => BorderButton.Padding = value;
+        }
+
+        /// <summary>
         /// Инициализировать объект кнопки с изображением
         /// </summary>
         public IELImageButtonKey()

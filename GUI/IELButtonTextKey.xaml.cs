@@ -280,6 +280,15 @@ namespace IEL
         /// </summary>
         private bool EnterButton = false;
 
+        /// <summary>
+        /// Смещение контента в объекте
+        /// </summary>
+        public Thickness PaddingContent
+        {
+            get => BorderButton.Padding;
+            set => BorderButton.Padding = value;
+        }
+
         public IELButtonTextKey()
         {
             InitializeComponent();

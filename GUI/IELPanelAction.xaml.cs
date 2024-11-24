@@ -120,9 +120,14 @@ namespace IEL
         readonly List<(IPageKey, string)> BufferPages = [];
 
         /// <summary>
-        /// Имя объекта страницы
+        /// Имя активного объекта страницы
         /// </summary>
-        public string NameFrameElement => ActiveObject.ElementInPanel?.Name ?? string.Empty;
+        public string ActualNameFrameElement => PanelActionActivate ? ActiveObject.ElementInPanel?.Name ?? string.Empty : string.Empty;
+
+        /// <summary>
+        /// Имя активной страницы
+        /// </summary>
+        public string ActualNamePage => PanelActionActivate ? ActualPage.PageName ?? string.Empty : string.Empty;
 
         /// <summary>
         /// Объект актуальной страницы
@@ -147,7 +152,7 @@ namespace IEL
         /// <summary>
         /// Объект настроек панели для активного объекта реализации
         /// </summary>
-        private SettingsPanelActionFrameworkElement ActiveObject;
+        private PanelActionSettingsFrameworkElement ActiveObject;
 
         /// <summary>
         /// Индекс смены окна страницы
@@ -242,7 +247,7 @@ namespace IEL
         /// Метод использования панели действий независимо на её состояние
         /// </summary>
         /// <param name="Settings">Объект настроек для взаимодействия с панелью действий</param>
-        public void UsingPanelAction(SettingsPanelActionFrameworkElement Settings)
+        public void UsingPanelAction(PanelActionSettingsFrameworkElement Settings)
         {
             if (!PanelActionActivate) OpenPanelAction(Settings);
             else
@@ -266,11 +271,20 @@ namespace IEL
         }
 
         /// <summary>
+        /// Перемещение панели действий к курсору учитывая активные настройки
+        /// </summary>
+        /// <exception cref="InvalidOperationException"></exception>
+        public void MovingPanelAction()
+        {
+            if (!PanelActionActivate) throw new InvalidOperationException("Невозможно переместить объект в отключённом состоянии...");
+        }
+
+        /// <summary>
         /// Метод открытия панели действий
         /// </summary>
         /// <param name="Settings">Объект настроек для открытия панели действий</param>
         [MethodImpl(MethodImplOptions.AggressiveOptimization)]
-        private void OpenPanelAction(SettingsPanelActionFrameworkElement Settings)
+        private void OpenPanelAction(PanelActionSettingsFrameworkElement Settings)
         {
             if (PanelActionActivate) return;
             Focus();
@@ -306,6 +320,24 @@ namespace IEL
             string NamePanel = ActiveObject.ElementInPanel.Name;
             ClearInformation();
             EventClosingPanelAction?.Invoke(NamePanel);
+        }
+
+        /// <summary>
+        /// Перенаправить страницу панели и переместиться в другой элемент
+        /// </summary>
+        /// <remarks>
+        /// <b>Страница по умолчанию в настройках не учитывается</b>
+        /// </remarks>
+        /// <param name="Settings">Настройки для переключения между объектами</param>
+        /// <param name="Content">Новая страница панели</param>
+        /// <param name="RightAlign">Правая ориентация движения</param>
+        /// <exception cref="Exception">Исключение при отключённом состоянии панели действий</exception>
+        public void NextPage(PanelActionSettingsFrameworkElement Settings, [NotNull()] IPageKey Content)
+        {
+            if (!PanelActionActivate) throw new Exception("При отключённом состоянии нельзя переключаться между страницами");
+            double X = Mouse.GetPosition((IInputElement)VisualParent).X;
+            AnimationMovePanelAction(PositionAnimActionPanel.Default, Settings.SizedPanel, Settings.ElementInPanel);
+            NextPage(Content, X >= Margin.Left);
         }
 
         /// <summary>
@@ -362,7 +394,7 @@ namespace IEL
         /// Метод добавления объекта в буфер
         /// </summary>
         /// <param name="SettingsElement">Объект настроек для добавления в буфер</param>
-        private void AddBufferElementPageAction(SettingsPanelActionFrameworkElement SettingsElement)
+        private void AddBufferElementPageAction(PanelActionSettingsFrameworkElement SettingsElement)
         {
             if (!((IPageKey)ActualFrame.Content).PageName.Equals(SettingsElement.DefaultPageInPanel.PageName))
                 BufferPages.Add(((IPageKey)ActualFrame.Content, SettingsElement.ElementInPanel.Name));

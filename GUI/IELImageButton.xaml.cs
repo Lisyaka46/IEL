@@ -192,6 +192,15 @@ namespace IEL
         }
 
         /// <summary>
+        /// Смещение контента в объекте
+        /// </summary>
+        public Thickness PaddingContent
+        {
+            get => BorderButton.Padding;
+            set => BorderButton.Padding = value;
+        }
+
+        /// <summary>
         /// Объект события активации левым щелчком мыши
         /// </summary>
         public IIELButtonDefault.Activate? OnActivateMouseLeft { get; set; }
@@ -210,7 +219,6 @@ namespace IEL
             StateVisualizationButton = StateButton.Default;
 
             AnimationMillisecond = 100;
-            BorderThicknessBlock = new(3, 3, 3, 3);
             BackgroundChangeDefaultColor = (Spectrum, Value) =>
             {
                 if ((Spectrum == BrushSettingQ.StateSpectrum.Default && !IsEnabled) ||

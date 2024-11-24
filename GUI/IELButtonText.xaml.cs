@@ -188,6 +188,15 @@ namespace IEL
         }
 
         /// <summary>
+        /// Смещение контента в объекте
+        /// </summary>
+        public Thickness PaddingContent
+        {
+            get => BorderButton.Padding;
+            set => BorderButton.Padding = value;
+        }
+
+        /// <summary>
         /// Текст кнопки
         /// </summary>
         public string Text

@@ -186,7 +186,14 @@ namespace IEL
         public Thickness BorderThicknessBlock
         {
             get => BorderMain.BorderThickness;
-            set => BorderMain.BorderThickness = value;
+            set
+            {
+                BorderMain.BorderThickness = value;
+                BorderThicknessActive = new(
+                value.Left + OffsetBorder, value.Top + OffsetBorder,
+                value.Right + OffsetBorder, value.Bottom + OffsetBorder);
+                BorderThicknessDiactive = value;
+            }
         }
 
         /// <summary>
@@ -233,7 +240,7 @@ namespace IEL
             {
                 if (value)
                 {
-                    if (_TextSignature.Length > 0) SignatureAnimateStart(true);
+                    if (_TextSignature.Length > 0) UsingSignatureAnimate(true);
                     TextBlockSignature.TextTrimming = TextTrimming.None;
                 }
                 else
@@ -283,7 +290,7 @@ namespace IEL
                 BorderSignature.UpdateLayout();
                 if (IsAnimatedSignatureText && value.Length > 0)
                 {
-                    SignatureAnimateStart(AnimatedStart);
+                    UsingSignatureAnimate(AnimatedStart);
                 }
             }
         }
@@ -308,19 +315,44 @@ namespace IEL
             {
                 if (_UsedState == value) return;
                 _UsedState = value;
-                int Offset = value ? 2 : -2;
-                AnimationThickness.To = new(
-                    BorderMain.BorderThickness.Left + Offset, BorderMain.BorderThickness.Top + Offset,
-                    BorderMain.BorderThickness.Right + Offset, BorderMain.BorderThickness.Bottom + Offset);
+                AnimationThickness.To = value ? BorderThicknessActive : BorderThicknessDiactive;
                 AnimationThickness.Duration = TimeSpan.FromMilliseconds(800d);
                 BorderMain.BeginAnimation(BorderThicknessProperty, AnimationThickness);
                 MouseLeaveAnimation();
             }
         }
 
+        /// <summary>
+        /// Смещение контента в объекте
+        /// </summary>
+        public Thickness PaddingContent
+        {
+            get => BorderMain.Padding;
+            set => BorderMain.Padding = value;
+        }
+
+        /// <summary>
+        /// Константа оффсета изменения между состояниями барьера
+        /// </summary>
+        private const int OffsetBorder = 2;
+
+        /// <summary>
+        /// Активное значение барьера вкладки
+        /// </summary>
+        private Thickness BorderThicknessActive;
+
+        /// <summary>
+        /// Диактивированное значение барьера вкладки
+        /// </summary>
+        private Thickness BorderThicknessDiactive;
+
         public IELInlay()
         {
             InitializeComponent();
+            BorderThicknessActive = new(
+                BorderThicknessBlock.Left + OffsetBorder, BorderThicknessBlock.Top + OffsetBorder,
+                BorderThicknessBlock.Right + OffsetBorder, BorderThicknessBlock.Bottom + OffsetBorder);
+            BorderThicknessDiactive = BorderThicknessBlock;
             _UsedState = false;
             StateVisualizationButton = StateButton.Default;
             TextBlockSignature.TextTrimming = TextTrimming.CharacterEllipsis;
@@ -566,7 +598,7 @@ namespace IEL
         /// Функция старта анимации подписи заголовка
         /// </summary>
         /// <param name="AnimateStart">Создать анимацию старта или нет</param>
-        private void SignatureAnimateStart(bool AnimateStart)
+        private void UsingSignatureAnimate(bool AnimateStart)
         {
             if (AnimateStart)
             {
@@ -579,6 +611,7 @@ namespace IEL
                 {
                     if (IsAnimatedSignatureText)
                     {
+                        TextBlockSignature.Margin = new(BorderSignature.ActualWidth, 0, 0, 0);
                         TextBlockSignature.Opacity = 1d;
                         Animate();
                     }
@@ -592,11 +625,14 @@ namespace IEL
                 if (Millisecond < 2500) Millisecond = 2500;
                 ThicknessAnimation animationForever = AnimationThickness.Clone();
                 animationForever.EasingFunction = null;
-                animationForever.From = new(BorderSignature.ActualWidth + 10, 0, 0, 0);
                 animationForever.To = new(-TextBlockSignature.ActualWidth - 10, 0, 0, 0);
-                animationForever.RepeatBehavior = RepeatBehavior.Forever;
                 animationForever.Duration = TimeSpan.FromMilliseconds(Millisecond);
-                animationForever.FillBehavior = FillBehavior.HoldEnd;
+                animationForever.FillBehavior = FillBehavior.Stop;
+                animationForever.Completed += (sender, e) =>
+                {
+                    TextBlockSignature.Margin = new(BorderSignature.ActualWidth, 0, 0, 0);
+                    TextBlockSignature.BeginAnimation(MarginProperty, animationForever);
+                };
                 TextBlockSignature.BeginAnimation(MarginProperty, animationForever);
             }
         }

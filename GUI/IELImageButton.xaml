@@ -6,7 +6,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="36.794" d:DesignWidth="95.838" Cursor="Hand">
     <Grid>
-        <Border x:Name="BorderButton" BorderThickness="3,3,3,3" CornerRadius="10,10,10,10" BorderBrush="Black" Background="White">
+        <Border x:Name="BorderButton" CornerRadius="10,10,10,10" BorderBrush="Black" Background="White">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition x:Name="ColumnLeftArrow" Width="25"/>
