@@ -1,17 +1,17 @@
 <mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/24.7.17 Chrome/128.0.6613.36 Electron/32.0.1 Safari/537.36" version="24.7.17" pages="2">
   <diagram name="CORE Диаграмма" id="ia_T1l1x6hs6FPcz-3SK">
-    <mxGraphModel dx="2047" dy="948" grid="0" gridSize="10" guides="0" tooltips="1" connect="0" arrows="1" fold="1" page="0" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="1372" dy="1236" grid="0" gridSize="10" guides="0" tooltips="1" connect="0" arrows="1" fold="1" page="0" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
         <mxCell id="MWzFeV6izfAVd_EmdzCG-8" value="BrushSettingQ" style="rounded=1;whiteSpace=wrap;fontSize=18;fontColor=#70967C;fontFamily=Lucida Console;strokeWidth=3;" parent="1" vertex="1">
-          <mxGeometry x="-22" y="188" width="170" height="80" as="geometry" />
+          <mxGeometry x="320" y="-220" width="170" height="80" as="geometry" />
         </mxCell>
         <mxCell id="MWzFeV6izfAVd_EmdzCG-9" value="ILabelAction" style="rounded=1;whiteSpace=wrap;fontSize=18;fontColor=#70967C;fontFamily=Lucida Console;strokeWidth=3;" parent="1" vertex="1">
-          <mxGeometry x="-22" y="328" width="170" height="80" as="geometry" />
+          <mxGeometry x="320" y="-80" width="170" height="80" as="geometry" />
         </mxCell>
         <mxCell id="MWzFeV6izfAVd_EmdzCG-12" value="SettingsPanelActionFrameworkElement" style="rounded=1;whiteSpace=wrap;fontSize=18;fontColor=#70967C;fontFamily=Lucida Console;strokeWidth=3;" parent="1" vertex="1">
-          <mxGeometry x="-18" y="58" width="430" height="80" as="geometry" />
+          <mxGeometry x="324" y="-350" width="430" height="80" as="geometry" />
         </mxCell>
         <mxCell id="r3l4vlM_85dYpehm9L9s-1" value="IPageKey" style="rounded=1;whiteSpace=wrap;fontSize=18;fontColor=#70967C;fontFamily=Lucida Console;" parent="1" vertex="1">
           <mxGeometry x="829" y="357" width="180" height="80" as="geometry" />
@@ -26,16 +26,22 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="r3l4vlM_85dYpehm9L9s-4" value="IPageDefault" style="rounded=1;whiteSpace=wrap;fontSize=18;fontColor=#70967C;fontFamily=Lucida Console;" parent="1" vertex="1">
-          <mxGeometry x="429" y="361" width="180" height="80" as="geometry" />
+          <mxGeometry x="365" y="311" width="180" height="80" as="geometry" />
         </mxCell>
         <mxCell id="r3l4vlM_85dYpehm9L9s-5" value="IPage" style="rounded=1;whiteSpace=wrap;fontSize=18;fontColor=#70967C;fontFamily=Lucida Console;strokeWidth=3;" parent="1" vertex="1">
           <mxGeometry x="629" y="217" width="180" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="xRkEdBbI5JdPBZ1gdwjC-3" style="edgeStyle=none;shape=connector;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;dashPattern=12 12;strokeColor=default;strokeWidth=2;align=center;verticalAlign=middle;fontFamily=Lucida Console;fontSize=18;fontColor=#70967C;labelBackgroundColor=default;endArrow=none;endFill=0;flowAnimation=1;" edge="1" parent="1" source="xRkEdBbI5JdPBZ1gdwjC-1" target="r3l4vlM_85dYpehm9L9s-4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="xRkEdBbI5JdPBZ1gdwjC-1" value="IPageSetting" style="rounded=1;whiteSpace=wrap;fontSize=18;fontColor=#70967C;fontFamily=Lucida Console;" vertex="1" parent="1">
+          <mxGeometry x="206" y="468" width="180" height="80" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
   </diagram>
   <diagram id="-gB4cSZo6_3nMkcXz_vv" name="FRONT Диаграмма">
-    <mxGraphModel dx="3647" dy="1348" grid="0" gridSize="10" guides="0" tooltips="1" connect="0" arrows="1" fold="1" page="0" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="3585" dy="1348" grid="0" gridSize="10" guides="0" tooltips="1" connect="0" arrows="1" fold="1" page="0" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -124,7 +130,7 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="K43k8vFx2dthZbpcqFvg-1" value="IIELInlay" style="rounded=1;whiteSpace=wrap;fontSize=18;fontColor=#70967C;fontFamily=Lucida Console;" parent="1" vertex="1">
-          <mxGeometry x="-1496" y="738" width="180" height="80" as="geometry" />
+          <mxGeometry x="-1466" y="761" width="180" height="80" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>

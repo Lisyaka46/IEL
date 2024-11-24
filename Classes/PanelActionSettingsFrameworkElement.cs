@@ -2,7 +2,7 @@
 
 namespace IEL.Interfaces.Core
 {
-    public struct SettingsPanelActionFrameworkElement(FrameworkElement Element, IPageKey DefaultPage, Size size, int ZIndex = 2)
+    public struct PanelActionSettingsFrameworkElement(FrameworkElement Element, IPageKey DefaultPage, Size size, int ZIndex = 2)
     {
         /// <summary>
         /// Элемент интерфейса в границах которого будет находится панель действий

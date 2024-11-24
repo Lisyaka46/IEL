@@ -38,6 +38,11 @@ namespace IEL.Interfaces.Front
         public Thickness BorderThicknessBlock { get; set; }
 
         /// <summary>
+        /// Смещение контента в объекте
+        /// </summary>
+        public Thickness PaddingContent { get; set; }
+
+        /// <summary>
         /// Длительность задержки в миллисекундах
         /// </summary>
         public double IntervalHover { get; set; }
