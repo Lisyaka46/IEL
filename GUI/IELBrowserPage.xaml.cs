@@ -189,6 +189,11 @@ namespace IEL
             }
         }
 
+        /// <summary>
+        /// Активная вкладка в браузере
+        /// </summary>
+        public IELInlay? ActualInlay => ActivateIndex > -1 ? IELInlays[ActivateIndex] : null;
+
         public IELBrowserPage()
         {
             InitializeComponent();
