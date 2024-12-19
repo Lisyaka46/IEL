@@ -337,7 +337,7 @@ namespace IEL
             if (!PanelActionActivate) throw new Exception("При отключённом состоянии нельзя переключаться между страницами");
             double X = Mouse.GetPosition((IInputElement)VisualParent).X;
             AnimationMovePanelAction(PositionAnimActionPanel.Default, Settings.SizedPanel, Settings.ElementInPanel);
-            NextPage(Content, X >= Margin.Left);
+            NextPage(Content, X >= Margin.Left);    
         }
 
         /// <summary>

@@ -368,11 +368,8 @@ namespace IEL
         public T? SearchPageType<T>() where T : IPageDefault
         {
             if (InlaysCount == 0) return default;
-            return (T?)IELInlays.First(
-                (i) =>
-                {
-                    return i.Page?.PageName.Equals(typeof(T).Name) ?? false;
-                }).Page;
+            IPageDefault? page = IELInlays.FirstOrDefault((i) => { return i.Page?.PageName.Equals(typeof(T).Name) ?? false; })?.Page;
+            return page != null ? (T?)page : default;
         }
 
         /// <summary>
