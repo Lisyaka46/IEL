@@ -10,6 +10,11 @@ namespace IEL.Interfaces.Front
     public interface IIELButtonDefault : IIELButton
     {
         /// <summary>
+        /// Делегат события активации
+        /// </summary>
+        public delegate void Activate();
+
+        /// <summary>
         /// Объект события активации кнопки левым щелчком мыши
         /// </summary>
         public Activate? OnActivateMouseLeft { get; set; }
@@ -18,10 +23,5 @@ namespace IEL.Interfaces.Front
         /// Объект события активации кнопки правым щелчком мыши
         /// </summary>
         public Activate? OnActivateMouseRight { get; set; }
-
-        /// <summary>
-        /// Делегат события активации
-        /// </summary>
-        public delegate void Activate();
     }
 }

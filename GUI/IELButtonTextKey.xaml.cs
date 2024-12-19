@@ -1,5 +1,6 @@
 ﻿using IEL.Classes;
 using IEL.Interfaces.Front;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -14,7 +15,7 @@ namespace IEL
     /// <summary>
     /// Логика взаимодействия для IELButtonTextKey.xaml
     /// </summary>
-    public partial class IELButtonTextKey : UserControl, IIELButtonKey
+    public partial class IELButtonTextKey : UserControl, IIELButtonKey, IIELEventsVision
     {
         #region StateVisualizationButton
         private StateButton _StateVisualizationButton = StateButton.LeftArrow;
@@ -169,6 +170,28 @@ namespace IEL
         public event EventHandler? MouseHover;
         #endregion
 
+        #region ImagedEventsButton
+        /// <summary>
+        /// Изображение отображения событий нажатия при отсутствии возможности нажатия
+        /// </summary>
+        public ImageSource? NotEventImageMouse { get; set; }
+
+        /// <summary>
+        /// Изображение отображения событий нажатия только при левой возможности нажатия
+        /// </summary>
+        public ImageSource? OnlyLeftEventImageMouse { get; set; }
+
+        /// <summary>
+        /// Изображение отображения событий нажатия только при правой возможности нажатия
+        /// </summary>
+        public ImageSource? OnlyRightEventImageMouse { get; set; }
+
+        /// <summary>
+        /// Изображение отображения событий нажатия при двусторонней возможности нажатия
+        /// </summary>
+        public ImageSource? FullEventImageMouse { get; set; }
+        #endregion
+
         /// <summary>
         /// Текст кнопки
         /// </summary>
@@ -241,37 +264,50 @@ namespace IEL
             }
         }
 
-
+        private IIELButtonKey.Activate? _OnActivateMouseLeft;
         /// <summary>
         /// Объект события активации левым щелчком мыши
         /// </summary>
-        public IIELButtonKey.Activate? OnActivateMouseLeft { get; set; }
+        public IIELButtonKey.Activate? OnActivateMouseLeft
+        {
+            get => _OnActivateMouseLeft;
+            set
+            {
+                _OnActivateMouseLeft = value;
+                UpdateVisibleMouseEvents();
+            }
+        }
 
+        private IIELButtonKey.Activate? _OnActivateMouseRight;
         /// <summary>
         /// Объект события активации правым щелчком мыши
         /// </summary>
-        public IIELButtonKey.Activate? OnActivateMouseRight { get; set; }
+        public IIELButtonKey.Activate? OnActivateMouseRight
+        {
+            get => _OnActivateMouseRight;
+            set
+            {
+                _OnActivateMouseRight = value;
+                UpdateVisibleMouseEvents();
+            }
+        }
 
-        /// <summary>
-        /// Картинка действий над кнопкой
-        /// </summary>
-        private BitmapImage? ImageMouse;
-
-        private bool _VisibleMouseImaging = true;
+        private bool _VisibleMouseImaging;
         /// <summary>
         /// Состояние активности отображения действий на кнопке
         /// </summary>
+        /// <remarks>
+        /// При включённом состоянии отображает изображение действий производимое над кнопкой.
+        /// <code></code>
+        /// <b>Изображение поменять нельзя.</b>
+        /// </remarks>
         public bool VisibleMouseImaging
         {
             get => _VisibleMouseImaging;
             set
             {
+                if (_VisibleMouseImaging != value) UpdateVisibleMouseEvents();
                 _VisibleMouseImaging = value;
-                if (EnterButton)
-                {
-                    AnimationDouble.To = value ? 0.4d : 0d;
-                    ImageMouseButtonsUse.BeginAnimation(OpacityProperty, AnimationDouble);
-                }
             }
         }
 
@@ -342,9 +378,9 @@ namespace IEL
 
             MouseEnter += (sender, e) =>
             {
-                EnterButton = true;
                 if (IsEnabled)
                 {
+                    EnterButton = true;
                     MouseEnterAnimation();
                     TimerBorderInfo.Start();
                 }
@@ -352,9 +388,9 @@ namespace IEL
 
             MouseLeave += (sender, e) =>
             {
-                EnterButton = false;
                 if (IsEnabled)
                 {
+                    EnterButton = false;
                     MouseLeaveAnimation();
                     TimerBorderInfo.Stop();
                 }
@@ -440,6 +476,20 @@ namespace IEL
         }
 
         /// <summary>
+        /// Обновить видимость событий мыши
+        /// </summary>
+        public void UpdateVisibleMouseEvents()
+        {
+            if (_VisibleMouseImaging)
+            {
+                ImageMouseButtonsUse.Source = ((IIELEventsVision)this).ImageMouseButton(this, this);
+                ImageMouseButtonsUse.UpdateLayout();
+            }
+            AnimationDouble.To = EnterButton ? 0.4d : 0d;
+            ImageMouseButtonsUse.BeginAnimation(OpacityProperty, AnimationDouble);
+        }
+
+        /// <summary>
         /// Анимировать нажатие на кнопку (Down)
         /// </summary>
         private void ClickDownAnimation()
@@ -514,19 +564,8 @@ namespace IEL
             TextBlockRightArrow.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
 
             TextBlockCharKey.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
-
-            if (VisibleMouseImaging)
-            {
-                ImageMouse = IIELObject.ImageMouseButton(OnActivateMouseLeft != null, OnActivateMouseRight != null);
-                if (ImageMouse != null)
-                {
-                    AnimationDouble.To = 0.4d;
-                    ImageMouseButtonsUse.BeginInit();
-                    ImageMouseButtonsUse.Source = ImageMouse;
-                    ImageMouseButtonsUse.EndInit();
-                    ImageMouseButtonsUse.BeginAnimation(OpacityProperty, AnimationDouble);
-                }
-            }
+            
+            UpdateVisibleMouseEvents();
         }
 
         /// <summary>

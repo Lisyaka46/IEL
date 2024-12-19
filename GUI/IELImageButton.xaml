@@ -20,6 +20,7 @@
                 <Border x:Name="BorderRightArrow" BorderBrush="Black" BorderThickness="2,2,2,2" CornerRadius="6,6,6,6" Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Left" Grid.Column="2">
                     <TextBlock x:Name="TextBlockRightArrow" TextWrapping="Wrap" Text="&gt;" HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="Arial Black" FontSize="14" Padding="1,0.7,0,0"/>
                 </Border>
+                <Image x:Name="ImageMouseButtonsUse" Grid.Column="2" MinWidth="15" MinHeight="15" MaxWidth="25" MaxHeight="25" VerticalAlignment="Top" Width="20" Height="20" HorizontalAlignment="Right" Opacity="0.4" Grid.ColumnSpan="1"/>
             </Grid>
         </Border>
 

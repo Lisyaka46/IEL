@@ -29,7 +29,7 @@
                 <Border x:Name="BorderLeftArrow" BorderBrush="Black" BorderThickness="2,2,2,2" CornerRadius="6,6,6,6" Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Right">
                     <TextBlock x:Name="TextBlockLeftArrow" TextWrapping="Wrap" Text="&lt;" HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="Arial Black" FontSize="14" Padding="0,0.7,1,0"/>
                 </Border>
-                <Image x:Name="ImageMouseButtonsUse" Source="/Windows/WindowsImages/DoubleMouseButton.png" Grid.Column="0" RenderTransformOrigin="-0.118,0.657" MinWidth="15" MinHeight="15" MaxWidth="25" MaxHeight="25" VerticalAlignment="Top" Grid.ColumnSpan="3" Width="20" Height="20" HorizontalAlignment="Right"/>
+                <Image x:Name="ImageMouseButtonsUse" Grid.Column="0" MinWidth="15" MinHeight="15" MaxWidth="25" MaxHeight="25" VerticalAlignment="Top" Grid.ColumnSpan="3" Width="20" Height="20" HorizontalAlignment="Right"/>
             </Grid>
         </Border>
     </Grid>

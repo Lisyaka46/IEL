@@ -13,7 +13,7 @@ namespace IEL
     /// <summary>
     /// Логика взаимодействия для IELImageButton.xaml
     /// </summary>
-    public partial class IELImageButton : UserControl, IIELButtonDefault
+    public partial class IELImageButton : UserControl, IIELButtonDefault, IIELEventsVision
     {
         #region StateVisualizationButton
         private StateButton _StateVisualizationButton = StateButton.LeftArrow;
@@ -126,6 +126,23 @@ namespace IEL
             DecelerationRatio = 0.2d,
             EasingFunction = new CubicEase() { EasingMode = EasingMode.EaseOut }
         };
+
+        /// <summary>
+        /// Анимация thickness значения
+        /// </summary>
+        private readonly ThicknessAnimation AnimationThickness = new()
+        {
+            EasingFunction = new QuinticEase() { EasingMode = EasingMode.EaseOut }
+        };
+
+        /// <summary>
+        /// Анимация double значения
+        /// </summary>
+        private readonly DoubleAnimation AnimationDouble = new()
+        {
+            DecelerationRatio = 0.2d,
+            EasingFunction = new QuinticEase() { EasingMode = EasingMode.EaseOut }
+        };
         #endregion
 
         #region MouseHover
@@ -147,6 +164,28 @@ namespace IEL
         /// Событие задержки курсора на элементе
         /// </summary>
         public event EventHandler? MouseHover;
+        #endregion
+
+        #region ImagedEventsButton
+        /// <summary>
+        /// Изображение отображения событий нажатия при отсутствии возможности нажатия
+        /// </summary>
+        public ImageSource? NotEventImageMouse { get; set; }
+
+        /// <summary>
+        /// Изображение отображения событий нажатия только при левой возможности нажатия
+        /// </summary>
+        public ImageSource? OnlyLeftEventImageMouse { get; set; }
+
+        /// <summary>
+        /// Изображение отображения событий нажатия только при правой возможности нажатия
+        /// </summary>
+        public ImageSource? OnlyRightEventImageMouse { get; set; }
+
+        /// <summary>
+        /// Изображение отображения событий нажатия при двусторонней возможности нажатия
+        /// </summary>
+        public ImageSource? FullEventImageMouse { get; set; }
         #endregion
 
         /// <summary>
@@ -210,6 +249,30 @@ namespace IEL
         /// </summary>
         public IIELButtonDefault.Activate? OnActivateMouseRight { get; set; }
 
+        private bool _VisibleMouseImaging;
+        /// <summary>
+        /// Состояние активности отображения действий на кнопке
+        /// </summary>
+        /// <remarks>
+        /// При включённом состоянии отображает изображение действий производимое над кнопкой.
+        /// <code></code>
+        /// <b>Изображение поменять нельзя.</b>
+        /// </remarks>
+        public bool VisibleMouseImaging
+        {
+            get => _VisibleMouseImaging;
+            set
+            {
+                if (_VisibleMouseImaging != value) UpdateVisibleMouseEvents();
+                _VisibleMouseImaging = value;
+            }
+        }
+
+        /// <summary>
+        /// Состояние активности наведения на кнопку
+        /// </summary>
+        private bool EnterButton = false;
+
         /// <summary>
         /// Инициализировать объект кнопки с изображением
         /// </summary>
@@ -250,6 +313,7 @@ namespace IEL
             ForegroundSetting = new(BrushSettingQ.CreateStyle.Foreground);
 
             IntervalHover = 1300d;
+            ImageMouseButtonsUse.Opacity = 0d;
             TimerBorderInfo.Tick += (sender, e) =>
             {
                 MouseHover?.Invoke(this, e);
@@ -260,6 +324,7 @@ namespace IEL
             {
                 if (IsEnabled)
                 {
+                    EnterButton = true;
                     MouseEnterDetect();
                     TimerBorderInfo.Start();
                 }
@@ -268,6 +333,7 @@ namespace IEL
             {
                 if (IsEnabled)
                 {
+                    EnterButton = false;
                     MouseLeaveDetect();
                     TimerBorderInfo.Stop();
                 }
@@ -275,6 +341,7 @@ namespace IEL
 
             IsEnabledChanged += (sender, e) =>
             {
+                EnterButton = false;
                 Color
                     Background = (bool)e.NewValue ? BackgroundSetting.Default : BackgroundSetting.NotEnabled,
                     BorderBrush = (bool)e.NewValue ? BorderBrushSetting.Default : BorderBrushSetting.NotEnabled,
@@ -331,6 +398,20 @@ namespace IEL
         }
 
         /// <summary>
+        /// Обновить видимость событий мыши
+        /// </summary>
+        public void UpdateVisibleMouseEvents()
+        {
+            if (_VisibleMouseImaging)
+            {
+                ImageMouseButtonsUse.Source = ((IIELEventsVision)this).ImageMouseButton(this, this);
+                ImageMouseButtonsUse.UpdateLayout();
+            }
+            AnimationDouble.To = EnterButton ? 0.4d : 0d;
+            ImageMouseButtonsUse.BeginAnimation(OpacityProperty, AnimationDouble);
+        }
+
+        /// <summary>
         /// Анимировать нажатие на кнопку (Down)
         /// </summary>
         private void ClickDownAnimation()
@@ -375,6 +456,8 @@ namespace IEL
             AnimationColor.To = Foreground;
             TextBlockLeftArrow.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
             TextBlockRightArrow.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
+
+            UpdateVisibleMouseEvents();
         }
 
         /// <summary>
@@ -395,6 +478,9 @@ namespace IEL
             AnimationColor.To = ForegroundSetting.Default;
             TextBlockLeftArrow.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
             TextBlockRightArrow.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
+
+            AnimationDouble.To = 0d;
+            ImageMouseButtonsUse.BeginAnimation(OpacityProperty, AnimationDouble);
         }
     }
 }

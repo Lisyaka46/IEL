@@ -15,14 +15,14 @@
                     <ColumnDefinition/>
                     <ColumnDefinition x:Name="ColumnRightArrow" Width="25"/>
                 </Grid.ColumnDefinitions>
-                <TextBlock x:Name="TextBlockButton" Text="TextBlockр" TextAlignment="Center" Foreground="Black" Focusable="True" TextWrapping="Wrap" ScrollViewer.HorizontalScrollBarVisibility="Hidden" ScrollViewer.VerticalScrollBarVisibility="Hidden" Grid.Column="1" VerticalAlignment="Center" Padding="0,2,0,2"/>
+                <TextBlock x:Name="TextBlockButton" Text="TextBlock" TextAlignment="Center" Foreground="Black" Focusable="True" TextWrapping="Wrap" ScrollViewer.HorizontalScrollBarVisibility="Hidden" ScrollViewer.VerticalScrollBarVisibility="Hidden" Grid.Column="1" VerticalAlignment="Center" Padding="0,2,0,2"/>
                 <Border x:Name="BorderRightArrow" BorderBrush="Black" BorderThickness="2,2,2,2" CornerRadius="6,6,6,6" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" Height="20" Width="20">
                     <TextBlock x:Name="TextBlockRightArrow" TextWrapping="Wrap" Text="&gt;" HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="Arial Black" FontSize="14" Padding="1,0.7,0,0"/>
                 </Border>
                 <Border x:Name="BorderLeftArrow" BorderBrush="Black" BorderThickness="2,2,2,2" CornerRadius="6,6,6,6" Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Right">
                     <TextBlock x:Name="TextBlockLeftArrow" TextWrapping="Wrap" Text="&lt;" HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="Arial Black" FontSize="14" Padding="0,0.7,1,0"/>
                 </Border>
-                <Image x:Name="ImageMouseButtonsUse" Source="/Windows/WindowsImages/DoubleMouseButton.png" Grid.Column="0" RenderTransformOrigin="-0.118,0.657" MinWidth="15" MinHeight="15" MaxWidth="25" MaxHeight="25" VerticalAlignment="Top" Grid.ColumnSpan="3" Width="20" Height="20" HorizontalAlignment="Right"/>
+                <Image x:Name="ImageMouseButtonsUse" Grid.Column="0" MinWidth="15" MinHeight="15" MaxWidth="25" MaxHeight="25" VerticalAlignment="Top" Grid.ColumnSpan="3" Width="20" Height="20" HorizontalAlignment="Right"/>
             </Grid>
         </Border>
     </Grid>
