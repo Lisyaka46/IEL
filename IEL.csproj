@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CounterScrollBar\DataScroll.csproj" />
+    <ProjectReference Include="..\DataScroll\DataScroll.csproj" />
   </ItemGroup>
 
   <ItemGroup>

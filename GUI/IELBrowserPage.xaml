@@ -30,7 +30,6 @@
                     </Grid>
                 </Border>
             </Grid>
-            <TextBlock HorizontalAlignment="Left" Margin="748,225,0,0" Grid.Row="1" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top"/>
         </Grid>
 
     </Border>

@@ -128,14 +128,6 @@ namespace IEL
         };
 
         /// <summary>
-        /// Анимация thickness значения
-        /// </summary>
-        private readonly ThicknessAnimation AnimationThickness = new()
-        {
-            EasingFunction = new QuinticEase() { EasingMode = EasingMode.EaseOut }
-        };
-
-        /// <summary>
         /// Анимация double значения
         /// </summary>
         private readonly DoubleAnimation AnimationDouble = new()
@@ -404,7 +396,7 @@ namespace IEL
         {
             if (_VisibleMouseImaging)
             {
-                ImageMouseButtonsUse.Source = ((IIELEventsVision)this).ImageMouseButton(this, this);
+                ImageMouseButtonsUse.Source = ((IIELEventsVision)this).ImageMouseButton(this);
                 ImageMouseButtonsUse.UpdateLayout();
             }
             AnimationDouble.To = EnterButton ? 0.4d : 0d;

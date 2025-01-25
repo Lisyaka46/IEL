@@ -314,6 +314,7 @@ namespace IEL
             TextName = string.Empty;
             ShowNameText = false;
             TextBoxMain.ContextMenu = null;
+            MaxLines = 1;
 
             ButtonAnimationColor = new();
             AnimationMillisecond = 100;

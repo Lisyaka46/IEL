@@ -59,22 +59,22 @@ namespace IEL.Interfaces.Front
         /// Узнать отображения действий над кнопкой
         /// </summary>
         /// <returns>Изображение мыши с действиями</returns>
-        public virtual ImageSource? ImageMouseButton(IIELButtonKey Button, IIELEventsVision Vision) =>
+        public virtual ImageSource? ImageMouseButton(IIELButtonKey Button) =>
             Task.FromResult(GetImageMouseEvents(
                 Button.OnActivateMouseLeft != null ?
                     (Button.OnActivateMouseRight != null ? EventMouse.Full : EventMouse.Left) :
-                    (Button.OnActivateMouseRight != null ? EventMouse.Right : EventMouse.Not), Vision
+                    (Button.OnActivateMouseRight != null ? EventMouse.Right : EventMouse.Not)
             )).Result;
 
         /// <summary>
         /// Узнать отображения действий над кнопкой
         /// </summary>
         /// <returns>Изображение мыши с действиями</returns>
-        public virtual ImageSource? ImageMouseButton(IIELButtonDefault Button, IIELEventsVision Vision) =>
+        public virtual ImageSource? ImageMouseButton(IIELButtonDefault Button) =>
             Task.FromResult(GetImageMouseEvents(
                 Button.OnActivateMouseLeft != null ? 
                     (Button.OnActivateMouseRight != null ? EventMouse.Full : EventMouse.Left) :
-                    (Button.OnActivateMouseRight != null ? EventMouse.Right : EventMouse.Not), Vision
+                    (Button.OnActivateMouseRight != null ? EventMouse.Right : EventMouse.Not)
             )).Result;
 
         /// <summary>
@@ -82,7 +82,7 @@ namespace IEL.Interfaces.Front
         /// </summary>
         /// <param name="Event">Тип состояния событий нажатия</param>
         /// <returns>Возможное изображение отображения событий</returns>
-        private ImageSource? GetImageMouseEvents(EventMouse Event, IIELEventsVision Vision)
+        private ImageSource? GetImageMouseEvents(EventMouse Event)
         {
             return Event switch
             {

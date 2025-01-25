@@ -455,7 +455,7 @@ namespace IEL
         {
             if (_VisibleMouseImaging)
             {
-                ImageMouseButtonsUse.Source = ((IIELEventsVision)this).ImageMouseButton(this, this);
+                ImageMouseButtonsUse.Source = ((IIELEventsVision)this).ImageMouseButton(this);
                 ImageMouseButtonsUse.UpdateLayout();
             }
             AnimationDouble.To = EnterButton ? 0.4d : 0d;

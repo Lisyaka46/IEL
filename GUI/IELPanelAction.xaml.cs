@@ -194,6 +194,7 @@ namespace IEL
                 }
                 else
                 {
+                    if (ActualPage == null) return;
                     if (ActualPage.KeyboardMode && !SelectButtonKeyboardMode)
                     {
                         SelectButtonKeyboardMode = true;
@@ -222,6 +223,7 @@ namespace IEL
                 }
                 else
                 {
+                    if (ActualPage == null) return;
                     if (ActualPage.KeyboardMode && SelectButtonKeyboardMode)
                     {
                         SelectButtonKeyboardMode = false;
