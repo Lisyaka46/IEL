@@ -12,8 +12,6 @@
             </Style>
         </Border.FocusVisualStyle>
         <Grid x:Name="GridActionPanel" Focusable="True" Margin="2,2,2,3">
-            <Frame x:Name="FrameActionPanelLeft" Grid.ColumnSpan="1" Panel.ZIndex="1" NavigationUIVisibility="Hidden"/>
-            <Frame x:Name="FrameActionPanelRight" Grid.ColumnSpan="1" NavigationUIVisibility="Hidden"/>
             <GUI:IELPageController x:Name="MainPageController"/>
             <TextBlock x:Name="TextBlockRightButtonIndicatorKey" HorizontalAlignment="Right" TextWrapping="Wrap" Text="CTRL" VerticalAlignment="Bottom" Panel.ZIndex="2" Padding="10,4,10,4" FontFamily="Bahnschrift SemiBold">
                 <TextBlock.Background>

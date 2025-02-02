@@ -273,9 +273,7 @@ namespace IEL
         {
             if (PanelActionActivate) return;
             Focus();
-            MainPageController.NextPage((Page)(BufferSearchDefaultPage(Settings.ElementInPanel.Name) ?? Settings.DefaultPageInPanel), false);
-            //ActualFrame.Navigate(BufferSearchDefaultPage(Settings.ElementInPanel.Name) ?? Settings.DefaultPageInPanel);
-
+            MainPageController.ActualFrame.Navigate((Page)(BufferSearchDefaultPage(Settings.ElementInPanel.Name) ?? Settings.DefaultPageInPanel));
             DoubleAnimateObj.To = 1d;
             BeginAnimation(OpacityProperty, DoubleAnimateObj);
             AnimationMovePanelAction(PositionAnimActionPanel.Default, Settings.SizedPanel, Settings.ElementInPanel);
