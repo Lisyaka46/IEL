@@ -16,7 +16,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace IEL.GUI
+namespace IEL
 {
     /// <summary>
     /// Логика взаимодействия для IELPageController.xaml
@@ -106,12 +106,12 @@ namespace IEL.GUI
             BackFrame.IsEnabled = false;
             ActualFrame.IsEnabled = true;
             ActualFrame.BeginAnimation(MarginProperty, null);
-            ActualFrame.Margin = !RightAlign ? new(-20, -20, 40, -3) : new(40, -10, -20, -3);
+            ActualFrame.Margin = !RightAlign ? LeftAnimateSwitch : RightAnimateSwitch;
             //Content.KeyboardMode = BackPage.KeyboardMode;
             //BackPage.KeyboardMode = false;
             ActualFrame.Navigate(Content);
 
-            animation_thickness.To = !RightAlign ? new(40, -20, -20, -3) : new(-20, -20, 40, -3);
+            animation_thickness.To = !RightAlign ? RightAnimateSwitch : LeftAnimateSwitch;
             BackFrame.BeginAnimation(MarginProperty, animation_thickness);
             animation_thickness.To = new(0);
             ActualFrame.BeginAnimation(MarginProperty, animation_thickness);
@@ -120,6 +120,19 @@ namespace IEL.GUI
             BackFrame.BeginAnimation(OpacityProperty, animation_double);
             animation_double.To = 1;
             ActualFrame.BeginAnimation(OpacityProperty, animation_double);
+        }
+
+        /// <summary>
+        /// Переместить текущую страницу к определённой точке
+        /// </summary>
+        /// <param name="MoveTo">Точка перемещения</param>
+        /// <param name="Millisecond">Время анимации в миллисекундах</param>
+        public void MoveActualPage(Thickness MoveTo, uint Millisecond = 100u)
+        {
+            ThicknessAnimation animation_thickness = ThicknessAnimate.Clone();
+            animation_thickness.To = MoveTo;
+            animation_thickness.Duration = TimeSpan.FromMilliseconds(Millisecond);
+            ActualFrame.BeginAnimation(MarginProperty, animation_thickness);
         }
     }
 }
