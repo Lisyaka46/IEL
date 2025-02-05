@@ -15,7 +15,7 @@ namespace IEL
     /// <summary>
     /// Логика взаимодействия для IELPanelAction.xaml
     /// </summary>
-    public partial class IELPanelAction : UserControl
+    public partial class IELPanelAction : UserControl, IIELObject
     {
         /// <summary>
         /// Перечисление вариаций вычисления позиций панели действий

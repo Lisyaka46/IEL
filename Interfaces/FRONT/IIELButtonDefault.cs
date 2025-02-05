@@ -7,7 +7,7 @@ using System.Windows.Media;
 
 namespace IEL.Interfaces.Front
 {
-    public interface IIELButtonDefault : IIELButton
+    public interface IIELButtonDefault : IIELButton, IIELStateVisualizationButton
     {
         /// <summary>
         /// Делегат события активации

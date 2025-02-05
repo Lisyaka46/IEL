@@ -170,11 +170,11 @@ namespace IEL
         /// </summary>
         public event ActiveActionInInlay? EventActiveActionInInlay;
 
-        private IELImageButton _IELButtonAddInlay;
+        private IELButtonImage _IELButtonAddInlay;
         /// <summary>
         /// Кнопка добавления новой вкладки
         /// </summary>
-        public IELImageButton IELButtonAddInlay
+        public IELButtonImage IELButtonAddInlay
         {
             get => _IELButtonAddInlay;
             set

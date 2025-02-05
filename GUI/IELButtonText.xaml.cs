@@ -8,14 +8,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using IEL.Classes;
 using IEL.Interfaces.Front;
-using static IEL.Interfaces.Front.IIELButton;
+using static IEL.Interfaces.Front.IIELStateVisualizationButton;
 
 namespace IEL
 {
     /// <summary>
     /// Логика взаимодействия для IELButtonText.xaml
     /// </summary>
-    public partial class IELButtonText : UserControl, IIELButtonDefault, IIELEventsVision
+    public partial class IELButtonText : UserControl, IIELButtonDefault
     {
         #region StateVisualizationButton
         private StateButton _StateVisualizationButton = StateButton.LeftArrow;
@@ -443,7 +443,7 @@ namespace IEL
         }
 
         /// <summary>
-        /// Анимировать нажатие на кнопку (Down)
+        /// Анимировать нажатие на элемент (Down)
         /// </summary>
         private void ClickDownAnimation()
         {
