@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace IEL.Interfaces.Front
 {
-    public interface IIELHover
+    public interface IIELHover : IIELControl
     {
         /// <summary>
         /// Длительность задержки в миллисекундах

@@ -6,7 +6,7 @@ using System.Windows.Media.Imaging;
 
 namespace IEL.Interfaces.Front
 {
-    public interface IIELButton : IIELObject, IIELControl, IIELHover
+    public interface IIELButton : IIELObject, IIELHover
     {
         /// <summary>
         /// Скругление границ

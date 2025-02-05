@@ -443,7 +443,7 @@ namespace IEL
         }
 
         /// <summary>
-        /// Анимировать нажатие на кнопку (Down)
+        /// Анимировать нажатие на элемент (Down)
         /// </summary>
         private void ClickDownAnimation()
         {
