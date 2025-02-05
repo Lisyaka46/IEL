@@ -6,14 +6,14 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
-using static IEL.Interfaces.Front.IIELButton;
+using static IEL.Interfaces.Front.IIELStateVisualizationButton;
 
 namespace IEL
 {
     /// <summary>
-    /// Логика взаимодействия для IELImageButton.xaml
+    /// Логика взаимодействия для IELButtonImage.xaml
     /// </summary>
-    public partial class IELImageButton : UserControl, IIELButtonDefault, IIELEventsVision
+    public partial class IELButtonImage : UserControl, IIELButtonDefault, IIELEventsVision
     {
         #region StateVisualizationButton
         private StateButton _StateVisualizationButton = StateButton.LeftArrow;
@@ -181,7 +181,7 @@ namespace IEL
         #endregion
 
         /// <summary>
-        /// Изображение которое отображается в кнопке
+        /// Изображение которое отображается в элементе
         /// </summary>
         public ImageSource Imaging
         {
@@ -214,7 +214,7 @@ namespace IEL
         }
 
         /// <summary>
-        /// Позиционирование картинки в кнопке
+        /// Позиционирование картинки в элементе
         /// </summary>
         public Thickness ImageMargin
         {
@@ -268,7 +268,7 @@ namespace IEL
         /// <summary>
         /// Инициализировать объект кнопки с изображением
         /// </summary>
-        public IELImageButton()
+        public IELButtonImage()
         {
             InitializeComponent();
             StateVisualizationButton = StateButton.Default;

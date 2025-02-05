@@ -8,14 +8,14 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
-using static IEL.Interfaces.Front.IIELButton;
+using static IEL.Interfaces.Front.IIELStateVisualizationButton;
 
 namespace IEL
 {
     /// <summary>
-    /// Логика взаимодействия для IELImageButtonKey.xaml
+    /// Логика взаимодействия для IELButtonImageKey.xaml
     /// </summary>
-    public partial class IELImageButtonKey : UserControl, IIELButtonKey, IIELEventsVision
+    public partial class IELButtonImageKey : UserControl, IIELButtonKey, IIELEventsVision
     {
         #region StateVisualizationButton
         private StateButton _StateVisualizationButton = StateButton.LeftArrow;
@@ -329,7 +329,7 @@ namespace IEL
         /// <summary>
         /// Инициализировать объект кнопки с изображением
         /// </summary>
-        public IELImageButtonKey()
+        public IELButtonImageKey()
         {
             InitializeComponent();
             StateVisualizationButton = StateButton.Default;

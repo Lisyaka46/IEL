@@ -3,7 +3,7 @@ using System.Windows.Media;
 
 namespace IEL.Interfaces.Front
 {
-    public interface IIELButtonKey : IIELButton, IIELObjectKey
+    public interface IIELButtonKey : IIELButton, IIELObjectKey, IIELStateVisualizationButton
     {
         /// <summary>
         /// Делегат события активации

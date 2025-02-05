@@ -14,10 +14,12 @@ namespace IEL.Interfaces.Front
         /// Объект обычного состояния фона
         /// </summary>
         public BrushSettingQ BackgroundSetting { get; }
+
         /// <summary>
         /// Объект обычного состояния границы
         /// </summary>
         public BrushSettingQ BorderBrushSetting { get; }
+
         /// <summary>
         /// Объект обычного состояния текста
         /// </summary>

@@ -12,7 +12,7 @@ namespace IEL
     /// <summary>
     /// Логика взаимодействия для IELButtonCommand.xaml
     /// </summary>
-    public partial class IELButtonCommand : UserControl, IIELObject
+    public partial class IELButtonCommand : UserControl, IIELButton
     {
         #region Color Setting
         private BrushSettingQ? _BackgroundSetting;
@@ -137,6 +137,15 @@ namespace IEL
         /// </summary>
         public event EventHandler? MouseHover;
         #endregion
+
+        /// <summary>
+        /// Смещение контента в объекте
+        /// </summary>
+        public Thickness PaddingContent
+        {
+            get => BorderButton.Padding;
+            set => BorderButton.Padding = value;
+        }
 
         /// <summary>
         /// Текст кнопки
