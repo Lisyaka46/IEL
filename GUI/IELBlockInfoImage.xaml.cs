@@ -209,6 +209,11 @@ namespace IEL
             set => MainImage.Margin = value;
         }
 
+        /// <summary>
+        /// Объект изображения отображаемого в блоке информации
+        /// </summary>
+        public Image MainFrontImage => MainImage; 
+
         public IELBlockInfoImage()
         {
             InitializeComponent();

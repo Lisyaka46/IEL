@@ -194,10 +194,16 @@ namespace IEL
         /// </summary>
         public IELInlay? ActualInlay => ActivateIndex > -1 ? IELInlays[ActivateIndex] : null;
 
+        /// <summary>
+        /// Значение длинны новой вкладки по умолчанию
+        /// </summary>
+        public double DefaultWidthNewInlay { get; set; }
+
         public IELBrowserPage()
         {
             InitializeComponent();
             IELInlays = [];
+            DefaultWidthNewInlay = 400d;
 
             _IELButtonAddInlay = new();
             GridMainButtons.Children.Add(_IELButtonAddInlay);
@@ -286,14 +292,48 @@ namespace IEL
                 TextBlockNullPage.BeginAnimation(OpacityProperty, animation);
             }
             IELInlays.Add(inlay);
-            GridMainInlays.ColumnDefinitions.Add(new() { Width = new GridLength(90d, GridUnitType.Star) });
+            if (IELInlays.Count > GridMainInlays.ColumnDefinitions.Count)
+            {
+                GridMainInlays.ColumnDefinitions.Add(
+                    new()
+                    {
+                        Width = new(DefaultWidthNewInlay, GridUnitType.Pixel),
+                        MaxWidth = 0d
+                    });
+            }
             GridMainInlays.Children.Add(inlay);
-            Grid.SetColumn(inlay, GridMainInlays.ColumnDefinitions.Count - 1);
+            Grid.SetColumn(inlay, IELInlays.Count - 1);
+
+            double NewWidth = GridMainInlays.ActualWidth / IELInlays.Count;
+            if (NewWidth > DefaultWidthNewInlay) NewWidth = DefaultWidthNewInlay;
+            UpdateWidthInlays(NewWidth);
+
             UsingInlayAnimationVisible(inlay);
 
             if (Activate)
             {
                 ActivateInlayIndex(IELInlays.Count - 1);
+            }
+        }
+
+        /// <summary>
+        /// Обновить длинну вкладок браузера
+        /// </summary>
+        /// <param name="NewWidth">Длинна обновления</param>
+        private void UpdateWidthInlays(double NewWidth)
+        {
+            DoubleAnimation animation = AnimationDouble.Clone();
+            animation.Duration = TimeSpan.FromMilliseconds(400d);
+            animation.To = NewWidth;
+            for (int i = 0; i < IELInlays.Count; i++)
+            {
+                //definition.Width = GridLength.Auto;
+                Storyboard storyboard = new();
+                storyboard.Children.Add(animation);
+                Storyboard.SetTarget(animation, GridMainInlays.ColumnDefinitions[i]);
+                Storyboard.SetTargetProperty(animation, new PropertyPath("(ColumnDefinition.MaxWidth)"));
+                storyboard.Begin();
+                //definition.BeginAnimation(, animation);
             }
         }
 
@@ -385,26 +425,29 @@ namespace IEL
             ActualInlay.SetPage<IPageDefault>(null);
             Canvas.SetZIndex(ActualInlay, 0);
 
+            double NewWidth = GridMainInlays.ActualWidth / (GridMainInlays.ColumnDefinitions.Count - 1);
+            if (NewWidth > DefaultWidthNewInlay) NewWidth = DefaultWidthNewInlay;
+            UpdateWidthInlays(NewWidth);
+
             DoubleAnimation animationDouble = AnimationDouble.Clone();
-            GridMainInlays.ColumnDefinitions[Index].MaxWidth = ActualInlay.ActualWidth;
+            //GridMainInlays.ColumnDefinitions[Index].MaxWidth = ActualInlay.ActualWidth;
             animationDouble.From = ActualInlay.ActualWidth;
             animationDouble.To = 0d;
             animationDouble.FillBehavior = FillBehavior.HoldEnd;
-            animationDouble.Duration = TimeSpan.FromMilliseconds(800d);
+            animationDouble.Duration = TimeSpan.FromMilliseconds(400d);
             Storyboard storyboard = new();
             storyboard.Children.Add(animationDouble);
             storyboard.FillBehavior = FillBehavior.Stop;
             storyboard.Completed += (sender, e) =>
             {
-                GridMainInlays.ColumnDefinitions[Index].MaxWidth = double.PositiveInfinity;
                 if (Index < IELInlays.Count)
                 {
+                    GridMainInlays.ColumnDefinitions.RemoveAt(Index);
                     for (int i = Index; i < IELInlays.Count; i++)
                     {
                         Grid.SetColumn(IELInlays[i], i);
                     }
                 }
-                GridMainInlays.ColumnDefinitions.RemoveAt(GridMainInlays.ColumnDefinitions.Count - 1);
             };
             Storyboard.SetTarget(animationDouble, GridMainInlays.ColumnDefinitions[Index]);
             Storyboard.SetTargetProperty(animationDouble, new PropertyPath("(ColumnDefinition.MaxWidth)"));
