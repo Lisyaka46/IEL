@@ -155,7 +155,7 @@ namespace IEL
         /// <summary>
         /// Делегат события взаимодействия с описанием вкладки
         /// </summary>
-        public delegate void DelegateDescriptionInlayHandler(UIElement Element, string Text);
+        public delegate void DelegateDescriptionInlayHandler(FrameworkElement Element, string Text);
 
         /// <summary>
         /// Делегат события активации действий над выбранной вкладкой
