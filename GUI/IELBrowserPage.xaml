@@ -10,10 +10,10 @@
     <Border x:Name="BorderMain">
         <Grid x:Name="GridMain">
             <Grid.RowDefinitions>
-                <RowDefinition Height="60"/>
+                <RowDefinition Height="50"/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
-            <TextBlock x:Name="TextBlockNullPage" HorizontalAlignment="Center" Text="Нет доступных вкладок" VerticalAlignment="Center" FontSize="16" TextTrimming="CharacterEllipsis" FontStyle="Italic" Opacity="0.4" Grid.RowSpan="2" FontFamily="Lucida Sans Unicode"/>
+            <TextBlock x:Name="TextBlockNullPage" HorizontalAlignment="Center" Text="Нет доступных вкладок" VerticalAlignment="Center" FontSize="16" TextTrimming="CharacterEllipsis" FontStyle="Italic" Opacity="0.4" FontFamily="Lucida Sans Unicode" Height="25" Grid.Row="1" Width="190"/>
             <Grid Grid.Row="1">
                 <IEL:IELFrameDefault x:Name="IELFrameBrowser"/>
             </Grid>

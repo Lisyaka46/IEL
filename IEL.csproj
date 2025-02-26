@@ -12,6 +12,7 @@
     <None Remove="Properties\Images\LeftMouseButton.png" />
     <None Remove="Properties\Images\NotMouseButton.png" />
     <None Remove="Properties\Images\RightMouseButton.png" />
+    <None Remove="Properties\Resources\Cross.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -35,6 +36,7 @@
       <CopyToOutputDirectory></CopyToOutputDirectory>
       <CustomToolNamespace></CustomToolNamespace>
     </Resource>
+    <Resource Include="Properties\Resources\Cross.png" />
   </ItemGroup>
 
   <ItemGroup>

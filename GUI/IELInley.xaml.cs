@@ -8,6 +8,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using static IEL.Interfaces.Front.IIELStateVisualizationButton;
 
@@ -18,25 +19,6 @@ namespace IEL
     /// </summary>
     public partial class IELInlay : UserControl, IIELInley
     {
-        #region StateVisualizationButton
-        private StateButton _StateVisualizationButton = StateButton.LeftArrow;
-        /// <summary>
-        /// Состояние отображения направления
-        /// </summary>
-        public StateButton StateVisualizationButton
-        {
-            get => _StateVisualizationButton;
-            set
-            {
-                if (_StateVisualizationButton == value) return;
-                ColumnLeftArrow.Width = new(value == StateButton.LeftArrow ? 25 : 0);
-                ColumnRightArrow.Width = new(value == StateButton.RightArrow ? 25 : 0);
-                BorderLeftArrow.Opacity = value == StateButton.LeftArrow ? 1d : 0d;
-                BorderRightArrow.Opacity = value == StateButton.RightArrow ? 1d : 0d;
-                _StateVisualizationButton = value;
-            }
-        }
-        #endregion
 
         #region Color Setting
         private BrushSettingQ? _BackgroundSetting;
@@ -207,6 +189,11 @@ namespace IEL
         public IIELButtonDefault.Activate? OnActivateMouseRight { get; set; }
 
         /// <summary>
+        /// Объект события активации закрытия вкладки
+        /// </summary>
+        public IIELButtonDefault.Activate? OnActivateCloseInlay { get; set; }
+
+        /// <summary>
         /// Страница заголовка
         /// </summary>
         public IPageDefault? Page { get; private set; }
@@ -229,71 +216,10 @@ namespace IEL
             }
         }
 
-        private bool _IsAnimatedSignatureText = false;
-        /// <summary>
-        /// Состояние анимирования текста подписи если он выходит за границы
-        /// </summary>
-        public bool IsAnimatedSignatureText
-        {
-            get => _IsAnimatedSignatureText;
-            set
-            {
-                if (value)
-                {
-                    if (_TextSignature.Length > 0) UsingSignatureAnimate(true);
-                    TextBlockSignature.TextTrimming = TextTrimming.None;
-                }
-                else
-                {
-                    SignatureAnimateStop();
-                    TextBlockSignature.TextTrimming = TextTrimming.CharacterEllipsis;
-                }
-                _IsAnimatedSignatureText = value;
-            }
-        }
-
-        private string _TextSignature = string.Empty;
         /// <summary>
         /// Текст подписи заголовка
         /// </summary>
-        public string TextSignature
-        {
-            get => _TextSignature;
-            set
-            {
-                bool AnimatedStart = true;
-                if ((value.Length > 0 && _TextSignature.Length == 0) ||
-                    (value.Length == 0 && _TextSignature.Length > 0) ||
-                    (value.Length == 0 && SignatureRowColumn.MaxHeight > 0))
-                {
-                    if (value.Length > 0)
-                    {
-                        TextBlockSignature.Text = value;
-                        AnimatedStart = false;
-                    }
-                    else if (IsAnimatedSignatureText) SignatureAnimateStop();
-                    _TextSignature = value;
-                    DoubleAnimation animation = AnimationDouble.Clone();
-                    animation.To = value.Length > 0 ? 25 : 0;
-                    animation.Duration = TimeSpan.FromMilliseconds(700d);
-                    Storyboard storyboard = new();
-                    storyboard.Children.Add(animation);
-                    Storyboard.SetTarget(animation, SignatureRowColumn);
-                    Storyboard.SetTargetProperty(animation, new PropertyPath("(RowDefinition.MaxHeight)"));
-                    storyboard.Begin();
-                }
-                else
-                {
-                    _TextSignature = value;
-                    TextBlockSignature.Text = value;
-                }
-                BorderSignature.UpdateLayout();
-                if (IsAnimatedSignatureText && value.Length > 0)
-                {
-                    UsingSignatureAnimate(AnimatedStart);
-                }
-            }
-        }
+        public string TextSignature { get; set; }
 
         /// <summary>
         /// Текст заголовка
@@ -332,6 +258,15 @@ namespace IEL
         }
 
         /// <summary>
+        /// Изображение кнопки закрытия вкладки
+        /// </summary>
+        public ImageSource SourceCloseButtonImage
+        {
+            get => ImageCloseInlay.Source;
+            set => ImageCloseInlay.Source = value;
+        }
+
+        /// <summary>
         /// Константа оффсета изменения между состояниями барьера
         /// </summary>
         private const int OffsetBorder = 2;
@@ -354,8 +289,7 @@ namespace IEL
                 BorderThicknessBlock.Right + OffsetBorder, BorderThicknessBlock.Bottom + OffsetBorder);
             BorderThicknessDiactive = BorderThicknessBlock;
             _UsedState = false;
-            StateVisualizationButton = StateButton.Default;
-            TextBlockSignature.TextTrimming = TextTrimming.CharacterEllipsis;
+            TextSignature = String.Empty;
             Page = null;
             Content = null;
 
@@ -373,19 +307,13 @@ namespace IEL
                 (Spectrum == BrushSettingQ.StateSpectrum.NotEnabled && IsEnabled)) return;
                 SolidColorBrush color = new(Value);
                 BorderMain.BorderBrush = color;
-                BorderLeftArrow.BorderBrush = color;
-                BorderRightArrow.BorderBrush = color;
-                BorderSignature.BorderBrush = color;
             };
             ForegroundChangeDefaultColor = (Spectrum, Value) =>
             {
                 if ((Spectrum == BrushSettingQ.StateSpectrum.Default && !IsEnabled) ||
                 (Spectrum == BrushSettingQ.StateSpectrum.NotEnabled && IsEnabled)) return;
                 SolidColorBrush color = new(Value);
-                TextBlockLeftArrow.Foreground = color;
-                TextBlockRightArrow.Foreground = color;
                 TextBlockHead.Foreground = color;
-                TextBlockSignature.Foreground = color;
             };
             BackgroundSetting = new(BrushSettingQ.CreateStyle.Background);
             BorderBrushSetting = new(BrushSettingQ.CreateStyle.BorderBrush);
@@ -400,7 +328,18 @@ namespace IEL
 
             // this
 
-            MouseEnter += (sender, e) =>
+            ImageCloseInlay.MouseEnter += (sender, e) =>
+            {
+                if (sender.GetType() == typeof(Image))
+                {
+                    DoubleAnimation animation = AnimationDouble.Clone();
+                    animation.Duration = TimeSpan.FromMilliseconds(AnimationMillisecond);
+                    animation.To = 25d;
+                    ImageCloseInlay.BeginAnimation(WidthProperty, animation);
+                    ImageCloseInlay.BeginAnimation(HeightProperty, animation);
+                }
+            };
+            BorderMain.MouseEnter += (sender, e) =>
             {
                 if (IsEnabled)
                 {
@@ -409,7 +348,15 @@ namespace IEL
                 }
             };
 
-            MouseLeave += (sender, e) =>
+            ImageCloseInlay.MouseLeave += (sender, e) =>
+            {
+                DoubleAnimation animation = AnimationDouble.Clone();
+                animation.Duration = TimeSpan.FromMilliseconds(AnimationMillisecond);
+                animation.To = 20d;
+                ImageCloseInlay.BeginAnimation(WidthProperty, animation);
+                ImageCloseInlay.BeginAnimation(HeightProperty, animation);
+            };
+            BorderMain.MouseLeave += (sender, e) =>
             {
                 if (IsEnabled)
                 {
@@ -418,21 +365,17 @@ namespace IEL
                 }
             };
 
-            MouseDown += (sender, e) =>
+            ImageCloseInlay.MouseDown += (sender, e) =>
             {
-                if (IsEnabled)
-                {
-                    if (
-                    (e.LeftButton == MouseButtonState.Pressed && OnActivateMouseLeft != null) ||
-                    (e.RightButton == MouseButtonState.Pressed && OnActivateMouseRight != null))
-                    {
-                        ClickDownAnimation();
-                        TimerBorderInfo.Stop();
-                    }
-                }
+                OnActivateCloseInlay?.Invoke();
+            };
+            BorderMain.MouseDown += (sender, e) =>
+            {
+                ClickDownAnimation();
+                TimerBorderInfo.Stop();
             };
 
-            MouseLeftButtonUp += (sender, e) =>
+            BorderMain.MouseLeftButtonUp += (sender, e) =>
             {
                 if (IsEnabled && OnActivateMouseLeft != null)
                 {
@@ -441,7 +384,7 @@ namespace IEL
                 }
             };
 
-            MouseRightButtonUp += (sender, e) =>
+            BorderMain.MouseRightButtonUp += (sender, e) =>
             {
                 if (IsEnabled && OnActivateMouseRight != null)
                 {
@@ -456,27 +399,11 @@ namespace IEL
                 Foreground = (bool)e.NewValue ? ForegroundSetting.Default : ForegroundSetting.NotEnabled,
                 Background = (bool)e.NewValue ? BackgroundSetting.Default : BackgroundSetting.NotEnabled,
                 BorderBrush = (bool)e.NewValue ? BorderBrushSetting.Default : BorderBrushSetting.NotEnabled;
-                if (StateVisualizationButton != StateButton.Default)
-                {
-                    if (StateVisualizationButton == StateButton.LeftArrow)
-                    {
-                        AnimationColor.To = Foreground;
-                        TextBlockLeftArrow.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
-                        BorderLeftArrow.BeginAnimation(MarginProperty, null);
-                    }
-                    else
-                    {
-                        AnimationColor.To = Foreground;
-                        TextBlockRightArrow.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
-                        BorderRightArrow.BeginAnimation(MarginProperty, null);
-                    }
-                }
                 AnimationColor.To = BorderBrush;
                 BorderMain.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
                 AnimationColor.To = Background;
                 BorderMain.Background.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
                 AnimationColor.To = Foreground;
-                TextBlockSignature.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
                 TextBlockHead.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
             };
         }
@@ -490,28 +417,12 @@ namespace IEL
                 Foreground = new(ForegroundSetting.Used),
                 Background = new(BackgroundSetting.Used),
                 BorderBrush = new(BorderBrushSetting.Used);
-            if (StateVisualizationButton != StateButton.Default)
-            {
-                (StateVisualizationButton == StateButton.LeftArrow ? TextBlockLeftArrow : TextBlockRightArrow)
-                    .Foreground = Foreground;
-                AnimationThickness.To = new(
-                    StateVisualizationButton == StateButton.RightArrow ? 5 : 0, 0,
-                    StateVisualizationButton == StateButton.LeftArrow ? 5 : 0, 0);
-                (StateVisualizationButton == StateButton.LeftArrow ? BorderLeftArrow : BorderRightArrow)
-                    .BeginAnimation(MarginProperty, AnimationThickness);
-            }
 
             BorderMain.BorderBrush = BorderBrush;
-            BorderSignature.BorderBrush = BorderBrush;
-            BorderLeftArrow.BorderBrush = BorderBrush;
-            BorderRightArrow.BorderBrush = BorderBrush;
 
             BorderMain.Background = Background;
 
             TextBlockHead.Foreground = Foreground;
-            TextBlockSignature.Foreground = Foreground;
-            TextBlockLeftArrow.Foreground = Foreground;
-            TextBlockRightArrow.Foreground = Foreground;
         }
 
         /// <summary>
@@ -524,39 +435,14 @@ namespace IEL
                 Background = BackgroundSetting.Select,
                 BorderBrush = BorderBrushSetting.Select;
 
-            if (StateVisualizationButton != StateButton.Default)
-            {
-                AnimationThickness.To = new(
-                    StateVisualizationButton == StateButton.RightArrow ? -3 : 0,
-                    0,
-                    StateVisualizationButton == StateButton.LeftArrow ? -3 : 0,
-                    0);
-                if (StateVisualizationButton == StateButton.LeftArrow)
-                    BorderLeftArrow.BeginAnimation(MarginProperty, AnimationThickness);
-                else BorderRightArrow.BeginAnimation(MarginProperty, AnimationThickness);
-            }
-
             AnimationColor.To = BorderBrush;
             BorderMain.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
-            if (StateVisualizationButton != StateButton.Default)
-            {
-                if (StateVisualizationButton == StateButton.LeftArrow)
-                    BorderLeftArrow.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
-                else BorderRightArrow.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
-            }
 
             AnimationColor.To = Background;
             BorderMain.Background.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
 
             AnimationColor.To = Foreground;
-            TextBlockSignature.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
             TextBlockHead.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
-            if (StateVisualizationButton != StateButton.Default)
-            {
-                if (StateVisualizationButton == StateButton.LeftArrow)
-                    TextBlockLeftArrow.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
-                else TextBlockRightArrow.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
-            }
         }
 
         /// <summary>
@@ -569,84 +455,14 @@ namespace IEL
                 Background = UsedState ? BackgroundSetting.Used : BackgroundSetting.Default,
                 BorderBrush = UsedState ? BorderBrushSetting.Used : BorderBrushSetting.Default;
 
-            if (StateVisualizationButton != StateButton.Default)
-            {
-                AnimationThickness.To = new(0);
-                if (StateVisualizationButton == StateButton.LeftArrow)
-                    BorderLeftArrow.BeginAnimation(MarginProperty, AnimationThickness);
-                else BorderRightArrow.BeginAnimation(MarginProperty, AnimationThickness);
-            }
-
             AnimationColor.To = BorderBrush;
             BorderMain.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
-            if (StateVisualizationButton != StateButton.Default)
-            {
-                if (StateVisualizationButton == StateButton.LeftArrow)
-                    BorderLeftArrow.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
-                else BorderRightArrow.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
-            }
 
             AnimationColor.To = Background;
             BorderMain.Background.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
 
             AnimationColor.To = Foreground;
-            TextBlockSignature.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
             TextBlockHead.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
-        }
-
-        /// <summary>
-        /// Функция старта анимации подписи заголовка
-        /// </summary>
-        /// <param name="AnimateStart">Создать анимацию старта или нет</param>
-        private void UsingSignatureAnimate(bool AnimateStart)
-        {
-            if (AnimateStart)
-            {
-                if (BorderSignature.ActualWidth == 0) TextBlockSignature.Opacity = 0d;
-                ThicknessAnimation animation = AnimationThickness.Clone();
-                animation.To = new(BorderSignature.ActualWidth, 0, 0, 0);
-                animation.FillBehavior = FillBehavior.Stop;
-                animation.Duration = TimeSpan.FromMilliseconds(600d);
-                animation.Completed += (sender, e) =>
-                {
-                    if (IsAnimatedSignatureText)
-                    {
-                        TextBlockSignature.Margin = new(BorderSignature.ActualWidth, 0, 0, 0);
-                        TextBlockSignature.Opacity = 1d;
-                        Animate();
-                    }
-                };
-                TextBlockSignature.BeginAnimation(MarginProperty, animation);
-            }
-            else Animate();
-            void Animate()
-            {
-                int Millisecond = 300 * TextBlockSignature.Text.Length;
-                if (Millisecond < 2500) Millisecond = 2500;
-                ThicknessAnimation animationForever = AnimationThickness.Clone();
-                animationForever.EasingFunction = null;
-                animationForever.To = new(-TextBlockSignature.ActualWidth - 10, 0, 0, 0);
-                animationForever.Duration = TimeSpan.FromMilliseconds(Millisecond);
-                animationForever.FillBehavior = FillBehavior.Stop;
-                animationForever.Completed += (sender, e) =>
-                {
-                    TextBlockSignature.Margin = new(BorderSignature.ActualWidth, 0, 0, 0);
-                    TextBlockSignature.BeginAnimation(MarginProperty, animationForever);
-                };
-                TextBlockSignature.BeginAnimation(MarginProperty, animationForever);
-            }
-        }
-
-        /// <summary>
-        /// Функция окончания анимации подписи заголовка
-        /// </summary>
-        private void SignatureAnimateStop()
-        {
-            ThicknessAnimation animation = AnimationThickness.Clone();
-            animation.To = new(0);
-            animation.FillBehavior = FillBehavior.HoldEnd;
-            animation.Duration = TimeSpan.FromMilliseconds(600d);
-            TextBlockSignature.BeginAnimation(MarginProperty, animation);
         }
 
         /// <summary>

@@ -10,6 +10,8 @@ using System.Windows.Controls.Primitives;
 using static System.Net.Mime.MediaTypeNames;
 using System;
 using System.Windows.Media.Imaging;
+using System.ComponentModel;
+using System.IO;
 
 namespace IEL
 {
@@ -151,6 +153,11 @@ namespace IEL
         public delegate void DelegateVoidHandler();
 
         /// <summary>
+        /// Делегат события взаимодействия с описанием вкладки
+        /// </summary>
+        public delegate void DelegateDescriptionInlayHandler(UIElement Element, string Text);
+
+        /// <summary>
         /// Делегат события активации действий над выбранной вкладкой
         /// </summary>
         public delegate void ActiveActionInInlay(IELInlay Inlay);
@@ -164,6 +171,16 @@ namespace IEL
         /// Событие изменения активной вкладки
         /// </summary>
         public event DelegateVoidHandler? EventChangeActiveInlay;
+
+        /// <summary>
+        /// Событие показания описания вкладки
+        /// </summary>
+        public event DelegateDescriptionInlayHandler? EventOnDescriptionInlay;
+
+        /// <summary>
+        /// Событие скрытия описания вкладки
+        /// </summary>
+        public event DelegateVoidHandler? EventOffDescriptionInlay;
 
         /// <summary>
         /// Событие открытия действий над выбранной вкладкой
@@ -203,7 +220,7 @@ namespace IEL
         {
             InitializeComponent();
             IELInlays = [];
-            DefaultWidthNewInlay = 400d;
+            DefaultWidthNewInlay = 180d;
 
             _IELButtonAddInlay = new();
             GridMainButtons.Children.Add(_IELButtonAddInlay);
@@ -257,6 +274,27 @@ namespace IEL
                 AnimationMillisecond = 200,
                 Padding = new(4, 4, 4, 0),
             };
+            Inlay.OnActivateCloseInlay += () =>
+            {
+                DeleteInlayPage(Inlay, ActivateIndex == IELInlays.IndexOf(Inlay));
+            };
+            Inlay.MouseHover += (sender, e) =>
+            {
+                if (Inlay.TextSignature.Length == 0) return;
+                EventOnDescriptionInlay?.Invoke(Inlay, Inlay.TextSignature);
+            };
+            Inlay.BorderMain.MouseLeave += (sender, e) =>
+            {
+                if (Inlay.TextSignature.Length == 0) return;
+                EventOffDescriptionInlay?.Invoke();
+            };
+
+            BitmapImage bitmap = new();
+            bitmap.BeginInit();
+            bitmap.StreamSource = new MemoryStream(Properties.Resources.Cross);
+            bitmap.EndInit();
+            Inlay.SourceCloseButtonImage = bitmap;
+
             Inlay.SetPage(Content);
             Inlay.OnActivateMouseLeft += () =>
             {
@@ -265,7 +303,6 @@ namespace IEL
             if (Signature != null)
             {
                 Inlay.TextSignature = Signature;
-                Inlay.IsAnimatedSignatureText = true;
             }
             return Inlay;
         }
@@ -330,7 +367,7 @@ namespace IEL
                 //definition.Width = GridLength.Auto;
                 Storyboard storyboard = new();
                 storyboard.Children.Add(animation);
-                Storyboard.SetTarget(animation, GridMainInlays.ColumnDefinitions[i]);
+                Storyboard.SetTarget(animation, GridMainInlays.ColumnDefinitions[Grid.GetColumn(IELInlays[i])]);
                 Storyboard.SetTargetProperty(animation, new PropertyPath("(ColumnDefinition.MaxWidth)"));
                 storyboard.Begin();
                 //definition.BeginAnimation(, animation);
@@ -367,7 +404,11 @@ namespace IEL
         /// <exception cref="Exception">Исключение при пустой странице в найденой вкладке</exception>
         public void ActivateInInlay(IELInlay inlay)
         {
-            ActivateInlayIndex(IELInlays.IndexOf(inlay));
+            try
+            {
+                ActivateInlayIndex(IELInlays.IndexOf(inlay));
+            }
+            catch { }
         }
 
         /// <summary>
@@ -416,40 +457,42 @@ namespace IEL
         /// Удалить вкладку в браузере
         /// </summary>
         /// <param name="inlay">Объект вкладки</param>
-        public void DeleteInlayPage(IELInlay inlay)
+        /// <param name="ActivateNextInlay">Активировать ли следующую после удалённой вкладки вкладку</param>
+        public void DeleteInlayPage(IELInlay inlay, bool ActivateNextInlay = true)
         {
             int Index = IELInlays.IndexOf(inlay);
             if (Index == -1) return;
             int IndexNext = NextIndex(Index, InlaysCount - 1);
             IELInlay ActualInlay = IELInlays[Index];
+            ActualInlay.IsEnabled = false;
             ActualInlay.SetPage<IPageDefault>(null);
             Canvas.SetZIndex(ActualInlay, 0);
 
-            double NewWidth = GridMainInlays.ActualWidth / (GridMainInlays.ColumnDefinitions.Count - 1);
+            double NewWidth = GridMainInlays.ActualWidth / IELInlays.Count(i => !i.IsEnabled);
             if (NewWidth > DefaultWidthNewInlay) NewWidth = DefaultWidthNewInlay;
             UpdateWidthInlays(NewWidth);
 
             DoubleAnimation animationDouble = AnimationDouble.Clone();
             //GridMainInlays.ColumnDefinitions[Index].MaxWidth = ActualInlay.ActualWidth;
-            animationDouble.From = ActualInlay.ActualWidth;
+            //animationDouble.From = ActualInlay.ActualWidth;
             animationDouble.To = 0d;
             animationDouble.FillBehavior = FillBehavior.HoldEnd;
             animationDouble.Duration = TimeSpan.FromMilliseconds(400d);
             Storyboard storyboard = new();
             storyboard.Children.Add(animationDouble);
-            storyboard.FillBehavior = FillBehavior.Stop;
+            storyboard.FillBehavior = FillBehavior.HoldEnd;
             storyboard.Completed += (sender, e) =>
             {
                 if (Index < IELInlays.Count)
                 {
-                    GridMainInlays.ColumnDefinitions.RemoveAt(Index);
-                    for (int i = Index; i < IELInlays.Count; i++)
-                    {
-                        Grid.SetColumn(IELInlays[i], i);
-                    }
+                    //GridMainInlays.ColumnDefinitions.RemoveAt(Index);
+                    //for (int i = Index; i < IELInlays.Count; i++)
+                    //{
+                    //    Grid.SetColumn(IELInlays[i], i);
+                    //}
                 }
             };
-            Storyboard.SetTarget(animationDouble, GridMainInlays.ColumnDefinitions[Index]);
+            Storyboard.SetTarget(animationDouble, GridMainInlays.ColumnDefinitions[Grid.GetColumn(ActualInlay)]);
             Storyboard.SetTargetProperty(animationDouble, new PropertyPath("(ColumnDefinition.MaxWidth)"));
             storyboard.Begin();
 
@@ -468,17 +511,20 @@ namespace IEL
 
             //ActualInlay.BeginAnimation(OpacityProperty, animationDouble);
 
-            if (IndexNext == -1)
+            if (ActivateNextInlay)
             {
-                ActivateIndex = -1;
-                IELFrameBrowser.CloseFrame();
-                EventCloseBrowser?.Invoke();
-            }
-            else
-            {
-                IELInlay NextInlay = IELInlays[IndexNext];
-                ActivateInInlay(NextInlay);
-                //if (NextInlay.TextSignature.Length > 0) NextInlay.IsAnimatedSignatureText = true;
+                if (IndexNext == -1)
+                {
+                    ActivateIndex = -1;
+                    IELFrameBrowser.CloseFrame();
+                    EventCloseBrowser?.Invoke();
+                }
+                else
+                {
+                    IELInlay NextInlay = IELInlays[IndexNext];
+                    ActivateInInlay(NextInlay);
+                    //if (NextInlay.TextSignature.Length > 0) NextInlay.IsAnimatedSignatureText = true;
+                }
             }
             if (InlaysCount == 0)
             {
