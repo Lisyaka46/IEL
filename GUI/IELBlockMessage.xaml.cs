@@ -130,6 +130,11 @@ namespace IEL
             /// Справа снизу
             /// </summary>
             RightDown = 3,
+
+            /// <summary>
+            /// Автоматическое определение оптимальной позиции элемента сообщения
+            /// </summary>
+            Auto = 4,
         }
         #endregion
 
@@ -227,6 +232,27 @@ namespace IEL
         {
             NameParentObject = Name;
             Text = TextVisible;
+            #region Auto
+            if (Orientation == OrientationBorderInfo.Auto)
+            {
+                FrameworkElement ParentElement = VisualTreeHelper.GetParent(this) as FrameworkElement ??
+                    throw new Exception("У объекта нет родительского элемента");
+                Point LocationPointElement =
+                    Element.TransformToAncestor(ParentElement).TransformBounds(new Rect(ParentElement.RenderSize)).Location;
+                Size SizeParentElement = ParentElement.RenderSize;
+                Point LeftRightOrientationLogic =
+                    new(Math.Abs(LocationPointElement.X - ActualWidth), SizeParentElement.Width - (LocationPointElement.X + ActualWidth));
+                double UpDownOrientationLogic = LocationPointElement.Y - ActualHeight;
+                if (LeftRightOrientationLogic.X >= LeftRightOrientationLogic.Y)
+                {
+                    Orientation = UpDownOrientationLogic >= 0 ? OrientationBorderInfo.LeftUp : OrientationBorderInfo.LeftDown;
+                }
+                else if (LeftRightOrientationLogic.X < LeftRightOrientationLogic.Y)
+                {
+                    Orientation = UpDownOrientationLogic >= 0 ? OrientationBorderInfo.RightUp : OrientationBorderInfo.RightDown;
+                }
+            }
+            #endregion
             AnimateBorderInformation(SetPositionOrientation(Element, Orientation), Orientation);
         }
 
@@ -235,7 +261,7 @@ namespace IEL
         /// </summary>
         /// <param name="TextVisible">Текст который выводится панелью сообщения</param>
         /// <param name="Orientation">Привязка к позиционированию панели</param>
-        public void UsingBorderInformation(string TextVisible, OrientationBorderInfo Orientation)
+        public void UsingBorderInformationCursor(string TextVisible, OrientationBorderInfo Orientation)
         {
             NameParentObject = "Cursor";
             Text = TextVisible;

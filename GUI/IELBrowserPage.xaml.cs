@@ -188,6 +188,7 @@ namespace IEL
         public event ActiveActionInInlay? EventActiveActionInInlay;
 
         private IELButtonImage _IELButtonAddInlay;
+
         /// <summary>
         /// Кнопка добавления новой вкладки
         /// </summary>
@@ -261,7 +262,36 @@ namespace IEL
         /// <param name="Head">Заголовок вкладки</param>
         /// <param name="Signature">Сигнатура-описание вкладки</param>
         /// <returns>Созданная вкладка</returns>
-        private IELInlay CreateInlay(IPageDefault Content, string Head, string? Signature = null)
+        private IELInlay CreateInlay(IPageDefault Content, string Head, string Signature)
+        {
+            IELInlay Inlay = CreateInlay(Content, Head);
+            Inlay.TextSignature = Signature;
+            Inlay.MouseHover += (sender, e) =>
+            {
+                if (Inlay.TextSignature.Length == 0) return;
+                EventOnDescriptionInlay?.Invoke(Inlay, Inlay.TextSignature);
+            };
+            Inlay.BorderMain.MouseLeave += (sender, e) =>
+            {
+                if (Inlay.TextSignature.Length == 0) return;
+                EventOffDescriptionInlay?.Invoke();
+            };
+            Inlay.BorderMain.MouseDown += (sender, e) =>
+            {
+                if (Inlay.TextSignature.Length == 0) return;
+                EventOffDescriptionInlay?.Invoke();
+            };
+            return Inlay;
+        }
+
+        /// <summary>
+        /// Создать вкладку в браузере
+        /// </summary>
+        /// <param name="Content">Страница ссылки</param>
+        /// <param name="Head">Заголовок вкладки</param>
+        /// <param name="Signature">Сигнатура-описание вкладки</param>
+        /// <returns>Созданная вкладка</returns>
+        private IELInlay CreateInlay(IPageDefault Content, string Head)
         {
             IELInlay Inlay = new()
             {
@@ -278,16 +308,6 @@ namespace IEL
             {
                 DeleteInlayPage(Inlay, ActivateIndex == IELInlays.IndexOf(Inlay));
             };
-            Inlay.MouseHover += (sender, e) =>
-            {
-                if (Inlay.TextSignature.Length == 0) return;
-                EventOnDescriptionInlay?.Invoke(Inlay, Inlay.TextSignature);
-            };
-            Inlay.BorderMain.MouseLeave += (sender, e) =>
-            {
-                if (Inlay.TextSignature.Length == 0) return;
-                EventOffDescriptionInlay?.Invoke();
-            };
 
             BitmapImage bitmap = new();
             bitmap.BeginInit();
@@ -300,10 +320,6 @@ namespace IEL
             {
                 ActivateInInlay(Inlay);
             };
-            if (Signature != null)
-            {
-                Inlay.TextSignature = Signature;
-            }
             return Inlay;
         }
 
@@ -314,13 +330,13 @@ namespace IEL
         /// <param name="Head">Наименование вкладки</param>
         /// <param name="Signature">Подпись вкладки</param>
         /// <param name="Activate">Активировать сразу или нет страницу</param>
-        public void AddInlayPage(IPageDefault Content, string Head, string? Signature = null, bool Activate = true)
+        public void AddInlayPage(IPageDefault Content, string Head, bool Activate = true)
         {
             foreach (IPageDefault? page in IELInlays.Select((i) => i.Page))
                 if (page?.PageName.Equals(Content.PageName) ?? true) return;
             DoubleAnimation animation = AnimationDouble.Clone();
             animation.Duration = TimeSpan.FromMilliseconds(300d);
-            IELInlay inlay = CreateInlay(Content, Head, Signature);
+            IELInlay inlay = CreateInlay(Content, Head);
             inlay.OnActivateMouseRight += () => EventActiveActionInInlay?.Invoke(inlay);
             inlay.Opacity = 0d;
             if (InlaysCount == 0)
@@ -354,9 +370,52 @@ namespace IEL
         }
 
         /// <summary>
+        /// Добавить новую страницу
+        /// </summary>
+        /// <param name="Content">Добавляемая страница в баузер страниц</param>
+        /// <param name="Head">Наименование вкладки</param>
+        /// <param name="Signature">Подпись вкладки</param>
+        /// <param name="Activate">Активировать сразу или нет страницу</param>
+        public void AddInlayPage(IPageDefault Content, string Head, string Signature, bool Activate = true)
+        {
+            foreach (IPageDefault? page in IELInlays.Select((i) => i.Page))
+                if (page?.PageName.Equals(Content.PageName) ?? true) return;
+            DoubleAnimation animation = AnimationDouble.Clone();
+            animation.Duration = TimeSpan.FromMilliseconds(300d);
+            IELInlay inlay = CreateInlay(Content, Head, Signature);
+            inlay.OnActivateMouseRight += () => EventActiveActionInInlay?.Invoke(inlay);
+            inlay.Opacity = 0d;
+            IELInlays.Add(inlay);
+            if (InlaysCount == 0)
+            {
+                animation.To = 0d;
+                TextBlockNullPage.BeginAnimation(OpacityProperty, animation);
+            }
+            if (IELInlays.Count > GridMainInlays.ColumnDefinitions.Count)
+            {
+                GridMainInlays.ColumnDefinitions.Add(
+                    new()
+                    {
+                        Width = new(DefaultWidthNewInlay, GridUnitType.Pixel),
+                        MaxWidth = 0d
+                    });
+            }
+            GridMainInlays.Children.Add(inlay);
+            Grid.SetColumn(inlay, IELInlays.Count - 1);
+
+            double NewWidth = GridMainInlays.ActualWidth / IELInlays.Count;
+            if (NewWidth > DefaultWidthNewInlay) NewWidth = DefaultWidthNewInlay;
+            UpdateWidthInlays(NewWidth);
+
+            UsingInlayAnimationVisible(inlay);
+
+            if (Activate) ActivateInInlay(inlay);
+        }
+
+        /// <summary>
         /// Обновить длинну вкладок браузера
         /// </summary>
-        /// <param name="NewWidth">Длинна обновления</param>
+        /// <param name="NewWidth">Длинна к которой обновляется размер</param>
         private void UpdateWidthInlays(double NewWidth)
         {
             DoubleAnimation animation = AnimationDouble.Clone();
@@ -462,7 +521,7 @@ namespace IEL
         {
             int Index = IELInlays.IndexOf(inlay);
             if (Index == -1) return;
-            int IndexNext = NextIndex(Index, InlaysCount - 1);
+            int IndexNext = NextIndex(Index, InlaysCount - 1), IndexColumn = Grid.GetColumn(inlay);
             IELInlay ActualInlay = IELInlays[Index];
             ActualInlay.IsEnabled = false;
             ActualInlay.SetPage<IPageDefault>(null);
@@ -480,16 +539,16 @@ namespace IEL
             animationDouble.Duration = TimeSpan.FromMilliseconds(400d);
             Storyboard storyboard = new();
             storyboard.Children.Add(animationDouble);
-            storyboard.FillBehavior = FillBehavior.HoldEnd;
+            storyboard.FillBehavior = FillBehavior.Stop;
             storyboard.Completed += (sender, e) =>
             {
-                if (Index < IELInlays.Count)
+                if (Index < IELInlays.Count && IELInlays.Count > 1)
                 {
-                    //GridMainInlays.ColumnDefinitions.RemoveAt(Index);
-                    //for (int i = Index; i < IELInlays.Count; i++)
-                    //{
-                    //    Grid.SetColumn(IELInlays[i], i);
-                    //}
+                    GridMainInlays.ColumnDefinitions.RemoveAt(IndexColumn);
+                    for (int i = Index; i < IELInlays.Count; i++)
+                    {
+                        if (IELInlays[i].IsEnabled) Grid.SetColumn(IELInlays[i], Grid.GetColumn(IELInlays[i]) - 1);
+                    }
                 }
             };
             Storyboard.SetTarget(animationDouble, GridMainInlays.ColumnDefinitions[Grid.GetColumn(ActualInlay)]);
@@ -526,6 +585,7 @@ namespace IEL
                     //if (NextInlay.TextSignature.Length > 0) NextInlay.IsAnimatedSignatureText = true;
                 }
             }
+            else ActivateIndex--;
             if (InlaysCount == 0)
             {
                 DoubleAnimation animation = AnimationDouble.Clone();

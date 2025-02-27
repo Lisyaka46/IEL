@@ -365,7 +365,7 @@ namespace IEL
                 }
             };
 
-            ImageCloseInlay.MouseDown += (sender, e) =>
+            ImageCloseInlay.MouseLeftButtonDown += (sender, e) =>
             {
                 OnActivateCloseInlay?.Invoke();
             };
@@ -375,7 +375,7 @@ namespace IEL
                 TimerBorderInfo.Stop();
             };
 
-            BorderMain.MouseLeftButtonUp += (sender, e) =>
+            BorderMain.MouseLeftButtonDown += (sender, e) =>
             {
                 if (IsEnabled && OnActivateMouseLeft != null)
                 {
@@ -384,7 +384,7 @@ namespace IEL
                 }
             };
 
-            BorderMain.MouseRightButtonUp += (sender, e) =>
+            BorderMain.MouseRightButtonDown += (sender, e) =>
             {
                 if (IsEnabled && OnActivateMouseRight != null)
                 {

@@ -13,7 +13,7 @@
                 <RowDefinition Height="50"/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
-            <TextBlock x:Name="TextBlockNullPage" HorizontalAlignment="Center" Text="Нет доступных вкладок" VerticalAlignment="Center" FontSize="16" TextTrimming="CharacterEllipsis" FontStyle="Italic" Opacity="0.4" FontFamily="Lucida Sans Unicode" Height="25" Grid.Row="1" Width="190"/>
+            <TextBlock x:Name="TextBlockNullPage" Text="Нет доступных вкладок" FontSize="16" TextTrimming="CharacterEllipsis" FontStyle="Italic" Opacity="0.4" FontFamily="Lucida Sans Unicode" Grid.Row="1" Padding="15,5,15,5" VerticalAlignment="Center" TextAlignment="Center"/>
             <Grid Grid.Row="1">
                 <IEL:IELFrameDefault x:Name="IELFrameBrowser"/>
             </Grid>
