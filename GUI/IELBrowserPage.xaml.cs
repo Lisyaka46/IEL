@@ -386,20 +386,17 @@ namespace IEL
             inlay.OnActivateMouseRight += () => EventActiveActionInInlay?.Invoke(inlay);
             inlay.Opacity = 0d;
             IELInlays.Add(inlay);
+            ColumnDefinition column = new()
+            {
+                Width = new(DefaultWidthNewInlay, GridUnitType.Pixel),
+                MaxWidth = 0d
+            };
             if (InlaysCount == 0)
             {
                 animation.To = 0d;
                 TextBlockNullPage.BeginAnimation(OpacityProperty, animation);
             }
-            if (IELInlays.Count > GridMainInlays.ColumnDefinitions.Count)
-            {
-                GridMainInlays.ColumnDefinitions.Add(
-                    new()
-                    {
-                        Width = new(DefaultWidthNewInlay, GridUnitType.Pixel),
-                        MaxWidth = 0d
-                    });
-            }
+            GridMainInlays.ColumnDefinitions.Add(column);
             GridMainInlays.Children.Add(inlay);
             Grid.SetColumn(inlay, IELInlays.Count - 1);
 
@@ -451,7 +448,7 @@ namespace IEL
             IELInlay NextInlay = IELInlays[index];
             UsingInlayAnimationActivate(NextInlay);
             NextInlay.UsedState = true;
-            IELFrameBrowser.NextPage(Page, index.Value < ActivateIndex ? IIELFrame.OrientationMove.Left : IIELFrame.OrientationMove.Right);
+            MainPageController.NextPage(Page.Content, index.Value >= ActivateIndex);
             ActivateIndex = index.Value;
             EventChangeActiveInlay?.Invoke();
         }
@@ -523,7 +520,8 @@ namespace IEL
             if (Index == -1) return;
             int IndexNext = NextIndex(Index, InlaysCount - 1), IndexColumn = Grid.GetColumn(inlay);
             IELInlay ActualInlay = IELInlays[Index];
-            ActualInlay.IsEnabled = false;
+            GridMainInlays.ColumnDefinitions[IndexColumn].IsEnabled = false;
+            //ActualInlay.IsEnabled = false;
             ActualInlay.SetPage<IPageDefault>(null);
             Canvas.SetZIndex(ActualInlay, 0);
 
@@ -542,8 +540,9 @@ namespace IEL
             storyboard.FillBehavior = FillBehavior.Stop;
             storyboard.Completed += (sender, e) =>
             {
-                if (Index < IELInlays.Count && IELInlays.Count > 1)
+                if (Index < IELInlays.Count)
                 {
+                    while (GridMainInlays.ColumnDefinitions[IndexColumn].IsEnabled) IndexColumn--;
                     GridMainInlays.ColumnDefinitions.RemoveAt(IndexColumn);
                     for (int i = Index; i < IELInlays.Count; i++)
                     {
@@ -551,7 +550,7 @@ namespace IEL
                     }
                 }
             };
-            Storyboard.SetTarget(animationDouble, GridMainInlays.ColumnDefinitions[Grid.GetColumn(ActualInlay)]);
+            Storyboard.SetTarget(animationDouble, GridMainInlays.ColumnDefinitions[IndexColumn]);
             Storyboard.SetTargetProperty(animationDouble, new PropertyPath("(ColumnDefinition.MaxWidth)"));
             storyboard.Begin();
 
@@ -575,7 +574,7 @@ namespace IEL
                 if (IndexNext == -1)
                 {
                     ActivateIndex = -1;
-                    IELFrameBrowser.CloseFrame();
+                    MainPageController.ClosePage();
                     EventCloseBrowser?.Invoke();
                 }
                 else

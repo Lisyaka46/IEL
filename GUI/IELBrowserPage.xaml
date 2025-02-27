@@ -4,7 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:IEL"
-             xmlns:IEL="clr-namespace:IEL" x:Class="IEL.IELBrowserPage"
+             xmlns:GUI="clr-namespace:IEL"
+             x:Class="IEL.IELBrowserPage"
              mc:Ignorable="d" 
              d:DesignHeight="380.454" d:DesignWidth="487.727">
     <Border x:Name="BorderMain">
@@ -15,7 +16,7 @@
             </Grid.RowDefinitions>
             <TextBlock x:Name="TextBlockNullPage" Text="Нет доступных вкладок" FontSize="16" TextTrimming="CharacterEllipsis" FontStyle="Italic" Opacity="0.4" FontFamily="Lucida Sans Unicode" Grid.Row="1" Padding="15,5,15,5" VerticalAlignment="Center" TextAlignment="Center"/>
             <Grid Grid.Row="1">
-                <IEL:IELFrameDefault x:Name="IELFrameBrowser"/>
+                <GUI:IELPageController x:Name="MainPageController" LeftAnimateSwitch="5,5,5,5" RightAnimateSwitch="-5,-5,-5,-5"/>
             </Grid>
             <Grid>
                 <Border x:Name="BorderMainPage" Grid.Column="1" BorderThickness="0,0,0,2" BorderBrush="Black">
