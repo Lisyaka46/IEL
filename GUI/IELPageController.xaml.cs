@@ -135,5 +135,18 @@ namespace IEL
             animation_thickness.Duration = TimeSpan.FromMilliseconds(Millisecond);
             ActualFrame.BeginAnimation(MarginProperty, animation_thickness);
         }
+
+        /// <summary>
+        /// Закрыть элемент фрейма
+        /// </summary>
+        public void ClosePage()
+        {
+            BackFrame.Navigate(null);
+            BackFrame.Source = null;
+            ActualFrame.Navigate(null);
+            ActualFrame.Source = null;
+            //Activate = false;
+            //ClosingFrame?.Invoke();
+        }
     }
 }
