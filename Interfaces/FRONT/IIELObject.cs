@@ -1,5 +1,8 @@
-﻿using System.Windows.Input;
+﻿using System.Reflection;
+using System.Windows.Input;
+using System.Drawing;
 using System.Windows.Media.Imaging;
+using System.IO;
 
 namespace IEL.Interfaces.Front
 {
@@ -12,21 +15,6 @@ namespace IEL.Interfaces.Front
         /// Статус активности объекта
         /// </summary>
         public bool IsEnabled { get; set; }
-
-        /// <summary>
-        /// Узнать отображения действий над кнопкой
-        /// </summary>
-        /// <returns>Изображение мыши с действиями</returns>
-        internal static sealed BitmapImage? ImageMouseButton(bool Left, bool Right)
-        {
-            if (Left)
-            {
-                if (Right) return new(new Uri("/Windows/WindowsImages/DoubleMouseButton.png", UriKind.Relative));
-                else return new(new Uri("/Windows/WindowsImages/LeftMouseButton.png", UriKind.Relative));
-            }
-            else if (Right) return new(new Uri("/Windows/WindiwsImages/RightMouseButton.png", UriKind.Relative));
-            else return null;
-        }
 
         /// <summary>
         /// Узнать символ клавиши по коду клавиши

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace IEL.Interfaces.Front
 {
-    internal interface IIELInley : IIELButtonDefault
+    internal interface IIELInley : IIELButton
     {
         /// <summary>
         /// Данные об странице заголовка

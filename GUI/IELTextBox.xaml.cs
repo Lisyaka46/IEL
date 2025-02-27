@@ -2,6 +2,7 @@
 using IEL.Interfaces.Front;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using static IEL.Interfaces.Front.IIELButton;
@@ -227,7 +228,11 @@ namespace IEL
         public string Text
         {
             get => TextBoxMain.Text;
-            set => TextBoxMain.Text = value;
+            set
+            {
+                TextBoxMain.Text = value;
+                TextBoxMain.SelectionStart = value.Length;
+            }
         }
 
         /// <summary>
@@ -272,6 +277,33 @@ namespace IEL
         }
 
         /// <summary>
+        /// Событие нажатия клавиши
+        /// </summary>
+        public new event KeyEventHandler? KeyDown
+        {
+            add => TextBoxMain.KeyDown += value;
+            remove => TextBoxMain.KeyDown -= value;
+        }
+
+        /// <summary>
+        /// Событие отпускания клавиши
+        /// </summary>
+        public new event KeyEventHandler? KeyUp
+        {
+            add => TextBoxMain.KeyUp += value;
+            remove => TextBoxMain.KeyUp -= value;
+        }
+
+        /// <summary>
+        /// Событие изменения текста
+        /// </summary>
+        public event TextChangedEventHandler? TextChanged
+        {
+            add => TextBoxMain.TextChanged += value;
+            remove => TextBoxMain.TextChanged -= value;
+        }
+
+        /// <summary>
         /// Фокусировка текста
         /// </summary>
         public bool IsFocus { get; private set; } = false;
@@ -279,14 +311,13 @@ namespace IEL
         public IELTextBox()
         {
             InitializeComponent();
-
             TextName = string.Empty;
             ShowNameText = false;
             TextBoxMain.ContextMenu = null;
+            MaxLines = 1;
 
             ButtonAnimationColor = new();
             AnimationMillisecond = 100;
-
             BackgroundChangeDefaultColor = (Spectrum, Value) =>
             {
                 if ((Spectrum == BrushSettingQ.StateSpectrum.Default && !IsEnabled) ||

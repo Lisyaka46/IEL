@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="IEL.IELImageButtonKey"
+﻿<UserControl x:Class="IEL.IELButtonImageKey"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -24,7 +24,7 @@
                 <Border x:Name="BorderRightArrow" BorderBrush="Black" BorderThickness="2,2,2,2" CornerRadius="6,6,6,6" Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Left" Grid.Column="2">
                     <TextBlock x:Name="TextBlockRightArrow" TextWrapping="Wrap" Text="&gt;" HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="Arial Black" FontSize="14" Padding="1,0.7,0,0"/>
                 </Border>
-                <Image x:Name="ImageMouseButtonsUse" Source="/Windows/WindowsImages/DoubleMouseButton.png" Grid.Column="1" MinWidth="15" MinHeight="15" MaxWidth="25" MaxHeight="25" VerticalAlignment="Top" Width="20" Height="20" HorizontalAlignment="Right" Margin="0,4,4,0" Opacity="0.4" Grid.ColumnSpan="2"/>
+                <Image x:Name="ImageMouseButtonsUse" Grid.Column="2" MinWidth="15" MinHeight="15" MaxWidth="25" MaxHeight="25" VerticalAlignment="Top" Width="20" Height="20" HorizontalAlignment="Right" Opacity="0.4" Grid.ColumnSpan="1"/>
             </Grid>
         </Border>
         <Border x:Name="BorderButtonKey" BorderBrush="Black" BorderThickness="2,2,2,2" CornerRadius="3,3,3,3" Margin="2,3,2,4" Background="White">

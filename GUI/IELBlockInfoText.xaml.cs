@@ -1,23 +1,34 @@
 ﻿using IEL.Classes;
 using IEL.Interfaces.Front;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
 using System.Windows.Threading;
+using static IEL.Interfaces.Front.IIELStateVisualizationButton;
 
 namespace IEL
 {
     /// <summary>
-    /// Логика взаимодействия для IELButtonCommand.xaml
+    /// Логика взаимодействия для IELBlockInfoText.xaml
     /// </summary>
-    public partial class IELButtonCommand : UserControl, IIELButton
+    public partial class IELBlockInfoText : UserControl, IIELHover
     {
         #region Color Setting
         private BrushSettingQ? _BackgroundSetting;
         /// <summary>
-        /// Объект обычного состояния фона
+        /// Объект настройки состояний фона
         /// </summary>
         public BrushSettingQ BackgroundSetting
         {
@@ -32,7 +43,7 @@ namespace IEL
 
         private BrushSettingQ? _BorderBrushSetting;
         /// <summary>
-        /// Объект обычного состояния границы
+        /// Объект настройки состояний границы
         /// </summary>
         public BrushSettingQ BorderBrushSetting
         {
@@ -47,7 +58,7 @@ namespace IEL
 
         private BrushSettingQ? _ForegroundSetting;
         /// <summary>
-        /// Объект обычного состояния текста
+        /// Объект настройки состояний текста
         /// </summary>
         public BrushSettingQ ForegroundSetting
         {
@@ -90,6 +101,7 @@ namespace IEL
             {
                 TimeSpan time = TimeSpan.FromMilliseconds(value);
                 AnimationColor.Duration = time;
+                AnimationThickness.Duration = time;
                 AnimationDouble.Duration = time;
                 _AnimationMillisecond = value;
 
@@ -105,6 +117,14 @@ namespace IEL
         {
             DecelerationRatio = 0.2d,
             EasingFunction = new CubicEase() { EasingMode = EasingMode.EaseOut }
+        };
+
+        /// <summary>
+        /// Анимация thickness значения
+        /// </summary>
+        private readonly ThicknessAnimation AnimationThickness = new()
+        {
+            EasingFunction = new QuinticEase() { EasingMode = EasingMode.EaseOut }
         };
 
         /// <summary>
@@ -139,71 +159,12 @@ namespace IEL
         #endregion
 
         /// <summary>
-        /// Смещение контента в объекте
-        /// </summary>
-        public Thickness PaddingContent
-        {
-            get => BorderButton.Padding;
-            set => BorderButton.Padding = value;
-        }
-
-        /// <summary>
-        /// Текст кнопки
-        /// </summary>
-        public string Text
-        {
-            get => TextBlockButtonName.Text;
-            set => TextBlockButtonName.Text = value;
-        }
-
-        /// <summary>
-        /// Текст команды
-        /// </summary>
-        public string TextCommand
-        {
-            get => TextBlockButtonCommand.Text;
-            set => TextBlockButtonCommand.Text = value;
-        }
-
-        private int _Index;
-        /// <summary>
-        /// Индекс элемента 
-        /// </summary>
-        public int Index
-        {
-            get => _Index;
-            set
-            {
-                TextBlockNumberCommand.Text = $"#{value + 1}";
-                _Index = value;
-            }
-        }
-
-        /// <summary>
-        /// Скругление границ кнопки (по умолчанию 10, 10, 10, 10)
+        /// Скругление границ
         /// </summary>
         public CornerRadius CornerRadius
         {
-            get => BorderButton.CornerRadius;
-            set => BorderButton.CornerRadius = value;
-        }
-
-        /// <summary>
-        /// Шрифт текста в кнопке
-        /// </summary>
-        public FontFamily TextFontFamily
-        {
-            get => TextBlockButtonName.FontFamily;
-            set => TextBlockButtonName.FontFamily = value;
-        }
-
-        /// <summary>
-        /// Размер текста в кнопке
-        /// </summary>
-        public double TextFontSize
-        {
-            get => TextBlockButtonName.FontSize;
-            set => TextBlockButtonName.FontSize = value;
+            get => MainBorder.CornerRadius;
+            set => MainBorder.CornerRadius = value;
         }
 
         /// <summary>
@@ -211,78 +172,78 @@ namespace IEL
         /// </summary>
         public Thickness BorderThicknessBlock
         {
-            get => BorderButton.BorderThickness;
-            set => BorderButton.BorderThickness = value;
+            get => MainBorder.BorderThickness;
+            set => MainBorder.BorderThickness = value;
         }
 
         /// <summary>
-        /// Активация действия кнопки
+        /// Смещение контента в объекте
         /// </summary>
-        private bool ButtonActivate = false;
+        public Thickness PaddingContent
+        {
+            get => MainBorder.Padding;
+            set => MainBorder.Padding = value;
+        }
 
         /// <summary>
-        /// Объект события активации левым щелчком мыши
+        /// Текст объекта
         /// </summary>
-        public IIELButtonDefault.Activate? OnActivateMouseLeft { get; set; }
+        public string Text
+        {
+            get => MainTextBlock.Text;
+            set => MainTextBlock.Text = value;
+        }
 
         /// <summary>
-        /// Объект события активации правым щелчком мыши
+        /// Шрифт текста в кнопке
         /// </summary>
-        public IIELButtonDefault.Activate? OnActivateMouseRight { get; set; }
+        public new FontFamily FontFamily
+        {
+            get => base.FontFamily;
+            set
+            {
+                MainTextBlock.FontFamily = value;
+                base.FontFamily = value;
+            }
+        }
 
-        public IELButtonCommand(string Name, string FullTextCommand, int indexBuffer)
+        public IELBlockInfoText()
         {
             InitializeComponent();
-
-            AnimationMillisecond = 100; 
-            BackgroundChangeDefaultColor = (Spectrum, Value) =>
-            {
-                if ((Spectrum == BrushSettingQ.StateSpectrum.Default && !IsEnabled) ||
-                (Spectrum == BrushSettingQ.StateSpectrum.NotEnabled && IsEnabled)) return;
-                SolidColorBrush color = new(Value);
-                BorderButton.Background = color;
-            };
-            BorderBrushChangeDefaultColor = (Spectrum, Value) =>
-            {
-                if ((Spectrum == BrushSettingQ.StateSpectrum.Default && !IsEnabled) ||
-                (Spectrum == BrushSettingQ.StateSpectrum.NotEnabled && IsEnabled)) return;
-                SolidColorBrush color = new(Value);
-                BorderButton.BorderBrush = color;
-            };
-            ForegroundChangeDefaultColor = (Spectrum, Value) =>
-            {
-                if ((Spectrum == BrushSettingQ.StateSpectrum.Default && !IsEnabled) ||
-                (Spectrum == BrushSettingQ.StateSpectrum.NotEnabled && IsEnabled)) return;
-                SolidColorBrush color = new(Value);
-                TextBlockButtonCommand.Foreground = color;
-                TextBlockButtonName.Foreground = color;
-                TextBlockNumberCommand.Foreground = color;
-            };
-            BackgroundSetting = new(BrushSettingQ.CreateStyle.Background);
-            BorderBrushSetting = new(BrushSettingQ.CreateStyle.BorderBrush);
-            ForegroundSetting = new(BrushSettingQ.CreateStyle.Foreground);
-
-            TextFontFamily = new FontFamily("Arial");
-            TextFontSize = 14;
-            TextBlockButtonName.FontWeight = FontWeights.Bold;
-            Text = Name;
-            TextBlockButtonCommand.Text = FullTextCommand;
-            CornerRadius = new CornerRadius(10);
-            HorizontalAlignment = HorizontalAlignment.Stretch;
-            VerticalAlignment = VerticalAlignment.Top;
-            Height = 27;
-            Width = 230;
-            BorderButton.CornerRadius = new CornerRadius(4);
-            Opacity = 0;
-            AnimationDouble.To = 1;
-            BeginAnimation(OpacityProperty, AnimationDouble);
-            Index = indexBuffer;
             IntervalHover = 1300d;
             TimerBorderInfo.Tick += (sender, e) =>
             {
                 MouseHover?.Invoke(this, e);
                 TimerBorderInfo.Stop();
             };
+
+            AnimationMillisecond = 100;
+            BackgroundChangeDefaultColor = (Spectrum, Value) =>
+            {
+                if ((Spectrum == BrushSettingQ.StateSpectrum.Default && !IsEnabled) ||
+                (Spectrum == BrushSettingQ.StateSpectrum.NotEnabled && IsEnabled)) return;
+                SolidColorBrush color = new(Value);
+                MainBorder.Background = color;
+            };
+            BorderBrushChangeDefaultColor = (Spectrum, Value) =>
+            {
+                if ((Spectrum == BrushSettingQ.StateSpectrum.Default && !IsEnabled) ||
+                (Spectrum == BrushSettingQ.StateSpectrum.NotEnabled && IsEnabled)) return;
+                SolidColorBrush color = new(Value);
+                MainBorder.BorderBrush = color;
+            };
+            ForegroundChangeDefaultColor = (Spectrum, Value) =>
+            {
+                if ((Spectrum == BrushSettingQ.StateSpectrum.Default && !IsEnabled) ||
+                (Spectrum == BrushSettingQ.StateSpectrum.NotEnabled && IsEnabled)) return;
+                SolidColorBrush color = new(Value);
+                MainTextBlock.Foreground = color;
+            };
+            BackgroundSetting = new(BrushSettingQ.CreateStyle.Background);
+            BorderBrushSetting = new(BrushSettingQ.CreateStyle.BorderBrush);
+            ForegroundSetting = new(BrushSettingQ.CreateStyle.Foreground);
+
+            CornerRadius = new CornerRadius(10);
 
             MouseEnter += (sender, e) =>
             {
@@ -295,7 +256,6 @@ namespace IEL
 
             MouseLeave += (sender, e) =>
             {
-                ButtonActivate = false;
                 if (IsEnabled)
                 {
                     MouseLeaveAnimation();
@@ -303,71 +263,22 @@ namespace IEL
                 }
             };
 
-            MouseDown += (sender, e) =>
-            {
-                if (IsEnabled)
-                {
-                    if (
-                    (e.LeftButton == MouseButtonState.Pressed && OnActivateMouseLeft != null) ||
-                    (e.RightButton == MouseButtonState.Pressed && OnActivateMouseRight != null))
-                    {
-                        ButtonActivate = true;
-                        ClickDownAnimation();
-                        TimerBorderInfo.Stop();
-                    }
-                }
-            };       
-
-            MouseLeftButtonUp += (sender, e) =>
-            {
-                if (ButtonActivate)
-                {
-                    ButtonActivate = false;
-                    MouseEnterAnimation();
-                    OnActivateMouseLeft?.Invoke();
-                }
-            };
-
-            MouseRightButtonUp += (sender, e) =>
-            {
-                if (ButtonActivate)
-                {
-                    ButtonActivate = false;
-                    MouseEnterAnimation();
-                    OnActivateMouseRight?.Invoke();
-                }
-            };
-
             IsEnabledChanged += (sender, e) =>
             {
                 Color
-                    Foreground = (bool)e.NewValue ? ForegroundSetting.Default : ForegroundSetting.NotEnabled,
-                    Background = (bool)e.NewValue ? BackgroundSetting.Default : BackgroundSetting.NotEnabled,
-                    BorderBrush = (bool)e.NewValue ? BorderBrushSetting.Default : BorderBrushSetting.NotEnabled;
-                BorderButton.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, null);
-                BorderButton.Background.BeginAnimation(SolidColorBrush.ColorProperty, null);
-                TextBlockButtonName.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, null);
-                TextBlockButtonCommand.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, null);
-                BorderButton.BorderBrush = new SolidColorBrush(BorderBrush);
-                BorderButton.Background = new SolidColorBrush(Background);
-                TextBlockButtonName.Foreground = new SolidColorBrush(Foreground);
-                TextBlockButtonCommand.Foreground = new SolidColorBrush(Foreground);
-            };
-        }
+                Foreground = (bool)e.NewValue ? ForegroundSetting.Default : ForegroundSetting.NotEnabled,
+                Background = (bool)e.NewValue ? BackgroundSetting.Default : BackgroundSetting.NotEnabled,
+                BorderBrush = (bool)e.NewValue ? BorderBrushSetting.Default : BorderBrushSetting.NotEnabled;
 
-        /// <summary>
-        /// Анимировать нажатие на кнопку (Down)
-        /// </summary>
-        private void ClickDownAnimation()
-        {
-            Color
-                Foreground = ForegroundSetting.Used,
-                Background = BackgroundSetting.Used,
-                BorderBrush = BorderBrushSetting.Used;
-            BorderButton.BorderBrush = new SolidColorBrush(BorderBrush);
-            BorderButton.Background = new SolidColorBrush(Background);
-            TextBlockButtonName.Foreground = new SolidColorBrush(Foreground);
-            TextBlockButtonCommand.Foreground = new SolidColorBrush(Foreground);
+                AnimationColor.To = BorderBrush;
+                MainBorder.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
+
+                AnimationColor.To = Background;
+                MainBorder.Background.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
+
+                AnimationColor.To = Foreground;
+                MainTextBlock.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
+            };
         }
 
         /// <summary>
@@ -379,15 +290,15 @@ namespace IEL
                 Foreground = ForegroundSetting.Select,
                 Background = BackgroundSetting.Select,
                 BorderBrush = BorderBrushSetting.Select;
+
             AnimationColor.To = BorderBrush;
-            BorderButton.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
+            MainBorder.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
 
             AnimationColor.To = Background;
-            BorderButton.Background.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
+            MainBorder.Background.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
 
             AnimationColor.To = Foreground;
-            TextBlockButtonName.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
-            TextBlockButtonCommand.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
+            MainTextBlock.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
         }
 
         /// <summary>
@@ -399,15 +310,15 @@ namespace IEL
                 Foreground = ForegroundSetting.Default,
                 Background = BackgroundSetting.Default,
                 BorderBrush = BorderBrushSetting.Default;
+
             AnimationColor.To = BorderBrush;
-            BorderButton.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
+            MainBorder.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
 
             AnimationColor.To = Background;
-            BorderButton.Background.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
+            MainBorder.Background.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
 
             AnimationColor.To = Foreground;
-            TextBlockButtonName.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
-            TextBlockButtonCommand.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
+            MainTextBlock.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
         }
     }
 }

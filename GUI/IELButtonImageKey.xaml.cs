@@ -1,5 +1,6 @@
 ﻿using IEL.Classes;
 using IEL.Interfaces.Front;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -7,31 +8,31 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
-using static IEL.Interfaces.Front.IIELButton;
+using static IEL.Interfaces.Front.IIELStateVisualizationButton;
 
 namespace IEL
 {
     /// <summary>
-    /// Логика взаимодействия для IELImageButtonKey.xaml
+    /// Логика взаимодействия для IELButtonImageKey.xaml
     /// </summary>
-    public partial class IELImageButtonKey : UserControl, IIELButtonKey
+    public partial class IELButtonImageKey : UserControl, IIELButtonKey, IIELEventsVision
     {
-        #region StateVisualization
-        private StateVisual _StateVisualization = StateVisual.LeftArrow;
+        #region StateVisualizationButton
+        private StateButton _StateVisualizationButton = StateButton.LeftArrow;
         /// <summary>
         /// Состояние отображения направления
         /// </summary>
-        public StateVisual StateVisualization
+        public StateButton StateVisualizationButton
         {
-            get => _StateVisualization;
+            get => _StateVisualizationButton;
             set
             {
-                if (_StateVisualization == value) return;
-                ColumnLeftArrow.Width = new(value == StateVisual.LeftArrow ? 25 : 0);
-                ColumnRightArrow.Width = new(value == StateVisual.RightArrow ? 25 : 0);
-                BorderLeftArrow.Opacity = value == StateVisual.LeftArrow ? 1d : 0d;
-                BorderRightArrow.Opacity = value == StateVisual.RightArrow ? 1d : 0d;
-                _StateVisualization = value;
+                if (_StateVisualizationButton == value) return;
+                ColumnLeftArrow.Width = new(value == StateButton.LeftArrow ? 25 : 0);
+                ColumnRightArrow.Width = new(value == StateButton.RightArrow ? 25 : 0);
+                BorderLeftArrow.Opacity = value == StateButton.LeftArrow ? 1d : 0d;
+                BorderRightArrow.Opacity = value == StateButton.RightArrow ? 1d : 0d;
+                _StateVisualizationButton = value;
             }
         }
         #endregion
@@ -169,6 +170,28 @@ namespace IEL
         public event EventHandler? MouseHover;
         #endregion
 
+        #region ImagedEventsButton
+        /// <summary>
+        /// Изображение отображения событий нажатия при отсутствии возможности нажатия
+        /// </summary>
+        public ImageSource? NotEventImageMouse { get; set; }
+
+        /// <summary>
+        /// Изображение отображения событий нажатия только при левой возможности нажатия
+        /// </summary>
+        public ImageSource? OnlyLeftEventImageMouse { get; set; }
+
+        /// <summary>
+        /// Изображение отображения событий нажатия только при правой возможности нажатия
+        /// </summary>
+        public ImageSource? OnlyRightEventImageMouse { get; set; }
+
+        /// <summary>
+        /// Изображение отображения событий нажатия при двусторонней возможности нажатия
+        /// </summary>
+        public ImageSource? FullEventImageMouse { get; set; }
+        #endregion
+
         /// <summary>
         /// Изображение которое отображается в кнопке
         /// </summary>
@@ -211,36 +234,50 @@ namespace IEL
             set => ImageButton.Margin = value;
         }
 
+        private IIELButtonKey.Activate? _OnActivateMouseLeft;
         /// <summary>
         /// Объект события активации левым щелчком мыши
         /// </summary>
-        public IIELButtonKey.Activate? OnActivateMouseLeft { get; set; }
+        public IIELButtonKey.Activate? OnActivateMouseLeft
+        {
+            get => _OnActivateMouseLeft;
+            set
+            {
+                _OnActivateMouseLeft = value;
+                UpdateVisibleMouseEvents();
+            }
+        }
 
+        private IIELButtonKey.Activate? _OnActivateMouseRight;
         /// <summary>
         /// Объект события активации правым щелчком мыши
         /// </summary>
-        public IIELButtonKey.Activate? OnActivateMouseRight { get; set; }
+        public IIELButtonKey.Activate? OnActivateMouseRight
+        {
+            get => _OnActivateMouseRight;
+            set
+            {
+                _OnActivateMouseRight = value;
+                UpdateVisibleMouseEvents();
+            }
+        }
 
-        /// <summary>
-        /// Картинка действий над кнопкой
-        /// </summary>
-        private BitmapImage? ImageMouse;
-
-        private bool _VisibleMouseImaging = true;
+        private bool _VisibleMouseImaging;
         /// <summary>
         /// Состояние активности отображения действий на кнопке
         /// </summary>
+        /// <remarks>
+        /// При включённом состоянии отображает изображение действий производимое над кнопкой.
+        /// <code></code>
+        /// <b>Изображение поменять нельзя.</b>
+        /// </remarks>
         public bool VisibleMouseImaging
         {
             get => _VisibleMouseImaging;
             set
             {
+                if (_VisibleMouseImaging != value) UpdateVisibleMouseEvents();
                 _VisibleMouseImaging = value;
-                if (EnterButton)
-                {
-                    AnimationDouble.To = value ? 0.4d : 0d;
-                    ImageMouseButtonsUse.BeginAnimation(OpacityProperty, AnimationDouble);
-                }
             }
         }
 
@@ -281,12 +318,21 @@ namespace IEL
         }
 
         /// <summary>
+        /// Смещение контента в объекте
+        /// </summary>
+        public Thickness PaddingContent
+        {
+            get => BorderButton.Padding;
+            set => BorderButton.Padding = value;
+        }
+
+        /// <summary>
         /// Инициализировать объект кнопки с изображением
         /// </summary>
-        public IELImageButtonKey()
+        public IELButtonImageKey()
         {
             InitializeComponent();
-            StateVisualization = StateVisual.Default;
+            StateVisualizationButton = StateButton.Default;
 
             AnimationMillisecond = 100;
             BackgroundChangeDefaultColor = (Spectrum, Value) =>
@@ -334,6 +380,7 @@ namespace IEL
             {
                 if (IsEnabled)
                 {
+                    EnterButton = true;
                     MouseEnterDetect();
                     TimerBorderInfo.Start();
                 }
@@ -342,6 +389,7 @@ namespace IEL
             {
                 if (IsEnabled)
                 {
+                    EnterButton = false;
                     MouseLeaveDetect();
                     TimerBorderInfo.Stop();
                 }
@@ -349,6 +397,7 @@ namespace IEL
 
             IsEnabledChanged += (sender, e) =>
             {
+                EnterButton = false;
                 Color
                 Background = (bool)e.NewValue ? BackgroundSetting.Default : BackgroundSetting.NotEnabled,
                 BorderBrush = (bool)e.NewValue ? BorderBrushSetting.Default : BorderBrushSetting.NotEnabled,
@@ -400,6 +449,20 @@ namespace IEL
         }
 
         /// <summary>
+        /// Обновить видимость событий мыши
+        /// </summary>
+        public void UpdateVisibleMouseEvents()
+        {
+            if (_VisibleMouseImaging)
+            {
+                ImageMouseButtonsUse.Source = ((IIELEventsVision)this).ImageMouseButton(this);
+                ImageMouseButtonsUse.UpdateLayout();
+            }
+            AnimationDouble.To = EnterButton ? 0.4d : 0d;
+            ImageMouseButtonsUse.BeginAnimation(OpacityProperty, AnimationDouble);
+        }
+
+        /// <summary>
         /// Анимировать нажатие на кнопку (Down)
         /// </summary>
         private void ClickDownAnimation()
@@ -433,19 +496,7 @@ namespace IEL
             AnimationColor.To = Foreground;
             TextBlockKey.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
 
-            if (VisibleMouseImaging)
-            {
-                ImageMouse = IIELObject.ImageMouseButton(OnActivateMouseLeft != null, OnActivateMouseRight != null);
-                if (ImageMouse != null)
-                {
-                    AnimationDouble.To = 0.4d;
-                    ImageMouseButtonsUse.BeginInit();
-                    ImageMouseButtonsUse.Source = ImageMouse;
-                    ImageMouseButtonsUse.EndInit();
-                    ImageMouseButtonsUse.BeginAnimation(OpacityProperty, AnimationDouble);
-                }
-            }
-            EnterButton = true;
+            UpdateVisibleMouseEvents();
         }
 
         /// <summary>
@@ -465,7 +516,6 @@ namespace IEL
 
             AnimationDouble.To = 0d;
             ImageMouseButtonsUse.BeginAnimation(OpacityProperty, AnimationDouble);
-            EnterButton = false;
         }
 
         /// <summary>

@@ -8,7 +8,53 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CounterScrollBar\DataScroll.csproj" />
+    <None Remove="Properties\Images\DoubleMouseButton.png" />
+    <None Remove="Properties\Images\LeftMouseButton.png" />
+    <None Remove="Properties\Images\NotMouseButton.png" />
+    <None Remove="Properties\Images\RightMouseButton.png" />
+    <None Remove="Properties\Resources\Cross.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DataScroll\DataScroll.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Properties\Images\DoubleMouseButton.png">
+      <CopyToOutputDirectory></CopyToOutputDirectory>
+      <CustomToolNamespace></CustomToolNamespace>
+    </Resource>
+    <Resource Include="Properties\Images\LeftMouseButton.png">
+      <CopyToOutputDirectory></CopyToOutputDirectory>
+      <CustomToolNamespace></CustomToolNamespace>
+    </Resource>
+    <Resource Include="Properties\Images\NotMouseButton.png">
+      <CopyToOutputDirectory></CopyToOutputDirectory>
+      <CustomToolNamespace></CustomToolNamespace>
+    </Resource>
+    <Resource Include="Properties\Images\RightMouseButton.png">
+      <CopyToOutputDirectory></CopyToOutputDirectory>
+      <CustomToolNamespace></CustomToolNamespace>
+    </Resource>
+    <Resource Include="Properties\Resources\Cross.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="GUI\IELBlockInfoImage.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>

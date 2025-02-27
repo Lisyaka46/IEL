@@ -7,8 +7,13 @@ using System.Windows.Media;
 
 namespace IEL.Interfaces.Front
 {
-    public interface IIELButtonDefault : IIELButton
+    public interface IIELButtonDefault : IIELButton, IIELStateVisualizationButton
     {
+        /// <summary>
+        /// Делегат события активации
+        /// </summary>
+        public delegate void Activate();
+
         /// <summary>
         /// Объект события активации кнопки левым щелчком мыши
         /// </summary>
@@ -18,10 +23,5 @@ namespace IEL.Interfaces.Front
         /// Объект события активации кнопки правым щелчком мыши
         /// </summary>
         public Activate? OnActivateMouseRight { get; set; }
-
-        /// <summary>
-        /// Делегат события активации
-        /// </summary>
-        public delegate void Activate();
     }
 }

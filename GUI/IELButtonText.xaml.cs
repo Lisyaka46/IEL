@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.IO;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -7,7 +8,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using IEL.Classes;
 using IEL.Interfaces.Front;
-using static IEL.Interfaces.Front.IIELButton;
+using static IEL.Interfaces.Front.IIELStateVisualizationButton;
 
 namespace IEL
 {
@@ -16,22 +17,22 @@ namespace IEL
     /// </summary>
     public partial class IELButtonText : UserControl, IIELButtonDefault
     {
-        #region StateVisualization
-        private StateVisual _StateVisualization = StateVisual.LeftArrow;
+        #region StateVisualizationButton
+        private StateButton _StateVisualizationButton = StateButton.LeftArrow;
         /// <summary>
         /// Состояние отображения направления
         /// </summary>
-        public StateVisual StateVisualization
+        public StateButton StateVisualizationButton
         {
-            get => _StateVisualization;
+            get => _StateVisualizationButton;
             set
             {
-                if (_StateVisualization == value) return;
-                ColumnLeftArrow.Width = new(value == StateVisual.LeftArrow ? 25 : 0);
-                ColumnRightArrow.Width = new(value == StateVisual.RightArrow ? 25 : 0);
-                BorderLeftArrow.Opacity = value == StateVisual.LeftArrow ? 1d : 0d;
-                BorderRightArrow.Opacity = value == StateVisual.RightArrow ? 1d : 0d;
-                _StateVisualization = value;
+                if (_StateVisualizationButton == value) return;
+                ColumnLeftArrow.Width = new(value == StateButton.LeftArrow ? 25 : 0);
+                ColumnRightArrow.Width = new(value == StateButton.RightArrow ? 25 : 0);
+                BorderLeftArrow.Opacity = value == StateButton.LeftArrow ? 1d : 0d;
+                BorderRightArrow.Opacity = value == StateButton.RightArrow ? 1d : 0d;
+                _StateVisualizationButton = value;
             }
         }
         #endregion
@@ -39,7 +40,7 @@ namespace IEL
         #region Color Setting
         private BrushSettingQ? _BackgroundSetting;
         /// <summary>
-        /// Объект обычного состояния фона
+        /// Объект настройки состояний фона
         /// </summary>
         public BrushSettingQ BackgroundSetting
         {
@@ -54,7 +55,7 @@ namespace IEL
 
         private BrushSettingQ? _BorderBrushSetting;
         /// <summary>
-        /// Объект обычного состояния границы
+        /// Объект настройки состояний границы
         /// </summary>
         public BrushSettingQ BorderBrushSetting
         {
@@ -69,7 +70,7 @@ namespace IEL
 
         private BrushSettingQ? _ForegroundSetting;
         /// <summary>
-        /// Объект обычного состояния текста
+        /// Объект настройки состояний текста
         /// </summary>
         public BrushSettingQ ForegroundSetting
         {
@@ -169,8 +170,30 @@ namespace IEL
         public event EventHandler? MouseHover;
         #endregion
 
+        #region ImagedEventsButton
         /// <summary>
-        /// Скругление границ (по умолчанию 10, 10, 10, 10)
+        /// Изображение отображения событий нажатия при отсутствии возможности нажатия
+        /// </summary>
+        public ImageSource? NotEventImageMouse { get; set; }
+
+        /// <summary>
+        /// Изображение отображения событий нажатия только при левой возможности нажатия
+        /// </summary>
+        public ImageSource? OnlyLeftEventImageMouse { get; set; }
+
+        /// <summary>
+        /// Изображение отображения событий нажатия только при правой возможности нажатия
+        /// </summary>
+        public ImageSource? OnlyRightEventImageMouse { get; set; }
+
+        /// <summary>
+        /// Изображение отображения событий нажатия при двусторонней возможности нажатия
+        /// </summary>
+        public ImageSource? FullEventImageMouse { get; set; }
+        #endregion
+
+        /// <summary>
+        /// Скругление границ
         /// </summary>
         public CornerRadius CornerRadius
         {
@@ -185,6 +208,15 @@ namespace IEL
         {
             get => BorderButton.BorderThickness;
             set => BorderButton.BorderThickness = value;
+        }
+
+        /// <summary>
+        /// Смещение контента в объекте
+        /// </summary>
+        public Thickness PaddingContent
+        {
+            get => BorderButton.Padding;
+            set => BorderButton.Padding = value;
         }
 
         /// <summary>
@@ -209,36 +241,50 @@ namespace IEL
             }
         }
 
+        private IIELButtonDefault.Activate? _OnActivateMouseLeft;
         /// <summary>
         /// Объект события активации левым щелчком мыши
         /// </summary>
-        public IIELButtonDefault.Activate? OnActivateMouseLeft { get; set; }
+        public IIELButtonDefault.Activate? OnActivateMouseLeft
+        {
+            get => _OnActivateMouseLeft;
+            set
+            {
+                _OnActivateMouseLeft = value;
+                UpdateVisibleMouseEvents();
+            }
+        }
 
+        private IIELButtonDefault.Activate? _OnActivateMouseRight;
         /// <summary>
         /// Объект события активации правым щелчком мыши
         /// </summary>
-        public IIELButtonDefault.Activate? OnActivateMouseRight { get; set; }
+        public IIELButtonDefault.Activate? OnActivateMouseRight
+        {
+            get => _OnActivateMouseRight;
+            set
+            {
+                _OnActivateMouseRight = value;
+                UpdateVisibleMouseEvents();
+            }
+        }
 
-        /// <summary>
-        /// Картинка действий над кнопкой
-        /// </summary>
-        private BitmapImage? ImageMouse;
-
-        private bool _VisibleMouseImaging = true;
+        private bool _VisibleMouseImaging;
         /// <summary>
         /// Состояние активности отображения действий на кнопке
         /// </summary>
+        /// <remarks>
+        /// При включённом состоянии отображает изображение действий производимое над кнопкой.
+        /// <code></code>
+        /// <b>Изображение поменять нельзя.</b>
+        /// </remarks>
         public bool VisibleMouseImaging
         {
             get => _VisibleMouseImaging;
             set
             {
+                if (_VisibleMouseImaging != value) UpdateVisibleMouseEvents();
                 _VisibleMouseImaging = value;
-                if (EnterButton)
-                {
-                    AnimationDouble.To = value ? 0.4d : 0d;
-                    ImageMouseButtonsUse.BeginAnimation(OpacityProperty, AnimationDouble);
-                }
             }
         }
 
@@ -250,7 +296,8 @@ namespace IEL
         public IELButtonText()
         {
             InitializeComponent();
-            StateVisualization = StateVisual.Default;
+            VisibleMouseImaging = true;
+            StateVisualizationButton = StateButton.Default;
 
             AnimationMillisecond = 100;
             BackgroundChangeDefaultColor = (Spectrum, Value) =>
@@ -299,6 +346,7 @@ namespace IEL
             {
                 if (IsEnabled)
                 {
+                    EnterButton = true;
                     MouseEnterAnimation();
                     TimerBorderInfo.Start();
                 }
@@ -308,6 +356,7 @@ namespace IEL
             {
                 if (IsEnabled)
                 {
+                    EnterButton = false;
                     MouseLeaveAnimation();
                     TimerBorderInfo.Stop();
                 }
@@ -347,13 +396,14 @@ namespace IEL
 
             IsEnabledChanged += (sender, e) =>
             {
+                EnterButton = false;
                 Color
                 Foreground = (bool)e.NewValue ? ForegroundSetting.Default : ForegroundSetting.NotEnabled,
                 Background = (bool)e.NewValue ? BackgroundSetting.Default : BackgroundSetting.NotEnabled,
                 BorderBrush = (bool)e.NewValue ? BorderBrushSetting.Default : BorderBrushSetting.NotEnabled;
-                if (StateVisualization != StateVisual.Default)
+                if (StateVisualizationButton != StateButton.Default)
                 {
-                    if (StateVisualization == StateVisual.LeftArrow)
+                    if (StateVisualizationButton == StateButton.LeftArrow)
                     {
                         AnimationColor.To = Foreground;
                         TextBlockLeftArrow.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
@@ -379,7 +429,21 @@ namespace IEL
         }
 
         /// <summary>
-        /// Анимировать нажатие на кнопку (Down)
+        /// Обновить видимость событий мыши
+        /// </summary>
+        public void UpdateVisibleMouseEvents()
+        {
+            if (_VisibleMouseImaging)
+            {
+                ImageMouseButtonsUse.Source = ((IIELEventsVision)this).ImageMouseButton(this);
+                ImageMouseButtonsUse.UpdateLayout();
+            }
+            AnimationDouble.To = EnterButton ? 0.4d : 0d;
+            ImageMouseButtonsUse.BeginAnimation(OpacityProperty, AnimationDouble);
+        }
+
+        /// <summary>
+        /// Анимировать нажатие на элемент (Down)
         /// </summary>
         private void ClickDownAnimation()
         {
@@ -387,14 +451,14 @@ namespace IEL
                 Foreground = ForegroundSetting.Used,
                 Background = BackgroundSetting.Used,
                 BorderBrush = BorderBrushSetting.Used;
-            if (StateVisualization != StateVisual.Default)
+            if (StateVisualizationButton != StateButton.Default)
             {
-                (StateVisualization == StateVisual.LeftArrow ? TextBlockLeftArrow : TextBlockRightArrow)
+                (StateVisualizationButton == StateButton.LeftArrow ? TextBlockLeftArrow : TextBlockRightArrow)
                     .Foreground = new SolidColorBrush(Foreground);
                 AnimationThickness.To = new(
-                    StateVisualization == StateVisual.RightArrow ? 5 : 0, 0,
-                    StateVisualization == StateVisual.LeftArrow ? 5 : 0, 0);
-                (StateVisualization == StateVisual.LeftArrow ? BorderLeftArrow : BorderRightArrow)
+                    StateVisualizationButton == StateButton.RightArrow ? 5 : 0, 0,
+                    StateVisualizationButton == StateButton.LeftArrow ? 5 : 0, 0);
+                (StateVisualizationButton == StateButton.LeftArrow ? BorderLeftArrow : BorderRightArrow)
                     .BeginAnimation(MarginProperty, AnimationThickness);
             }
 
@@ -412,14 +476,14 @@ namespace IEL
                 Foreground = ForegroundSetting.Select,
                 Background = BackgroundSetting.Select,
                 BorderBrush = BorderBrushSetting.Select;
-            if (StateVisualization != StateVisual.Default)
+            if (StateVisualizationButton != StateButton.Default)
             {
                 AnimationThickness.To = new(
-                    StateVisualization == StateVisual.RightArrow ? -3 : 0,
+                    StateVisualizationButton == StateButton.RightArrow ? -3 : 0,
                     0,
-                    StateVisualization == StateVisual.LeftArrow ? -3 : 0,
+                    StateVisualizationButton == StateButton.LeftArrow ? -3 : 0,
                     0);
-                if (StateVisualization == StateVisual.LeftArrow)
+                if (StateVisualizationButton == StateButton.LeftArrow)
                     BorderLeftArrow.BeginAnimation(MarginProperty, AnimationThickness);
                 else BorderRightArrow.BeginAnimation(MarginProperty, AnimationThickness);
             }
@@ -436,26 +500,14 @@ namespace IEL
 
             AnimationColor.To = Foreground;
             TextBlockButton.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
-            if (StateVisualization != StateVisual.Default)
+            if (StateVisualizationButton != StateButton.Default)
             {
-                if (StateVisualization == StateVisual.LeftArrow)
+                if (StateVisualizationButton == StateButton.LeftArrow)
                     TextBlockLeftArrow.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
                 else TextBlockRightArrow.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
             }
 
-            if (VisibleMouseImaging)
-            {
-                ImageMouse = IIELObject.ImageMouseButton(OnActivateMouseLeft != null, OnActivateMouseRight != null);
-                if (ImageMouse != null)
-                {
-                    AnimationDouble.To = 0.4d;
-                    ImageMouseButtonsUse.BeginInit();
-                    ImageMouseButtonsUse.Source = ImageMouse;
-                    ImageMouseButtonsUse.EndInit();
-                    ImageMouseButtonsUse.BeginAnimation(OpacityProperty, AnimationDouble);
-                }
-            }
-            EnterButton = true;
+            UpdateVisibleMouseEvents();
         }
 
         /// <summary>
@@ -467,11 +519,10 @@ namespace IEL
                 Foreground = ForegroundSetting.Default,
                 Background = BackgroundSetting.Default,
                 BorderBrush = BorderBrushSetting.Default;
-            EnterButton = false;
-            if (StateVisualization != StateVisual.Default)
+            if (StateVisualizationButton != StateButton.Default)
             {
                 AnimationThickness.To = new(0);
-                (StateVisualization == StateVisual.LeftArrow ? BorderLeftArrow : BorderRightArrow)
+                (StateVisualizationButton == StateButton.LeftArrow ? BorderLeftArrow : BorderRightArrow)
                     .BeginAnimation(MarginProperty, AnimationThickness);
             }
 
@@ -487,9 +538,9 @@ namespace IEL
 
             AnimationColor.To = Foreground;
             TextBlockButton.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
-            if (StateVisualization != StateVisual.Default)
+            if (StateVisualizationButton != StateButton.Default)
             {
-                if (StateVisualization == StateVisual.LeftArrow)
+                if (StateVisualizationButton == StateButton.LeftArrow)
                     TextBlockLeftArrow.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
                 else TextBlockRightArrow.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
             }

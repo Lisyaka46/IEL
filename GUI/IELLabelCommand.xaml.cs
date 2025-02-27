@@ -12,7 +12,7 @@ namespace IEL
     /// <summary>
     /// Логика взаимодействия для IELLabelCommand.xaml
     /// </summary>
-    public partial class IELLabelCommand : UserControl, IIELObject
+    public partial class IELLabelCommand : UserControl, IIELButton
     {
         #region Color Setting
         private BrushSettingQ? _BackgroundSetting;
@@ -148,6 +148,15 @@ namespace IEL
         #endregion
 
         /// <summary>
+        /// Смещение контента в объекте
+        /// </summary>
+        public Thickness PaddingContent
+        {
+            get => BorderButton.Padding;
+            set => BorderButton.Padding = value;
+        }
+
+        /// <summary>
         /// Объект события активации кнопки левым щелчком мыши
         /// </summary>
         public IIELButtonDefault.Activate? OnActivateMouseLeft { get; set; }
@@ -208,7 +217,24 @@ namespace IEL
             }
         }
 
-        public LabelAction Label { get; set; }
+        private LabelAction _Label = LabelAction.Empty;
+        /// <summary>
+        /// Ярлык который выполняется объектом
+        /// </summary>
+        public LabelAction Label
+        {
+            get => _Label;
+            set
+            {
+                _Label = value;
+                if (value == LabelAction.Empty) IsEnabled = false;
+                else
+                {
+                    if (!IsEnabled) IsEnabled = true;
+                    TextBlockName.Text = _Label.Name;
+                }
+            }
+        }
 
         private int _Index;
         public int Index
