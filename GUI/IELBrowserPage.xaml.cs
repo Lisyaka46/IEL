@@ -439,7 +439,7 @@ namespace IEL
         {
             if (index.Value == ActivateIndex && IELInlays[index].UsedState) return;
             IPageDefault Page = IELInlays[index].Page ?? throw new Exception("Объект заголовка не может быть без страницы!");
-            if (ActivateIndex > -1 && ActivateIndex < IELInlays.Count)
+            if (ActivateIndex > -1)
             {
                 IELInlay BackInlay = IELInlays[ActivateIndex];
                 BackInlay.UsedState = false;
@@ -584,7 +584,7 @@ namespace IEL
                     //if (NextInlay.TextSignature.Length > 0) NextInlay.IsAnimatedSignatureText = true;
                 }
             }
-            else ActivateIndex--;
+            else if (ActivateIndex >= Index) ActivateIndex--;
             if (InlaysCount == 0)
             {
                 DoubleAnimation animation = AnimationDouble.Clone();
