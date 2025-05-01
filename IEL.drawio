@@ -1,20 +1,20 @@
 <mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/26.0.9 Chrome/128.0.6613.186 Electron/32.2.5 Safari/537.36" version="26.0.9" pages="2">
   <diagram name="CORE Диаграмма" id="ia_T1l1x6hs6FPcz-3SK">
-    <mxGraphModel dx="1372" dy="1236" grid="0" gridSize="10" guides="0" tooltips="1" connect="0" arrows="1" fold="1" page="0" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="1434" dy="1236" grid="0" gridSize="10" guides="0" tooltips="1" connect="0" arrows="1" fold="1" page="0" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="MWzFeV6izfAVd_EmdzCG-8" value="BrushSettingQ" style="rounded=1;whiteSpace=wrap;fontSize=18;fontColor=#70967C;fontFamily=Lucida Console;strokeWidth=3;" parent="1" vertex="1">
-          <mxGeometry x="320" y="-220" width="170" height="80" as="geometry" />
+        <mxCell id="MWzFeV6izfAVd_EmdzCG-8" value="BrushSettingQ" style="rounded=1;whiteSpace=wrap;fontSize=18;fontColor=#70967C;fontFamily=Lucida Console;strokeWidth=1;" parent="1" vertex="1">
+          <mxGeometry x="796" y="-144" width="170" height="80" as="geometry" />
         </mxCell>
         <mxCell id="MWzFeV6izfAVd_EmdzCG-9" value="ILabelAction" style="rounded=1;whiteSpace=wrap;fontSize=18;fontColor=#70967C;fontFamily=Lucida Console;strokeWidth=3;" parent="1" vertex="1">
-          <mxGeometry x="320" y="-80" width="170" height="80" as="geometry" />
+          <mxGeometry x="330" y="-221" width="170" height="80" as="geometry" />
         </mxCell>
         <mxCell id="MWzFeV6izfAVd_EmdzCG-12" value="SettingsPanelActionFrameworkElement" style="rounded=1;whiteSpace=wrap;fontSize=18;fontColor=#70967C;fontFamily=Lucida Console;strokeWidth=3;" parent="1" vertex="1">
           <mxGeometry x="324" y="-350" width="430" height="80" as="geometry" />
         </mxCell>
         <mxCell id="r3l4vlM_85dYpehm9L9s-1" value="IPageKey" style="rounded=1;whiteSpace=wrap;fontSize=18;fontColor=#70967C;fontFamily=Lucida Console;" parent="1" vertex="1">
-          <mxGeometry x="829" y="357" width="180" height="80" as="geometry" />
+          <mxGeometry x="865" y="324" width="180" height="80" as="geometry" />
         </mxCell>
         <mxCell id="r3l4vlM_85dYpehm9L9s-2" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;dashPattern=12 12;strokeWidth=2;endArrow=none;endFill=0;flowAnimation=1;" parent="1" source="r3l4vlM_85dYpehm9L9s-1" target="r3l4vlM_85dYpehm9L9s-5" edge="1">
           <mxGeometry relative="1" as="geometry">
@@ -26,16 +26,31 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="r3l4vlM_85dYpehm9L9s-4" value="IPageDefault" style="rounded=1;whiteSpace=wrap;fontSize=18;fontColor=#70967C;fontFamily=Lucida Console;" parent="1" vertex="1">
-          <mxGeometry x="365" y="311" width="180" height="80" as="geometry" />
+          <mxGeometry x="401" y="328" width="180" height="80" as="geometry" />
         </mxCell>
         <mxCell id="r3l4vlM_85dYpehm9L9s-5" value="IPage" style="rounded=1;whiteSpace=wrap;fontSize=18;fontColor=#70967C;fontFamily=Lucida Console;strokeWidth=3;" parent="1" vertex="1">
           <mxGeometry x="629" y="217" width="180" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="xRkEdBbI5JdPBZ1gdwjC-3" style="edgeStyle=none;shape=connector;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;dashPattern=12 12;strokeColor=default;strokeWidth=2;align=center;verticalAlign=middle;fontFamily=Lucida Console;fontSize=18;fontColor=#70967C;labelBackgroundColor=default;endArrow=none;endFill=0;flowAnimation=1;" edge="1" parent="1" source="xRkEdBbI5JdPBZ1gdwjC-1" target="r3l4vlM_85dYpehm9L9s-4">
+        <mxCell id="xRkEdBbI5JdPBZ1gdwjC-3" style="edgeStyle=none;shape=connector;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;dashPattern=12 12;strokeColor=default;strokeWidth=2;align=center;verticalAlign=middle;fontFamily=Lucida Console;fontSize=18;fontColor=#70967C;labelBackgroundColor=default;endArrow=none;endFill=0;flowAnimation=1;" parent="1" source="xRkEdBbI5JdPBZ1gdwjC-1" target="r3l4vlM_85dYpehm9L9s-4" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="xRkEdBbI5JdPBZ1gdwjC-1" value="IPageSetting" style="rounded=1;whiteSpace=wrap;fontSize=18;fontColor=#70967C;fontFamily=Lucida Console;" vertex="1" parent="1">
-          <mxGeometry x="206" y="468" width="180" height="80" as="geometry" />
+        <mxCell id="xRkEdBbI5JdPBZ1gdwjC-1" value="IPageSetting" style="rounded=1;whiteSpace=wrap;fontSize=18;fontColor=#70967C;fontFamily=Lucida Console;" parent="1" vertex="1">
+          <mxGeometry x="156" y="427" width="180" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="acRfijsAaLbDK8lnZ0tN-2" style="edgeStyle=none;shape=connector;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;dashPattern=12 12;strokeColor=default;strokeWidth=2;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=11;fontColor=default;labelBackgroundColor=default;endArrow=none;endFill=0;flowAnimation=1;" parent="1" source="acRfijsAaLbDK8lnZ0tN-1" target="MWzFeV6izfAVd_EmdzCG-8" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="acRfijsAaLbDK8lnZ0tN-1" value="IQData" style="rounded=1;whiteSpace=wrap;fontSize=18;fontColor=#70967C;fontFamily=Lucida Console;strokeWidth=3;" parent="1" vertex="1">
+          <mxGeometry x="580" y="-221" width="170" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="isjeXYCtf65aWthZw_w7-1" value="BrowserPage" style="rounded=1;whiteSpace=wrap;fontSize=18;fontColor=#70967C;fontFamily=Lucida Console;" vertex="1" parent="1">
+          <mxGeometry x="463" y="507" width="180" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="isjeXYCtf65aWthZw_w7-2" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;endArrow=none;endFill=0;dashed=1;dashPattern=12 12;flowAnimation=1;" edge="1" parent="1" source="isjeXYCtf65aWthZw_w7-1" target="r3l4vlM_85dYpehm9L9s-4">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="583" y="338" as="sourcePoint" />
+            <mxPoint x="647" y="307" as="targetPoint" />
+          </mxGeometry>
         </mxCell>
       </root>
     </mxGraphModel>
