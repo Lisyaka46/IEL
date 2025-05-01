@@ -83,6 +83,34 @@ namespace IEL
         /// </remarks>
         public Thickness RightAnimateSwitch { get; set; }
 
+        public new HorizontalAlignment HorizontalAlignment
+        {
+            get
+            {
+                return base.HorizontalAlignment;
+            }
+            set
+            {
+                base.HorizontalAlignment = value;
+                FrameActionPanelLeft.HorizontalAlignment = value;
+                FrameActionPanelRight.HorizontalAlignment = value;
+            }
+        }
+
+        public new VerticalAlignment VerticalAlignment
+        {
+            get
+            {
+                return base.VerticalAlignment;
+            }
+            set
+            {
+                base.VerticalAlignment = value;
+                FrameActionPanelLeft.VerticalAlignment = value;
+                FrameActionPanelRight.VerticalAlignment = value;
+            }
+        }
+
         public IELPageController()
         {
             InitializeComponent();
@@ -110,6 +138,8 @@ namespace IEL
             ActualFrame.Margin = !RightAlign ? LeftAnimateSwitch : RightAnimateSwitch;
             //Content.KeyboardMode = BackPage.KeyboardMode;
             //BackPage.KeyboardMode = false;
+            Content.HorizontalAlignment = HorizontalAlignment;
+            Content.VerticalAlignment = VerticalAlignment;
             ActualFrame.Navigate(Content);
 
             animation_thickness.To = !RightAlign ? RightAnimateSwitch : LeftAnimateSwitch;
@@ -119,7 +149,7 @@ namespace IEL
 
             animation_double.To = 0d;
             BackFrame.BeginAnimation(OpacityProperty, animation_double);
-            animation_double.To = 1;
+            animation_double.To = 1d;
             ActualFrame.BeginAnimation(OpacityProperty, animation_double);
         }
 
