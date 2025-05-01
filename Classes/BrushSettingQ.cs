@@ -1,4 +1,6 @@
-﻿using System.Windows.Media;
+﻿using IEL.Interfaces.Core;
+using System.Windows.Media;
+using static IEL.Interfaces.Core.IQData;
 
 namespace IEL.Classes
 {
@@ -29,32 +31,6 @@ namespace IEL.Classes
         }
 
         /// <summary>
-        /// Перечисление спектров цвета
-        /// </summary>
-        public enum StateSpectrum
-        {
-            /// <summary>
-            /// Спектр обычного состояния
-            /// </summary>
-            Default = 0,
-
-            /// <summary>
-            /// Спектр выделенного состояния
-            /// </summary>
-            Select = 1,
-
-            /// <summary>
-            /// Спектр использованного цвета
-            /// </summary>
-            Used = 2,
-
-            /// <summary>
-            /// Спектр отключённого цвета
-            /// </summary>
-            NotEnabled = 3,
-        }
-
-        /// <summary>
         /// Делегат события изменения обычного цвета
         /// </summary>
         /// <param name="Value">Новое значение цвета</param>
@@ -64,6 +40,29 @@ namespace IEL.Classes
         /// Событие изменения цвета обычного состояния
         /// </summary>
         internal event ColorDefaultChangeEventHandler? ColorDefaultChange;
+
+        /// <summary>
+        /// Массив данных цвета
+        /// </summary>
+        internal QData ColorData { get; set; } = new();
+
+        /// <summary>
+        /// Изменить напрямую стиль отображения объекта
+        /// </summary>
+        /// <param name="Spectrum">Стиль придаваемый использоваемому объекту</param>
+        public void InvokeObjectUsedStateColor(StateSpectrum Spectrum)
+        {
+            if (ColorDefaultChange == null) return;
+            Color Value = Spectrum switch
+            {
+                StateSpectrum.Default => Default,
+                StateSpectrum.Select => Select,
+                StateSpectrum.Used => Used,
+                StateSpectrum.NotEnabled => NotEnabled,
+                _ => Default,
+            };
+            ColorDefaultChange?.Invoke(Spectrum, Value);
+        }
 
         /// <summary>
         /// Состояние активности элемента
@@ -90,68 +89,65 @@ namespace IEL.Classes
             set
             {
                 _UsedState = value;
-                if (IsEnabled) ColorDefaultChange?.Invoke(StateSpectrum.Default, value ? _Used : _Default);
+                if (IsEnabled) 
+                    ColorDefaultChange?.Invoke(StateSpectrum.Default, ColorData.GetIndexingColor(value ? StateSpectrum.Used : StateSpectrum.Default));
             }
         }
 
         #region Default
-        private Color _Default;
         /// <summary>
         /// Цвет отключённого состояния состояния
         /// </summary>
         public Color Default
         {
-            get => IsEnabled ? (UsedState ? _Used : _Default) : _NotEnabled;
+            get => ColorData.GetIndexingColor(IsEnabled ? (UsedState ? StateSpectrum.Used : StateSpectrum.Default) : StateSpectrum.NotEnabled);
             set
             {
-                _Default = value;
+                ColorData.SetIndexingColor(StateSpectrum.Default, value);
                 if (IsEnabled) ColorDefaultChange?.Invoke(StateSpectrum.Default, value);
             }
         }
         #endregion
 
         #region NotEnabled
-        private Color _NotEnabled;
         /// <summary>
         /// Цвет отключённого состояния состояния
         /// </summary>
         public Color NotEnabled
         {
-            get => _NotEnabled;
+            get => ColorData.GetIndexingColor(StateSpectrum.NotEnabled);
             set
             {
-                _NotEnabled = value;
+                ColorData.SetIndexingColor(StateSpectrum.NotEnabled, value);
                 ColorDefaultChange?.Invoke(StateSpectrum.NotEnabled, value);
             }
         }
         #endregion
 
         #region Select
-        private Color _Select;
         /// <summary>
         /// Цвет выделенного состояния
         /// </summary>
         public Color Select
         {
-            get => IsEnabled ? _Select : _NotEnabled;
+            get => ColorData.GetIndexingColor(IsEnabled ? StateSpectrum.Select : StateSpectrum.NotEnabled);
             set
             {
-                _Select = value;
+                ColorData.SetIndexingColor(StateSpectrum.Select, value);
             }
         }
         #endregion
 
         #region Used
-        private Color _Used;
         /// <summary>
         /// Цвет нажатого или использованого состояния
         /// </summary>
         public Color Used
         {
-            get => IsEnabled ? (UsedState ? _Default : _Used) : _NotEnabled;
+            get => ColorData.GetIndexingColor(IsEnabled ? (UsedState ? StateSpectrum.Default : StateSpectrum.Used) : StateSpectrum.NotEnabled);
             set
             {
-                _Used = value;
+                ColorData.SetIndexingColor(StateSpectrum.Used, value);
             }
         }
         #endregion
@@ -159,20 +155,17 @@ namespace IEL.Classes
         public BrushSettingQ()
         {
             IsEnabled = true;
-            _Default = Colors.Black;
+            Default = Colors.Black;
             Select = Colors.Black;
             Used = Colors.Black;
             NotEnabled = Colors.Black;
         }
 
-        internal BrushSettingQ(Color Default, Color Select, Color Used, Color NotEnabled)
+        public BrushSettingQ(byte[,] ByteColorData)
         {
             IsEnabled = true;
             _UsedState = false;
-            _Default = Default;
-            this.Select = Select;
-            this.Used = Used;
-            this.NotEnabled = NotEnabled;
+            ColorData = new(ByteColorData);
         }
 
         internal BrushSettingQ(CreateStyle Style)

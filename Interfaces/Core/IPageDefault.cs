@@ -8,6 +8,6 @@ namespace IEL.Interfaces.Core
         /// <summary>
         /// Объект страницы распологающий элементы
         /// </summary>
-        public Page Content { get; }
+        public Page PageContent { get; }
     }
 }
