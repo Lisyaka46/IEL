@@ -17,6 +17,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 using static IEL.Interfaces.Front.IIELStateVisualizationButton;
+using static IEL.Interfaces.Core.IQData;
 
 namespace IEL
 {
@@ -35,7 +36,7 @@ namespace IEL
             get => _BackgroundSetting ?? new();
             set
             {
-                BackgroundChangeDefaultColor.Invoke(BrushSettingQ.StateSpectrum.Default, value.Default);
+                BackgroundChangeDefaultColor.Invoke(StateSpectrum.Default, value.Default);
                 value.ColorDefaultChange += BackgroundChangeDefaultColor;
                 _BackgroundSetting = value;
             }
@@ -50,7 +51,7 @@ namespace IEL
             get => _BorderBrushSetting ?? new();
             set
             {
-                BorderBrushChangeDefaultColor.Invoke(BrushSettingQ.StateSpectrum.Default, value.Default);
+                BorderBrushChangeDefaultColor.Invoke(StateSpectrum.Default, value.Default);
                 value.ColorDefaultChange += BorderBrushChangeDefaultColor;
                 _BorderBrushSetting = value;
             }
@@ -65,7 +66,7 @@ namespace IEL
             get => _ForegroundSetting ?? new();
             set
             {
-                ForegroundChangeDefaultColor.Invoke(BrushSettingQ.StateSpectrum.Default, value.Default);
+                ForegroundChangeDefaultColor.Invoke(StateSpectrum.Default, value.Default);
                 value.ColorDefaultChange += ForegroundChangeDefaultColor;
                 _ForegroundSetting = value;
             }
@@ -227,22 +228,22 @@ namespace IEL
             AnimationMillisecond = 100;
             BackgroundChangeDefaultColor = (Spectrum, Value) =>
             {
-                if ((Spectrum == BrushSettingQ.StateSpectrum.Default && !IsEnabled) ||
-                (Spectrum == BrushSettingQ.StateSpectrum.NotEnabled && IsEnabled)) return;
+                if ((Spectrum == StateSpectrum.Default && !IsEnabled) ||
+                (Spectrum == StateSpectrum.NotEnabled && IsEnabled)) return;
                 SolidColorBrush color = new(Value);
                 MainBorder.Background = color;
             };
             BorderBrushChangeDefaultColor = (Spectrum, Value) =>
             {
-                if ((Spectrum == BrushSettingQ.StateSpectrum.Default && !IsEnabled) ||
-                (Spectrum == BrushSettingQ.StateSpectrum.NotEnabled && IsEnabled)) return;
+                if ((Spectrum == StateSpectrum.Default && !IsEnabled) ||
+                (Spectrum == StateSpectrum.NotEnabled && IsEnabled)) return;
                 SolidColorBrush color = new(Value);
                 MainBorder.BorderBrush = color;
             };
             ForegroundChangeDefaultColor = (Spectrum, Value) =>
             {
-                if ((Spectrum == BrushSettingQ.StateSpectrum.Default && !IsEnabled) ||
-                (Spectrum == BrushSettingQ.StateSpectrum.NotEnabled && IsEnabled)) return;
+                if ((Spectrum == StateSpectrum.Default && !IsEnabled) ||
+                (Spectrum == StateSpectrum.NotEnabled && IsEnabled)) return;
                 SolidColorBrush color = new(Value);
             };
             BackgroundSetting = new(BrushSettingQ.CreateStyle.Background);

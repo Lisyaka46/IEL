@@ -6,6 +6,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using static IEL.Interfaces.Front.IIELButton;
+using static IEL.Interfaces.Core.IQData;
 
 namespace IEL
 {
@@ -60,6 +61,15 @@ namespace IEL
         }
 
         /// <summary>
+        /// Смещение объекта наименования
+        /// </summary>
+        public Thickness MarginNaming
+        {
+            get => TextBlockNaming.Margin;
+            set => TextBlockNaming.Margin = value;
+        }
+
+        /// <summary>
         /// Вертикальная ориентация контента элемента
         /// </summary>
         public VerticalAlignment TextBoxVerticalAlignment
@@ -80,10 +90,28 @@ namespace IEL
         /// <summary>
         /// Размер текста в элементе
         /// </summary>
-        public new double FontSize
+        public double FontSizeText
         {
             get => TextBoxMain.FontSize;
             set => TextBoxMain.FontSize = value;
+        }
+
+        /// <summary>
+        /// Доступна или нет печать в объекте
+        /// </summary>
+        public bool IsReadOnly
+        {
+            get => TextBoxMain.IsReadOnly;
+            set => TextBoxMain.IsReadOnly = value;
+        }
+
+        /// <summary>
+        /// Размер текста наименования элемента
+        /// </summary>
+        public double FontSizeNaming
+        {
+            get => TextBlockNaming.FontSize;
+            set => TextBlockNaming.FontSize = value;
         }
 
         /// <summary>
@@ -132,7 +160,7 @@ namespace IEL
             get => _BackgroundSetting ?? new();
             set
             {
-                BackgroundChangeDefaultColor.Invoke(BrushSettingQ.StateSpectrum.Default, value.Default);
+                BackgroundChangeDefaultColor.Invoke(StateSpectrum.Default, value.Default);
                 value.ColorDefaultChange += BackgroundChangeDefaultColor;
                 _BackgroundSetting = value;
             }
@@ -147,7 +175,7 @@ namespace IEL
             get => _BorderBrushSetting ?? new();
             set
             {
-                BorderBrushChangeDefaultColor.Invoke(BrushSettingQ.StateSpectrum.Default, value.Default);
+                BorderBrushChangeDefaultColor.Invoke(StateSpectrum.Default, value.Default);
                 value.ColorDefaultChange += BorderBrushChangeDefaultColor;
                 _BorderBrushSetting = value;
             }
@@ -162,7 +190,7 @@ namespace IEL
             get => _ForegroundSetting ?? new();
             set
             {
-                ForegroundChangeDefaultColor.Invoke(BrushSettingQ.StateSpectrum.Default, value.Default);
+                ForegroundChangeDefaultColor.Invoke(StateSpectrum.Default, value.Default);
                 value.ColorDefaultChange += ForegroundChangeDefaultColor;
                 _ForegroundSetting = value;
             }
@@ -320,22 +348,22 @@ namespace IEL
             AnimationMillisecond = 100;
             BackgroundChangeDefaultColor = (Spectrum, Value) =>
             {
-                if ((Spectrum == BrushSettingQ.StateSpectrum.Default && !IsEnabled) ||
-                (Spectrum == BrushSettingQ.StateSpectrum.NotEnabled && IsEnabled)) return;
+                if ((Spectrum == StateSpectrum.Default && !IsEnabled) ||
+                (Spectrum == StateSpectrum.NotEnabled && IsEnabled)) return;
                 SolidColorBrush color = new(Value);
                 TextBoxBorder.Background = color;
             };
             BorderBrushChangeDefaultColor = (Spectrum, Value) =>
             {
-                if ((Spectrum == BrushSettingQ.StateSpectrum.Default && !IsEnabled) ||
-                (Spectrum == BrushSettingQ.StateSpectrum.NotEnabled && IsEnabled)) return;
+                if ((Spectrum == StateSpectrum.Default && !IsEnabled) ||
+                (Spectrum == StateSpectrum.NotEnabled && IsEnabled)) return;
                 SolidColorBrush color = new(Value);
                 TextBoxBorder.BorderBrush = color;
             };
             ForegroundChangeDefaultColor = (Spectrum, Value) =>
             {
-                if ((Spectrum == BrushSettingQ.StateSpectrum.Default && !IsEnabled) ||
-                (Spectrum == BrushSettingQ.StateSpectrum.NotEnabled && IsEnabled)) return;
+                if ((Spectrum == StateSpectrum.Default && !IsEnabled) ||
+                (Spectrum == StateSpectrum.NotEnabled && IsEnabled)) return;
                 SolidColorBrush color = new(Value);
                 TextBoxMain.Foreground = color;
             };
