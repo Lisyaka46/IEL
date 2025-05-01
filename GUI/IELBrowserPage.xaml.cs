@@ -12,6 +12,8 @@ using System;
 using System.Windows.Media.Imaging;
 using System.ComponentModel;
 using System.IO;
+using static IEL.Interfaces.Core.IQData;
+using IEL.Classes.Browser;
 
 namespace IEL
 {
@@ -30,7 +32,7 @@ namespace IEL
             get => _BackgroundSetting ?? new();
             set
             {
-                BackgroundChangeDefaultColor.Invoke(BrushSettingQ.StateSpectrum.Default, value.Default);
+                BackgroundChangeDefaultColor.Invoke(StateSpectrum.Default, value.Default);
                 value.ColorDefaultChange += BackgroundChangeDefaultColor;
                 _BackgroundSetting = value;
             }
@@ -45,7 +47,7 @@ namespace IEL
             get => _BorderBrushSetting ?? new();
             set
             {
-                BorderBrushChangeDefaultColor.Invoke(BrushSettingQ.StateSpectrum.Default, value.Default);
+                BorderBrushChangeDefaultColor.Invoke(StateSpectrum.Default, value.Default);
                 value.ColorDefaultChange += BorderBrushChangeDefaultColor;
                 _BorderBrushSetting = value;
             }
@@ -60,7 +62,7 @@ namespace IEL
             get => _ForegroundSetting ?? new();
             set
             {
-                ForegroundChangeDefaultColor.Invoke(BrushSettingQ.StateSpectrum.Default, value.Default);
+                ForegroundChangeDefaultColor.Invoke(StateSpectrum.Default, value.Default);
                 value.ColorDefaultChange += ForegroundChangeDefaultColor;
                 _ForegroundSetting = value;
             }
@@ -133,6 +135,21 @@ namespace IEL
         #endregion
 
         /// <summary>
+        /// Данные об стиле цветов фона вкладок в браузере
+        /// </summary>
+        public QData QDataDefaultInlayBackground { get; set; }
+
+        /// <summary>
+        /// Данные об стиле цветов границ вкладок в браузере
+        /// </summary>
+        public QData QDataDefaultInlayBorderBrush { get; set; }
+
+        /// <summary>
+        /// Данные об стиле цветов текста вкладок в браузере
+        /// </summary>
+        public QData QDataDefaultInlayForeground { get; set; }
+
+        /// <summary>
         /// Массив объектов страниц
         /// </summary>
         private readonly List<IELInlay> IELInlays;
@@ -163,7 +180,7 @@ namespace IEL
         public delegate void ActiveActionInInlay(IELInlay Inlay);
 
         /// <summary>
-        /// Событие закрытия всех вкладок браузера
+        /// Событие закрытия последней вкладки браузера
         /// </summary>
         public event DelegateVoidHandler? EventCloseBrowser;
 
@@ -183,9 +200,16 @@ namespace IEL
         public event DelegateVoidHandler? EventOffDescriptionInlay;
 
         /// <summary>
+        /// Событие закрытия вкладки
+        /// </summary>
+        public event DelegateVoidHandler? EventCloseInlay;
+
+        /// <summary>
         /// Событие открытия действий над выбранной вкладкой
         /// </summary>
         public event ActiveActionInInlay? EventActiveActionInInlay;
+
+
 
         private IELButtonImage _IELButtonAddInlay;
 
@@ -220,6 +244,9 @@ namespace IEL
         public IELBrowserPage()
         {
             InitializeComponent();
+            QDataDefaultInlayBackground = new();
+            QDataDefaultInlayBorderBrush = new();
+            QDataDefaultInlayForeground = new();
             IELInlays = [];
             DefaultWidthNewInlay = 180d;
 
@@ -230,23 +257,23 @@ namespace IEL
             AnimationMillisecond = 100;
             BackgroundChangeDefaultColor = (Spectrum, Value) =>
             {
-                if ((Spectrum == BrushSettingQ.StateSpectrum.Default && !IsEnabled) ||
-                (Spectrum == BrushSettingQ.StateSpectrum.NotEnabled && IsEnabled)) return;
+                if ((Spectrum == StateSpectrum.Default && !IsEnabled) ||
+                (Spectrum == StateSpectrum.NotEnabled && IsEnabled)) return;
                 SolidColorBrush color = new(Value);
                 BorderMain.Background = color;
             };
             BorderBrushChangeDefaultColor = (Spectrum, Value) =>
             {
-                if ((Spectrum == BrushSettingQ.StateSpectrum.Default && !IsEnabled) ||
-                (Spectrum == BrushSettingQ.StateSpectrum.NotEnabled && IsEnabled)) return;
+                if ((Spectrum == StateSpectrum.Default && !IsEnabled) ||
+                (Spectrum == StateSpectrum.NotEnabled && IsEnabled)) return;
                 SolidColorBrush color = new(Value);
                 BorderMain.BorderBrush = color;
                 BorderMainPage.BorderBrush = color;
             };
             ForegroundChangeDefaultColor = (Spectrum, Value) =>
             {
-                if ((Spectrum == BrushSettingQ.StateSpectrum.Default && !IsEnabled) ||
-                (Spectrum == BrushSettingQ.StateSpectrum.NotEnabled && IsEnabled)) return;
+                if ((Spectrum == StateSpectrum.Default && !IsEnabled) ||
+                (Spectrum == StateSpectrum.NotEnabled && IsEnabled)) return;
                 SolidColorBrush color = new(Value);
                 TextBlockNullPage.Foreground = color;
             };
@@ -262,7 +289,7 @@ namespace IEL
         /// <param name="Head">Заголовок вкладки</param>
         /// <param name="Signature">Сигнатура-описание вкладки</param>
         /// <returns>Созданная вкладка</returns>
-        private IELInlay CreateInlay(IPageDefault Content, string Head, string Signature)
+        private IELInlay CreateInlay(BrowserPage Content, string Head, string Signature)
         {
             IELInlay Inlay = CreateInlay(Content, Head);
             Inlay.TextSignature = Signature;
@@ -291,7 +318,7 @@ namespace IEL
         /// <param name="Head">Заголовок вкладки</param>
         /// <param name="Signature">Сигнатура-описание вкладки</param>
         /// <returns>Созданная вкладка</returns>
-        private IELInlay CreateInlay(IPageDefault Content, string Head)
+        private IELInlay CreateInlay(BrowserPage Content, string Head)
         {
             IELInlay Inlay = new()
             {
@@ -304,9 +331,13 @@ namespace IEL
                 AnimationMillisecond = 200,
                 Padding = new(4, 4, 4, 0),
             };
+            Inlay.BackgroundSetting.ColorData = QDataDefaultInlayBackground;
+            Inlay.BorderBrushSetting.ColorData = QDataDefaultInlayBorderBrush;
+            Inlay.ForegroundSetting.ColorData = QDataDefaultInlayForeground;
             Inlay.OnActivateCloseInlay += () =>
             {
                 DeleteInlayPage(Inlay, ActivateIndex == IELInlays.IndexOf(Inlay));
+                EventCloseInlay?.Invoke();
             };
 
             BitmapImage bitmap = new();
@@ -330,10 +361,10 @@ namespace IEL
         /// <param name="Head">Наименование вкладки</param>
         /// <param name="Signature">Подпись вкладки</param>
         /// <param name="Activate">Активировать сразу или нет страницу</param>
-        public void AddInlayPage(IPageDefault Content, string Head, bool Activate = true)
+        public void AddInlayPage(BrowserPage Content, string Head, bool Activate = true)
         {
-            foreach (IPageDefault? page in IELInlays.Select((i) => i.Page))
-                if (page?.PageName.Equals(Content.PageName) ?? true) return;
+            foreach (BrowserPage? page in IELInlays.Select((i) => i.Page))
+                if (page?.PageContent.GetType().Equals(Content.GetType()) ?? true) return;
             DoubleAnimation animation = AnimationDouble.Clone();
             animation.Duration = TimeSpan.FromMilliseconds(300d);
             IELInlay inlay = CreateInlay(Content, Head);
@@ -376,10 +407,11 @@ namespace IEL
         /// <param name="Head">Наименование вкладки</param>
         /// <param name="Signature">Подпись вкладки</param>
         /// <param name="Activate">Активировать сразу или нет страницу</param>
-        public void AddInlayPage(IPageDefault Content, string Head, string Signature, bool Activate = true)
+        public void AddInlayPage(BrowserPage? Content, string Head, string Signature, bool Activate = true)
         {
-            foreach (IPageDefault? page in IELInlays.Select((i) => i.Page))
-                if (page?.PageName.Equals(Content.PageName) ?? true) return;
+            if (Content == null) return;
+            foreach (BrowserPage? page in IELInlays.Select((i) => i.Page))
+                if (page?.PageContent.GetType().Equals(Content.GetType()) ?? true) return;
             DoubleAnimation animation = AnimationDouble.Clone();
             animation.Duration = TimeSpan.FromMilliseconds(300d);
             IELInlay inlay = CreateInlay(Content, Head, Signature);
@@ -438,8 +470,8 @@ namespace IEL
         public void ActivateInlayIndex(Index index)
         {
             if (index.Value == ActivateIndex && IELInlays[index].UsedState) return;
-            IPageDefault Page = IELInlays[index].Page ?? throw new Exception("Объект заголовка не может быть без страницы!");
-            if (ActivateIndex > -1)
+            BrowserPage Page = IELInlays[index].Page ?? throw new Exception("Объект заголовка не может быть без страницы!");
+            if (ActivateIndex > -1 && IELInlays.Count > ActivateIndex)
             {
                 IELInlay BackInlay = IELInlays[ActivateIndex];
                 BackInlay.UsedState = false;
@@ -448,8 +480,9 @@ namespace IEL
             IELInlay NextInlay = IELInlays[index];
             UsingInlayAnimationActivate(NextInlay);
             NextInlay.UsedState = true;
-            MainPageController.NextPage(Page.Content, index.Value >= ActivateIndex);
+            MainPageController.NextPage(Page.PageContent, index.Value >= ActivateIndex);
             ActivateIndex = index.Value;
+            Page.EventFocusPage?.Invoke(Page);
             EventChangeActiveInlay?.Invoke();
         }
 
@@ -476,7 +509,6 @@ namespace IEL
         private void UsingInlayAnimationVisible(IELInlay Inlay, bool Visible = true, double DurationMillisecond = 800d)
         {
             Canvas.SetZIndex(Inlay, Visible ? 1 : 0);
-
             DoubleAnimation animation = AnimationDouble.Clone();
             animation.Duration = TimeSpan.FromMilliseconds(DurationMillisecond);
             animation.To = Visible ? 1d : 0d;
@@ -491,6 +523,7 @@ namespace IEL
         /// <param name="DurationMillisecond">Количество миллисекунд для анимации</param>
         private void UsingInlayAnimationActivate(IELInlay Inlay, bool Activate = true, double DurationMillisecond = 800d)
         {
+            if (!Activate) Inlay.Page?.EventUnfocusPage?.Invoke(Inlay.Page);
             ThicknessAnimation animation = AnimationThickness.Clone();
             animation.Duration = TimeSpan.FromMilliseconds(DurationMillisecond);
             animation.To = Activate ? new(0) : new(4, 4, 4, 0);
@@ -502,10 +535,10 @@ namespace IEL
         /// </summary>
         /// <typeparam name="T">Тип страницы поиска</typeparam>
         /// <returns>Найденная страница</returns>
-        public T? SearchPageType<T>() where T : IPageDefault
+        public T? SearchPageType<T>() where T : BrowserPage
         {
             if (InlaysCount == 0) return default;
-            IPageDefault? page = IELInlays.FirstOrDefault((i) => { return i.Page?.PageName.Equals(typeof(T).Name) ?? false; })?.Page;
+            BrowserPage? page = IELInlays.FirstOrDefault((i) => { return i.Page?.PageName.Equals(typeof(T).Name) ?? false; })?.Page;
             return page != null ? (T?)page : default;
         }
 
@@ -522,7 +555,7 @@ namespace IEL
             IELInlay ActualInlay = IELInlays[Index];
             GridMainInlays.ColumnDefinitions[IndexColumn].IsEnabled = false;
             //ActualInlay.IsEnabled = false;
-            ActualInlay.SetPage<IPageDefault>(null);
+            ActualInlay.SetPage<BrowserPage>(null);
             Canvas.SetZIndex(ActualInlay, 0);
 
             double NewWidth = GridMainInlays.ActualWidth / IELInlays.Count(i => !i.IsEnabled);
@@ -579,8 +612,7 @@ namespace IEL
                 }
                 else
                 {
-                    IELInlay NextInlay = IELInlays[IndexNext];
-                    ActivateInInlay(NextInlay);
+                    ActivateInlayIndex(IndexNext);
                     //if (NextInlay.TextSignature.Length > 0) NextInlay.IsAnimatedSignatureText = true;
                 }
             }
@@ -600,11 +632,6 @@ namespace IEL
         /// <param name="ActualIndex">Текущий индекс</param>
         /// <param name="Count">Количество элементов</param>
         /// <returns>Ожидаемый индекс элемента</returns>
-        private static int NextIndex(int ActualIndex, int Count)
-        {
-            if (ActualIndex < Count - 1) return ++ActualIndex;
-            else if (Count > 1) return --ActualIndex;
-            return Count - 1;
-        }
+        private static int NextIndex(int ActualIndex, int Count) => ActualIndex < Count ? ActualIndex : --ActualIndex;
     }
 }

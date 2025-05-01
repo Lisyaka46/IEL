@@ -11,6 +11,8 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using static IEL.Interfaces.Front.IIELStateVisualizationButton;
+using static IEL.Interfaces.Core.IQData;
+using IEL.Classes.Browser;
 
 namespace IEL
 {
@@ -30,7 +32,7 @@ namespace IEL
             get => _BackgroundSetting ?? new();
             set
             {
-                BackgroundChangeDefaultColor.Invoke(BrushSettingQ.StateSpectrum.Default, value.Default);
+                BackgroundChangeDefaultColor.Invoke(StateSpectrum.Default, value.Default);
                 value.ColorDefaultChange += BackgroundChangeDefaultColor;
                 _BackgroundSetting = value;
             }
@@ -45,7 +47,7 @@ namespace IEL
             get => _BorderBrushSetting ?? new();
             set
             {
-                BorderBrushChangeDefaultColor.Invoke(BrushSettingQ.StateSpectrum.Default, value.Default);
+                BorderBrushChangeDefaultColor.Invoke(StateSpectrum.Default, value.Default);
                 value.ColorDefaultChange += BorderBrushChangeDefaultColor;
                 _BorderBrushSetting = value;
             }
@@ -60,7 +62,7 @@ namespace IEL
             get => _ForegroundSetting ?? new();
             set
             {
-                ForegroundChangeDefaultColor.Invoke(BrushSettingQ.StateSpectrum.Default, value.Default);
+                ForegroundChangeDefaultColor.Invoke(StateSpectrum.Default, value.Default);
                 value.ColorDefaultChange += ForegroundChangeDefaultColor;
                 _ForegroundSetting = value;
             }
@@ -196,12 +198,12 @@ namespace IEL
         /// <summary>
         /// Страница заголовка
         /// </summary>
-        public IPageDefault? Page { get; private set; }
+        public BrowserPage? Page { get; private set; }
 
         /// <summary>
         /// Объект страницы
         /// </summary>
-        internal new object? Content { get; private set; }
+        internal object? ContentPage { get; private set; }
 
         /// <summary>
         /// Шрифт текста в кнопке
@@ -291,27 +293,27 @@ namespace IEL
             _UsedState = false;
             TextSignature = String.Empty;
             Page = null;
-            Content = null;
+            ContentPage = null;
 
             AnimationMillisecond = 100;
             BackgroundChangeDefaultColor = (Spectrum, Value) =>
             {
-                if ((Spectrum == BrushSettingQ.StateSpectrum.Default && !IsEnabled) ||
-                (Spectrum == BrushSettingQ.StateSpectrum.NotEnabled && IsEnabled)) return;
+                //if ((Spectrum == StateSpectrum.Default && !IsEnabled) ||
+                //(Spectrum == StateSpectrum.NotEnabled && IsEnabled)) return;
                 SolidColorBrush color = new(Value);
                 BorderMain.Background = color;
             };
             BorderBrushChangeDefaultColor = (Spectrum, Value) =>
             {
-                if ((Spectrum == BrushSettingQ.StateSpectrum.Default && !IsEnabled) ||
-                (Spectrum == BrushSettingQ.StateSpectrum.NotEnabled && IsEnabled)) return;
+                //if ((Spectrum == StateSpectrum.Default && !IsEnabled) ||
+                //(Spectrum == StateSpectrum.NotEnabled && IsEnabled)) return;
                 SolidColorBrush color = new(Value);
                 BorderMain.BorderBrush = color;
             };
             ForegroundChangeDefaultColor = (Spectrum, Value) =>
             {
-                if ((Spectrum == BrushSettingQ.StateSpectrum.Default && !IsEnabled) ||
-                (Spectrum == BrushSettingQ.StateSpectrum.NotEnabled && IsEnabled)) return;
+                //if ((Spectrum == StateSpectrum.Default && !IsEnabled) ||
+                //(Spectrum == StateSpectrum.NotEnabled && IsEnabled)) return;
                 SolidColorBrush color = new(Value);
                 TextBlockHead.Foreground = color;
             };
@@ -469,10 +471,10 @@ namespace IEL
         /// Установить вкладке объект страницы
         /// </summary>
         /// <param name="page">Объект страницы</param>
-        internal void SetPage<T>(T? page) where T : IPageDefault
+        internal void SetPage<T>(T? page) where T : BrowserPage
         {
             Page = page;
-            Content = Page;
+            ContentPage = Page?.PageContent;
         }
     }
 }
