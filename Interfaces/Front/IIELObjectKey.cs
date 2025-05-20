@@ -13,11 +13,21 @@ namespace IEL.Interfaces.Front
         /// <summary>
         /// Активность видимости символа действия активации
         /// </summary>
-        protected bool CharKeyboardActivate { get; set; }
+        public bool CharKeyboardActivate { get; protected set; }
 
         /// <summary>
         /// Клавиша отвечающая за активацию
         /// </summary>
         public Key? CharKeyKeyboard { get; }
+
+        /// <summary>
+        /// Объект события активации кнопки левым щелчком мыши
+        /// </summary>
+        public IIELObject.Activate? OnActivateMouseLeft { get; set; }
+
+        /// <summary>
+        /// Объект события активации кнопки правым щелчком мыши
+        /// </summary>
+        public IIELObject.Activate? OnActivateMouseRight { get; set; }
     }
 }

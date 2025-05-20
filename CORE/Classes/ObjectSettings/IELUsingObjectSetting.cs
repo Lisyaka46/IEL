@@ -1,0 +1,60 @@
+﻿using IEL.CORE.Enums;
+using IEL.Interfaces;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
+using System.Windows.Threading;
+
+namespace IEL.CORE.Classes.ObjectSettings
+{
+    public class IELUsingObjectSetting : IELObjectSetting
+    {
+        #region MouseHover
+        /// <summary>
+        /// Длительность задержки в миллисекундах
+        /// </summary>
+        public double IntervalHover
+        {
+            get => TimerBorderInfo.Interval.TotalMilliseconds;
+            set => TimerBorderInfo.Interval = TimeSpan.FromMilliseconds(value);
+        }
+
+        /// <summary>
+        /// Таймер события MouseHover
+        /// </summary>
+        private readonly DispatcherTimer TimerBorderInfo = new()
+        {
+            Interval = TimeSpan.FromMilliseconds(1300d),
+        };
+
+        /// <summary>
+        /// Запустить таймер позиции мыши
+        /// </summary>
+        public void StartHover() => TimerBorderInfo.Start();
+
+        /// <summary>
+        /// Остановить таймер позиции мыши
+        /// </summary>
+        public void StopHover() => TimerBorderInfo.Stop();
+
+        /// <summary>
+        /// Событие задержки курсора на элементе
+        /// </summary>
+        public event EventHandler? MouseHover;
+        #endregion
+
+        public IELUsingObjectSetting()
+        {
+            TimerBorderInfo.Tick += (sender, e) =>
+            {
+                MouseHover?.Invoke(this, e);
+                TimerBorderInfo.Stop();
+            };
+            AnimationMillisecond = 200d;
+        }
+    }
+}

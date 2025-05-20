@@ -12,15 +12,8 @@
             </Style>
         </Border.FocusVisualStyle>
         <Grid x:Name="GridActionPanel" Focusable="True" Margin="2,2,2,3">
-            <GUI:IELPageController x:Name="MainPageController"/>
-            <TextBlock x:Name="TextBlockRightButtonIndicatorKey" HorizontalAlignment="Right" TextWrapping="Wrap" Text="CTRL" VerticalAlignment="Bottom" Panel.ZIndex="2" Padding="10,4,10,4" FontFamily="Bahnschrift SemiBold">
-                <TextBlock.Background>
-                    <RadialGradientBrush RadiusX="0.5" RadiusY="0.5">
-                        <GradientStop Color="#B255A6A7" Offset="0.575"/>
-                        <GradientStop Offset="1" Color="#00922525"/>
-                    </RadialGradientBrush>
-                </TextBlock.Background>
-            </TextBlock>
+            <GUI:IELPageController x:Name="MainPageController" Padding="4,4,4,4"/>
+            <TextBlock x:Name="TextBlockRightButtonIndicatorKey" HorizontalAlignment="Right" TextWrapping="Wrap" Text="CTRL" VerticalAlignment="Bottom" Panel.ZIndex="2" FontFamily="Bahnschrift SemiBold" FontSize="16" Foreground="White"/>
         </Grid>
     </Border>
 </UserControl>

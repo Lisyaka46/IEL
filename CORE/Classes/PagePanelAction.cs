@@ -1,62 +1,84 @@
-﻿using IEL.Classes;
-using IEL.Interfaces.Front;
-using System.Windows;
+﻿using IEL.Interfaces.Front;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Markup;
 using System.Windows.Media;
 
-namespace IEL.Interfaces.Core
+namespace IEL.CORE.Classes
 {
-    public interface IPageKey : IPage
+    #region Enum
+    /// <summary>
+    /// Перечисление вариаций активации кнопки по клавише
+    /// </summary>
+    internal enum OrientationActivate
     {
         /// <summary>
-        /// Перечисление вариаций активации кнопки по клавише
+        /// Левая активация кнопки
         /// </summary>
-        public enum OrientationActivate
+        LeftButton = 0,
+
+        /// <summary>
+        /// Правая активация кнопки
+        /// </summary>
+        RightButton = 1,
+    }
+
+    /// <summary>
+    /// Какое действие совершить
+    /// </summary>
+    internal enum ActionButton
+    {
+        /// <summary>
+        /// Активация действия
+        /// </summary>
+        ActionActivate = 0,
+
+        /// <summary>
+        /// Активация мерцания
+        /// </summary>
+        BlinkActivate = 1,
+    }
+    #endregion
+
+    /// <summary>
+    /// Инициализатор класса управления страницей
+    /// </summary>
+    /// <param name="Source">Страница данных</param>
+    public class PagePanelAction(Page DefaultSource)
+    {
+        #region ElementChangedHandler
+        public delegate void ElementChangedHandler<T_Value>(Page Source, T_Value NewValue);
+
+        /// <summary>
+        /// Событие изменения состояния управления с помощью клавиатуры
+        /// </summary>
+        public event ElementChangedHandler<bool>? IsKeyboardModeChanged;
+        #endregion
+
+        #region IsKeyboardMode
+        private bool _IsKeyboardMode = false;
+        /// <summary>
+        /// Состояние управления с помощью клавиатуры
+        /// </summary>
+        public bool IsKeyboardMode
         {
-            /// <summary>
-            /// Левая активация кнопки
-            /// </summary>
-            LeftButton = 0,
-
-            /// <summary>
-            /// Правая активация кнопки
-            /// </summary>
-            RightButton = 1,
+            get => _IsKeyboardMode;
+            set
+            {
+                IsKeyboardModeChanged?.Invoke(ObjectPage, value);
+                _IsKeyboardMode = value;
+            }
         }
+        #endregion
 
         /// <summary>
-        /// Какое действие совершить
+        /// Страница управления
         /// </summary>
-        public enum ActionButton
-        {
-            /// <summary>
-            /// Активация действия
-            /// </summary>
-            ActionActivate = 0,
-
-            /// <summary>
-            /// Активация мерцания
-            /// </summary>
-            BlinkActivate = 1,
-        }
-
-        /// <summary>
-        /// Объект состояния режима клавиатуры <b>БЕЗ СОБЫТИЯ ИЗМЕНЕНИЯ</b>
-        /// </summary>
-        public bool KeyboardMode { get; set; }
-
-        /// <summary>
-        /// Делегат события изменения состояния режима клавиатуры
-        /// </summary>
-        /// <param name="ModeChanged">Новое значение Alt режима</param>
-        public delegate void Delegate_KeyboardModeChanged(bool ModeChanged);
-
-        /// <summary>
-        /// Объект события режима клавиатуры
-        /// </summary>
-        public Delegate_KeyboardModeChanged? KeyboardModeChanged { get; }
+        public Page ObjectPage { get; } = DefaultSource;
 
         /// <summary>
         /// Найти элемент поддерживающий клавишу в странице
@@ -90,16 +112,15 @@ namespace IEL.Interfaces.Core
         /// <summary>
         /// Активировать кнопку в данном элементе типа "IIELButtonKey" с помощью клавиши
         /// </summary>
-        /// <param name="SearchPage">Объект интерфейса в котором находится элемент</param>
         /// <param name="key">Клавиша которую нажали</param>
         /// <param name="ElementAction">Событие которое нужно совершить над объектом</param>
         /// <param name="Orientation">Ориентация нажатия на кнопку</param>
         /// <remarks>Производится поиск и реализация действия над объектом</remarks>
         /// <returns>Выполнилось удачно или нет</returns>
-        internal virtual bool ActivateElementKey<T>(Page SearchPage, Key key, ActionButton ElementAction,
+        internal bool ActivateElementKey<T>(Key key, ActionButton ElementAction,
             OrientationActivate Orientation = OrientationActivate.LeftButton) where T : IIELButtonKey
         {
-            T? Button = SearchButton<T>((Visual)SearchPage.Content, key);
+            T? Button = SearchButton<T>((Visual)ObjectPage.Content, key);
             if (Button == null) return false;
             switch (ElementAction)
             {

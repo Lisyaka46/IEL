@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 using System.Windows.Controls;
 using static IEL.Interfaces.Core.IBrowserPage;
 
-namespace IEL.Classes.Browser
+namespace IEL.CORE.Classes.Browser
 {
-    public class BrowserPage : IBrowserPage
+    public class BrowserPage(Page ElementPage) : IBrowserPage
     {
         /// <summary>
         /// Имя страницы
@@ -19,7 +19,7 @@ namespace IEL.Classes.Browser
         /// <summary>
         /// Объект страницы
         /// </summary>
-        public Page PageContent { get; }
+        public Page PageContent { get; } = ElementPage;
 
         public BrowserEvent? EventUnfocusPage { get; set; }
         /// <summary>
@@ -52,11 +52,6 @@ namespace IEL.Classes.Browser
             {
                 EventUnfocusPage -= value;
             }
-        }
-
-        public BrowserPage(Page ElementPage)
-        {
-            PageContent = ElementPage;
         }
     }
 }

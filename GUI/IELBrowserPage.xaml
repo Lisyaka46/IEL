@@ -26,7 +26,11 @@
                                 <ColumnDefinition/>
                                 <ColumnDefinition Width="50" MaxWidth="50" MinWidth="50"/>
                             </Grid.ColumnDefinitions>
-                            <Grid x:Name="GridMainInlays"/>
+                            <Grid>
+
+                                <Grid x:Name="GridMainInlays">
+                                </Grid>
+                            </Grid>
                         </Grid>
                     </Grid>
                 </Border>

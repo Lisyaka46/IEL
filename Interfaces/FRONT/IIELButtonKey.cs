@@ -1,30 +1,25 @@
-﻿using System.Windows.Input;
-using System.Windows.Media;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace IEL.Interfaces.Front
 {
-    public interface IIELButtonKey : IIELButton, IIELObjectKey, IIELStateVisualizationButton
+    internal interface IIELButtonKey : IIELButton
     {
         /// <summary>
-        /// Делегат события активации
+        /// Активность видимости символа действия активации
         /// </summary>
-        /// <param name="KeyboardActivate">Активировался ли объект с помощью клавиатуры</param>
-        public delegate void Activate(bool KeyboardActivate);
-        
-        /// <summary>
-        /// Объект события активации кнопки левым щелчком мыши
-        /// </summary>
-        public Activate? OnActivateMouseLeft { get; set; }
+        public bool CharKeyboardActivate { get; protected set; }
 
         /// <summary>
-        /// Объект события активации кнопки правым щелчком мыши
+        /// Клавиша отвечающая за активацию
         /// </summary>
-        public Activate? OnActivateMouseRight { get; set; }
+        public Key? CharKeyKeyboard { get; }
 
-        /// <summary>
-        /// Анимация мерцания
-        /// </summary>
-        [MTAThread()]
+        //
         public void BlinkAnimation();
     }
 }

@@ -6,8 +6,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
 using static IEL.Interfaces.Core.IQData;
+using IEL.CORE.Enums;
 
-namespace IEL.Classes
+namespace IEL.CORE.Classes
 {
     public class QData : IQData
     {
@@ -16,6 +17,9 @@ namespace IEL.Classes
         /// </summary>
         public byte[,] Data { get; }
 
+        /// <summary>
+        /// Инициализировать данные по умолчанию
+        /// </summary>
         public QData()
         {
             Data = new byte[4, 4]

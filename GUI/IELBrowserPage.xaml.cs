@@ -1,5 +1,4 @@
-﻿using IEL.Classes;
-using IEL.Interfaces.Core;
+﻿using IEL.Interfaces.Core;
 using IEL.Interfaces.Front;
 using System.Windows;
 using System.Windows.Controls;
@@ -13,126 +12,45 @@ using System.Windows.Media.Imaging;
 using System.ComponentModel;
 using System.IO;
 using static IEL.Interfaces.Core.IQData;
-using IEL.Classes.Browser;
+using IEL.CORE.Classes;
+using IEL.CORE.Classes.Browser;
+using IEL.CORE.Classes.ObjectSettings;
 
 namespace IEL
 {
     /// <summary>
     /// Логика взаимодействия для IELBrowserPage.xaml
     /// </summary>
-    public partial class IELBrowserPage : UserControl, IIELBrowserPage
+    public partial class IELBrowserPage : UserControl
     {
-        #region Color Setting
-        private BrushSettingQ? _BackgroundSetting;
+        private IELObjectSetting _IELSettingObject = new();
         /// <summary>
-        /// Объект обычного состояния фона
+        /// Настройка использования объекта
         /// </summary>
-        public BrushSettingQ BackgroundSetting
+        public IELObjectSetting IELSettingObject
         {
-            get => _BackgroundSetting ?? new();
+            get => _IELSettingObject;
             set
             {
-                BackgroundChangeDefaultColor.Invoke(StateSpectrum.Default, value.Default);
-                value.ColorDefaultChange += BackgroundChangeDefaultColor;
-                _BackgroundSetting = value;
+                value.BackgroundQChanged += (NewValue) =>
+                {
+                    SolidColorBrush color = new(NewValue);
+                    BorderMain.Background = color;
+                };
+                value.BorderBrushQChanged += (NewValue) =>
+                {
+                    SolidColorBrush color = new(NewValue);
+                    BorderMain.BorderBrush = color;
+                    BorderMainPage.BorderBrush = color;
+                };
+                value.ForegroundQChanged += (NewValue) =>
+                {
+                    SolidColorBrush color = new(NewValue);
+                    TextBlockNullPage.Foreground = color;
+                };
+                _IELSettingObject = value;
             }
         }
-
-        private BrushSettingQ? _BorderBrushSetting;
-        /// <summary>
-        /// Объект обычного состояния границы
-        /// </summary>
-        public BrushSettingQ BorderBrushSetting
-        {
-            get => _BorderBrushSetting ?? new();
-            set
-            {
-                BorderBrushChangeDefaultColor.Invoke(StateSpectrum.Default, value.Default);
-                value.ColorDefaultChange += BorderBrushChangeDefaultColor;
-                _BorderBrushSetting = value;
-            }
-        }
-
-        private BrushSettingQ? _ForegroundSetting;
-        /// <summary>
-        /// Объект обычного состояния текста
-        /// </summary>
-        public BrushSettingQ ForegroundSetting
-        {
-            get => _ForegroundSetting ?? new();
-            set
-            {
-                ForegroundChangeDefaultColor.Invoke(StateSpectrum.Default, value.Default);
-                value.ColorDefaultChange += ForegroundChangeDefaultColor;
-                _ForegroundSetting = value;
-            }
-        }
-
-        #region Event Change Color
-        /// <summary>
-        /// Обект события изменения цвета обычного состояния фона
-        /// </summary>
-        private readonly BrushSettingQ.ColorDefaultChangeEventHandler BackgroundChangeDefaultColor;
-
-        /// <summary>
-        /// Обект события изменения цвета обычного состояния границы
-        /// </summary>
-        private readonly BrushSettingQ.ColorDefaultChangeEventHandler BorderBrushChangeDefaultColor;
-
-        /// <summary>
-        /// Обект события изменения цвета обычного состояния текста
-        /// </summary>
-        private readonly BrushSettingQ.ColorDefaultChangeEventHandler ForegroundChangeDefaultColor;
-        #endregion
-        #endregion
-
-        #region AnimationMillisecond
-        private int _AnimationMillisecond;
-        /// <summary>
-        /// Длительность анимации в миллисекундах
-        /// </summary>
-        public int AnimationMillisecond
-        {
-            get => _AnimationMillisecond;
-            set
-            {
-                TimeSpan time = TimeSpan.FromMilliseconds(value);
-                AnimationColor.Duration = time;
-                AnimationThickness.Duration = time;
-                AnimationDouble.Duration = time;
-                _AnimationMillisecond = value;
-
-            }
-        }
-        #endregion
-
-        #region animateObjects
-        /// <summary>
-        /// Анимация color значения
-        /// </summary>
-        private readonly ColorAnimation AnimationColor = new()
-        {
-            DecelerationRatio = 0.2d,
-            EasingFunction = new CubicEase() { EasingMode = EasingMode.EaseOut }
-        };
-
-        /// <summary>
-        /// Анимация thickness значения
-        /// </summary>
-        private readonly ThicknessAnimation AnimationThickness = new()
-        {
-            EasingFunction = new QuinticEase() { EasingMode = EasingMode.EaseOut }
-        };
-
-        /// <summary>
-        /// Анимация double значения
-        /// </summary>
-        private readonly DoubleAnimation AnimationDouble = new()
-        {
-            DecelerationRatio = 0.2d,
-            EasingFunction = new QuinticEase() { EasingMode = EasingMode.EaseOut }
-        };
-        #endregion
 
         /// <summary>
         /// Данные об стиле цветов фона вкладок в браузере
@@ -244,6 +162,7 @@ namespace IEL
         public IELBrowserPage()
         {
             InitializeComponent();
+            IELSettingObject = new();
             QDataDefaultInlayBackground = new();
             QDataDefaultInlayBorderBrush = new();
             QDataDefaultInlayForeground = new();
@@ -253,33 +172,14 @@ namespace IEL
             _IELButtonAddInlay = new();
             GridMainButtons.Children.Add(_IELButtonAddInlay);
             Grid.SetColumn(_IELButtonAddInlay, 1);
-
-            AnimationMillisecond = 100;
-            BackgroundChangeDefaultColor = (Spectrum, Value) =>
+            SizeChanged += (sender, e) =>
             {
-                if ((Spectrum == StateSpectrum.Default && !IsEnabled) ||
-                (Spectrum == StateSpectrum.NotEnabled && IsEnabled)) return;
-                SolidColorBrush color = new(Value);
-                BorderMain.Background = color;
+                _ = e.NewSize.Width;
+                double NewWidth = (e.NewSize.Width - 50) / IELInlays.Count;
+                if (NewWidth > DefaultWidthNewInlay) NewWidth = DefaultWidthNewInlay;
+                //if (GridMainInlays.ColumnDefinitions[0].Width.Value == NewWidth) return;
+                UpdateWidthInlays(NewWidth);
             };
-            BorderBrushChangeDefaultColor = (Spectrum, Value) =>
-            {
-                if ((Spectrum == StateSpectrum.Default && !IsEnabled) ||
-                (Spectrum == StateSpectrum.NotEnabled && IsEnabled)) return;
-                SolidColorBrush color = new(Value);
-                BorderMain.BorderBrush = color;
-                BorderMainPage.BorderBrush = color;
-            };
-            ForegroundChangeDefaultColor = (Spectrum, Value) =>
-            {
-                if ((Spectrum == StateSpectrum.Default && !IsEnabled) ||
-                (Spectrum == StateSpectrum.NotEnabled && IsEnabled)) return;
-                SolidColorBrush color = new(Value);
-                TextBlockNullPage.Foreground = color;
-            };
-            BackgroundSetting = new(BrushSettingQ.CreateStyle.Background);
-            BorderBrushSetting = new(BrushSettingQ.CreateStyle.BorderBrush);
-            ForegroundSetting = new(BrushSettingQ.CreateStyle.Foreground);
         }
 
         /// <summary>
@@ -293,7 +193,7 @@ namespace IEL
         {
             IELInlay Inlay = CreateInlay(Content, Head);
             Inlay.TextSignature = Signature;
-            Inlay.MouseHover += (sender, e) =>
+            Inlay.IELSettingObject.MouseHover += (sender, e) =>
             {
                 if (Inlay.TextSignature.Length == 0) return;
                 EventOnDescriptionInlay?.Invoke(Inlay, Inlay.TextSignature);
@@ -328,13 +228,16 @@ namespace IEL
                 //Margin = MarginDiactivateRightInlay,
                 BorderThicknessBlock = new(2),
                 CornerRadius = new(8, 8, 0, 0),
-                AnimationMillisecond = 200,
+                IELSettingObject = new()
+                {
+                    AnimationMillisecond = 200,
+                    BackgroundSetting = new() { ColorData = QDataDefaultInlayBackground },
+                    BorderBrushSetting = new() { ColorData = QDataDefaultInlayBorderBrush },
+                    ForegroundSetting = new() { ColorData = QDataDefaultInlayForeground },
+                },
                 Padding = new(4, 4, 4, 0),
             };
-            Inlay.BackgroundSetting.ColorData = QDataDefaultInlayBackground;
-            Inlay.BorderBrushSetting.ColorData = QDataDefaultInlayBorderBrush;
-            Inlay.ForegroundSetting.ColorData = QDataDefaultInlayForeground;
-            Inlay.OnActivateCloseInlay += () =>
+            Inlay.OnActivateCloseInlay += (Key) =>
             {
                 DeleteInlayPage(Inlay, ActivateIndex == IELInlays.IndexOf(Inlay));
                 EventCloseInlay?.Invoke();
@@ -347,7 +250,7 @@ namespace IEL
             Inlay.SourceCloseButtonImage = bitmap;
 
             Inlay.SetPage(Content);
-            Inlay.OnActivateMouseLeft += () =>
+            Inlay.OnActivateMouseLeft += (Key) =>
             {
                 ActivateInInlay(Inlay);
             };
@@ -363,17 +266,12 @@ namespace IEL
         /// <param name="Activate">Активировать сразу или нет страницу</param>
         public void AddInlayPage(BrowserPage Content, string Head, bool Activate = true)
         {
-            foreach (BrowserPage? page in IELInlays.Select((i) => i.Page))
-                if (page?.PageContent.GetType().Equals(Content.GetType()) ?? true) return;
-            DoubleAnimation animation = AnimationDouble.Clone();
-            animation.Duration = TimeSpan.FromMilliseconds(300d);
             IELInlay inlay = CreateInlay(Content, Head);
-            inlay.OnActivateMouseRight += () => EventActiveActionInInlay?.Invoke(inlay);
+            inlay.OnActivateMouseRight += (Key) => EventActiveActionInInlay?.Invoke(inlay);
             inlay.Opacity = 0d;
             if (InlaysCount == 0)
             {
-                animation.To = 0d;
-                TextBlockNullPage.BeginAnimation(OpacityProperty, animation);
+                TextBlockNullPage.BeginAnimation(OpacityProperty, IELSettingObject.ObjectAnimateSetting.GetAnimationDouble(0d));
             }
             IELInlays.Add(inlay);
             if (IELInlays.Count > GridMainInlays.ColumnDefinitions.Count)
@@ -410,24 +308,19 @@ namespace IEL
         public void AddInlayPage(BrowserPage? Content, string Head, string Signature, bool Activate = true)
         {
             if (Content == null) return;
-            foreach (BrowserPage? page in IELInlays.Select((i) => i.Page))
-                if (page?.PageContent.GetType().Equals(Content.GetType()) ?? true) return;
-            DoubleAnimation animation = AnimationDouble.Clone();
-            animation.Duration = TimeSpan.FromMilliseconds(300d);
             IELInlay inlay = CreateInlay(Content, Head, Signature);
-            inlay.OnActivateMouseRight += () => EventActiveActionInInlay?.Invoke(inlay);
+            inlay.OnActivateMouseRight += (Key) => EventActiveActionInInlay?.Invoke(inlay);
             inlay.Opacity = 0d;
+            if (InlaysCount == 0)
+            {
+                TextBlockNullPage.BeginAnimation(OpacityProperty, IELSettingObject.ObjectAnimateSetting.GetAnimationDouble(0d));
+            }
             IELInlays.Add(inlay);
             ColumnDefinition column = new()
             {
                 Width = new(DefaultWidthNewInlay, GridUnitType.Pixel),
                 MaxWidth = 0d
             };
-            if (InlaysCount == 0)
-            {
-                animation.To = 0d;
-                TextBlockNullPage.BeginAnimation(OpacityProperty, animation);
-            }
             GridMainInlays.ColumnDefinitions.Add(column);
             GridMainInlays.Children.Add(inlay);
             Grid.SetColumn(inlay, IELInlays.Count - 1);
@@ -447,8 +340,8 @@ namespace IEL
         /// <param name="NewWidth">Длинна к которой обновляется размер</param>
         private void UpdateWidthInlays(double NewWidth)
         {
-            DoubleAnimation animation = AnimationDouble.Clone();
-            animation.Duration = TimeSpan.FromMilliseconds(400d);
+            DoubleAnimation animation = IELSettingObject.ObjectAnimateSetting.GetAnimationDouble();
+            animation.Duration = TimeSpan.FromMilliseconds(300d);
             animation.To = NewWidth;
             for (int i = 0; i < IELInlays.Count; i++)
             {
@@ -509,10 +402,8 @@ namespace IEL
         private void UsingInlayAnimationVisible(IELInlay Inlay, bool Visible = true, double DurationMillisecond = 800d)
         {
             Canvas.SetZIndex(Inlay, Visible ? 1 : 0);
-            DoubleAnimation animation = AnimationDouble.Clone();
-            animation.Duration = TimeSpan.FromMilliseconds(DurationMillisecond);
-            animation.To = Visible ? 1d : 0d;
-            Inlay.BeginAnimation(OpacityProperty, animation);
+            Inlay.BeginAnimation(OpacityProperty, IELSettingObject.ObjectAnimateSetting.GetAnimationDouble(
+                Visible ? 1d : 0d, TimeSpan.FromMilliseconds(DurationMillisecond)));
         }
 
         /// <summary>
@@ -524,10 +415,8 @@ namespace IEL
         private void UsingInlayAnimationActivate(IELInlay Inlay, bool Activate = true, double DurationMillisecond = 800d)
         {
             if (!Activate) Inlay.Page?.EventUnfocusPage?.Invoke(Inlay.Page);
-            ThicknessAnimation animation = AnimationThickness.Clone();
-            animation.Duration = TimeSpan.FromMilliseconds(DurationMillisecond);
-            animation.To = Activate ? new(0) : new(4, 4, 4, 0);
-            Inlay.BeginAnimation(PaddingProperty, animation);
+            Inlay.BeginAnimation(PaddingProperty, IELSettingObject.ObjectAnimateSetting.GetAnimationThickness(
+                Activate ? new(0) : new(4, 4, 4, 0), TimeSpan.FromMilliseconds(DurationMillisecond)));
         }
 
         /// <summary>
@@ -535,11 +424,14 @@ namespace IEL
         /// </summary>
         /// <typeparam name="T">Тип страницы поиска</typeparam>
         /// <returns>Найденная страница</returns>
-        public T? SearchPageType<T>() where T : BrowserPage
+        public T? SearchPageType<T>() where T : Page
         {
             if (InlaysCount == 0) return default;
-            BrowserPage? page = IELInlays.FirstOrDefault((i) => { return i.Page?.PageName.Equals(typeof(T).Name) ?? false; })?.Page;
-            return page != null ? (T?)page : default;
+            foreach (IELInlay Inlay in IELInlays)
+            {
+                if (Inlay.Page?.PageContent.GetType() == typeof(T)) return (T?)Inlay.Page?.PageContent;
+            }
+            return null;
         }
 
         /// <summary>
@@ -558,11 +450,11 @@ namespace IEL
             ActualInlay.SetPage<BrowserPage>(null);
             Canvas.SetZIndex(ActualInlay, 0);
 
-            double NewWidth = GridMainInlays.ActualWidth / IELInlays.Count(i => !i.IsEnabled);
+            double NewWidth = GridMainInlays.ActualWidth / (IELInlays.Count - 1);
             if (NewWidth > DefaultWidthNewInlay) NewWidth = DefaultWidthNewInlay;
             UpdateWidthInlays(NewWidth);
 
-            DoubleAnimation animationDouble = AnimationDouble.Clone();
+            DoubleAnimation animationDouble = IELSettingObject.ObjectAnimateSetting.GetAnimationDouble();
             //GridMainInlays.ColumnDefinitions[Index].MaxWidth = ActualInlay.ActualWidth;
             //animationDouble.From = ActualInlay.ActualWidth;
             animationDouble.To = 0d;
@@ -619,10 +511,7 @@ namespace IEL
             else if (ActivateIndex >= Index) ActivateIndex--;
             if (InlaysCount == 0)
             {
-                DoubleAnimation animation = AnimationDouble.Clone();
-                animation.Duration = TimeSpan.FromMilliseconds(300d);
-                animation.To = 0.4d;
-                TextBlockNullPage.BeginAnimation(OpacityProperty, animation);
+                TextBlockNullPage.BeginAnimation(OpacityProperty, IELSettingObject.ObjectAnimateSetting.GetAnimationDouble(0.4d));
             }
         }
 

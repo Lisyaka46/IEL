@@ -2,6 +2,7 @@
 using IEL.Interfaces.Front;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
@@ -60,12 +61,12 @@ namespace IEL
         /// <summary>
         /// Объект актуальной страницы
         /// </summary>
-        internal object ActualPage => ActualFrame.Content;
+        internal Page? ActualPage => ActualFrame.Content as Page;
 
         /// <summary>
         /// Объект предыдущей страницы
         /// </summary>
-        internal object BackPage => BackFrame.Content;
+        internal Page? BackPage => BackFrame.Content as Page;
 
         /// <summary>
         /// Левая анимация переключателя
@@ -132,6 +133,7 @@ namespace IEL
             ActualFrame.Opacity = 0d;
             Canvas.SetZIndex(BackFrame, 0);
             Canvas.SetZIndex(ActualFrame, 1);
+            BackFrame.Navigate(null);
             BackFrame.IsEnabled = false;
             ActualFrame.IsEnabled = true;
             ActualFrame.BeginAnimation(MarginProperty, null);

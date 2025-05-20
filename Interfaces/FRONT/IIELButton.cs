@@ -1,12 +1,12 @@
-﻿using IEL.Classes;
-using System.IO;
+﻿using System.IO;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace IEL.Interfaces.Front
 {
-    public interface IIELButton : IIELObject, IIELHover
+    public interface IIELButton : IIELObject
     {
         /// <summary>
         /// Скругление границ
@@ -22,5 +22,15 @@ namespace IEL.Interfaces.Front
         /// Смещение контента в объекте
         /// </summary>
         public Thickness PaddingContent { get; set; }
+
+        /// <summary>
+        /// Объект события активации кнопки левым щелчком мыши
+        /// </summary>
+        public IIELObject.Activate? OnActivateMouseLeft { get; set; }
+
+        /// <summary>
+        /// Объект события активации кнопки правым щелчком мыши
+        /// </summary>
+        public IIELObject.Activate? OnActivateMouseRight { get; set; }
     }
 }

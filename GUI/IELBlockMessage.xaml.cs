@@ -4,6 +4,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using IEL.Interfaces.Front;
+using IEL.CORE.Enums;
 
 namespace IEL
 {
@@ -105,39 +106,6 @@ namespace IEL
         };
         #endregion
 
-        #region Enums
-        /// <summary>
-        /// Перечисление вариаций позиционирования панели сообщения
-        /// </summary>
-        public enum OrientationBorderInfo
-        {
-            /// <summary>
-            /// Слева снизу
-            /// </summary>
-            LeftDown = 0,
-
-            /// <summary>
-            /// Слева сверху
-            /// </summary>
-            LeftUp = 1,
-
-            /// <summary>
-            /// Справа сверху
-            /// </summary>
-            RightUp = 2,
-
-            /// <summary>
-            /// Справа снизу
-            /// </summary>
-            RightDown = 3,
-
-            /// <summary>
-            /// Автоматическое определение оптимальной позиции элемента сообщения
-            /// </summary>
-            Auto = 4,
-        }
-        #endregion
-
         #region Values Object
         #region Default
         /// <summary>
@@ -163,7 +131,7 @@ namespace IEL
         /// <summary>
         /// Имя контейнера привязки
         /// </summary>
-        public string NameParentObject { get; private set; }
+        public int CodeParentObject { get; private set; }
         #endregion
 
         #region Constructor
@@ -203,7 +171,7 @@ namespace IEL
             OffsetLeftRight = 3u;
             OffsetUpDown = 3u;
 
-            NameParentObject = string.Empty;
+            CodeParentObject = int.MinValue;
             #endregion
 
             #region Colors
@@ -228,12 +196,12 @@ namespace IEL
         /// <param name="Name">Имя объекта привязки</param>
         /// <param name="TextVisible">Текст который выводится панелью сообщения</param>
         /// <param name="Orientation">Привязка к позиционированию панели</param>
-        public void UsingBorderInformation(FrameworkElement Element, string Name, string TextVisible, OrientationBorderInfo Orientation)
+        public void UsingBorderInformation(FrameworkElement Element, string TextVisible, OrientationBorderPosition Orientation)
         {
-            NameParentObject = Name;
+            CodeParentObject = Element.GetHashCode();
             Text = TextVisible;
             #region Auto
-            if (Orientation == OrientationBorderInfo.Auto)
+            if (Orientation == OrientationBorderPosition.Auto)
             {
                 FrameworkElement ParentElement = VisualTreeHelper.GetParent(this) as FrameworkElement ??
                     throw new Exception("У объекта нет родительского элемента");
@@ -245,11 +213,11 @@ namespace IEL
                 double UpDownOrientationLogic = LocationPointElement.Y - ActualHeight;
                 if (LeftRightOrientationLogic.X >= LeftRightOrientationLogic.Y)
                 {
-                    Orientation = UpDownOrientationLogic >= 0 ? OrientationBorderInfo.LeftUp : OrientationBorderInfo.LeftDown;
+                    Orientation = UpDownOrientationLogic >= 0 ? OrientationBorderPosition.LeftUp : OrientationBorderPosition.LeftDown;
                 }
                 else if (LeftRightOrientationLogic.X < LeftRightOrientationLogic.Y)
                 {
-                    Orientation = UpDownOrientationLogic >= 0 ? OrientationBorderInfo.RightUp : OrientationBorderInfo.RightDown;
+                    Orientation = UpDownOrientationLogic >= 0 ? OrientationBorderPosition.RightUp : OrientationBorderPosition.RightDown;
                 }
             }
             #endregion
@@ -261,9 +229,9 @@ namespace IEL
         /// </summary>
         /// <param name="TextVisible">Текст который выводится панелью сообщения</param>
         /// <param name="Orientation">Привязка к позиционированию панели</param>
-        public void UsingBorderInformationCursor(string TextVisible, OrientationBorderInfo Orientation)
+        public void UsingBorderInformationCursor(string TextVisible, OrientationBorderPosition Orientation)
         {
-            NameParentObject = "Cursor";
+            CodeParentObject = 0;
             Text = TextVisible;
             AnimateBorderInformation(SetPositionOrientation(Orientation), Orientation);
         }
@@ -298,15 +266,15 @@ namespace IEL
         /// Узнать стартовое значение позиции
         /// </summary>
         /// <param name="Orientation">Привязка к позиционированию панели</param>
-        private Point SetPositionOrientation(OrientationBorderInfo Orientation)
+        private Point SetPositionOrientation(OrientationBorderPosition Orientation)
         {
             Point CursorPos = Mouse.GetPosition((IInputElement)VisualParent);
             return Orientation switch
             {
-                OrientationBorderInfo.LeftDown => new(CursorPos.X - BorderMessage.ActualWidth, CursorPos.Y),
-                OrientationBorderInfo.LeftUp => new(CursorPos.X - BorderMessage.ActualWidth, CursorPos.Y - BorderMessage.ActualHeight),
-                OrientationBorderInfo.RightUp => new(CursorPos.X, CursorPos.Y - BorderMessage.ActualHeight),
-                OrientationBorderInfo.RightDown => new(CursorPos.X, CursorPos.Y),
+                OrientationBorderPosition.LeftDown => new(CursorPos.X - BorderMessage.ActualWidth, CursorPos.Y),
+                OrientationBorderPosition.LeftUp => new(CursorPos.X - BorderMessage.ActualWidth, CursorPos.Y - BorderMessage.ActualHeight),
+                OrientationBorderPosition.RightUp => new(CursorPos.X, CursorPos.Y - BorderMessage.ActualHeight),
+                OrientationBorderPosition.RightDown => new(CursorPos.X, CursorPos.Y),
                 _ => CursorPos
             };
         }
@@ -316,15 +284,15 @@ namespace IEL
         /// </summary>
         /// <param name="Element">Элемент к которому прикрепляется панель описания</param>
         /// <param name="Orientation">Привязка к позиционированию панели</param>
-        private Point SetPositionOrientation(FrameworkElement Element, OrientationBorderInfo Orientation)
+        private Point SetPositionOrientation(FrameworkElement Element, OrientationBorderPosition Orientation)
         {
             Point ElementPos = Element.TransformToAncestor((Visual)VisualParent).TransformBounds(new Rect(Element.RenderSize)).Location;
             return Orientation switch
             {
-                OrientationBorderInfo.LeftDown => new(ElementPos.X - BorderMessage.ActualWidth, ElementPos.Y + Element.ActualHeight),
-                OrientationBorderInfo.LeftUp => new(ElementPos.X - BorderMessage.ActualWidth, ElementPos.Y - BorderMessage.ActualHeight),
-                OrientationBorderInfo.RightUp => new(ElementPos.X + Element.ActualWidth, ElementPos.Y - BorderMessage.ActualHeight),
-                OrientationBorderInfo.RightDown => new(ElementPos.X + Element.ActualWidth, ElementPos.Y + Element.ActualHeight),
+                OrientationBorderPosition.LeftDown => new(ElementPos.X - BorderMessage.ActualWidth, ElementPos.Y + Element.ActualHeight),
+                OrientationBorderPosition.LeftUp => new(ElementPos.X - BorderMessage.ActualWidth, ElementPos.Y - BorderMessage.ActualHeight),
+                OrientationBorderPosition.RightUp => new(ElementPos.X + Element.ActualWidth, ElementPos.Y - BorderMessage.ActualHeight),
+                OrientationBorderPosition.RightDown => new(ElementPos.X + Element.ActualWidth, ElementPos.Y + Element.ActualHeight),
                 _ => ElementPos
             };
         }
@@ -335,7 +303,7 @@ namespace IEL
         /// </summary>
         /// <param name="Position">Позиция привязки</param>
         /// <param name="Orientation">Привязка к позиционированию панели</param>
-        private void AnimateBorderInformation(Point Position, OrientationBorderInfo Orientation)
+        private void AnimateBorderInformation(Point Position, OrientationBorderPosition Orientation)
         {
             FlagMessage = true;
 
@@ -345,15 +313,15 @@ namespace IEL
 
             BorderMessage.CornerRadius = Orientation switch
             {
-                OrientationBorderInfo.LeftDown => new(RadiusDefault, RadiusMagnite, RadiusDefault, RadiusDefault),
-                OrientationBorderInfo.LeftUp => new(RadiusDefault, RadiusDefault, RadiusMagnite, RadiusDefault),
-                OrientationBorderInfo.RightUp => new(RadiusDefault, RadiusDefault, RadiusDefault, RadiusMagnite),
-                OrientationBorderInfo.RightDown => new(RadiusMagnite, RadiusDefault, RadiusDefault, RadiusDefault),
+                OrientationBorderPosition.LeftDown => new(RadiusDefault, RadiusMagnite, RadiusDefault, RadiusDefault),
+                OrientationBorderPosition.LeftUp => new(RadiusDefault, RadiusDefault, RadiusMagnite, RadiusDefault),
+                OrientationBorderPosition.RightUp => new(RadiusDefault, RadiusDefault, RadiusDefault, RadiusMagnite),
+                OrientationBorderPosition.RightDown => new(RadiusMagnite, RadiusDefault, RadiusDefault, RadiusDefault),
                 _ => new(RadiusDefault),
             };
             Point Offset = new(
-                Orientation == OrientationBorderInfo.LeftDown || Orientation == OrientationBorderInfo.LeftUp ? -OffsetLeftRight : OffsetLeftRight,
-                Orientation == OrientationBorderInfo.LeftUp || Orientation == OrientationBorderInfo.RightUp ? -OffsetUpDown : OffsetUpDown);
+                Orientation == OrientationBorderPosition.LeftDown || Orientation == OrientationBorderPosition.LeftUp ? -OffsetLeftRight : OffsetLeftRight,
+                Orientation == OrientationBorderPosition.LeftUp || Orientation == OrientationBorderPosition.RightUp ? -OffsetUpDown : OffsetUpDown);
             //BorderInformation.Margin = new(OffsetPosElement.X - BorderInformation.ActualWidth, OffsetPosElement.Y + Element.Height, 0, 0);
 
             ThicknessAnimate.From = new(Position.X, Position.Y, 0, 0);

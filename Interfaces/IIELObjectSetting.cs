@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IEL.Interfaces.Front
+namespace IEL.Interfaces
 {
-    public interface IIELBrowserPage : IIELObject, IIELControl
+    internal interface IIELObjectSetting
     {
-
     }
 }
