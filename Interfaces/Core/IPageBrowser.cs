@@ -7,7 +7,7 @@ using System.Windows.Controls;
 
 namespace IEL.Interfaces.Core
 {
-    public interface IBrowserPage : IPageDefault
+    public interface IBrowserPage : IDisposable
     {
         public delegate void BrowserEvent(IBrowserPage browser_page);
 

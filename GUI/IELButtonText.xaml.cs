@@ -165,7 +165,7 @@ namespace IEL
                 if (IsEnabled && OnActivateMouseLeft != null)
                 {
                     MouseEnterAnimation();
-                    OnActivateMouseLeft?.Invoke();
+                    OnActivateMouseLeft?.Invoke(this);
                 }
             };
 
@@ -174,7 +174,7 @@ namespace IEL
                 if (IsEnabled && OnActivateMouseRight != null)
                 {
                     MouseEnterAnimation();
-                    OnActivateMouseRight?.Invoke();
+                    OnActivateMouseRight?.Invoke(this);
                 }
             };
 

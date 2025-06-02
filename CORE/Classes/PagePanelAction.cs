@@ -125,6 +125,7 @@ namespace IEL.CORE.Classes
             switch (ElementAction)
             {
                 case ActionButton.ActionActivate:
+                    Button.LeaveAnimation();
                     if (Orientation == OrientationActivate.LeftButton) Button.OnActivateMouseLeft?.Invoke(true);
                     else if (Orientation == OrientationActivate.RightButton) Button.OnActivateMouseRight?.Invoke(true);
                     break;

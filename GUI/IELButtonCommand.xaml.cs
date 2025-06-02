@@ -185,7 +185,7 @@ namespace IEL
                 {
                     ButtonActivate = false;
                     MouseEnterAnimation();
-                    OnActivateMouseLeft?.Invoke();
+                    OnActivateMouseLeft?.Invoke(this);
                 }
             };
 
@@ -195,7 +195,7 @@ namespace IEL
                 {
                     ButtonActivate = false;
                     MouseEnterAnimation();
-                    OnActivateMouseRight?.Invoke();
+                    OnActivateMouseRight?.Invoke(this);
                 }
             };
 

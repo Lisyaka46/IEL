@@ -176,7 +176,7 @@ namespace IEL
             {
                 if (IsEnabled)
                 {
-                    MouseLeaveDetect();
+                    LeaveAnimation();
                     IELSettingObject.StopHover();
                 }
             };
@@ -276,7 +276,7 @@ namespace IEL
         /// <summary>
         /// Событие ухода курсора из видимой области кнопки
         /// </summary>
-        private void MouseLeaveDetect()
+        public void LeaveAnimation()
         {
             Color
                 Foreground = IELSettingObject.ForegroundSetting.Default,

@@ -9,6 +9,11 @@ namespace IEL.Interfaces.Front
     public interface IIELButton : IIELObject
     {
         /// <summary>
+        /// Делегат события активации
+        /// </summary>
+        public delegate void Activate(object Source, bool KeyActivate = false);
+
+        /// <summary>
         /// Скругление границ
         /// </summary>
         public CornerRadius CornerRadius { get; set; }
@@ -26,11 +31,11 @@ namespace IEL.Interfaces.Front
         /// <summary>
         /// Объект события активации кнопки левым щелчком мыши
         /// </summary>
-        public IIELObject.Activate? OnActivateMouseLeft { get; set; }
+        public Activate? OnActivateMouseLeft { get; set; }
 
         /// <summary>
         /// Объект события активации кнопки правым щелчком мыши
         /// </summary>
-        public IIELObject.Activate? OnActivateMouseRight { get; set; }
+        public Activate? OnActivateMouseRight { get; set; }
     }
 }

@@ -62,7 +62,7 @@ namespace IEL
         /// <summary>
         /// Страница заголовка
         /// </summary>
-        public BrowserPage? Page { get; private set; }
+        public BrowserPage? PageElement { get; private set; }
 
         /// <summary>
         /// Объект страницы
@@ -81,11 +81,6 @@ namespace IEL
                 base.FontFamily = value;
             }
         }
-
-        /// <summary>
-        /// Текст подписи заголовка
-        /// </summary>
-        public string TextSignature { get; set; }
 
         /// <summary>
         /// Текст заголовка
@@ -154,8 +149,6 @@ namespace IEL
                 BorderThicknessBlock.Right + OffsetBorder, BorderThicknessBlock.Bottom + OffsetBorder);
             BorderThicknessDiactive = BorderThicknessBlock;
             _UsedState = false;
-            TextSignature = String.Empty;
-            Page = null;
             ContentPage = null;
 
             IELSettingObject.BackgroundQChanged += (NewValue) =>
@@ -211,7 +204,7 @@ namespace IEL
 
             ImageCloseInlay.MouseLeftButtonDown += (sender, e) =>
             {
-                OnActivateCloseInlay?.Invoke();
+                OnActivateCloseInlay?.Invoke(this);
             };
             BorderMain.MouseDown += (sender, e) =>
             {
@@ -224,7 +217,7 @@ namespace IEL
                 if (IsEnabled && OnActivateMouseLeft != null)
                 {
                     MouseEnterAnimation();
-                    OnActivateMouseLeft?.Invoke();
+                    OnActivateMouseLeft?.Invoke(this);
                 }
             };
 
@@ -233,7 +226,7 @@ namespace IEL
                 if (IsEnabled && OnActivateMouseRight != null)
                 {
                     MouseEnterAnimation();
-                    OnActivateMouseRight?.Invoke();
+                    OnActivateMouseRight?.Invoke(this);
                 }
             };
 
@@ -307,10 +300,10 @@ namespace IEL
         /// Установить вкладке объект страницы
         /// </summary>
         /// <param name="page">Объект страницы</param>
-        internal void SetPage<T>(T? page) where T : BrowserPage
+        internal void SetPage<T>(T page) where T : BrowserPage
         {
-            Page = page;
-            ContentPage = Page?.PageContent;
+            PageElement = page;
+            ContentPage = PageElement?.PageContent;
         }
     }
 }

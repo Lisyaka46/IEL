@@ -21,5 +21,8 @@ namespace IEL.Interfaces.Front
 
         //
         public void BlinkAnimation();
+
+        //
+        public void LeaveAnimation();
     }
 }

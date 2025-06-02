@@ -187,42 +187,13 @@ namespace IEL
         /// </summary>
         /// <param name="Content">Страница ссылки</param>
         /// <param name="Head">Заголовок вкладки</param>
-        /// <param name="Signature">Сигнатура-описание вкладки</param>
+        /// <param name="Description">Сигнатура-описание вкладки</param>
         /// <returns>Созданная вкладка</returns>
-        private IELInlay CreateInlay(BrowserPage Content, string Head, string Signature)
-        {
-            IELInlay Inlay = CreateInlay(Content, Head);
-            Inlay.TextSignature = Signature;
-            Inlay.IELSettingObject.MouseHover += (sender, e) =>
-            {
-                if (Inlay.TextSignature.Length == 0) return;
-                EventOnDescriptionInlay?.Invoke(Inlay, Inlay.TextSignature);
-            };
-            Inlay.BorderMain.MouseLeave += (sender, e) =>
-            {
-                if (Inlay.TextSignature.Length == 0) return;
-                EventOffDescriptionInlay?.Invoke();
-            };
-            Inlay.BorderMain.MouseDown += (sender, e) =>
-            {
-                if (Inlay.TextSignature.Length == 0) return;
-                EventOffDescriptionInlay?.Invoke();
-            };
-            return Inlay;
-        }
-
-        /// <summary>
-        /// Создать вкладку в браузере
-        /// </summary>
-        /// <param name="Content">Страница ссылки</param>
-        /// <param name="Head">Заголовок вкладки</param>
-        /// <param name="Signature">Сигнатура-описание вкладки</param>
-        /// <returns>Созданная вкладка</returns>
-        private IELInlay CreateInlay(BrowserPage Content, string Head)
+        private IELInlay CreateInlay(BrowserPage Content)
         {
             IELInlay Inlay = new()
             {
-                Text = Head,
+                Text = Content.Title,
                 HorizontalAlignment = HorizontalAlignment.Stretch,
                 VerticalAlignment = VerticalAlignment.Stretch,
                 //Margin = MarginDiactivateRightInlay,
@@ -237,7 +208,7 @@ namespace IEL
                 },
                 Padding = new(4, 4, 4, 0),
             };
-            Inlay.OnActivateCloseInlay += (Key) =>
+            Inlay.OnActivateCloseInlay += (sender, Key) =>
             {
                 DeleteInlayPage(Inlay, ActivateIndex == IELInlays.IndexOf(Inlay));
                 EventCloseInlay?.Invoke();
@@ -250,9 +221,25 @@ namespace IEL
             Inlay.SourceCloseButtonImage = bitmap;
 
             Inlay.SetPage(Content);
-            Inlay.OnActivateMouseLeft += (Key) =>
+            Inlay.OnActivateMouseLeft += (sender, Key) =>
             {
-                ActivateInInlay(Inlay);
+                ActivateInlayInBrowserPage(Inlay.PageElement);
+            };
+            Inlay.IELSettingObject.MouseHover += (sender, e) =>
+            {
+                if (Inlay.PageElement == null) return;
+                else if (Inlay.PageElement?.Description.Length == 0) return;
+                EventOnDescriptionInlay?.Invoke(Inlay, Inlay.PageElement?.Description ?? string.Empty);
+            };
+            Inlay.BorderMain.MouseLeave += (sender, e) =>
+            {
+                if (Inlay.PageElement?.Description.Length == 0) return;
+                EventOffDescriptionInlay?.Invoke();
+            };
+            Inlay.BorderMain.MouseDown += (sender, e) =>
+            {
+                if (Inlay.PageElement?.Description.Length == 0) return;
+                EventOffDescriptionInlay?.Invoke();
             };
             return Inlay;
         }
@@ -264,25 +251,23 @@ namespace IEL
         /// <param name="Head">Наименование вкладки</param>
         /// <param name="Signature">Подпись вкладки</param>
         /// <param name="Activate">Активировать сразу или нет страницу</param>
-        public void AddInlayPage(BrowserPage Content, string Head, bool Activate = true)
+        public void AddInlayPage(BrowserPage? Content, bool Activate = true)
         {
-            IELInlay inlay = CreateInlay(Content, Head);
-            inlay.OnActivateMouseRight += (Key) => EventActiveActionInInlay?.Invoke(inlay);
+            if (Content == null) return;
+            IELInlay inlay = CreateInlay(Content);
+            inlay.OnActivateMouseRight += (sender, Key) => EventActiveActionInInlay?.Invoke(inlay);
             inlay.Opacity = 0d;
             if (InlaysCount == 0)
             {
                 TextBlockNullPage.BeginAnimation(OpacityProperty, IELSettingObject.ObjectAnimateSetting.GetAnimationDouble(0d));
             }
             IELInlays.Add(inlay);
-            if (IELInlays.Count > GridMainInlays.ColumnDefinitions.Count)
-            {
-                GridMainInlays.ColumnDefinitions.Add(
-                    new()
-                    {
-                        Width = new(DefaultWidthNewInlay, GridUnitType.Pixel),
-                        MaxWidth = 0d
-                    });
-            }
+            GridMainInlays.ColumnDefinitions.Add(
+                new()
+                {
+                    Width = new(DefaultWidthNewInlay, GridUnitType.Pixel),
+                    MaxWidth = 0d
+                });
             GridMainInlays.Children.Add(inlay);
             Grid.SetColumn(inlay, IELInlays.Count - 1);
 
@@ -298,41 +283,41 @@ namespace IEL
             }
         }
 
-        /// <summary>
-        /// Добавить новую страницу
-        /// </summary>
-        /// <param name="Content">Добавляемая страница в баузер страниц</param>
-        /// <param name="Head">Наименование вкладки</param>
-        /// <param name="Signature">Подпись вкладки</param>
-        /// <param name="Activate">Активировать сразу или нет страницу</param>
-        public void AddInlayPage(BrowserPage? Content, string Head, string Signature, bool Activate = true)
-        {
-            if (Content == null) return;
-            IELInlay inlay = CreateInlay(Content, Head, Signature);
-            inlay.OnActivateMouseRight += (Key) => EventActiveActionInInlay?.Invoke(inlay);
-            inlay.Opacity = 0d;
-            if (InlaysCount == 0)
-            {
-                TextBlockNullPage.BeginAnimation(OpacityProperty, IELSettingObject.ObjectAnimateSetting.GetAnimationDouble(0d));
-            }
-            IELInlays.Add(inlay);
-            ColumnDefinition column = new()
-            {
-                Width = new(DefaultWidthNewInlay, GridUnitType.Pixel),
-                MaxWidth = 0d
-            };
-            GridMainInlays.ColumnDefinitions.Add(column);
-            GridMainInlays.Children.Add(inlay);
-            Grid.SetColumn(inlay, IELInlays.Count - 1);
+        ///// <summary>
+        ///// Добавить новую страницу
+        ///// </summary>
+        ///// <param name="Content">Добавляемая страница в баузер страниц</param>
+        ///// <param name="Head">Наименование вкладки</param>
+        ///// <param name="Signature">Подпись вкладки</param>
+        ///// <param name="Activate">Активировать сразу или нет страницу</param>
+        //public void AddInlayPage(BrowserPage? Content, bool Activate = true)
+        //{
+        //    if (Content == null) return;
+        //    IELInlay inlay = CreateInlay(Content);
+        //    inlay.OnActivateMouseRight += (Key) => EventActiveActionInInlay?.Invoke(inlay);
+        //    inlay.Opacity = 0d;
+        //    if (InlaysCount == 0)
+        //    {
+        //        TextBlockNullPage.BeginAnimation(OpacityProperty, IELSettingObject.ObjectAnimateSetting.GetAnimationDouble(0d));
+        //    }
+        //    IELInlays.Add(inlay);
+        //    ColumnDefinition column = new()
+        //    {
+        //        Width = new(DefaultWidthNewInlay, GridUnitType.Pixel),
+        //        MaxWidth = 0d
+        //    };
+        //    GridMainInlays.ColumnDefinitions.Add(column);
+        //    GridMainInlays.Children.Add(inlay);
+        //    Grid.SetColumn(inlay, IELInlays.Count - 1);
 
-            double NewWidth = GridMainInlays.ActualWidth / IELInlays.Count;
-            if (NewWidth > DefaultWidthNewInlay) NewWidth = DefaultWidthNewInlay;
-            UpdateWidthInlays(NewWidth);
+        //    double NewWidth = GridMainInlays.ActualWidth / IELInlays.Count;
+        //    if (NewWidth > DefaultWidthNewInlay) NewWidth = DefaultWidthNewInlay;
+        //    UpdateWidthInlays(NewWidth);
 
-            UsingInlayAnimationVisible(inlay);
+        //    UsingInlayAnimationVisible(inlay);
 
-            if (Activate) ActivateInInlay(inlay);
-        }
+        //    if (Activate) ActivateInInlay(inlay);
+        //}
 
         /// <summary>
         /// Обновить длинну вкладок браузера
@@ -363,7 +348,7 @@ namespace IEL
         public void ActivateInlayIndex(Index index)
         {
             if (index.Value == ActivateIndex && IELInlays[index].UsedState) return;
-            BrowserPage Page = IELInlays[index].Page ?? throw new Exception("Объект заголовка не может быть без страницы!");
+            BrowserPage Page = IELInlays[index].PageElement ?? throw new Exception("Объект заголовка не может быть без страницы!");
             if (ActivateIndex > -1 && IELInlays.Count > ActivateIndex)
             {
                 IELInlay BackInlay = IELInlays[ActivateIndex];
@@ -382,13 +367,15 @@ namespace IEL
         /// <summary>
         /// Открыть страницу по элементу
         /// </summary>
-        /// <param name="inlay">Открываемая вкладка страницы</param>
+        /// <param name="Page">Открываемая вкладка страницы</param>
         /// <exception cref="Exception">Исключение при пустой странице в найденой вкладке</exception>
-        public void ActivateInInlay(IELInlay inlay)
+        public void ActivateInlayInBrowserPage(BrowserPage? Page)
         {
             try
             {
-                ActivateInlayIndex(IELInlays.IndexOf(inlay));
+                if (Page == null) return;
+                BrowserPage?[] Pages = [..IELInlays.Select((i) => i.PageElement)];
+                ActivateInlayIndex(Array.IndexOf(Pages, Page));
             }
             catch { }
         }
@@ -414,9 +401,25 @@ namespace IEL
         /// <param name="DurationMillisecond">Количество миллисекунд для анимации</param>
         private void UsingInlayAnimationActivate(IELInlay Inlay, bool Activate = true, double DurationMillisecond = 800d)
         {
-            if (!Activate) Inlay.Page?.EventUnfocusPage?.Invoke(Inlay.Page);
+            if (!Activate) Inlay.PageElement?.EventUnfocusPage?.Invoke(Inlay.PageElement);
             Inlay.BeginAnimation(PaddingProperty, IELSettingObject.ObjectAnimateSetting.GetAnimationThickness(
                 Activate ? new(0) : new(4, 4, 4, 0), TimeSpan.FromMilliseconds(DurationMillisecond)));
+        }
+
+        /// <summary>
+        /// Сделать поиск страниц по типу
+        /// </summary>
+        /// <typeparam name="T">Тип страницы поиска</typeparam>
+        /// <returns>Найденные страницы</returns>
+        public T?[]? SearchAllPageType<T>() where T : Page
+        {
+            if (InlaysCount == 0) return default;
+            List<T?> values = [];
+            foreach (IELInlay Inlay in IELInlays)
+            {
+                if (Inlay.PageElement?.PageContent.GetType() == typeof(T)) values.Add((T?)Inlay.PageElement?.PageContent);
+            }
+            return values.Count == 0 ? null : [..values];
         }
 
         /// <summary>
@@ -429,7 +432,7 @@ namespace IEL
             if (InlaysCount == 0) return default;
             foreach (IELInlay Inlay in IELInlays)
             {
-                if (Inlay.Page?.PageContent.GetType() == typeof(T)) return (T?)Inlay.Page?.PageContent;
+                if (Inlay.PageElement?.PageContent.GetType() == typeof(T)) return (T?)Inlay.PageElement?.PageContent;
             }
             return null;
         }
@@ -447,7 +450,7 @@ namespace IEL
             IELInlay ActualInlay = IELInlays[Index];
             GridMainInlays.ColumnDefinitions[IndexColumn].IsEnabled = false;
             //ActualInlay.IsEnabled = false;
-            ActualInlay.SetPage<BrowserPage>(null);
+            ActualInlay.PageElement?.Dispose();
             Canvas.SetZIndex(ActualInlay, 0);
 
             double NewWidth = GridMainInlays.ActualWidth / (IELInlays.Count - 1);

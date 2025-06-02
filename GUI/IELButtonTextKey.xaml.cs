@@ -176,7 +176,7 @@ namespace IEL
             {
                 if (IsEnabled)
                 {
-                    MouseLeaveAnimation();
+                    LeaveAnimation();
                     IELSettingObject.StopHover();
                 }
             };
@@ -200,7 +200,7 @@ namespace IEL
                 if (IsEnabled && OnActivateMouseLeft != null)
                 {
                     MouseEnterAnimation();
-                    OnActivateMouseLeft?.Invoke();
+                    OnActivateMouseLeft?.Invoke(this);
                 }
             };
 
@@ -209,7 +209,7 @@ namespace IEL
                 if (IsEnabled && OnActivateMouseRight != null)
                 {
                     MouseEnterAnimation();
-                    OnActivateMouseRight?.Invoke();
+                    OnActivateMouseRight?.Invoke(this);
                 }
             };
 
@@ -298,7 +298,7 @@ namespace IEL
         /// <summary>
         /// Анимация отключения выделения мышью
         /// </summary>
-        private void MouseLeaveAnimation()
+        public void LeaveAnimation()
         {
             Color
                 Foreground = IELSettingObject.ForegroundSetting.Default,

@@ -13,7 +13,7 @@
                     <ColumnDefinition/>
                     <ColumnDefinition x:Name="ColumnRightArrow" Width="25"/>
                 </Grid.ColumnDefinitions>
-                <Image x:Name="ImageButton" Margin="2,2,2,2" Grid.Column="1"/>
+                <Image x:Name="ImageButton" Grid.Column="1"/>
                 <Border x:Name="BorderLeftArrow" BorderBrush="Black" BorderThickness="2,2,2,2" CornerRadius="6,6,6,6" Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Right">
                     <TextBlock x:Name="TextBlockLeftArrow" TextWrapping="Wrap" Text="&lt;" HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="Arial Black" FontSize="14" Padding="0,0.7,1,0"/>
                 </Border>

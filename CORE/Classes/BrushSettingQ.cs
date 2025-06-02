@@ -147,6 +147,10 @@ namespace IEL.CORE.Classes
             NotEnabled = Colors.Black;
         }
 
+        /// <summary>
+        /// Default -> Select -> Used -> NotEnabled
+        /// </summary>
+        /// <param name="ByteColorData"></param>
         public BrushSettingQ(byte[,] ByteColorData)
         {
             IsEnabled = true;

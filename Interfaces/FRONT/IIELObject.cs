@@ -12,11 +12,6 @@ namespace IEL.Interfaces.Front
     public interface IIELObject
     {
         /// <summary>
-        /// Делегат события активации
-        /// </summary>
-        public delegate void Activate(bool KeyActivate = false);
-
-        /// <summary>
         /// Статус активности объекта
         /// </summary>
         public bool IsEnabled { get; set; }
