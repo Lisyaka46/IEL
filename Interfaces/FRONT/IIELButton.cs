@@ -11,7 +11,7 @@ namespace IEL.Interfaces.Front
         /// <summary>
         /// Делегат события активации
         /// </summary>
-        public delegate void Activate(object Source, bool KeyActivate = false);
+        public delegate void Activate(object Source, MouseButtonEventArgs eventArgs, bool KeyActivate = false);
 
         /// <summary>
         /// Скругление границ

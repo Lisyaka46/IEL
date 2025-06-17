@@ -126,8 +126,8 @@ namespace IEL.CORE.Classes
             {
                 case ActionButton.ActionActivate:
                     Button.LeaveAnimation();
-                    if (Orientation == OrientationActivate.LeftButton) Button.OnActivateMouseLeft?.Invoke(true);
-                    else if (Orientation == OrientationActivate.RightButton) Button.OnActivateMouseRight?.Invoke(true);
+                    if (Orientation == OrientationActivate.LeftButton) Button.OnActivateMouseLeft?.Invoke(ElementAction, new(Mouse.PrimaryDevice, 1, MouseButton.Left), true);
+                    else if (Orientation == OrientationActivate.RightButton) Button.OnActivateMouseRight?.Invoke(ElementAction, new(Mouse.PrimaryDevice, 1, MouseButton.Left), true);
                     break;
                 case ActionButton.BlinkActivate:
                     Button.BlinkAnimation();

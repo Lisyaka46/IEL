@@ -7,21 +7,17 @@
              mc:Ignorable="d" 
              d:DesignHeight="30" d:DesignWidth="160">
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition/>
-            <ColumnDefinition Width="30"/>
-        </Grid.ColumnDefinitions>
-        <Border x:Name="BorderMain" Grid.ColumnSpan="2">
+        <Border x:Name="BorderMain" Grid.ColumnSpan="2" BorderBrush="Black" BorderThickness="2,2,2,2" Background="#FF888282">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
-                    <ColumnDefinition Width="30"/>
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <Grid x:Name="GridMain">
                     <TextBlock x:Name="TextBlockHead" Text="Head" FontSize="16" TextWrapping="WrapWithOverflow" TextTrimming="CharacterEllipsis" AutomationProperties.IsRowHeader="True" Margin="7,0,7,0" VerticalAlignment="Center"/>
                 </Grid>
+                <Image x:Name="ImageCloseInlay" Grid.Column="1" Width="20" Height="20" Panel.ZIndex="1" AutomationProperties.IsColumnHeader="True" Margin="8,0,8,0"/>
             </Grid>
         </Border>
-        <Image x:Name="ImageCloseInlay" Grid.Column="1" Width="20" Height="20" Panel.ZIndex="1" AutomationProperties.IsColumnHeader="True" Margin="0,0,7,0"/>
     </Grid>
 </UserControl>

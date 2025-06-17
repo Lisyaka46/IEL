@@ -10,7 +10,7 @@ using IEL.CORE.Enums;
 
 namespace IEL.CORE.Classes
 {
-    public class QData : IQData
+    public class QData : IQData, ICloneable
     {
         /// <summary>
         /// Массив данных цвета
@@ -58,5 +58,14 @@ namespace IEL.CORE.Classes
         /// <param name="DataColor">Цвет</param>
         public Color GetIndexingColor(StateSpectrum Spectrum) =>
             Color.FromArgb(Data[(int)Spectrum, 0], Data[(int)Spectrum, 1], Data[(int)Spectrum, 2], Data[(int)Spectrum, 3]);
+
+        /// <summary>
+        /// Скопировать данные расположения цветов
+        /// </summary>
+        /// <returns>Склонированный элемент</returns>
+        public object Clone()
+        {
+            return new QData(Data);
+        }
     }
 }

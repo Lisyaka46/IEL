@@ -43,6 +43,7 @@ namespace IEL
                     TextBoxMain.Foreground = color;
                 };
                 _IELSettingObject = value;
+                _IELSettingObject.UseActiveQSetting();
             }
         }
 
@@ -232,10 +233,11 @@ namespace IEL
 
             IsEnabledChanged += (sender, e) =>
             {
+                bool NewValue = (bool)e.NewValue;
                 Color
-                Foreground = (bool)e.NewValue ? IELSettingObject.ForegroundSetting.Default : IELSettingObject.ForegroundSetting.NotEnabled,
-                Background = (bool)e.NewValue ? IELSettingObject.BackgroundSetting.Default : IELSettingObject.BackgroundSetting.NotEnabled,
-                BorderBrush = (bool)e.NewValue ? IELSettingObject.BorderBrushSetting.Default : IELSettingObject.BorderBrushSetting.NotEnabled;
+                    Foreground = NewValue ? IELSettingObject.ForegroundSetting.Default : IELSettingObject.ForegroundSetting.NotEnabled,
+                    Background = NewValue ? IELSettingObject.BackgroundSetting.Default : IELSettingObject.BackgroundSetting.NotEnabled,
+                    BorderBrush = NewValue ? IELSettingObject.BorderBrushSetting.Default : IELSettingObject.BorderBrushSetting.NotEnabled;
                 ColorAnimation animation;
 
                 animation = IELSettingObject.ObjectAnimateSetting.GetAnimationColor(Background);

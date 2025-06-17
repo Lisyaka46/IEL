@@ -1,4 +1,5 @@
 ﻿using IEL.CORE.Classes.ObjectSettings;
+using IEL.CORE.Enums;
 using IEL.Interfaces.Front;
 using System.Windows;
 using System.Windows.Controls;
@@ -185,7 +186,7 @@ namespace IEL
                 {
                     ButtonActivate = false;
                     MouseEnterAnimation();
-                    OnActivateMouseLeft?.Invoke(this);
+                    OnActivateMouseLeft?.Invoke(this, e);
                 }
             };
 
@@ -195,16 +196,17 @@ namespace IEL
                 {
                     ButtonActivate = false;
                     MouseEnterAnimation();
-                    OnActivateMouseRight?.Invoke(this);
+                    OnActivateMouseRight?.Invoke(this, e);
                 }
             };
 
             IsEnabledChanged += (sender, e) =>
             {
+                bool NewValue = (bool)e.NewValue;
                 Color
-                    Foreground = (bool)e.NewValue ? IELSettingObject.ForegroundSetting.Default : IELSettingObject.ForegroundSetting.NotEnabled,
-                    Background = (bool)e.NewValue ? IELSettingObject.BackgroundSetting.Default : IELSettingObject.BackgroundSetting.NotEnabled,
-                    BorderBrush = (bool)e.NewValue ? IELSettingObject.BorderBrushSetting.Default : IELSettingObject.BorderBrushSetting.NotEnabled;
+                    Foreground = NewValue ? IELSettingObject.ForegroundSetting.Default : IELSettingObject.ForegroundSetting.NotEnabled,
+                    Background = NewValue ? IELSettingObject.BackgroundSetting.Default : IELSettingObject.BackgroundSetting.NotEnabled,
+                    BorderBrush = NewValue ? IELSettingObject.BorderBrushSetting.Default : IELSettingObject.BorderBrushSetting.NotEnabled;
                 BorderButton.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, null);
                 BorderButton.Background.BeginAnimation(SolidColorBrush.ColorProperty, null);
                 TextBlockButtonName.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, null);

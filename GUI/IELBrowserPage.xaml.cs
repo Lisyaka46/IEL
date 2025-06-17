@@ -1,20 +1,13 @@
-﻿using IEL.Interfaces.Core;
-using IEL.Interfaces.Front;
+﻿using IEL.CORE.Classes;
+using IEL.CORE.Classes.Browser;
+using IEL.CORE.Classes.ObjectSettings;
+using System.Collections.ObjectModel;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
-using DataScroll;
-using System.Windows.Controls.Primitives;
-using static System.Net.Mime.MediaTypeNames;
-using System;
 using System.Windows.Media.Imaging;
-using System.ComponentModel;
-using System.IO;
-using static IEL.Interfaces.Core.IQData;
-using IEL.CORE.Classes;
-using IEL.CORE.Classes.Browser;
-using IEL.CORE.Classes.ObjectSettings;
 
 namespace IEL
 {
@@ -49,6 +42,7 @@ namespace IEL
                     TextBlockNullPage.Foreground = color;
                 };
                 _IELSettingObject = value;
+                _IELSettingObject.UseActiveQSetting();
             }
         }
 
@@ -71,6 +65,11 @@ namespace IEL
         /// Массив объектов страниц
         /// </summary>
         private readonly List<IELInlay> IELInlays;
+
+        /// <summary>
+        /// Массив активных вкладок браузера
+        /// </summary>
+        public ReadOnlyCollection<IELInlay> Inlays => IELInlays.AsReadOnly();
 
         /// <summary>
         /// Индекс активированной вкладки
@@ -202,13 +201,13 @@ namespace IEL
                 IELSettingObject = new()
                 {
                     AnimationMillisecond = 200,
-                    BackgroundSetting = new() { ColorData = QDataDefaultInlayBackground },
-                    BorderBrushSetting = new() { ColorData = QDataDefaultInlayBorderBrush },
-                    ForegroundSetting = new() { ColorData = QDataDefaultInlayForeground },
+                    BackgroundSetting = new(QDataDefaultInlayBackground),
+                    BorderBrushSetting = new(QDataDefaultInlayBorderBrush),
+                    ForegroundSetting = new(QDataDefaultInlayForeground),
                 },
                 Padding = new(4, 4, 4, 0),
             };
-            Inlay.OnActivateCloseInlay += (sender, Key) =>
+            Inlay.OnActivateCloseInlay += (sender, e, Key) =>
             {
                 DeleteInlayPage(Inlay, ActivateIndex == IELInlays.IndexOf(Inlay));
                 EventCloseInlay?.Invoke();
@@ -221,7 +220,7 @@ namespace IEL
             Inlay.SourceCloseButtonImage = bitmap;
 
             Inlay.SetPage(Content);
-            Inlay.OnActivateMouseLeft += (sender, Key) =>
+            Inlay.OnActivateMouseLeft += (sender, e, Key) =>
             {
                 ActivateInlayInBrowserPage(Inlay.PageElement);
             };
@@ -255,7 +254,7 @@ namespace IEL
         {
             if (Content == null) return;
             IELInlay inlay = CreateInlay(Content);
-            inlay.OnActivateMouseRight += (sender, Key) => EventActiveActionInInlay?.Invoke(inlay);
+            inlay.OnActivateMouseRight += (sender, e, Key) => EventActiveActionInInlay?.Invoke(inlay);
             inlay.Opacity = 0d;
             if (InlaysCount == 0)
             {

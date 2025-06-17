@@ -1,5 +1,6 @@
 ﻿using IEL.CORE.Classes.Browser;
 using IEL.CORE.Classes.ObjectSettings;
+using IEL.CORE.Enums;
 using IEL.Interfaces.Front;
 using System.Windows;
 using System.Windows.Controls;
@@ -13,11 +14,34 @@ namespace IEL
     /// </summary>
     public partial class IELInlay : UserControl
     {
-
+        private IELUsingObjectSetting _IELSettingObject = new();
         /// <summary>
         /// Настройка использования объекта
         /// </summary>
-        public IELUsingObjectSetting IELSettingObject { get; set; } = new();
+        public IELUsingObjectSetting IELSettingObject
+        {
+            get => _IELSettingObject;
+            set
+            {
+                value.BackgroundQChanged += (NewValue) =>
+                {
+                    SolidColorBrush color = new(NewValue);
+                    BorderMain.Background = color;
+                };
+                value.BorderBrushQChanged += (NewValue) =>
+                {
+                    SolidColorBrush color = new(NewValue);
+                    BorderMain.BorderBrush = color;
+                };
+                value.ForegroundQChanged += (NewValue) =>
+                {
+                    SolidColorBrush color = new(NewValue);
+                    TextBlockHead.Foreground = color;
+                };
+                _IELSettingObject = value;
+                _IELSettingObject.UseActiveQSetting();
+            }
+        }
 
         /// <summary>
         /// Скругление границ
@@ -204,7 +228,7 @@ namespace IEL
 
             ImageCloseInlay.MouseLeftButtonDown += (sender, e) =>
             {
-                OnActivateCloseInlay?.Invoke(this);
+                OnActivateCloseInlay?.Invoke(this, e);
             };
             BorderMain.MouseDown += (sender, e) =>
             {
@@ -217,7 +241,7 @@ namespace IEL
                 if (IsEnabled && OnActivateMouseLeft != null)
                 {
                     MouseEnterAnimation();
-                    OnActivateMouseLeft?.Invoke(this);
+                    OnActivateMouseLeft?.Invoke(this, e);
                 }
             };
 
@@ -226,16 +250,17 @@ namespace IEL
                 if (IsEnabled && OnActivateMouseRight != null)
                 {
                     MouseEnterAnimation();
-                    OnActivateMouseRight?.Invoke(this);
+                    OnActivateMouseRight?.Invoke(this, e);
                 }
             };
 
             IsEnabledChanged += (sender, e) =>
             {
+                bool NewValue = (bool)e.NewValue;
                 Color
-                Foreground = (bool)e.NewValue ? IELSettingObject.ForegroundSetting.Default : IELSettingObject.ForegroundSetting.NotEnabled,
-                Background = (bool)e.NewValue ? IELSettingObject.BackgroundSetting.Default : IELSettingObject.BackgroundSetting.NotEnabled,
-                BorderBrush = (bool)e.NewValue ? IELSettingObject.BorderBrushSetting.Default : IELSettingObject.BorderBrushSetting.NotEnabled;
+                    Foreground = NewValue ? IELSettingObject.ForegroundSetting.Default : IELSettingObject.ForegroundSetting.NotEnabled,
+                    Background = NewValue ? IELSettingObject.BackgroundSetting.Default : IELSettingObject.BackgroundSetting.NotEnabled,
+                    BorderBrush = NewValue ? IELSettingObject.BorderBrushSetting.Default : IELSettingObject.BorderBrushSetting.NotEnabled;
 
                 BorderMain.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, IELSettingObject.ObjectAnimateSetting.GetAnimationColor(BorderBrush));
 

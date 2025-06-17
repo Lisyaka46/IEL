@@ -8,7 +8,7 @@ namespace IEL.CORE.Classes
     /// <summary>
     /// Класс настройки поведения цвета при разных состояниях объекта
     /// </summary>
-    public class BrushSettingQ
+    public class BrushSettingQ : ICloneable
     {
         /// <summary>
         /// Делегат события изменения обычного цвета
@@ -24,7 +24,7 @@ namespace IEL.CORE.Classes
         /// <summary>
         /// Массив данных цвета
         /// </summary>
-        internal QData ColorData { get; set; } = new();
+        internal QData ColorData { get; private set; }
 
         /// <summary>
         /// Изменить напрямую стиль отображения объекта
@@ -54,7 +54,7 @@ namespace IEL.CORE.Classes
         /// </remarks>
         internal bool IsEnabled { get; set; }
 
-        private bool _UsedState;
+        #region UsedState
         /// <summary>
         /// Состояние навигации использования
         /// </summary>
@@ -63,22 +63,31 @@ namespace IEL.CORE.Classes
         /// <code></code>
         /// <b>Default <![CDATA[<]]>=<![CDATA[>]]> Used</b>
         /// </remarks>
-        public bool UsedState
+        private bool UsedState;
+
+        /// <summary>
+        /// Узнать состояние использования
+        /// </summary>
+        /// <returns>Текущее состояние использование</returns>
+        public bool GetUsedState() => UsedState;
+
+        /// <summary>
+        /// Установить новое значение использованию цвета
+        /// </summary>
+        /// <param name="NewValue">Новое значение</param>
+        public void SetUsedState(bool NewValue)
         {
-            get => _UsedState;
-            set
+            UsedState = NewValue;
+            if (IsEnabled)
             {
-                _UsedState = value;
-                if (IsEnabled)
+                try
                 {
-                    try
-                    {
-                        ColorChanged?.Invoke(StateSpectrum.Default, ColorData.GetIndexingColor(value ? StateSpectrum.Used : StateSpectrum.Default));
-                    }
-                    catch { }
+                    ColorChanged?.Invoke(StateSpectrum.Default, ColorData.GetIndexingColor(NewValue ? StateSpectrum.Used : StateSpectrum.Default));
                 }
+                catch { }
             }
         }
+        #endregion
 
         #region Default
         /// <summary>
@@ -86,7 +95,7 @@ namespace IEL.CORE.Classes
         /// </summary>
         public Color Default
         {
-            get => ColorData.GetIndexingColor(IsEnabled ? UsedState ? StateSpectrum.Used : StateSpectrum.Default : StateSpectrum.NotEnabled);
+            get => ColorData.GetIndexingColor(IsEnabled ? (UsedState ? StateSpectrum.Used : StateSpectrum.Default) : StateSpectrum.NotEnabled);
             set
             {
                 ColorData.SetIndexingColor(StateSpectrum.Default, value);
@@ -122,6 +131,7 @@ namespace IEL.CORE.Classes
                 ColorData.SetIndexingColor(StateSpectrum.Select, value);
             }
         }
+
         #endregion
 
         #region Used
@@ -141,10 +151,8 @@ namespace IEL.CORE.Classes
         public BrushSettingQ()
         {
             IsEnabled = true;
-            Default = Colors.Black;
-            Select = Colors.Black;
-            Used = Colors.Black;
-            NotEnabled = Colors.Black;
+            UsedState = false;
+            ColorData = new();
         }
 
         /// <summary>
@@ -154,8 +162,25 @@ namespace IEL.CORE.Classes
         public BrushSettingQ(byte[,] ByteColorData)
         {
             IsEnabled = true;
-            _UsedState = false;
+            UsedState = false;
             ColorData = new(ByteColorData);
         }
+
+        /// <summary>
+        /// Source QData
+        /// </summary>
+        /// <param name="ByteColorData"></param>
+        public BrushSettingQ(QData ByteColorData)
+        {
+            IsEnabled = true;
+            UsedState = false;
+            ColorData = (QData)ByteColorData.Clone();
+        }
+
+        /// <summary>
+        /// Клонировать объект политры
+        /// </summary>
+        /// <returns>Объект палитры</returns>
+        public object Clone() => new BrushSettingQ(ColorData);
     }
 }

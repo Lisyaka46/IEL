@@ -57,6 +57,7 @@ namespace IEL
                     TextBlockRightArrow.Foreground = color;
                 };
                 _IELSettingObject = value;
+                _IELSettingObject.UseActiveQSetting();
             }
         }
 
@@ -151,10 +152,11 @@ namespace IEL
             IsEnabledChanged += (sender, e) =>
             {
                 ColorAnimation animation;
+                bool NewValue = (bool)e.NewValue;
                 Color
-                    Background = (bool)e.NewValue ? IELSettingObject.BackgroundSetting.Default : IELSettingObject.BackgroundSetting.NotEnabled,
-                    BorderBrush = (bool)e.NewValue ? IELSettingObject.BorderBrushSetting.Default : IELSettingObject.BorderBrushSetting.NotEnabled,
-                    Foreground = (bool)e.NewValue ? IELSettingObject.ForegroundSetting.Default : IELSettingObject.BackgroundSetting.NotEnabled;
+                    Foreground = NewValue ? IELSettingObject.ForegroundSetting.Default : IELSettingObject.ForegroundSetting.NotEnabled,
+                    Background = NewValue ? IELSettingObject.BackgroundSetting.Default : IELSettingObject.BackgroundSetting.NotEnabled,
+                    BorderBrush = NewValue ? IELSettingObject.BorderBrushSetting.Default : IELSettingObject.BorderBrushSetting.NotEnabled;
 
                 animation = IELSettingObject.ObjectAnimateSetting.GetAnimationColor(BorderBrush);
                 BorderButton.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, animation);
@@ -198,7 +200,7 @@ namespace IEL
                 if (IsEnabled && OnActivateMouseLeft != null)
                 {
                     MouseEnterDetect();
-                    OnActivateMouseLeft?.Invoke(this);
+                    OnActivateMouseLeft?.Invoke(this, e);
                 }
             };
 
@@ -207,7 +209,7 @@ namespace IEL
                 if (IsEnabled && OnActivateMouseRight != null)
                 {
                     MouseEnterDetect();
-                    OnActivateMouseRight?.Invoke(this);
+                    OnActivateMouseRight?.Invoke(this, e);
                 }
             };
         }

@@ -17,10 +17,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DataScroll\DataScroll.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Resource Include="Properties\Images\DoubleMouseButton.png">
       <CopyToOutputDirectory></CopyToOutputDirectory>
       <CustomToolNamespace></CustomToolNamespace>

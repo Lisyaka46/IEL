@@ -59,6 +59,7 @@ namespace IEL
                     TextBlockRightArrow.Foreground = color;
                 };
                 _IELSettingObject = value;
+                _IELSettingObject.UseActiveQSetting();
             }
         }
 
@@ -183,10 +184,11 @@ namespace IEL
 
             IsEnabledChanged += (sender, e) =>
             {
+                bool NewValue = (bool)e.NewValue;
                 Color
-                Background = (bool)e.NewValue ? IELSettingObject.BackgroundSetting.Default : IELSettingObject.BackgroundSetting.NotEnabled,
-                BorderBrush = (bool)e.NewValue ? IELSettingObject.BorderBrushSetting.Default : IELSettingObject.BorderBrushSetting.NotEnabled,
-                Foreground = (bool)e.NewValue ? IELSettingObject.ForegroundSetting.Default : IELSettingObject.ForegroundSetting.NotEnabled;
+                    Foreground = NewValue ? IELSettingObject.ForegroundSetting.Default : IELSettingObject.ForegroundSetting.NotEnabled,
+                    Background = NewValue ? IELSettingObject.BackgroundSetting.Default : IELSettingObject.BackgroundSetting.NotEnabled,
+                    BorderBrush = NewValue ? IELSettingObject.BorderBrushSetting.Default : IELSettingObject.BorderBrushSetting.NotEnabled;
                 ColorAnimation animation;
 
                 animation = IELSettingObject.ObjectAnimateSetting.GetAnimationColor(BorderBrush);
@@ -220,7 +222,7 @@ namespace IEL
                 if (IsEnabled && OnActivateMouseLeft != null)
                 {
                     MouseEnterDetect();
-                    OnActivateMouseLeft?.Invoke(false);
+                    OnActivateMouseLeft?.Invoke(false, e);
                 }
             };
 
@@ -229,7 +231,7 @@ namespace IEL
                 if (IsEnabled && OnActivateMouseRight != null)
                 {
                     MouseEnterDetect();
-                    OnActivateMouseRight?.Invoke(false);
+                    OnActivateMouseRight?.Invoke(false, e);
                 }
             };
         }
@@ -240,9 +242,9 @@ namespace IEL
         private void ClickDownAnimation()
         {
             Color
+                Foreground = IELSettingObject.ForegroundSetting.Used,
                 Background = IELSettingObject.BackgroundSetting.Used,
-                BorderBrush = IELSettingObject.BorderBrushSetting.Used,
-                Foreground = IELSettingObject.ForegroundSetting.Used;
+                BorderBrush = IELSettingObject.BorderBrushSetting.Used;
 
             BorderButton.BorderBrush = new SolidColorBrush(BorderBrush);
             BorderButton.Background = new SolidColorBrush(Background);

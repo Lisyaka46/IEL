@@ -60,6 +60,7 @@ namespace IEL
                     TextBlockRightArrow.Foreground = color;
                 };
                 _IELSettingObject = value;
+                _IELSettingObject.UseActiveQSetting();
             }
         }
 
@@ -200,7 +201,7 @@ namespace IEL
                 if (IsEnabled && OnActivateMouseLeft != null)
                 {
                     MouseEnterAnimation();
-                    OnActivateMouseLeft?.Invoke(this);
+                    OnActivateMouseLeft?.Invoke(this, e);
                 }
             };
 
@@ -209,16 +210,17 @@ namespace IEL
                 if (IsEnabled && OnActivateMouseRight != null)
                 {
                     MouseEnterAnimation();
-                    OnActivateMouseRight?.Invoke(this);
+                    OnActivateMouseRight?.Invoke(this, e);
                 }
             };
 
             IsEnabledChanged += (sender, e) =>
             {
+                bool NewValue = (bool)e.NewValue;
                 Color
-                Foreground = (bool)e.NewValue ? IELSettingObject.ForegroundSetting.Default : IELSettingObject.ForegroundSetting.NotEnabled,
-                Background = (bool)e.NewValue ? IELSettingObject.BackgroundSetting.Default : IELSettingObject.BackgroundSetting.NotEnabled,
-                BorderBrush = (bool)e.NewValue ? IELSettingObject.BorderBrushSetting.Default : IELSettingObject.BorderBrushSetting.NotEnabled;
+                    Foreground = NewValue ? IELSettingObject.ForegroundSetting.Default : IELSettingObject.ForegroundSetting.NotEnabled,
+                    Background = NewValue ? IELSettingObject.BackgroundSetting.Default : IELSettingObject.BackgroundSetting.NotEnabled,
+                    BorderBrush = NewValue ? IELSettingObject.BorderBrushSetting.Default : IELSettingObject.BorderBrushSetting.NotEnabled;
                 ColorAnimation animation;
 
                 animation = IELSettingObject.ObjectAnimateSetting.GetAnimationColor(BorderBrush);
@@ -247,9 +249,9 @@ namespace IEL
         private void ClickDownAnimation()
         {
             Color
-            Foreground = IELSettingObject.ForegroundSetting.Used,
-            Background = IELSettingObject.BackgroundSetting.Used,
-            BorderBrush = IELSettingObject.BorderBrushSetting.Used;
+                Foreground = IELSettingObject.ForegroundSetting.Used,
+                Background = IELSettingObject.BackgroundSetting.Used,
+                BorderBrush = IELSettingObject.BorderBrushSetting.Used;
 
             BorderCharKeyboard.BorderBrush = new SolidColorBrush(BorderBrush);
             BorderLeftArrow.BorderBrush = new SolidColorBrush(BorderBrush);
