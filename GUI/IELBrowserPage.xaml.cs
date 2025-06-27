@@ -160,6 +160,7 @@ namespace IEL
 
         public IELBrowserPage()
         {
+            IELObjectSetting.GlobalSetValidKey();
             InitializeComponent();
             IELSettingObject = new();
             QDataDefaultInlayBackground = new();
@@ -373,7 +374,7 @@ namespace IEL
             try
             {
                 if (Page == null) return;
-                BrowserPage?[] Pages = [..IELInlays.Select((i) => i.PageElement)];
+                BrowserPage?[] Pages = [.. IELInlays.Select((i) => i.PageElement)];
                 ActivateInlayIndex(Array.IndexOf(Pages, Page));
             }
             catch { }
@@ -418,7 +419,7 @@ namespace IEL
             {
                 if (Inlay.PageElement?.PageContent.GetType() == typeof(T)) values.Add((T?)Inlay.PageElement?.PageContent);
             }
-            return values.Count == 0 ? null : [..values];
+            return values.Count == 0 ? null : [.. values];
         }
 
         /// <summary>

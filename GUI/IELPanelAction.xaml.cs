@@ -1,15 +1,13 @@
-﻿using System.Diagnostics;
+﻿using IEL.CORE.Classes;
+using IEL.CORE.Enums;
+using IEL.Interfaces.Front;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Eventing.Reader;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
-using IEL.Interfaces.Front;
-using IEL.CORE.Enums;
-using IEL.CORE.Classes;
 
 namespace IEL
 {
@@ -280,7 +278,7 @@ namespace IEL
             AnimationMovePanelAction(PositionAnim, new Size(0, 0), ActiveSettingVisual.ElementInPanel);
             AnimateSizePanelAction(new(0, 0));
             AddBufferElementPageAction(ActiveSettingVisual);
-            
+
             PanelActionActivate = false;
             string NamePanel = ActiveSettingVisual.ElementInPanel.Name;
             ClearInformation();

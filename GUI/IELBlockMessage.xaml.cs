@@ -1,10 +1,11 @@
-﻿using System.Windows;
+﻿using IEL.CORE.Classes.ObjectSettings;
+using IEL.CORE.Enums;
+using IEL.Interfaces.Front;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
-using IEL.Interfaces.Front;
-using IEL.CORE.Enums;
 
 namespace IEL
 {
@@ -162,6 +163,7 @@ namespace IEL
         #region ** Inicialize Object **
         public IELBlockMessage()
         {
+            IELObjectSetting.GlobalSetValidKey();
             InitializeComponent();
             #region Set Values Object
             #region Values

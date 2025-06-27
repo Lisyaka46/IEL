@@ -1,5 +1,4 @@
-﻿using IEL.CORE.Classes;
-using IEL.CORE.Classes.ObjectSettings;
+﻿using IEL.CORE.Classes.ObjectSettings;
 using IEL.CORE.Enums;
 using IEL.Interfaces.Front;
 using System.Windows;
@@ -7,7 +6,6 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
-using System.Windows.Threading;
 
 namespace IEL
 {
@@ -158,6 +156,7 @@ namespace IEL
         /// </summary>
         public IELButtonImageKey()
         {
+            IELObjectSetting.GlobalSetValidKey();
             InitializeComponent();
             IELSettingObject = new();
 

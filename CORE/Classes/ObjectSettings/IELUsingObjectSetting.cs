@@ -1,13 +1,4 @@
-﻿using IEL.CORE.Enums;
-using IEL.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Threading;
+﻿using System.Windows.Threading;
 
 namespace IEL.CORE.Classes.ObjectSettings
 {

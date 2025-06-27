@@ -1,6 +1,5 @@
 ﻿using IEL.CORE.Classes.Browser;
 using IEL.CORE.Classes.ObjectSettings;
-using IEL.CORE.Enums;
 using IEL.Interfaces.Front;
 using System.Windows;
 using System.Windows.Controls;
@@ -126,7 +125,7 @@ namespace IEL
             {
                 if (_UsedState == value) return;
                 _UsedState = value;
-                BorderMain.BeginAnimation(BorderThicknessProperty, 
+                BorderMain.BeginAnimation(BorderThicknessProperty,
                     IELSettingObject.ObjectAnimateSetting.GetAnimationThickness(value ? BorderThicknessActive : BorderThicknessDiactive, TimeSpan.FromMilliseconds(800d)));
                 MouseLeaveAnimation();
             }

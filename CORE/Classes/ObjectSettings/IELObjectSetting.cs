@@ -1,15 +1,14 @@
 ﻿using IEL.CORE.Enums;
 using IEL.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using OperPage_les.UI.Dialogs;
+using System.IO;
+using System.Text.RegularExpressions;
+using System.Windows;
 using System.Windows.Media;
 
 namespace IEL.CORE.Classes.ObjectSettings
 {
-    public class IELObjectSetting : IIELObjectSetting
+    public partial class IELObjectSetting : IIELObjectSetting
     {
         /// <summary>
         /// Делегат события изменения поля значения
@@ -148,5 +147,85 @@ namespace IEL.CORE.Classes.ObjectSettings
         {
             AnimationMillisecond = 200d;
         }
+
+        /// <summary>
+        /// Главная директория ресурсов проекта
+        /// </summary>
+        internal static readonly string MainDirectoryLibrary = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"/IEL/";
+
+        /// <summary>
+        /// Главная директория ресурсов проекта
+        /// </summary>
+        internal static readonly string DirectoryValidKeyLibrary = MainDirectoryLibrary + @"Key";
+
+        /// <summary>
+        /// Установить ключ для библиотеки интерфейса на прямую
+        /// </summary>
+        /// <param name="SourcePathFileKey">Директория файла ключа</param>
+        /// <returns></returns>
+        public static bool SetFileKey(string SourcePathFileKey)
+        {
+            if (File.Exists(DirectoryValidKeyLibrary)) if (CheckFileKey()) return true;
+            if (!File.Exists(SourcePathFileKey) && Path.GetFileName(SourcePathFileKey).Equals("Key")) return false;
+            Directory.CreateDirectory(MainDirectoryLibrary);
+            File.Copy(SourcePathFileKey, SourcePathFileKey + "_COPY");
+            File.Move(SourcePathFileKey + "_COPY", DirectoryValidKeyLibrary);
+            return true;
+        }
+
+        /// <summary>
+        /// Установить ключ для библиотеки интерфейса через интерфейс
+        /// </summary>
+        /// <returns></returns>
+        public static ResultSet SetFileKeyInWindow()
+        {
+            WindowProgramKey WprogramKey = new();
+            WprogramKey.SetKeyValid(MainDirectoryLibrary);
+            return WprogramKey.Cancel ? (WprogramKey.CloseProject ? ResultSet.Close : ResultSet.NotSet) : ResultSet.Complete;
+        }
+
+        /// <summary>
+        /// Проверить установленный ключ валидности
+        /// </summary>
+        /// <returns></returns>
+        internal static bool CheckFileKey()
+        {
+            if (!File.Exists(DirectoryValidKeyLibrary)) return false;
+            bool InitKeyValid;
+            try
+            {
+                string MainPackAndValidKey = File.ReadAllText(DirectoryValidKeyLibrary);
+                string UUID = RegexPackValidKey().Match(MainPackAndValidKey).Value;
+                MainPackAndValidKey = MainPackAndValidKey[(UUID.Length + 1)..];
+                string Pack = RegexPackValidKey().Match(MainPackAndValidKey).Value;
+                string Key = MainPackAndValidKey[(Pack.Length + 1)..];
+                InitKeyValid = ConsoleManipulateKey.CORE.Manipulate.CheckKeyValid(Pack, Key) && UUID.Equals(ConsoleManipulateKey.CORE.Manipulate.GetCodeUUID());
+            }
+            catch
+            {
+                InitKeyValid = false;
+            }
+            if (!InitKeyValid) MessageBox.Show("Установленный валидный ключ не подходит", "Предупреждение",
+                MessageBoxButton.OK, MessageBoxImage.Error);
+            return InitKeyValid;
+        }
+
+        /// <summary>
+        /// Использовать проверку установки ключа валидности
+        /// </summary>
+        /// <exception cref="Exception">Отказ на предоставление ключа</exception>
+        internal static void GlobalSetValidKey()
+        {
+            if (!CheckFileKey())
+                while (true)
+                {
+                    ResultSet result = SetFileKeyInWindow();
+                    if (result == ResultSet.Close) throw new Exception("Отказ о предоставлении ключа валидности.");
+                    else if (result == ResultSet.Complete) break;
+                }
+        }
+
+        [GeneratedRegex(@"[^ ]+")]
+        private static partial Regex RegexPackValidKey();
     }
 }

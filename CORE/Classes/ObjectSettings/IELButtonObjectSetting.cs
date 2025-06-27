@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using IEL.CORE.Enums;
+using IEL.Interfaces.Front;
 using System.Windows.Controls;
 using System.Windows.Media;
-using IEL.CORE.Enums;
-using IEL.Interfaces.Front;
-using static IEL.CORE.Classes.ObjectSettings.IELObjectSetting;
 
 namespace IEL.CORE.Classes.ObjectSettings
 {

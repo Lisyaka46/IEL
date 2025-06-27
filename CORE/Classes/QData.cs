@@ -1,21 +1,14 @@
-﻿using IEL.Interfaces.Core;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using IEL.CORE.Enums;
 using System.Windows.Media;
-using static IEL.Interfaces.Core.IQData;
-using IEL.CORE.Enums;
 
 namespace IEL.CORE.Classes
 {
-    public class QData : IQData, ICloneable
+    public class QData : ICloneable
     {
         /// <summary>
         /// Массив данных цвета
         /// </summary>
-        public byte[,] Data { get; }
+        internal byte[,] Data { get; }
 
         /// <summary>
         /// Инициализировать данные по умолчанию
@@ -43,7 +36,7 @@ namespace IEL.CORE.Classes
         /// </summary>
         /// <param name="Spectrum">Спектр</param>
         /// <param name="DataColor">Цвет</param>
-        public void SetIndexingColor(StateSpectrum Spectrum, Color DataColor)
+        internal void SetIndexingColor(StateSpectrum Spectrum, Color DataColor)
         {
             Data[(int)Spectrum, 0] = DataColor.A;
             Data[(int)Spectrum, 1] = DataColor.R;

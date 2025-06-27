@@ -1,14 +1,9 @@
-﻿using IEL.Interfaces.Front;
+﻿using IEL.CORE.Classes.ObjectSettings;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
-using static IEL.Interfaces.Front.IIELButton;
-using static IEL.Interfaces.Core.IQData;
-using IEL.CORE.Classes;
-using IEL.CORE.Classes.ObjectSettings;
-using IEL.CORE.Enums;
 
 namespace IEL
 {

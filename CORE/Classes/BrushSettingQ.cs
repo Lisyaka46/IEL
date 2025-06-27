@@ -1,7 +1,5 @@
-﻿using IEL.Interfaces.Core;
+﻿using IEL.CORE.Enums;
 using System.Windows.Media;
-using static IEL.Interfaces.Core.IQData;
-using IEL.CORE.Enums;
 
 namespace IEL.CORE.Classes
 {
@@ -24,7 +22,7 @@ namespace IEL.CORE.Classes
         /// <summary>
         /// Массив данных цвета
         /// </summary>
-        internal QData ColorData { get; private set; }
+        public QData ColorData { get; private set; }
 
         /// <summary>
         /// Изменить напрямую стиль отображения объекта

@@ -1,5 +1,4 @@
 ﻿using IEL.CORE.Classes.ObjectSettings;
-using IEL.CORE.Enums;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -93,10 +92,11 @@ namespace IEL
         /// <summary>
         /// Объект изображения отображаемого в блоке информации
         /// </summary>
-        public Image MainFrontImage => MainImage; 
+        public Image MainFrontImage => MainImage;
 
         public IELBlockInfoImage()
         {
+            IELObjectSetting.GlobalSetValidKey();
             InitializeComponent();
             IELSettingObject = new();
             CornerRadius = new CornerRadius(10);

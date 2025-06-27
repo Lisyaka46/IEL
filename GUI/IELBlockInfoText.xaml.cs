@@ -1,5 +1,4 @@
 ﻿using IEL.CORE.Classes.ObjectSettings;
-using IEL.CORE.Enums;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -91,6 +90,7 @@ namespace IEL
 
         public IELBlockInfoText()
         {
+            IELObjectSetting.GlobalSetValidKey();
             InitializeComponent();
             IELSettingObject = new();
             CornerRadius = new CornerRadius(10);
