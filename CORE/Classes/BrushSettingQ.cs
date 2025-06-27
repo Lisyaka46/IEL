@@ -25,7 +25,7 @@ namespace IEL.CORE.Classes
         /// <summary>
         /// Массив данных цвета
         /// </summary>
-        public QData ColorData { get; private set; }
+        public QData ColorData { get; set; }
 
         /// <summary>
         /// Последний изменяемый спектр цыета
@@ -39,7 +39,15 @@ namespace IEL.CORE.Classes
         /// <param name="Animated">Анимируются ли свойства цвета</param>
         public void InvokeObjectUsedStateColor(StateSpectrum Spectrum, bool Animated = true)
         {
-            ActionColorChange?.Invoke(Spectrum, ColorData.GetIndexingColor(Spectrum), Animated);
+            Color color = Spectrum switch
+            {
+                StateSpectrum.Default => Default,
+                StateSpectrum.Select => Select,
+                StateSpectrum.Used => Used,
+                StateSpectrum.NotEnabled => NotEnabled,
+                _ => Default
+            };
+            ActionColorChange?.Invoke(Spectrum, color, Animated);
         }
 
         #region UsedState
@@ -86,7 +94,7 @@ namespace IEL.CORE.Classes
             {
                 LastChange = StateSpectrum.Default;
                 ColorData.SetIndexingColor(StateSpectrum.Default, value);
-                ActionColorChange?.Invoke(StateSpectrum.Default, value, true);
+                if (!UsedState) ActionColorChange?.Invoke(StateSpectrum.Default, value, true);
             }
         }
         #endregion
@@ -102,7 +110,6 @@ namespace IEL.CORE.Classes
             {
                 LastChange = StateSpectrum.NotEnabled;
                 ColorData.SetIndexingColor(StateSpectrum.NotEnabled, value);
-                ActionColorChange?.Invoke(StateSpectrum.NotEnabled, value, true);
             }
         }
         #endregion
@@ -134,6 +141,7 @@ namespace IEL.CORE.Classes
             {
                 LastChange = StateSpectrum.Used;
                 ColorData.SetIndexingColor(StateSpectrum.Used, value);
+                if (UsedState) ActionColorChange?.Invoke(StateSpectrum.Used, value, true);
             }
         }
         #endregion
