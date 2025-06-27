@@ -1,184 +1,63 @@
-﻿using IEL.Classes;
+﻿using IEL.CORE.Classes.ObjectSettings;
+using IEL.CORE.Enums;
 using IEL.Interfaces.Front;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
-using System.Windows.Threading;
-using static IEL.Interfaces.Front.IIELStateVisualizationButton;
 
 namespace IEL
 {
     /// <summary>
     /// Логика взаимодействия для IELButtonImage.xaml
     /// </summary>
-    public partial class IELButtonImage : UserControl, IIELButtonDefault, IIELEventsVision
+    public partial class IELButtonImage : UserControl, IIELButton
     {
-        #region StateVisualizationButton
-        private StateButton _StateVisualizationButton = StateButton.LeftArrow;
+        private IELButtonObjectSetting _IELSettingObject = new();
         /// <summary>
-        /// Состояние отображения направления
+        /// Настройка использования объекта
         /// </summary>
-        public StateButton StateVisualizationButton
+        public IELButtonObjectSetting IELSettingObject
         {
-            get => _StateVisualizationButton;
+            get => _IELSettingObject;
             set
             {
-                if (_StateVisualizationButton == value) return;
-                ColumnLeftArrow.Width = new(value == StateButton.LeftArrow ? 25 : 0);
-                ColumnRightArrow.Width = new(value == StateButton.RightArrow ? 25 : 0);
-                BorderLeftArrow.Opacity = value == StateButton.LeftArrow ? 1d : 0d;
-                BorderRightArrow.Opacity = value == StateButton.RightArrow ? 1d : 0d;
-                _StateVisualizationButton = value;
+                value.VisualizationButtonChanged += (StateVisual) =>
+                {
+                    bool
+                        Left = StateVisual == StateVisualButton.LeftArrow,
+                        Right = StateVisual == StateVisualButton.RightArrow;
+                    ColumnRightArrow.Width = new(Right ? 25 : 0);
+                    BorderRightArrow.Opacity = Right ? 1d : 0d;
+
+                    ColumnLeftArrow.Width = new(Left ? 25 : 0);
+                    BorderLeftArrow.Opacity = Left ? 1d : 0d;
+                    ImageMouseButtonsUse.HorizontalAlignment = Right ? HorizontalAlignment.Left : HorizontalAlignment.Right;
+                };
+                value.BackgroundQChanged += (NewValue) =>
+                {
+                    SolidColorBrush color = new(NewValue);
+                    BorderButton.Background = color;
+                    BorderRightArrow.Background = color;
+                    BorderLeftArrow.Background = color;
+                };
+                value.BorderBrushQChanged += (NewValue) =>
+                {
+                    SolidColorBrush color = new(NewValue);
+                    BorderButton.BorderBrush = color;
+                    BorderRightArrow.BorderBrush = color;
+                    BorderLeftArrow.BorderBrush = color;
+                };
+                value.ForegroundQChanged += (NewValue) =>
+                {
+                    SolidColorBrush color = new(NewValue);
+                    TextBlockLeftArrow.Foreground = color;
+                    TextBlockRightArrow.Foreground = color;
+                };
+                _IELSettingObject = value;
+                _IELSettingObject.UseActiveQSetting();
             }
         }
-        #endregion
-
-        #region Color Setting
-        private BrushSettingQ? _BackgroundSetting;
-        /// <summary>
-        /// Объект обычного состояния фона
-        /// </summary>
-        public BrushSettingQ BackgroundSetting
-        {
-            get => _BackgroundSetting ?? new();
-            set
-            {
-                BackgroundChangeDefaultColor.Invoke(BrushSettingQ.StateSpectrum.Default, value.Default);
-                value.ColorDefaultChange += BackgroundChangeDefaultColor;
-                _BackgroundSetting = value;
-            }
-        }
-
-        private BrushSettingQ? _BorderBrushSetting;
-        /// <summary>
-        /// Объект обычного состояния границы
-        /// </summary>
-        public BrushSettingQ BorderBrushSetting
-        {
-            get => _BorderBrushSetting ?? new();
-            set
-            {
-                BorderBrushChangeDefaultColor.Invoke(BrushSettingQ.StateSpectrum.Default, value.Default);
-                value.ColorDefaultChange += BorderBrushChangeDefaultColor;
-                _BorderBrushSetting = value;
-            }
-        }
-
-        private BrushSettingQ? _ForegroundSetting;
-        /// <summary>
-        /// Объект обычного состояния текста
-        /// </summary>
-        public BrushSettingQ ForegroundSetting
-        {
-            get => _ForegroundSetting ?? new();
-            set
-            {
-                ForegroundChangeDefaultColor.Invoke(BrushSettingQ.StateSpectrum.Default, value.Default);
-                value.ColorDefaultChange += ForegroundChangeDefaultColor;
-                _ForegroundSetting = value;
-            }
-        }
-
-        #region Event Change Color
-        /// <summary>
-        /// Обект события изменения цвета обычного состояния фона
-        /// </summary>
-        private readonly BrushSettingQ.ColorDefaultChangeEventHandler BackgroundChangeDefaultColor;
-
-        /// <summary>
-        /// Обект события изменения цвета обычного состояния границы
-        /// </summary>
-        private readonly BrushSettingQ.ColorDefaultChangeEventHandler BorderBrushChangeDefaultColor;
-
-        /// <summary>
-        /// Обект события изменения цвета обычного состояния текста
-        /// </summary>
-        private readonly BrushSettingQ.ColorDefaultChangeEventHandler ForegroundChangeDefaultColor;
-        #endregion
-        #endregion
-
-        #region AnimationMillisecond
-        private int _AnimationMillisecond;
-        /// <summary>
-        /// Длительность анимации в миллисекундах
-        /// </summary>
-        public int AnimationMillisecond
-        {
-            get => _AnimationMillisecond;
-            set
-            {
-                TimeSpan time = TimeSpan.FromMilliseconds(value);
-                AnimationColor.Duration = time;
-                _AnimationMillisecond = value;
-
-            }
-        }
-        #endregion
-
-        #region animateObjects
-        /// <summary>
-        /// Анимация color значения
-        /// </summary>
-        private readonly ColorAnimation AnimationColor = new()
-        {
-            DecelerationRatio = 0.2d,
-            EasingFunction = new CubicEase() { EasingMode = EasingMode.EaseOut }
-        };
-
-        /// <summary>
-        /// Анимация double значения
-        /// </summary>
-        private readonly DoubleAnimation AnimationDouble = new()
-        {
-            DecelerationRatio = 0.2d,
-            EasingFunction = new QuinticEase() { EasingMode = EasingMode.EaseOut }
-        };
-        #endregion
-
-        #region MouseHover
-        /// <summary>
-        /// Длительность задержки в миллисекундах
-        /// </summary>
-        public double IntervalHover
-        {
-            get => TimerBorderInfo.Interval.TotalMilliseconds;
-            set => TimerBorderInfo.Interval = TimeSpan.FromMilliseconds(value);
-        }
-
-        /// <summary>
-        /// Таймер события MouseHover
-        /// </summary>
-        private readonly DispatcherTimer TimerBorderInfo = new();
-
-        /// <summary>
-        /// Событие задержки курсора на элементе
-        /// </summary>
-        public event EventHandler? MouseHover;
-        #endregion
-
-        #region ImagedEventsButton
-        /// <summary>
-        /// Изображение отображения событий нажатия при отсутствии возможности нажатия
-        /// </summary>
-        public ImageSource? NotEventImageMouse { get; set; }
-
-        /// <summary>
-        /// Изображение отображения событий нажатия только при левой возможности нажатия
-        /// </summary>
-        public ImageSource? OnlyLeftEventImageMouse { get; set; }
-
-        /// <summary>
-        /// Изображение отображения событий нажатия только при правой возможности нажатия
-        /// </summary>
-        public ImageSource? OnlyRightEventImageMouse { get; set; }
-
-        /// <summary>
-        /// Изображение отображения событий нажатия при двусторонней возможности нажатия
-        /// </summary>
-        public ImageSource? FullEventImageMouse { get; set; }
-        #endregion
 
         /// <summary>
         /// Изображение которое отображается в элементе
@@ -234,122 +113,67 @@ namespace IEL
         /// <summary>
         /// Объект события активации левым щелчком мыши
         /// </summary>
-        public IIELButtonDefault.Activate? OnActivateMouseLeft { get; set; }
+        public IIELButton.Activate? OnActivateMouseLeft { get; set; }
 
         /// <summary>
         /// Объект события активации правым щелчком мыши
         /// </summary>
-        public IIELButtonDefault.Activate? OnActivateMouseRight { get; set; }
-
-        private bool _VisibleMouseImaging;
-        /// <summary>
-        /// Состояние активности отображения действий на кнопке
-        /// </summary>
-        /// <remarks>
-        /// При включённом состоянии отображает изображение действий производимое над кнопкой.
-        /// <code></code>
-        /// <b>Изображение поменять нельзя.</b>
-        /// </remarks>
-        public bool VisibleMouseImaging
-        {
-            get => _VisibleMouseImaging;
-            set
-            {
-                if (_VisibleMouseImaging != value) UpdateVisibleMouseEvents();
-                _VisibleMouseImaging = value;
-            }
-        }
-
-        /// <summary>
-        /// Состояние активности наведения на кнопку
-        /// </summary>
-        private bool EnterButton = false;
+        public IIELButton.Activate? OnActivateMouseRight { get; set; }
 
         /// <summary>
         /// Инициализировать объект кнопки с изображением
         /// </summary>
         public IELButtonImage()
         {
+            IELObjectSetting.GlobalSetValidKey();
             InitializeComponent();
-            StateVisualizationButton = StateButton.Default;
+            IELSettingObject = new();
 
-            AnimationMillisecond = 100;
-            BackgroundChangeDefaultColor = (Spectrum, Value) =>
-            {
-                if ((Spectrum == BrushSettingQ.StateSpectrum.Default && !IsEnabled) ||
-                (Spectrum == BrushSettingQ.StateSpectrum.NotEnabled && IsEnabled)) return;
-                SolidColorBrush color = new(Value);
-                BorderButton.Background = color;
-                BorderRightArrow.Background = color;
-                BorderLeftArrow.Background = color;
-            };
-            BorderBrushChangeDefaultColor = (Spectrum, Value) =>
-            {
-                if ((Spectrum == BrushSettingQ.StateSpectrum.Default && !IsEnabled) ||
-                (Spectrum == BrushSettingQ.StateSpectrum.NotEnabled && IsEnabled)) return;
-                SolidColorBrush color = new(Value);
-                BorderButton.BorderBrush = color;
-                BorderRightArrow.BorderBrush = color;
-                BorderLeftArrow.BorderBrush = color;
-            };
-            ForegroundChangeDefaultColor = (Spectrum, Value) =>
-            {
-                if ((Spectrum == BrushSettingQ.StateSpectrum.Default && !IsEnabled) ||
-                (Spectrum == BrushSettingQ.StateSpectrum.NotEnabled && IsEnabled)) return;
-                SolidColorBrush color = new(Value);
-                TextBlockLeftArrow.Foreground = color;
-                TextBlockRightArrow.Foreground = color;
-            };
-            BackgroundSetting = new(BrushSettingQ.CreateStyle.Background);
-            BorderBrushSetting = new(BrushSettingQ.CreateStyle.BorderBrush);
-            ForegroundSetting = new(BrushSettingQ.CreateStyle.Foreground);
-
-            IntervalHover = 1300d;
             ImageMouseButtonsUse.Opacity = 0d;
-            TimerBorderInfo.Tick += (sender, e) =>
-            {
-                MouseHover?.Invoke(this, e);
-                TimerBorderInfo.Stop();
-            };
 
             BorderButton.MouseEnter += (sender, e) =>
             {
                 if (IsEnabled)
                 {
-                    EnterButton = true;
                     MouseEnterDetect();
-                    TimerBorderInfo.Start();
+                    IELSettingObject.StartHover();
                 }
             };
             BorderButton.MouseLeave += (sender, e) =>
             {
                 if (IsEnabled)
                 {
-                    EnterButton = false;
                     MouseLeaveDetect();
-                    TimerBorderInfo.Stop();
+                    IELSettingObject.StopHover();
                 }
             };
 
             IsEnabledChanged += (sender, e) =>
             {
-                EnterButton = false;
+                ColorAnimation animation;
+                bool NewValue = (bool)e.NewValue;
                 Color
-                    Background = (bool)e.NewValue ? BackgroundSetting.Default : BackgroundSetting.NotEnabled,
-                    BorderBrush = (bool)e.NewValue ? BorderBrushSetting.Default : BorderBrushSetting.NotEnabled,
-                    Foreground = (bool)e.NewValue ? ForegroundSetting.Default : BackgroundSetting.NotEnabled;
+                    Foreground = NewValue ? IELSettingObject.ForegroundSetting.Default : IELSettingObject.ForegroundSetting.NotEnabled,
+                    Background = NewValue ? IELSettingObject.BackgroundSetting.Default : IELSettingObject.BackgroundSetting.NotEnabled,
+                    BorderBrush = NewValue ? IELSettingObject.BorderBrushSetting.Default : IELSettingObject.BorderBrushSetting.NotEnabled;
 
-                AnimationColor.To = BorderBrush;
-                BorderButton.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
-                BorderRightArrow.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
-                BorderLeftArrow.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
-                AnimationColor.To = Background;
-                BorderButton.Background.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
-                BorderRightArrow.Background.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
-                BorderLeftArrow.Background.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
-                AnimationColor.To = Foreground;
-                TextBlockLeftArrow.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
-                TextBlockRightArrow.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
+                animation = IELSettingObject.ObjectAnimateSetting.GetAnimationColor(BorderBrush);
+                BorderButton.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, animation);
+                BorderLeftArrow.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, animation);
+                BorderRightArrow.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, animation);
+
+                animation = IELSettingObject.ObjectAnimateSetting.GetAnimationColor(Background);
+                BorderButton.Background.BeginAnimation(SolidColorBrush.ColorProperty, animation);
+                BorderLeftArrow.Background.BeginAnimation(SolidColorBrush.ColorProperty, animation);
+                BorderRightArrow.Background.BeginAnimation(SolidColorBrush.ColorProperty, animation);
+
+                animation = IELSettingObject.ObjectAnimateSetting.GetAnimationColor(Foreground);
+                //TextBlockButton.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, animation);
+                if (IELSettingObject.StateVisualizationButton != StateVisualButton.Default)
+                {
+                    (IELSettingObject.StateVisualizationButton == StateVisualButton.LeftArrow ? TextBlockLeftArrow : TextBlockRightArrow)
+                        .Foreground.BeginAnimation(SolidColorBrush.ColorProperty, animation);
+                }
             };
 
             MouseLeftButtonDown += (sender, e) =>
@@ -357,7 +181,7 @@ namespace IEL
                 if (IsEnabled && OnActivateMouseLeft != null)
                 {
                     ClickDownAnimation();
-                    TimerBorderInfo.Stop();
+                    IELSettingObject.StopHover();
                 }
             };
 
@@ -366,7 +190,7 @@ namespace IEL
                 if (IsEnabled && OnActivateMouseRight != null)
                 {
                     ClickDownAnimation();
-                    TimerBorderInfo.Stop();
+                    IELSettingObject.StopHover();
                 }
             };
 
@@ -375,7 +199,7 @@ namespace IEL
                 if (IsEnabled && OnActivateMouseLeft != null)
                 {
                     MouseEnterDetect();
-                    OnActivateMouseLeft?.Invoke();
+                    OnActivateMouseLeft?.Invoke(this, e);
                 }
             };
 
@@ -384,23 +208,9 @@ namespace IEL
                 if (IsEnabled && OnActivateMouseRight != null)
                 {
                     MouseEnterDetect();
-                    OnActivateMouseRight?.Invoke();
+                    OnActivateMouseRight?.Invoke(this, e);
                 }
             };
-        }
-
-        /// <summary>
-        /// Обновить видимость событий мыши
-        /// </summary>
-        public void UpdateVisibleMouseEvents()
-        {
-            if (_VisibleMouseImaging)
-            {
-                ImageMouseButtonsUse.Source = ((IIELEventsVision)this).ImageMouseButton(this);
-                ImageMouseButtonsUse.UpdateLayout();
-            }
-            AnimationDouble.To = EnterButton ? 0.4d : 0d;
-            ImageMouseButtonsUse.BeginAnimation(OpacityProperty, AnimationDouble);
         }
 
         /// <summary>
@@ -409,9 +219,9 @@ namespace IEL
         private void ClickDownAnimation()
         {
             SolidColorBrush
-                Background = new(BackgroundSetting.Used),
-                BorderBrush = new(BorderBrushSetting.Used),
-                Foreground = new(ForegroundSetting.Used);
+                Background = new(IELSettingObject.BackgroundSetting.Used),
+                BorderBrush = new(IELSettingObject.BorderBrushSetting.Used),
+                Foreground = new(IELSettingObject.ForegroundSetting.Used);
 
             BorderButton.BorderBrush = BorderBrush;
             BorderRightArrow.BorderBrush = BorderBrush;
@@ -430,26 +240,31 @@ namespace IEL
         /// </summary>
         private void MouseEnterDetect()
         {
+            ColorAnimation animation;
             Color
-                Background = BackgroundSetting.Select,
-                BorderBrush = BorderBrushSetting.Select,
-                Foreground = ForegroundSetting.Select;
+                Foreground = IELSettingObject.ForegroundSetting.Select,
+                Background = IELSettingObject.BackgroundSetting.Select,
+                BorderBrush = IELSettingObject.BorderBrushSetting.Select;
 
-            AnimationColor.To = BorderBrush;
-            BorderButton.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
-            BorderRightArrow.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
-            BorderLeftArrow.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
+            animation = IELSettingObject.ObjectAnimateSetting.GetAnimationColor(BorderBrush);
+            BorderButton.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, animation);
+            BorderLeftArrow.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, animation);
+            BorderRightArrow.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, animation);
 
-            AnimationColor.To = Background;
-            BorderButton.Background.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
-            BorderRightArrow.Background.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
-            BorderLeftArrow.Background.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
+            animation = IELSettingObject.ObjectAnimateSetting.GetAnimationColor(Background);
+            BorderButton.Background.BeginAnimation(SolidColorBrush.ColorProperty, animation);
+            BorderLeftArrow.Background.BeginAnimation(SolidColorBrush.ColorProperty, animation);
+            BorderRightArrow.Background.BeginAnimation(SolidColorBrush.ColorProperty, animation);
 
-            AnimationColor.To = Foreground;
-            TextBlockLeftArrow.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
-            TextBlockRightArrow.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
+            animation = IELSettingObject.ObjectAnimateSetting.GetAnimationColor(Foreground);
+            //TextBlockButton.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, animation);
+            if (IELSettingObject.StateVisualizationButton != StateVisualButton.Default)
+            {
+                (IELSettingObject.StateVisualizationButton == StateVisualButton.LeftArrow ? TextBlockLeftArrow : TextBlockRightArrow)
+                    .Foreground.BeginAnimation(SolidColorBrush.ColorProperty, animation);
+            }
 
-            UpdateVisibleMouseEvents();
+            IELSettingObject.UpdateVisibleMouseEvents(ImageMouseButtonsUse, this, true);
         }
 
         /// <summary>
@@ -457,22 +272,31 @@ namespace IEL
         /// </summary>
         private void MouseLeaveDetect()
         {
-            AnimationColor.To = BorderBrushSetting.Default;
-            BorderButton.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
-            BorderRightArrow.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
-            BorderLeftArrow.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
+            ColorAnimation animation;
+            Color
+                Foreground = IELSettingObject.ForegroundSetting.Default,
+                Background = IELSettingObject.BackgroundSetting.Default,
+                BorderBrush = IELSettingObject.BorderBrushSetting.Default;
 
-            AnimationColor.To = BackgroundSetting.Default;
-            BorderButton.Background.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
-            BorderRightArrow.Background.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
-            BorderLeftArrow.Background.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
+            animation = IELSettingObject.ObjectAnimateSetting.GetAnimationColor(BorderBrush);
+            BorderButton.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, animation);
+            BorderLeftArrow.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, animation);
+            BorderRightArrow.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, animation);
 
-            AnimationColor.To = ForegroundSetting.Default;
-            TextBlockLeftArrow.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
-            TextBlockRightArrow.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, AnimationColor);
+            animation = IELSettingObject.ObjectAnimateSetting.GetAnimationColor(Background);
+            BorderButton.Background.BeginAnimation(SolidColorBrush.ColorProperty, animation);
+            BorderLeftArrow.Background.BeginAnimation(SolidColorBrush.ColorProperty, animation);
+            BorderRightArrow.Background.BeginAnimation(SolidColorBrush.ColorProperty, animation);
 
-            AnimationDouble.To = 0d;
-            ImageMouseButtonsUse.BeginAnimation(OpacityProperty, AnimationDouble);
+            animation = IELSettingObject.ObjectAnimateSetting.GetAnimationColor(Foreground);
+            //TextBlockButton.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, animation);
+            if (IELSettingObject.StateVisualizationButton != StateVisualButton.Default)
+            {
+                (IELSettingObject.StateVisualizationButton == StateVisualButton.LeftArrow ? TextBlockLeftArrow : TextBlockRightArrow)
+                    .Foreground.BeginAnimation(SolidColorBrush.ColorProperty, animation);
+            }
+
+            IELSettingObject.UpdateVisibleMouseEvents(ImageMouseButtonsUse, false);
         }
     }
 }

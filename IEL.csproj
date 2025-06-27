@@ -5,6 +5,8 @@
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <ImplicitUsings>enable</ImplicitUsings>
+    <Platforms>AnyCPU;x86;x64</Platforms>
+    <Configurations>Debug;Release;Testing</Configurations>
   </PropertyGroup>
 
   <ItemGroup>
@@ -12,10 +14,11 @@
     <None Remove="Properties\Images\LeftMouseButton.png" />
     <None Remove="Properties\Images\NotMouseButton.png" />
     <None Remove="Properties\Images\RightMouseButton.png" />
+    <None Remove="Properties\Resources\Cross.png" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DataScroll\DataScroll.csproj" />
+    <ProjectReference Include="..\ConsoleManipulateKey\ConsoleManipulateKey.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -35,10 +38,14 @@
       <CopyToOutputDirectory></CopyToOutputDirectory>
       <CustomToolNamespace></CustomToolNamespace>
     </Resource>
+    <Resource Include="Properties\Resources\Cross.png" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="GUI\IELBlockInfoImage.xaml.cs">
+    <Compile Update="GUI\BlockInfoImage.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="GUI\ValidKey\WindowProgramKey.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Properties\Resources.Designer.cs">

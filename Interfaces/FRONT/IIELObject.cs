@@ -1,8 +1,4 @@
-﻿using System.Reflection;
-using System.Windows.Input;
-using System.Drawing;
-using System.Windows.Media.Imaging;
-using System.IO;
+﻿using System.Windows.Input;
 
 namespace IEL.Interfaces.Front
 {

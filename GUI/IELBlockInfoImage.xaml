@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:IEL"
              mc:Ignorable="d" 
              d:DesignHeight="30" d:DesignWidth="30">
-    <Border x:Name="MainBorder" BorderBrush="#FF277B4B" BorderThickness="2,2,2,2" CornerRadius="5,5,5,5" Padding="3,3,3,3" Background="#FF5CBBAC" Cursor="Help" Margin="3,3,3,3">
-        <Image x:Name="MainImage" />
+    <Border x:Name="MainBorder" BorderBrush="#FF277B4B" BorderThickness="2,2,2,2" CornerRadius="5,5,5,5" Background="#FF5CBBAC" Cursor="Help" ClipToBounds="True">
+        <Image x:Name="MainImage" Source="/IEL;component/Properties/Images/NotMouseButton.png" />
     </Border>
 </UserControl>

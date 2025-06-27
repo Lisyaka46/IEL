@@ -1,14 +1,13 @@
-﻿using System.Diagnostics;
+﻿using IEL.CORE.Classes;
+using IEL.CORE.Enums;
+using IEL.Interfaces.Front;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Eventing.Reader;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
-using IEL.Interfaces.Core;
-using IEL.Interfaces.Front;
 
 namespace IEL
 {
@@ -17,22 +16,6 @@ namespace IEL
     /// </summary>
     public partial class IELPanelAction : UserControl, IIELObject
     {
-        /// <summary>
-        /// Перечисление вариаций вычисления позиций панели действий
-        /// </summary>
-        public enum PositionAnimActionPanel
-        {
-            /// <summary>
-            /// Обычное вычисление по курсору
-            /// </summary>
-            Default = 0,
-
-            /// <summary>
-            /// Вычисление цента объекта
-            /// </summary>
-            CenterObject = 1,
-        }
-
         /// <summary>
         /// Флаг состояния активности панели действий
         /// </summary>
@@ -118,27 +101,29 @@ namespace IEL
             EasingFunction = new PowerEase() { EasingMode = EasingMode.EaseOut }
         };
 
-        private readonly List<(IPageKey, string)> BufferPages = [];
+        /// <summary>
+        /// История используемых страниц
+        /// </summary>
+        private readonly List<PanelActionSettingVisual> HistoryBufferPages = [];
 
         /// <summary>
         /// Имя активного объекта страницы
         /// </summary>
-        public string ActualNameFrameElement => PanelActionActivate ? ActiveObject.ElementInPanel?.Name ?? string.Empty : string.Empty;
-
-        /// <summary>
-        /// Имя активной страницы
-        /// </summary>
-        public string ActualNamePage => PanelActionActivate ? ((IPage)MainPageController.ActualPage).PageName ?? string.Empty : string.Empty;
+        public string ActualNameFrameElement => PanelActionActivate ? ActiveSettingVisual.ElementInPanel?.Name ?? string.Empty : string.Empty;
 
         /// <summary>
         /// Актуальный статус активности режима клавиатуры в активной странице
         /// </summary>
-        internal bool ActualKeyboardMode => ((IPageKey)MainPageController.ActualPage).KeyboardMode;
+        internal bool ActualKeyboardMode
+        {
+            get => ActiveSettingVisual.ActiveSource.IsKeyboardMode;
+            set => ActiveSettingVisual.ActiveSource.IsKeyboardMode = value;
+        }
 
         /// <summary>
         /// Объект настроек панели для активного объекта реализации
         /// </summary>
-        private PanelActionSettingsFrameworkElement ActiveObject;
+        private PanelActionSettingVisual ActiveSettingVisual;
 
         /// <summary>
         /// Делегат события закрытия панели действий
@@ -173,7 +158,7 @@ namespace IEL
                 }
                 else if (e.Key == KeyCloseElement)
                 {
-                    AnimateSizePanelAction(new(ActiveObject.SizedPanel.Width + 16, ActiveObject.SizedPanel.Height + 16));
+                    AnimateSizePanelAction(new(ActiveSettingVisual.SizedPanel.Width + 16, ActiveSettingVisual.SizedPanel.Height + 16));
                 }
                 else
                 {
@@ -181,8 +166,8 @@ namespace IEL
                     if (ActualKeyboardMode && !SelectButtonKeyboardMode)
                     {
                         SelectButtonKeyboardMode = true;
-                        ((IPageKey)MainPageController.ActualPage).ActivateElementKey<IIELButtonKey>((Page)MainPageController.ActualFrame.Content, e.Key, IPageKey.ActionButton.BlinkActivate,
-                            ActivateRightClickKeyboardMode ? IPageKey.OrientationActivate.RightButton : IPageKey.OrientationActivate.LeftButton);
+                        ActiveSettingVisual.ActiveSource.ActivateElementKey<IIELButtonKey>(e.Key, ActionButton.BlinkActivate,
+                            ActivateRightClickKeyboardMode ? OrientationActivate.RightButton : OrientationActivate.LeftButton);
                     }
                 }
             };
@@ -192,7 +177,7 @@ namespace IEL
                 else BlockWhileEvent = false;
                 if (e.Key == KeyActivateKeyboardMode)
                 {
-                    ((IPageKey)MainPageController.ActualPage).KeyboardMode = !ActualKeyboardMode;
+                    ActualKeyboardMode = !ActualKeyboardMode;
                     if (!ActualKeyboardMode && ActivateRightClickKeyboardMode) AnimTextBlockRightClick(false);
                 }
                 else if (e.Key == KeyKeyboardModeActivateRightClick && ActualKeyboardMode && ActivateRightClickKeyboardMode)
@@ -210,8 +195,8 @@ namespace IEL
                     if (ActualKeyboardMode && SelectButtonKeyboardMode)
                     {
                         SelectButtonKeyboardMode = false;
-                        ((IPageKey)MainPageController.ActualPage).ActivateElementKey<IIELButtonKey>((Page)MainPageController.ActualFrame.Content, e.Key, IPageKey.ActionButton.ActionActivate,
-                            ActivateRightClickKeyboardMode ? IPageKey.OrientationActivate.RightButton : IPageKey.OrientationActivate.LeftButton);
+                        ActiveSettingVisual.ActiveSource.ActivateElementKey<IIELButtonKey>(e.Key, ActionButton.ActionActivate,
+                            ActivateRightClickKeyboardMode ? OrientationActivate.RightButton : OrientationActivate.LeftButton);
                     }
                 }
             };
@@ -229,58 +214,52 @@ namespace IEL
         }
 
         /// <summary>
-        /// Метод использования панели действий независимо на её состояние
+        /// Метод использования панели действий независимо на её состояния
         /// </summary>
-        /// <param name="Settings">Объект настроек для взаимодействия с панелью действий</param>
-        public void UsingPanelAction(PanelActionSettingsFrameworkElement Settings)
+        /// <param name="SettingVisual">Объект настроек для взаимодействия с панелью действий</param>
+        public void UsingPanelAction(PanelActionSettingVisual SettingVisual)
         {
-            if (!PanelActionActivate) OpenPanelAction(Settings);
+            if (!PanelActionActivate) OpenPanelAction(SettingVisual);
             else
             {
-                if (!ActiveObject.ElementInPanel.Name.Equals(Settings.ElementInPanel.Name))
+                if (!ActiveSettingVisual.ElementInPanel.Equals(SettingVisual.ElementInPanel))
                 {
-                    double X = Mouse.GetPosition((IInputElement)VisualParent).X;
-                    if (Settings.ElementInPanel.ActualWidth < Settings.SizedPanel.Width)
-                        Settings.SizedPanel = new(Settings.ElementInPanel.ActualWidth, Settings.SizedPanel.Height);
-                    if (Settings.ElementInPanel.ActualHeight < Settings.SizedPanel.Height)
-                        Settings.SizedPanel = new(Settings.SizedPanel.Width, Settings.ElementInPanel.ActualHeight);
-                    AddBufferElementPageAction(ActiveObject);
+                    if (SettingVisual.ElementInPanel.ActualWidth < SettingVisual.SizedPanel.Width)
+                        SettingVisual.SizedPanel = new(SettingVisual.ElementInPanel.ActualWidth, SettingVisual.SizedPanel.Height);
+                    if (SettingVisual.ElementInPanel.ActualHeight < SettingVisual.SizedPanel.Height)
+                        SettingVisual.SizedPanel = new(SettingVisual.SizedPanel.Width, SettingVisual.ElementInPanel.ActualHeight);
+                    AddBufferElementPageAction(ActiveSettingVisual);
                     ThicknessAnimate.Duration = TimeSpan.FromMilliseconds(360d);
-                    NextPage(BufferSearchDefaultPage(Settings.ElementInPanel.Name) ?? Settings.DefaultPageInPanel, X >= Margin.Left);
+                    PanelActionSettingVisual? SearchSettingVisual = BufferSearchSettingVisual(SettingVisual);
+                    PagePanelAction ActivatePage = SearchSettingVisual.HasValue ? SearchSettingVisual.Value.ActiveSource : SettingVisual.DefaultSource;
+                    NextPage(ActivatePage);
                     ThicknessAnimate.Duration = TimeSpan.FromMilliseconds(300d);
-                    AnimateSizePanelAction(Settings.SizedPanel);
-                    ActiveObject = Settings;
+                    AnimateSizePanelAction(SettingVisual.SizedPanel);
+                    ActiveSettingVisual = SearchSettingVisual ?? SettingVisual;
                 }
-                AnimationMovePanelAction(PositionAnimActionPanel.Default, Settings.SizedPanel, Settings.ElementInPanel);
+                AnimationMovePanelAction(PositionAnimActionPanel.Cursor, SettingVisual.SizedPanel, SettingVisual.ElementInPanel);
             }
-        }
-
-        /// <summary>
-        /// Перемещение панели действий к курсору учитывая активные настройки
-        /// </summary>
-        /// <exception cref="InvalidOperationException"></exception>
-        public void MovingPanelAction()
-        {
-            if (!PanelActionActivate) throw new InvalidOperationException("Невозможно переместить объект в отключённом состоянии...");
         }
 
         /// <summary>
         /// Метод открытия панели действий
         /// </summary>
-        /// <param name="Settings">Объект настроек для открытия панели действий</param>
+        /// <param name="SettingVisual">Объект настроек для открытия панели действий</param>
         [MethodImpl(MethodImplOptions.AggressiveOptimization)]
-        private void OpenPanelAction(PanelActionSettingsFrameworkElement Settings)
+        private void OpenPanelAction(PanelActionSettingVisual SettingVisual)
         {
             if (PanelActionActivate) return;
             Focus();
-            MainPageController.ActualFrame.Navigate((Page)(BufferSearchDefaultPage(Settings.ElementInPanel.Name) ?? Settings.DefaultPageInPanel));
+            PanelActionSettingVisual SearchSettingVisual = BufferSearchSettingVisual(SettingVisual) ?? SettingVisual;
+            SearchSettingVisual.ActiveSource.IsKeyboardMode = false;
+            NextPage(SearchSettingVisual);
             DoubleAnimateObj.To = 1d;
             BeginAnimation(OpacityProperty, DoubleAnimateObj);
-            AnimationMovePanelAction(PositionAnimActionPanel.Default, Settings.SizedPanel, Settings.ElementInPanel);
-            AnimateSizePanelAction(Settings.SizedPanel);
-            ActiveObject = Settings;
+            AnimationMovePanelAction(PositionAnimActionPanel.Cursor, SettingVisual.SizedPanel, SettingVisual.ElementInPanel);
+            AnimateSizePanelAction(SettingVisual.SizedPanel);
+            ActiveSettingVisual = SearchSettingVisual;
             PanelActionActivate = true;
-            Canvas.SetZIndex(this, ActiveObject.Z);
+            Canvas.SetZIndex(this, ActiveSettingVisual.Z);
         }
 
         /// <summary>
@@ -288,20 +267,20 @@ namespace IEL
         /// </summary>
         /// <param name="PositionAnim">Состояние анимирования позиции</param>
         [MethodImpl(MethodImplOptions.AggressiveOptimization)]
-        public void ClosePanelAction(PositionAnimActionPanel PositionAnim = PositionAnimActionPanel.Default)
+        public void ClosePanelAction(PositionAnimActionPanel PositionAnim = PositionAnimActionPanel.Cursor)
         {
             if (!PanelActionActivate) return;
 
             DoubleAnimateObj.To = 0d;
             if (ActivateRightClickKeyboardMode) ActivateRightClickKeyboardMode = false;
-            ((IPageKey)MainPageController.ActualPage).KeyboardMode = false;
+            ActiveSettingVisual.ActiveSource.IsKeyboardMode = false;
             BeginAnimation(OpacityProperty, DoubleAnimateObj);
-            AnimationMovePanelAction(PositionAnim, new Size(0, 0), ActiveObject.ElementInPanel);
+            AnimationMovePanelAction(PositionAnim, new Size(0, 0), ActiveSettingVisual.ElementInPanel);
             AnimateSizePanelAction(new(0, 0));
-            AddBufferElementPageAction(ActiveObject);
-            
+            AddBufferElementPageAction(ActiveSettingVisual);
+
             PanelActionActivate = false;
-            string NamePanel = ActiveObject.ElementInPanel.Name;
+            string NamePanel = ActiveSettingVisual.ElementInPanel.Name;
             ClearInformation();
             EventClosingPanelAction?.Invoke(NamePanel);
         }
@@ -309,79 +288,64 @@ namespace IEL
         /// <summary>
         /// Перенаправить страницу панели и переместиться в другой элемент
         /// </summary>
-        /// <remarks>
-        /// <b>Страница по умолчанию в настройках не учитывается</b>
-        /// </remarks>
-        /// <param name="Settings">Настройки для переключения между объектами</param>
-        /// <param name="Content">Новая страница панели</param>
-        /// <param name="RightAlign">Правая ориентация движения</param>
+        /// <param name="SettingVisual">Настройки для переключения между объектами</param>
         /// <exception cref="Exception">Исключение при отключённом состоянии панели действий</exception>
-        public void NextPage(PanelActionSettingsFrameworkElement Settings, [NotNull()] IPageKey Content)
+        public void NextPage(PanelActionSettingVisual SettingVisual)
         {
-            if (!PanelActionActivate) throw new Exception("При отключённом состоянии нельзя переключаться между страницами");
+            //if (!PanelActionActivate)
+            //{
+            //    OpenPanelAction(SettingVisual);
+            //    return;
+            //}
             double X = Mouse.GetPosition((IInputElement)VisualParent).X;
-            AnimationMovePanelAction(PositionAnimActionPanel.Default, Settings.SizedPanel, Settings.ElementInPanel);
-            NextPage(Content, X >= Margin.Left);    
+            AnimationMovePanelAction(PositionAnimActionPanel.Cursor, SettingVisual.SizedPanel, SettingVisual.ElementInPanel);
+            //NextPage(SettingPage, X >= Margin.Left);
+            if (PanelActionActivate)
+            {
+                SettingVisual.ActiveSource.IsKeyboardMode = ActualKeyboardMode;
+                ActualKeyboardMode = false;
+            }
+            ActiveSettingVisual = SettingVisual;
+            MainPageController.NextPage(ActiveSettingVisual.ActiveSource.ObjectPage, X >= Margin.Left);
         }
 
         /// <summary>
         /// Перенаправить страницу панели
         /// </summary>
-        /// <param name="Content">Новая страница панели</param>
+        /// <param name="SettingPage">Новая страница панели</param>
         /// <param name="RightAlign">Правая ориентация движения</param>
-        public void NextPage([NotNull()] IPageKey Content, bool RightAlign = true)
+        public void NextPage([NotNull()] PagePanelAction NextPagePanelAction, bool RightAlign = true)
         {
             if (!PanelActionActivate) return;
-
-            Content.KeyboardMode = ((IPageKey)MainPageController.ActualPage).KeyboardMode;
-            ((IPageKey)MainPageController.ActualPage).KeyboardMode = false;
-            MainPageController.NextPage((Page)Content, RightAlign);
-            /*ActualFrame.Opacity = 0d;
-            Canvas.SetZIndex(BackFrame, 0);
-            Canvas.SetZIndex(ActualFrame, 1);
-            BackFrame.IsEnabled = false;
-            ActualFrame.IsEnabled = true;
-            ActualFrame.BeginAnimation(MarginProperty, null);
-            ActualFrame.Margin = !RightAlign ? MainPageController.LeftAnimateSwitch : MainPageController.RightAnimateSwitch;
-            ActualFrame.Navigate(Content);
-
-            DoubleAnimateObj.To = 0d;
-            BackFrame.BeginAnimation(OpacityProperty, DoubleAnimateObj);
-            DoubleAnimateObj.To = 1;
-            ActualFrame.BeginAnimation(OpacityProperty, DoubleAnimateObj);
-
-            ThicknessAnimate.To = !RightAlign ? MainPageController.RightAnimateSwitch : MainPageController.LeftAnimateSwitch;
-            BackFrame.BeginAnimation(MarginProperty, ThicknessAnimate);
-            ThicknessAnimate.To = new(0);
-            ActualFrame.BeginAnimation(MarginProperty, ThicknessAnimate);*/
+            NextPagePanelAction.IsKeyboardMode = ActualKeyboardMode;
+            ActiveSettingVisual.ActiveSource = NextPagePanelAction;
+            MainPageController.NextPage(NextPagePanelAction.ObjectPage, RightAlign);
         }
 
         /// <summary>
-        /// Поиск страницы сохранённой в буфере
+        /// Поиск настроек страниц сохранённых в буфере
         /// </summary>
-        /// <param name="FrameworkElement_Name">Имя объекта в котором была сохранена страница</param>
-        /// <returns>Возможно найденная страница</returns>
-        private IPageKey? BufferSearchDefaultPage(string FrameworkElement_Name)
+        /// <param name="SettingVisual">Настройка визуализации страниц</param>
+        /// <returns>Возможно найденный объект настроек</returns>
+        private PanelActionSettingVisual? BufferSearchSettingVisual(PanelActionSettingVisual SettingVisual)
         {
-            string[] BufferNames = [.. BufferPages.Select((i) => i.Item2)];
-            if (BufferNames.Any((i) => i.Equals(FrameworkElement_Name)))
-            {
-                int Index = Array.IndexOf(BufferNames, FrameworkElement_Name);
-                IPageKey Page = BufferPages[Index].Item1;
-                BufferPages.RemoveAt(Index);
-                return Page;
-            }
-            return null;
+            FrameworkElement[] FrameElements = [.. HistoryBufferPages.Select((i) => i.ElementInPanel)];
+            int index = Array.IndexOf(FrameElements, SettingVisual.ElementInPanel);
+            return index == -1 ? null : HistoryBufferPages[index];
         }
 
         /// <summary>
         /// Метод добавления объекта в буфер
         /// </summary>
         /// <param name="SettingsElement">Объект настроек для добавления в буфер</param>
-        private void AddBufferElementPageAction(PanelActionSettingsFrameworkElement SettingsElement)
+        private void AddBufferElementPageAction(PanelActionSettingVisual SettingsElement)
         {
-            if (!((IPageKey)MainPageController.ActualFrame.Content).PageName.Equals(SettingsElement.DefaultPageInPanel.PageName))
-                BufferPages.Add(((IPageKey)MainPageController.ActualFrame.Content, SettingsElement.ElementInPanel.Name));
+            FrameworkElement[] FrameElements = [.. HistoryBufferPages.Select((i) => i.ElementInPanel)];
+            int index = Array.IndexOf(FrameElements, SettingsElement.ElementInPanel);
+            if (index == -1 || HistoryBufferPages.Count == 0)
+                HistoryBufferPages.Add(SettingsElement);
+            else if (!HistoryBufferPages[index].ActiveSource.Equals(SettingsElement.ActiveSource))
+                HistoryBufferPages[index] = SettingsElement;
         }
 
         /// <summary>
@@ -389,7 +353,7 @@ namespace IEL
         /// </summary>
         private void ClearInformation()
         {
-            ActiveObject = default;
+            ActiveSettingVisual = default;
             MainPageController.BackFrame.Navigate(null);
             MainPageController.ActualFrame.Navigate(null);
         }
@@ -412,7 +376,7 @@ namespace IEL
                 void SetZOne(object? sender, EventArgs e)
                 {
                     if (PanelActionActivate) return;
-                    Canvas.SetZIndex(this, -ActiveObject.Z);
+                    Canvas.SetZIndex(this, -ActiveSettingVisual.Z);
                     animation.FillBehavior = FillBehavior.HoldEnd;
                     animation.Completed -= SetZOne;
                 }
@@ -430,7 +394,7 @@ namespace IEL
         private void AnimationMovePanelAction(PositionAnimActionPanel StylePositionToAnimate, Size ActionPanelSize, FrameworkElement Element)
         {
             ThicknessAnimation animation = ThicknessAnimate.Clone();
-            if (StylePositionToAnimate == PositionAnimActionPanel.Default)
+            if (StylePositionToAnimate == PositionAnimActionPanel.Cursor)
             {
                 Point MousePoint = Mouse.GetPosition((IInputElement)VisualParent);
                 Point OffsetPosElement = Element.TransformToAncestor((Visual)VisualParent).Transform(new Point(0, 0));

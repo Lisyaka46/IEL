@@ -1,21 +1,8 @@
-﻿using IEL.Interfaces.Core;
-using IEL.Interfaces.Front;
-using System;
-using System.Collections.Generic;
+﻿using IEL.Interfaces.Front;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Animation;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace IEL
 {
@@ -60,12 +47,12 @@ namespace IEL
         /// <summary>
         /// Объект актуальной страницы
         /// </summary>
-        internal object ActualPage => ActualFrame.Content;
+        internal Page? ActualPage => ActualFrame.Content as Page;
 
         /// <summary>
         /// Объект предыдущей страницы
         /// </summary>
-        internal object BackPage => BackFrame.Content;
+        internal Page? BackPage => BackFrame.Content as Page;
 
         /// <summary>
         /// Левая анимация переключателя
@@ -82,6 +69,34 @@ namespace IEL
         /// Используется позиция настройки при правом переключении страниц
         /// </remarks>
         public Thickness RightAnimateSwitch { get; set; }
+
+        public new HorizontalAlignment HorizontalAlignment
+        {
+            get
+            {
+                return base.HorizontalAlignment;
+            }
+            set
+            {
+                base.HorizontalAlignment = value;
+                FrameActionPanelLeft.HorizontalAlignment = value;
+                FrameActionPanelRight.HorizontalAlignment = value;
+            }
+        }
+
+        public new VerticalAlignment VerticalAlignment
+        {
+            get
+            {
+                return base.VerticalAlignment;
+            }
+            set
+            {
+                base.VerticalAlignment = value;
+                FrameActionPanelLeft.VerticalAlignment = value;
+                FrameActionPanelRight.VerticalAlignment = value;
+            }
+        }
 
         public IELPageController()
         {
@@ -104,12 +119,15 @@ namespace IEL
             ActualFrame.Opacity = 0d;
             Canvas.SetZIndex(BackFrame, 0);
             Canvas.SetZIndex(ActualFrame, 1);
+            BackFrame.NavigationService.Navigate(null);
             BackFrame.IsEnabled = false;
             ActualFrame.IsEnabled = true;
             ActualFrame.BeginAnimation(MarginProperty, null);
             ActualFrame.Margin = !RightAlign ? LeftAnimateSwitch : RightAnimateSwitch;
             //Content.KeyboardMode = BackPage.KeyboardMode;
             //BackPage.KeyboardMode = false;
+            Content.HorizontalAlignment = HorizontalAlignment;
+            Content.VerticalAlignment = VerticalAlignment;
             ActualFrame.Navigate(Content);
 
             animation_thickness.To = !RightAlign ? RightAnimateSwitch : LeftAnimateSwitch;
@@ -119,7 +137,7 @@ namespace IEL
 
             animation_double.To = 0d;
             BackFrame.BeginAnimation(OpacityProperty, animation_double);
-            animation_double.To = 1;
+            animation_double.To = 1d;
             ActualFrame.BeginAnimation(OpacityProperty, animation_double);
         }
 
@@ -134,6 +152,19 @@ namespace IEL
             animation_thickness.To = MoveTo;
             animation_thickness.Duration = TimeSpan.FromMilliseconds(Millisecond);
             ActualFrame.BeginAnimation(MarginProperty, animation_thickness);
+        }
+
+        /// <summary>
+        /// Закрыть элемент фрейма
+        /// </summary>
+        public void ClosePage()
+        {
+            BackFrame.Navigate(null);
+            BackFrame.Source = null;
+            ActualFrame.Navigate(null);
+            ActualFrame.Source = null;
+            //Activate = false;
+            //ClosingFrame?.Invoke();
         }
     }
 }

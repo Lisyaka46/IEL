@@ -15,7 +15,7 @@
                     <ColumnDefinition/>
                     <ColumnDefinition x:Name="ColumnRightArrow" Width="25"/>
                 </Grid.ColumnDefinitions>
-                <TextBlock x:Name="TextBlockButton" Text="TextBlock" TextAlignment="Center" Foreground="Black" Focusable="True" TextWrapping="Wrap" ScrollViewer.HorizontalScrollBarVisibility="Hidden" ScrollViewer.VerticalScrollBarVisibility="Hidden" Grid.Column="1" VerticalAlignment="Center" Padding="0,2,0,2"/>
+                <TextBlock x:Name="TextBlockButton" Text="TextBlock" TextAlignment="Center" Foreground="Black" Focusable="True" TextWrapping="Wrap" ScrollViewer.HorizontalScrollBarVisibility="Hidden" ScrollViewer.VerticalScrollBarVisibility="Hidden" Grid.Column="1" VerticalAlignment="Center" Padding="0,2,0,2" Margin="3,0,3,0"/>
                 <Border x:Name="BorderRightArrow" BorderBrush="Black" BorderThickness="2,2,2,2" CornerRadius="6,6,6,6" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" Height="20" Width="20">
                     <TextBlock x:Name="TextBlockRightArrow" TextWrapping="Wrap" Text="&gt;" HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="Arial Black" FontSize="14" Padding="1,0.7,0,0"/>
                 </Border>
