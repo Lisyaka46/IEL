@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using IEL.CORE.Enums;
 
 namespace IEL
 {
@@ -22,23 +23,46 @@ namespace IEL
             get => _IELSettingObject;
             set
             {
-                value.BackgroundQChanged += (NewValue) =>
+                value.BackgroundSetting.SetActionColorChanged((Spectrum, NewValue, Animated) =>
                 {
-                    SolidColorBrush color = new(NewValue);
-                    TextBoxBorder.Background = color;
-                };
-                value.BorderBrushQChanged += (NewValue) =>
+                    if (Animated)
+                    {
+                        ColorAnimation anim = IELSettingObject.ObjectAnimateSetting.GetAnimationColor(NewValue);
+                        TextBoxBorder.Background.BeginAnimation(SolidColorBrush.ColorProperty, anim);
+                    }
+                    else
+                    {
+                        SolidColorBrush color = new(NewValue);
+                        TextBoxBorder.Background = color;
+                    }
+                });
+                value.BorderBrushSetting.SetActionColorChanged((Spectrum, NewValue, Animated) =>
                 {
-                    SolidColorBrush color = new(NewValue);
-                    TextBoxBorder.BorderBrush = color;
-                };
-                value.ForegroundQChanged += (NewValue) =>
+                    if (Animated)
+                    {
+                        ColorAnimation anim = IELSettingObject.ObjectAnimateSetting.GetAnimationColor(NewValue);
+                        TextBoxBorder.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, anim);
+                    }
+                    else
+                    {
+                        SolidColorBrush color = new(NewValue);
+                        TextBoxBorder.BorderBrush = color;
+                    }
+                });
+                value.ForegroundSetting.SetActionColorChanged((Spectrum, NewValue, Animated) =>
                 {
-                    SolidColorBrush color = new(NewValue);
-                    TextBoxMain.Foreground = color;
-                };
+                    if (Animated)
+                    {
+                        ColorAnimation anim = IELSettingObject.ObjectAnimateSetting.GetAnimationColor(NewValue);
+                        TextBoxMain.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, anim);
+                    }
+                    else
+                    {
+                        SolidColorBrush color = new(NewValue);
+                        TextBoxMain.Foreground = color;
+                    }
+                });
                 _IELSettingObject = value;
-                _IELSettingObject.UseActiveQSetting();
             }
         }
 
@@ -208,110 +232,34 @@ namespace IEL
             GotKeyboardFocus += (sender, e) =>
             {
                 IsFocus = true;
-                FocusAnimation();
+                IELSettingObject.UseActiveQSetting(StateSpectrum.Used);
             };
             LostKeyboardFocus += (sender, e) =>
             {
                 IsFocus = false;
-                MouseLeaveAnimation();
+                IELSettingObject.UseActiveQSetting(StateSpectrum.Default);
             };
 
             MouseEnter += (sender, e) =>
             {
-                if (IsEnabled && !IsFocus) MouseEnterAnimation();
+                if (IsEnabled && !IsFocus) IELSettingObject.UseActiveQSetting(StateSpectrum.Select);
             };
 
             MouseLeave += (sender, e) =>
             {
-                if (IsEnabled && !IsFocus) MouseLeaveAnimation();
+                if (IsEnabled && !IsFocus) IELSettingObject.UseActiveQSetting(StateSpectrum.Default);
             };
 
             IsEnabledChanged += (sender, e) =>
             {
                 bool NewValue = (bool)e.NewValue;
-                Color
-                    Foreground = NewValue ? IELSettingObject.ForegroundSetting.Default : IELSettingObject.ForegroundSetting.NotEnabled,
-                    Background = NewValue ? IELSettingObject.BackgroundSetting.Default : IELSettingObject.BackgroundSetting.NotEnabled,
-                    BorderBrush = NewValue ? IELSettingObject.BorderBrushSetting.Default : IELSettingObject.BorderBrushSetting.NotEnabled;
-                ColorAnimation animation;
-
-                animation = IELSettingObject.ObjectAnimateSetting.GetAnimationColor(Background);
-                TextBoxBorder.Background.BeginAnimation(SolidColorBrush.ColorProperty, animation);
-
-                animation = IELSettingObject.ObjectAnimateSetting.GetAnimationColor(BorderBrush);
-                TextBoxBorder.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, animation);
-
-                animation = IELSettingObject.ObjectAnimateSetting.GetAnimationColor(Foreground);
-                TextBoxMain.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, animation);
+                IELSettingObject.UseActiveQSetting(NewValue ? StateSpectrum.Default : StateSpectrum.NotEnabled);
             };
 
             MouseDown += (sender, e) =>
             {
                 TextBoxMain.Focus();
             };
-        }
-
-        /// <summary>
-        /// Анимировать назначение фокуса на элемент
-        /// </summary>
-        private void FocusAnimation()
-        {
-            Color
-                Foreground = IELSettingObject.ForegroundSetting.Used,
-                Background = IELSettingObject.BackgroundSetting.Used,
-                BorderBrush = IELSettingObject.BorderBrushSetting.Used;
-            ColorAnimation animation;
-
-            animation = IELSettingObject.ObjectAnimateSetting.GetAnimationColor(Background);
-            TextBoxBorder.Background.BeginAnimation(SolidColorBrush.ColorProperty, animation);
-
-            animation = IELSettingObject.ObjectAnimateSetting.GetAnimationColor(BorderBrush);
-            TextBoxBorder.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, animation);
-
-            animation = IELSettingObject.ObjectAnimateSetting.GetAnimationColor(Foreground);
-            TextBoxMain.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, animation);
-        }
-
-        /// <summary>
-        /// Анимация выделения мышью
-        /// </summary>
-        private void MouseEnterAnimation()
-        {
-            Color
-                Foreground = IELSettingObject.ForegroundSetting.Select,
-                Background = IELSettingObject.BackgroundSetting.Select,
-                BorderBrush = IELSettingObject.BorderBrushSetting.Select;
-            ColorAnimation animation;
-
-            animation = IELSettingObject.ObjectAnimateSetting.GetAnimationColor(Background);
-            TextBoxBorder.Background.BeginAnimation(SolidColorBrush.ColorProperty, animation);
-
-            animation = IELSettingObject.ObjectAnimateSetting.GetAnimationColor(BorderBrush);
-            TextBoxBorder.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, animation);
-
-            animation = IELSettingObject.ObjectAnimateSetting.GetAnimationColor(Foreground);
-            TextBoxMain.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, animation);
-        }
-
-        /// <summary>
-        /// Анимация отключения выделения мышью
-        /// </summary>
-        private void MouseLeaveAnimation()
-        {
-            Color
-                Foreground = IELSettingObject.ForegroundSetting.Default,
-                Background = IELSettingObject.BackgroundSetting.Default,
-                BorderBrush = IELSettingObject.BorderBrushSetting.Default;
-            ColorAnimation animation;
-
-            animation = IELSettingObject.ObjectAnimateSetting.GetAnimationColor(Background);
-            TextBoxBorder.Background.BeginAnimation(SolidColorBrush.ColorProperty, animation);
-
-            animation = IELSettingObject.ObjectAnimateSetting.GetAnimationColor(BorderBrush);
-            TextBoxBorder.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, animation);
-
-            animation = IELSettingObject.ObjectAnimateSetting.GetAnimationColor(Foreground);
-            TextBoxMain.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, animation);
         }
     }
 }

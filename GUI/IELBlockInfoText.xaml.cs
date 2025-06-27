@@ -2,6 +2,8 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
+using IEL.CORE.Enums;
 
 namespace IEL
 {
@@ -19,23 +21,46 @@ namespace IEL
             get => _IELSettingObject;
             set
             {
-                value.BackgroundQChanged += (NewValue) =>
+                value.BackgroundSetting.SetActionColorChanged((Spectrum, NewValue, Animated) =>
                 {
-                    SolidColorBrush color = new(NewValue);
-                    MainBorder.Background = color;
-                };
-                value.BorderBrushQChanged += (NewValue) =>
+                    if (Animated)
+                    {
+                        ColorAnimation anim = IELSettingObject.ObjectAnimateSetting.GetAnimationColor(NewValue);
+                        MainBorder.Background.BeginAnimation(SolidColorBrush.ColorProperty, anim);
+                    }
+                    else
+                    {
+                        SolidColorBrush color = new(NewValue);
+                        MainBorder.Background = color;
+                    }
+                });
+                value.BorderBrushSetting.SetActionColorChanged((Spectrum, NewValue, Animated) =>
                 {
-                    SolidColorBrush color = new(NewValue);
-                    MainBorder.BorderBrush = color;
-                };
-                value.ForegroundQChanged += (NewValue) =>
+                    if (Animated)
+                    {
+                        ColorAnimation anim = IELSettingObject.ObjectAnimateSetting.GetAnimationColor(NewValue);
+                        MainBorder.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, anim);
+                    }
+                    else
+                    {
+                        SolidColorBrush color = new(NewValue);
+                        MainBorder.BorderBrush = color;
+                    }
+                });
+                value.ForegroundSetting.SetActionColorChanged((Spectrum, NewValue, Animated) =>
                 {
-                    SolidColorBrush color = new(NewValue);
-                    MainTextBlock.Foreground = color;
-                };
+                    if (Animated)
+                    {
+                        ColorAnimation anim = IELSettingObject.ObjectAnimateSetting.GetAnimationColor(NewValue);
+                        MainTextBlock.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, anim);
+                    }
+                    else
+                    {
+                        SolidColorBrush color = new(NewValue);
+                        MainTextBlock.Foreground = color;
+                    }
+                });
                 _IELSettingObject = value;
-                _IELSettingObject.UseActiveQSetting();
             }
         }
 
@@ -99,7 +124,7 @@ namespace IEL
             {
                 if (IsEnabled)
                 {
-                    MouseEnterAnimation();
+                    IELSettingObject.UseActiveQSetting(StateSpectrum.Select);
                     IELSettingObject.StartHover();
                 }
             };
@@ -108,7 +133,7 @@ namespace IEL
             {
                 if (IsEnabled)
                 {
-                    MouseLeaveAnimation();
+                    IELSettingObject.UseActiveQSetting(StateSpectrum.Default);
                     IELSettingObject.StopHover();
                 }
             };
@@ -116,51 +141,8 @@ namespace IEL
             IsEnabledChanged += (sender, e) =>
             {
                 bool NewValue = (bool)e.NewValue;
-                Color
-                    Foreground = NewValue ? IELSettingObject.ForegroundSetting.Default : IELSettingObject.ForegroundSetting.NotEnabled,
-                    Background = NewValue ? IELSettingObject.BackgroundSetting.Default : IELSettingObject.BackgroundSetting.NotEnabled,
-                    BorderBrush = NewValue ? IELSettingObject.BorderBrushSetting.Default : IELSettingObject.BorderBrushSetting.NotEnabled;
-
-                MainBorder.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, IELSettingObject.ObjectAnimateSetting.GetAnimationColor(BorderBrush));
-
-                MainBorder.Background.BeginAnimation(SolidColorBrush.ColorProperty, IELSettingObject.ObjectAnimateSetting.GetAnimationColor(Background));
-
-                MainTextBlock.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, IELSettingObject.ObjectAnimateSetting.GetAnimationColor(Foreground));
+                IELSettingObject.UseActiveQSetting(NewValue ? StateSpectrum.Default : StateSpectrum.NotEnabled);
             };
-        }
-
-        /// <summary>
-        /// Анимация выделения кнопки мышью
-        /// </summary>
-        private void MouseEnterAnimation()
-        {
-            Color
-                Foreground = IELSettingObject.ForegroundSetting.Select,
-                Background = IELSettingObject.BackgroundSetting.Select,
-                BorderBrush = IELSettingObject.BorderBrushSetting.Select;
-
-            MainBorder.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, IELSettingObject.ObjectAnimateSetting.GetAnimationColor(BorderBrush));
-
-            MainBorder.Background.BeginAnimation(SolidColorBrush.ColorProperty, IELSettingObject.ObjectAnimateSetting.GetAnimationColor(Background));
-
-            MainTextBlock.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, IELSettingObject.ObjectAnimateSetting.GetAnimationColor(Foreground));
-        }
-
-        /// <summary>
-        /// Анимация отключения выделения мышью
-        /// </summary>
-        private void MouseLeaveAnimation()
-        {
-            Color
-                Foreground = IELSettingObject.ForegroundSetting.Default,
-                Background = IELSettingObject.BackgroundSetting.Default,
-                BorderBrush = IELSettingObject.BorderBrushSetting.Default;
-
-            MainBorder.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, IELSettingObject.ObjectAnimateSetting.GetAnimationColor(BorderBrush));
-
-            MainBorder.Background.BeginAnimation(SolidColorBrush.ColorProperty, IELSettingObject.ObjectAnimateSetting.GetAnimationColor(Background));
-
-            MainTextBlock.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, IELSettingObject.ObjectAnimateSetting.GetAnimationColor(Foreground));
         }
     }
 }
