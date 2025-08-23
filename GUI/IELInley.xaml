@@ -10,8 +10,8 @@
         <Border x:Name="BorderMain" Grid.ColumnSpan="2" BorderBrush="Black" BorderThickness="2,2,2,2" Background="#FF888282">
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="10*"/>
+                    <ColumnDefinition Width="3*"/>
                 </Grid.ColumnDefinitions>
                 <Grid x:Name="GridMain">
                     <TextBlock x:Name="TextBlockHead" Text="Head" FontSize="16" TextWrapping="WrapWithOverflow" TextTrimming="CharacterEllipsis" AutomationProperties.IsRowHeader="True" Margin="7,0,7,0" VerticalAlignment="Center"/>

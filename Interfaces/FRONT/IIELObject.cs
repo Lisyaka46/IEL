@@ -1,4 +1,5 @@
-﻿using System.Windows.Input;
+﻿using IEL.CORE.Classes.ObjectSettings;
+using System.Windows.Input;
 
 namespace IEL.Interfaces.Front
 {
@@ -10,7 +11,7 @@ namespace IEL.Interfaces.Front
         /// <summary>
         /// Статус активности объекта
         /// </summary>
-        public bool IsEnabled { get; set; }
+        public bool IsEnabled { get; }
 
         /// <summary>
         /// Узнать символ клавиши по коду клавиши

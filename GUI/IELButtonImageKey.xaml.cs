@@ -35,29 +35,62 @@ namespace IEL
                     BorderLeftArrow.Opacity = Left ? 1d : 0d;
                     ImageMouseButtonsUse.HorizontalAlignment = Right ? HorizontalAlignment.Left : HorizontalAlignment.Right;
                 };
-                value.BackgroundQChanged += (NewValue) =>
+                value.BackgroundSetting.SetActionColorChanged((Spectrum, NewValue, Animated) =>
                 {
-                    SolidColorBrush color = new(NewValue);
-                    BorderButton.Background = color;
-                    BorderButtonKey.Background = color;
-                };
-                value.BorderBrushQChanged += (NewValue) =>
+                    if (Animated)
+                    {
+                        ColorAnimation anim = IELSettingObject.ObjectAnimateSetting.GetAnimationColor(NewValue);
+                        BorderButton.Background.BeginAnimation(SolidColorBrush.ColorProperty, anim);
+                        BorderButtonKey.Background.BeginAnimation(SolidColorBrush.ColorProperty, anim);
+                        BorderRightArrow.Background.BeginAnimation(SolidColorBrush.ColorProperty, anim);
+                        BorderLeftArrow.Background.BeginAnimation(SolidColorBrush.ColorProperty, anim);
+                    }
+                    else
+                    {
+                        SolidColorBrush color = new(NewValue);
+                        BorderButton.Background = color;
+                        BorderButtonKey.Background = color;
+                        BorderRightArrow.Background = color;
+                        BorderLeftArrow.Background = color;
+                    }
+                });
+                value.BorderBrushSetting.SetActionColorChanged((Spectrum, NewValue, Animated) =>
                 {
-                    SolidColorBrush color = new(NewValue);
-                    BorderButton.BorderBrush = color;
-                    BorderButtonKey.BorderBrush = color;
-                    BorderLeftArrow.BorderBrush = color;
-                    BorderRightArrow.BorderBrush = color;
-                };
-                value.ForegroundQChanged += (NewValue) =>
+                    if (Animated)
+                    {
+                        ColorAnimation anim = IELSettingObject.ObjectAnimateSetting.GetAnimationColor(NewValue);
+                        BorderButton.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, anim);
+                        BorderButtonKey.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, anim);
+                        BorderRightArrow.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, anim);
+                        BorderLeftArrow.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, anim);
+                    }
+                    else
+                    {
+                        SolidColorBrush color = new(NewValue);
+                        BorderButton.BorderBrush = color;
+                        BorderButtonKey.Background = color;
+                        BorderRightArrow.BorderBrush = color;
+                        BorderLeftArrow.BorderBrush = color;
+                    }
+                });
+                value.ForegroundSetting.SetActionColorChanged((Spectrum, NewValue, Animated) =>
                 {
-                    SolidColorBrush color = new(NewValue);
-                    TextBlockKey.Foreground = color;
-                    TextBlockLeftArrow.Foreground = color;
-                    TextBlockRightArrow.Foreground = color;
-                };
+                    if (Animated)
+                    {
+                        ColorAnimation anim = IELSettingObject.ObjectAnimateSetting.GetAnimationColor(NewValue);
+                        TextBlockKey.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, anim);
+                        TextBlockLeftArrow.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, anim);
+                        TextBlockRightArrow.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, anim);
+                    }
+                    else
+                    {
+                        SolidColorBrush color = new(NewValue);
+                        TextBlockKey.Foreground = color;
+                        TextBlockLeftArrow.Foreground = color;
+                        TextBlockRightArrow.Foreground = color;
+                    }
+                });
                 _IELSettingObject = value;
-                _IELSettingObject.UseActiveQSetting();
             }
         }
 
@@ -156,7 +189,6 @@ namespace IEL
         /// </summary>
         public IELButtonImageKey()
         {
-            //IELObjectSetting.GlobalSetValidKey();
             InitializeComponent();
             IELSettingObject = new();
 
@@ -168,7 +200,8 @@ namespace IEL
             {
                 if (IsEnabled)
                 {
-                    MouseEnterDetect();
+                    IELSettingObject.UseActiveQSetting(StateSpectrum.Select);
+                    IELSettingObject.UpdateVisibleMouseEvents(ImageMouseButtonsUse, this, true);
                     IELSettingObject.StartHover();
                 }
             };
@@ -176,7 +209,8 @@ namespace IEL
             {
                 if (IsEnabled)
                 {
-                    LeaveAnimation();
+                    IELSettingObject.UseActiveQSetting(StateSpectrum.Default);
+                    IELSettingObject.UpdateVisibleMouseEvents(ImageMouseButtonsUse, false);
                     IELSettingObject.StopHover();
                 }
             };
@@ -184,22 +218,8 @@ namespace IEL
             IsEnabledChanged += (sender, e) =>
             {
                 bool NewValue = (bool)e.NewValue;
-                Color
-                    Foreground = NewValue ? IELSettingObject.ForegroundSetting.Default : IELSettingObject.ForegroundSetting.NotEnabled,
-                    Background = NewValue ? IELSettingObject.BackgroundSetting.Default : IELSettingObject.BackgroundSetting.NotEnabled,
-                    BorderBrush = NewValue ? IELSettingObject.BorderBrushSetting.Default : IELSettingObject.BorderBrushSetting.NotEnabled;
-                ColorAnimation animation;
-
-                animation = IELSettingObject.ObjectAnimateSetting.GetAnimationColor(BorderBrush);
-                BorderButton.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, animation);
-                BorderButtonKey.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, animation);
-
-                animation = IELSettingObject.ObjectAnimateSetting.GetAnimationColor(Background);
-                BorderButton.Background.BeginAnimation(SolidColorBrush.ColorProperty, animation);
-                BorderButtonKey.Background.BeginAnimation(SolidColorBrush.ColorProperty, animation);
-
-                animation = IELSettingObject.ObjectAnimateSetting.GetAnimationColor(Foreground);
-                TextBlockKey.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, animation);
+                IELSettingObject.UseActiveQSetting(NewValue ? StateSpectrum.Select : StateSpectrum.NotEnabled);
+                IELSettingObject.UpdateVisibleMouseEvents(ImageMouseButtonsUse, false);
             };
 
             MouseDown += (sender, e) =>
@@ -210,7 +230,8 @@ namespace IEL
                     (e.LeftButton == MouseButtonState.Pressed && OnActivateMouseLeft != null) ||
                     (e.RightButton == MouseButtonState.Pressed && OnActivateMouseRight != null))
                     {
-                        ClickDownAnimation();
+                        IELSettingObject.UseActiveQSetting(StateSpectrum.Used);
+                        IELSettingObject.UpdateVisibleMouseEvents(ImageMouseButtonsUse, this, true);
                         IELSettingObject.StopHover();
                     }
                 }
@@ -220,7 +241,8 @@ namespace IEL
             {
                 if (IsEnabled && OnActivateMouseLeft != null)
                 {
-                    MouseEnterDetect();
+                    IELSettingObject.UseActiveQSetting(StateSpectrum.Select);
+                    IELSettingObject.UpdateVisibleMouseEvents(ImageMouseButtonsUse, this, true);
                     OnActivateMouseLeft?.Invoke(false, e);
                 }
             };
@@ -229,73 +251,11 @@ namespace IEL
             {
                 if (IsEnabled && OnActivateMouseRight != null)
                 {
-                    MouseEnterDetect();
+                    IELSettingObject.UseActiveQSetting(StateSpectrum.Select);
+                    IELSettingObject.UpdateVisibleMouseEvents(ImageMouseButtonsUse, this, true);
                     OnActivateMouseRight?.Invoke(false, e);
                 }
             };
-        }
-
-        /// <summary>
-        /// Анимировать нажатие на кнопку (Down)
-        /// </summary>
-        private void ClickDownAnimation()
-        {
-            Color
-                Foreground = IELSettingObject.ForegroundSetting.Used,
-                Background = IELSettingObject.BackgroundSetting.Used,
-                BorderBrush = IELSettingObject.BorderBrushSetting.Used;
-
-            BorderButton.BorderBrush = new SolidColorBrush(BorderBrush);
-            BorderButton.Background = new SolidColorBrush(Background);
-            TextBlockKey.Foreground = new SolidColorBrush(Foreground);
-        }
-
-        /// <summary>
-        /// Событие прихода курсора в видимую область кнопки
-        /// </summary>
-        private void MouseEnterDetect()
-        {
-            Color
-                Foreground = IELSettingObject.ForegroundSetting.Select,
-                Background = IELSettingObject.BackgroundSetting.Select,
-                BorderBrush = IELSettingObject.BorderBrushSetting.Select;
-            ColorAnimation animation;
-
-            animation = IELSettingObject.ObjectAnimateSetting.GetAnimationColor(BorderBrush);
-            BorderButton.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, animation);
-
-            animation = IELSettingObject.ObjectAnimateSetting.GetAnimationColor(Background);
-            BorderButton.Background.BeginAnimation(SolidColorBrush.ColorProperty, animation);
-            BorderButtonKey.Background.BeginAnimation(SolidColorBrush.ColorProperty, animation);
-
-            animation = IELSettingObject.ObjectAnimateSetting.GetAnimationColor(Foreground);
-            TextBlockKey.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, animation);
-
-            IELSettingObject.UpdateVisibleMouseEvents(ImageMouseButtonsUse, this, true);
-        }
-
-        /// <summary>
-        /// Событие ухода курсора из видимой области кнопки
-        /// </summary>
-        public void LeaveAnimation()
-        {
-            Color
-                Foreground = IELSettingObject.ForegroundSetting.Default,
-                Background = IELSettingObject.BackgroundSetting.Default,
-                BorderBrush = IELSettingObject.BorderBrushSetting.Default;
-            ColorAnimation animation;
-
-            animation = IELSettingObject.ObjectAnimateSetting.GetAnimationColor(BorderBrush);
-            BorderButton.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, animation);
-
-            animation = IELSettingObject.ObjectAnimateSetting.GetAnimationColor(Background);
-            BorderButton.Background.BeginAnimation(SolidColorBrush.ColorProperty, animation);
-            BorderButtonKey.Background.BeginAnimation(SolidColorBrush.ColorProperty, animation);
-
-            animation = IELSettingObject.ObjectAnimateSetting.GetAnimationColor(Foreground);
-            TextBlockKey.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, animation);
-
-            IELSettingObject.UpdateVisibleMouseEvents(ImageMouseButtonsUse, false);
         }
 
         /// <summary>
@@ -304,20 +264,19 @@ namespace IEL
         [MTAThread()]
         public void BlinkAnimation()
         {
-            ColorAnimation animation = IELSettingObject.ObjectAnimateSetting.GetAnimationColor();
-            animation.SpeedRatio = 0.6d;
-            animation.From = IELSettingObject.BorderBrushSetting.Used;
-            animation.To = IELSettingObject.BorderBrushSetting.Select;
-            BorderButton.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, animation);
-            BorderButtonKey.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, animation);
+            IELSettingObject.UseActiveQSetting(StateSpectrum.Used, false);
+            IELSettingObject.UseActiveQSetting(StateSpectrum.Select);
+            IELSettingObject.UpdateVisibleMouseEvents(ImageMouseButtonsUse, this, true);
+        }
 
-            animation.From = IELSettingObject.BackgroundSetting.Used;
-            animation.To = IELSettingObject.BackgroundSetting.Select;
-            BorderButtonKey.Background.BeginAnimation(SolidColorBrush.ColorProperty, animation);
-
-            animation.From = IELSettingObject.ForegroundSetting.Used;
-            animation.To = IELSettingObject.ForegroundSetting.Select;
-            TextBlockKey.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, animation);
+        /// <summary>
+        /// Анимация мерцания
+        /// </summary>
+        [MTAThread()]
+        public void UnfocusAnimation()
+        {
+            IELSettingObject.UseActiveQSetting(StateSpectrum.Default);
+            IELSettingObject.UpdateVisibleMouseEvents(ImageMouseButtonsUse, false);
         }
     }
 }

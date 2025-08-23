@@ -8,49 +8,47 @@ namespace IEL.CORE.Classes
     /// </summary>
     public class BrushSettingQ : ICloneable
     {
-        /// <summary>
-        /// Делегат события изменения обычного цвета
-        /// </summary>
-        /// <param name="Value">Новое значение цвета</param>
-        internal delegate void ColorChangedEventHandler(StateSpectrum Spectrum, Color Value);
+        private Action<StateSpectrum, Color, bool>? ActionColorChange { get; set; }
 
         /// <summary>
-        /// Событие изменения цвета обычного состояния
+        /// Установить значение действия воспроизводимое для взаимодействия объекта и настроек цвета
         /// </summary>
-        internal event ColorChangedEventHandler? ColorChanged;
+        /// <param name="action">Параметр действия</param>
+        /// <returns>Состояние добавления действия к настройке</returns>
+        public bool SetActionColorChanged(in Action<StateSpectrum, Color, bool> action)
+        {
+            ActionColorChange = action.Clone() as Action<StateSpectrum, Color, bool>;
+            ActionColorChange?.Invoke(StateSpectrum.Default, Default, false);
+            return true;
+        }
 
         /// <summary>
         /// Массив данных цвета
         /// </summary>
-        public QData ColorData { get; private set; }
+        public QData ColorData { get; set; }
+
+        /// <summary>
+        /// Последний изменяемый спектр цыета
+        /// </summary>
+        private StateSpectrum LastChange { get; set; }
 
         /// <summary>
         /// Изменить напрямую стиль отображения объекта
         /// </summary>
         /// <param name="Spectrum">Стиль придаваемый использоваемому объекту</param>
-        public void InvokeObjectUsedStateColor(StateSpectrum Spectrum)
+        /// <param name="Animated">Анимируются ли свойства цвета</param>
+        public void InvokeObjectUsedStateColor(StateSpectrum Spectrum, bool Animated = true)
         {
-            if (ColorChanged == null) return;
-            Color Value = Spectrum switch
+            Color color = Spectrum switch
             {
                 StateSpectrum.Default => Default,
                 StateSpectrum.Select => Select,
                 StateSpectrum.Used => Used,
                 StateSpectrum.NotEnabled => NotEnabled,
-                _ => Default,
+                _ => Default
             };
-            ColorChanged?.Invoke(Spectrum, Value);
+            ActionColorChange?.Invoke(Spectrum, color, Animated);
         }
-
-        /// <summary>
-        /// Состояние активности элемента
-        /// </summary>
-        /// <remarks>
-        /// При отключённой активности будут доступны только спектры цвета <b>Default</b> или <b>NotEnabled</b>
-        /// <code></code>
-        /// При попытке вызова отключённого спектра будет выводится спектр <b>Default</b>
-        /// </remarks>
-        internal bool IsEnabled { get; set; }
 
         #region UsedState
         /// <summary>
@@ -66,7 +64,7 @@ namespace IEL.CORE.Classes
         /// <summary>
         /// Узнать состояние использования
         /// </summary>
-        /// <returns>Текущее состояние использование</returns>
+        /// <returns>Текущее состояние использования</returns>
         public bool GetUsedState() => UsedState;
 
         /// <summary>
@@ -76,14 +74,12 @@ namespace IEL.CORE.Classes
         public void SetUsedState(bool NewValue)
         {
             UsedState = NewValue;
-            if (IsEnabled)
+            try
             {
-                try
-                {
-                    ColorChanged?.Invoke(StateSpectrum.Default, ColorData.GetIndexingColor(NewValue ? StateSpectrum.Used : StateSpectrum.Default));
-                }
-                catch { }
+                LastChange = StateSpectrum.Default;
+                ActionColorChange?.Invoke(StateSpectrum.Default, ColorData.GetIndexingColor(NewValue ? StateSpectrum.Used : StateSpectrum.Default), true);
             }
+            catch { }
         }
         #endregion
 
@@ -93,11 +89,12 @@ namespace IEL.CORE.Classes
         /// </summary>
         public Color Default
         {
-            get => ColorData.GetIndexingColor(IsEnabled ? (UsedState ? StateSpectrum.Used : StateSpectrum.Default) : StateSpectrum.NotEnabled);
+            get => ColorData.GetIndexingColor(UsedState ? StateSpectrum.Used : StateSpectrum.Default);
             set
             {
+                LastChange = StateSpectrum.Default;
                 ColorData.SetIndexingColor(StateSpectrum.Default, value);
-                if (IsEnabled) ColorChanged?.Invoke(StateSpectrum.Default, value);
+                if (!UsedState) ActionColorChange?.Invoke(StateSpectrum.Default, value, true);
             }
         }
         #endregion
@@ -111,8 +108,8 @@ namespace IEL.CORE.Classes
             get => ColorData.GetIndexingColor(StateSpectrum.NotEnabled);
             set
             {
+                LastChange = StateSpectrum.NotEnabled;
                 ColorData.SetIndexingColor(StateSpectrum.NotEnabled, value);
-                ColorChanged?.Invoke(StateSpectrum.NotEnabled, value);
             }
         }
         #endregion
@@ -123,9 +120,10 @@ namespace IEL.CORE.Classes
         /// </summary>
         public Color Select
         {
-            get => ColorData.GetIndexingColor(IsEnabled ? StateSpectrum.Select : StateSpectrum.NotEnabled);
+            get => ColorData.GetIndexingColor(StateSpectrum.Select);
             set
             {
+                LastChange = StateSpectrum.Select;
                 ColorData.SetIndexingColor(StateSpectrum.Select, value);
             }
         }
@@ -138,17 +136,18 @@ namespace IEL.CORE.Classes
         /// </summary>
         public Color Used
         {
-            get => ColorData.GetIndexingColor(IsEnabled ? UsedState ? StateSpectrum.Default : StateSpectrum.Used : StateSpectrum.NotEnabled);
+            get => ColorData.GetIndexingColor(UsedState ? StateSpectrum.Default : StateSpectrum.Used);
             set
             {
+                LastChange = StateSpectrum.Used;
                 ColorData.SetIndexingColor(StateSpectrum.Used, value);
+                if (UsedState) ActionColorChange?.Invoke(StateSpectrum.Used, value, true);
             }
         }
         #endregion
 
         public BrushSettingQ()
         {
-            IsEnabled = true;
             UsedState = false;
             ColorData = new();
         }
@@ -159,7 +158,6 @@ namespace IEL.CORE.Classes
         /// <param name="ByteColorData"></param>
         public BrushSettingQ(byte[,] ByteColorData)
         {
-            IsEnabled = true;
             UsedState = false;
             ColorData = new(ByteColorData);
         }
@@ -170,7 +168,6 @@ namespace IEL.CORE.Classes
         /// <param name="ByteColorData"></param>
         public BrushSettingQ(QData ByteColorData)
         {
-            IsEnabled = true;
             UsedState = false;
             ColorData = (QData)ByteColorData.Clone();
         }
@@ -179,6 +176,14 @@ namespace IEL.CORE.Classes
         /// Клонировать объект политры
         /// </summary>
         /// <returns>Объект палитры</returns>
-        public object Clone() => new BrushSettingQ(ColorData);
+        public object Clone()
+        {
+            BrushSettingQ Clone = new(ColorData)
+            {
+                ActionColorChange = ActionColorChange
+            };
+            Clone.ActionColorChange?.Invoke(LastChange, Clone.ColorData.GetIndexingColor(LastChange), true);
+            return Clone;
+        }
     }
 }

@@ -14,10 +14,14 @@ namespace IEL.Interfaces.Front
         /// </summary>
         public Key? CharKeyKeyboard { get; }
 
-        //
-        public void BlinkAnimation();
+        /// <summary>
+        /// Воспроизвести анимацию мерцания
+        /// </summary>
+        internal abstract void BlinkAnimation();
 
-        //
-        public void LeaveAnimation();
+        /// <summary>
+        /// Воспроизвести анимацию выделения
+        /// </summary>
+        internal abstract void UnfocusAnimation();
     }
 }
