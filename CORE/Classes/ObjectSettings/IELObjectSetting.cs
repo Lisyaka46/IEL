@@ -4,7 +4,7 @@ using OperPage_les.UI.Dialogs;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows;
-using System.Windows.Media;
+using Color = System.Windows.Media.Color;
 
 namespace IEL.CORE.Classes.ObjectSettings
 {
