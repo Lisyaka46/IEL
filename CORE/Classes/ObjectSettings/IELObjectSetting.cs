@@ -7,7 +7,7 @@ using Color = System.Windows.Media.Color;
 
 namespace IEL.CORE.Classes.ObjectSettings
 {
-    public partial class IELObjectSetting : IIELObjectSetting
+    public partial class IELObjectSetting : DependencyObject, IIELObjectSetting
     {
         /// <summary>
         /// Делегат события изменения поля значения

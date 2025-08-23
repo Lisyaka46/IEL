@@ -130,7 +130,7 @@ namespace IEL
         public uint OffsetUpDown { get; set; }
 
         /// <summary>
-        /// Имя контейнера привязки
+        /// Код контейнера привязки
         /// </summary>
         public int CodeParentObject { get; private set; }
         #endregion

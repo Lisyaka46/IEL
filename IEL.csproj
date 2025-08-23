@@ -1,12 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0-windows</TargetFramework>
+    <TargetFramework>net8.0-windows10.0.26100.0</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <ImplicitUsings>enable</ImplicitUsings>
     <Platforms>AnyCPU;x86;x64</Platforms>
     <Configurations>Debug;Release;Testing</Configurations>
+    <SupportedOSPlatformVersion>10.0.26100.0</SupportedOSPlatformVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,10 +15,6 @@
     <EmbeddedResource Remove="Properties\Images\**" />
     <None Remove="Properties\Images\**" />
     <Page Remove="Properties\Images\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Remove="Properties\Resources\Cross.png" />
   </ItemGroup>
 
   <ItemGroup>
