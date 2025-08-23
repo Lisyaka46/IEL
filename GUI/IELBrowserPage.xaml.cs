@@ -185,7 +185,6 @@ namespace IEL
 
         public IELBrowserPage()
         {
-            IELObjectSetting.GlobalSetValidKey();
             InitializeComponent();
             IELSettingObject = new();
             QDataDefaultInlayBackground = new();

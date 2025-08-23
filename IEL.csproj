@@ -10,26 +10,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Properties\Images\**" />
+    <EmbeddedResource Remove="Properties\Images\**" />
+    <None Remove="Properties\Images\**" />
+    <Page Remove="Properties\Images\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="Properties\Resources\Cross.png" />
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Properties\Images\DoubleMouseButton.png">
-      <CopyToOutputDirectory></CopyToOutputDirectory>
-      <CustomToolNamespace></CustomToolNamespace>
-    </Resource>
-    <Resource Include="Properties\Images\LeftMouseButton.png">
-      <CopyToOutputDirectory></CopyToOutputDirectory>
-      <CustomToolNamespace></CustomToolNamespace>
-    </Resource>
-    <Resource Include="Properties\Images\NotMouseButton.png">
-      <CopyToOutputDirectory></CopyToOutputDirectory>
-      <CustomToolNamespace></CustomToolNamespace>
-    </Resource>
-    <Resource Include="Properties\Images\RightMouseButton.png">
-      <CopyToOutputDirectory></CopyToOutputDirectory>
-      <CustomToolNamespace></CustomToolNamespace>
-    </Resource>
     <Resource Include="Properties\Resources\Cross.png" />
   </ItemGroup>
 

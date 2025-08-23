@@ -189,7 +189,6 @@ namespace IEL
         /// </summary>
         public IELButtonImageKey()
         {
-            IELObjectSetting.GlobalSetValidKey();
             InitializeComponent();
             IELSettingObject = new();
 

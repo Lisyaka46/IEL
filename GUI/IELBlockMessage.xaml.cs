@@ -163,7 +163,6 @@ namespace IEL
         #region ** Inicialize Object **
         public IELBlockMessage()
         {
-            IELObjectSetting.GlobalSetValidKey();
             InitializeComponent();
             #region Set Values Object
             #region Values

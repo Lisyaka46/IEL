@@ -115,7 +115,6 @@ namespace IEL
 
         public IELBlockInfoText()
         {
-            IELObjectSetting.GlobalSetValidKey();
             InitializeComponent();
             IELSettingObject = new();
             CornerRadius = new CornerRadius(10);
