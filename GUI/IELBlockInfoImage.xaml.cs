@@ -96,7 +96,7 @@ namespace IEL
 
         public IELBlockInfoImage()
         {
-            IELObjectSetting.GlobalSetValidKey();
+            //IELObjectSetting.GlobalSetValidKey();
             InitializeComponent();
             IELSettingObject = new();
             CornerRadius = new CornerRadius(10);

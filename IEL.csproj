@@ -1,12 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0-windows</TargetFramework>
+    <TargetFramework>net8.0-windows10.0.26100.0</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <ImplicitUsings>enable</ImplicitUsings>
     <Platforms>AnyCPU;x86;x64</Platforms>
     <Configurations>Debug;Release;Testing</Configurations>
+    <SupportedOSPlatformVersion>10.0.26100.0</SupportedOSPlatformVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,10 +16,6 @@
     <None Remove="Properties\Images\NotMouseButton.png" />
     <None Remove="Properties\Images\RightMouseButton.png" />
     <None Remove="Properties\Resources\Cross.png" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\ConsoleManipulateKey\ConsoleManipulateKey.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -43,9 +40,6 @@
 
   <ItemGroup>
     <Compile Update="GUI\BlockInfoImage.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="GUI\ValidKey\WindowProgramKey.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Properties\Resources.Designer.cs">

@@ -1,5 +1,6 @@
 ﻿using IEL.CORE.Enums;
 using IEL.Interfaces.Front;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
@@ -42,11 +43,6 @@ namespace IEL.CORE.Classes.ObjectSettings
         }
 
         /// <summary>
-        /// Значение прозрачности показания изображения действий элемента
-        /// </summary>
-        public double VisibleOpacityImageMouse { get; set; } = 0.4d;
-
-        /// <summary>
         /// Событие изменения значения стиля отображения объекта
         /// </summary>
         public event IELSettingValueChangedHandler<bool>? VisibleMouseImagingChanged;
@@ -70,82 +66,39 @@ namespace IEL.CORE.Classes.ObjectSettings
         /// </summary>
         public void UpdateVisibleMouseEvents(Image Element, IIELButton Button, bool Activate)
         {
+            if (SettingMouseImage == null) return;
             if (_VisibleMouseImaging)
             {
-                Element.Source = ImageMouseButton(Button.OnActivateMouseLeft, Button.OnActivateMouseRight);
+                Element.Source = SettingMouseImage.ImageMouseButton(Button.OnActivateMouseLeft, Button.OnActivateMouseRight);
                 Element.UpdateLayout();
             }
             UpdateVisibleMouseEvents(Element, Activate);
         }
+
         /// <summary>
         /// Обновить видимость событий мыши
         /// </summary>
         public void UpdateVisibleMouseEvents(Image Element, bool Activate)
         {
-            Element.BeginAnimation(Image.OpacityProperty, ObjectAnimateSetting.GetAnimationDouble(Activate ? VisibleOpacityImageMouse : 0d));
+            Element.BeginAnimation(Image.OpacityProperty,
+                ObjectAnimateSetting.GetAnimationDouble(Activate ? SettingMouseImage?.VisibleOpacityImageMouse ?? 0d : 0d));
         }
         #endregion
 
-        #region ImagedEventsButton
         /// <summary>
-        /// Данные изображений отображения событий нажатия
+        /// Объект параметра настройки отображения изображений нажатий мыши
         /// </summary>
-        private readonly ImageSource?[] EventImageSourceMouse = new ImageSource[4];
+        public static readonly DependencyProperty SettingMouseImageProperty =
+            DependencyProperty.Register("SettingMouseImage", typeof(IELMouseImageSetting), typeof(IELButtonObjectSetting));
 
         /// <summary>
-        /// Изображение отображения событий нажатия при отсутствии возможности нажатия
+        /// Объект настройки отображения изображений нажатий мыши
         /// </summary>
-        public ImageSource? NotEventImageMouse
+        public IELMouseImageSetting? SettingMouseImage
         {
-            get => EventImageSourceMouse[(int)EventsMouse.Not];
-            set => EventImageSourceMouse[(int)EventsMouse.Not] = value;
+            get => (IELMouseImageSetting)GetValue(SettingMouseImageProperty);
+            set => SetValue(SettingMouseImageProperty, value);
         }
-
-        /// <summary>
-        /// Изображение отображения событий нажатия только при левой возможности нажатия
-        /// </summary>
-        public ImageSource? OnlyLeftEventImageMouse
-        {
-            get => EventImageSourceMouse[(int)EventsMouse.Left];
-            set => EventImageSourceMouse[(int)EventsMouse.Left] = value;
-        }
-
-        /// <summary>
-        /// Изображение отображения событий нажатия только при правой возможности нажатия
-        /// </summary>
-        public ImageSource? OnlyRightEventImageMouse
-        {
-            get => EventImageSourceMouse[(int)EventsMouse.Right];
-            set => EventImageSourceMouse[(int)EventsMouse.Right] = value;
-        }
-
-        /// <summary>
-        /// Изображение отображения событий нажатия при двусторонней возможности нажатия
-        /// </summary>
-        public ImageSource? FullEventImageMouse
-        {
-            get => EventImageSourceMouse[(int)EventsMouse.Full];
-            set => EventImageSourceMouse[(int)EventsMouse.Full] = value;
-        }
-
-        /// <summary>
-        /// Узнать отображения действий над кнопкой
-        /// </summary>
-        /// <returns>Изображение мыши с действиями</returns>
-        public ImageSource? ImageMouseButton(object? Left, object? Right) =>
-            Task.FromResult(GetImageMouseEvents(
-                Left != null ?
-                    (Right != null ? EventsMouse.Full : EventsMouse.Left) :
-                    (Right != null ? EventsMouse.Right : EventsMouse.Not)
-            )).Result;
-
-        /// <summary>
-        /// Получить изображение событий по перечислению
-        /// </summary>
-        /// <param name="Event">Тип состояния событий нажатия</param>
-        /// <returns>Возможное изображение отображения событий</returns>
-        private ImageSource? GetImageMouseEvents(EventsMouse Event) => EventImageSourceMouse[(int)Event];
-        #endregion
 
         /// <summary>
         /// Инициализировать класс настроек объекта
