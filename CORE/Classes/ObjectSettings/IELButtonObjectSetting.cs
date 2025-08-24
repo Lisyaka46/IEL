@@ -86,19 +86,9 @@ namespace IEL.CORE.Classes.ObjectSettings
         #endregion
 
         /// <summary>
-        /// Объект параметра настройки отображения изображений нажатий мыши
-        /// </summary>
-        public static readonly DependencyProperty SettingMouseImageProperty =
-            DependencyProperty.Register("SettingMouseImage", typeof(IELMouseImageSetting), typeof(IELButtonObjectSetting));
-
-        /// <summary>
         /// Объект настройки отображения изображений нажатий мыши
         /// </summary>
-        public IELMouseImageSetting? SettingMouseImage
-        {
-            get => (IELMouseImageSetting)GetValue(SettingMouseImageProperty);
-            set => SetValue(SettingMouseImageProperty, value);
-        }
+        public IELMouseImageSetting? SettingMouseImage { get; set; }
 
         /// <summary>
         /// Инициализировать класс настроек объекта

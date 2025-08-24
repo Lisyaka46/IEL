@@ -5,7 +5,7 @@ using System.Windows.Media;
 using IEL.CORE.Enums;
 using System.Windows.Media.Animation;
 
-namespace IEL
+namespace IEL.GUI
 {
     /// <summary>
     /// Логика взаимодействия для IELBlockInfo.xaml

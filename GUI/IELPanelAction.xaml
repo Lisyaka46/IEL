@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:GUI="clr-namespace:IEL" x:Class="IEL.IELPanelAction"
+             xmlns:GUI="clr-namespace:IEL.GUI" x:Class="IEL.GUI.IELPanelAction"
              mc:Ignorable="d" d:DesignHeight="150" d:DesignWidth="150" Focusable="True">
     <UserControl.FocusVisualStyle>
         <Style>
