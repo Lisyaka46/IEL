@@ -56,7 +56,7 @@
     </mxGraphModel>
   </diagram>
   <diagram id="-gB4cSZo6_3nMkcXz_vv" name="FRONT Диаграмма">
-    <mxGraphModel dx="4561" dy="2378" grid="0" gridSize="10" guides="0" tooltips="1" connect="0" arrows="1" fold="1" page="0" pageScale="1" pageWidth="827" pageHeight="1169" background="none" math="0" shadow="0">
+    <mxGraphModel dx="5480" dy="3042" grid="0" gridSize="10" guides="0" tooltips="1" connect="0" arrows="1" fold="1" page="0" pageScale="1" pageWidth="827" pageHeight="1169" background="none" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -276,10 +276,10 @@
         <mxCell id="lmQRzR7XMKIJKrrvn6Hr-28" value="IELButtonImageKey" style="rounded=1;whiteSpace=wrap;fontSize=20;fontColor=#C3C3C3;fontFamily=Lucida Console;strokeWidth=3;arcSize=0;strokeColor=#009900;flipH=0;" parent="1" vertex="1">
           <mxGeometry x="-2440" y="-1520" width="240" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="vzUwvgRPBZBfhJaL0Pv2-1" value="IELMouseImageSetting" style="rounded=1;whiteSpace=wrap;fontSize=20;fontColor=#C3C3C3;fontFamily=Lucida Console;strokeWidth=3;" vertex="1" parent="1">
+        <mxCell id="vzUwvgRPBZBfhJaL0Pv2-1" value="IELMouseImageSetting" style="rounded=1;whiteSpace=wrap;fontSize=20;fontColor=#C3C3C3;fontFamily=Lucida Console;strokeWidth=3;" parent="1" vertex="1">
           <mxGeometry x="-2080" y="-1600" width="280" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="vzUwvgRPBZBfhJaL0Pv2-2" style="edgeStyle=orthogonalEdgeStyle;shape=connector;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=default;strokeWidth=2;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=11;fontColor=default;labelBackgroundColor=default;startArrow=none;startFill=0;startSize=20;endArrow=doubleBlock;endFill=1;endSize=20;flowAnimation=0;" edge="1" parent="1" source="vzUwvgRPBZBfhJaL0Pv2-1" target="IoBPHAgzxRjIGfkeBfS8-16">
+        <mxCell id="vzUwvgRPBZBfhJaL0Pv2-2" style="edgeStyle=orthogonalEdgeStyle;shape=connector;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=default;strokeWidth=2;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=11;fontColor=default;labelBackgroundColor=default;startArrow=none;startFill=0;startSize=20;endArrow=doubleBlock;endFill=1;endSize=20;flowAnimation=0;" parent="1" source="vzUwvgRPBZBfhJaL0Pv2-1" target="IoBPHAgzxRjIGfkeBfS8-16" edge="1">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="-1910" y="-1280" />
