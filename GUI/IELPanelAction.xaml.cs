@@ -115,7 +115,7 @@ namespace IEL.GUI
         /// <summary>
         /// Актуальный статус активности режима клавиатуры в активной странице
         /// </summary>
-        internal bool ActualKeyboardMode
+        internal bool KeyboardModeInActualPage
         {
             get => ActiveSettingVisual.ActiveSource.IsKeyboardMode;
             set => ActiveSettingVisual.ActiveSource.IsKeyboardMode = value;
@@ -137,9 +137,21 @@ namespace IEL.GUI
         /// </summary>
         public event ClosingPanelAction? EventClosingPanelAction;
 
+        /// <summary>
+        /// Отключать режим клавиатуры при закрытии объекта
+        /// </summary>
+        public bool IsKeyboardModeExit;
+
+        /// <summary>
+        /// Сохранённое состояние активности режима клавиатуры
+        /// </summary>
+        private bool ActiveKeyboardMode;
+
         public IELPanelAction()
         {
             InitializeComponent();
+            IsKeyboardModeExit = true;
+            ActiveKeyboardMode = false;
             keys = [Key.Z, Key.Oem3, Key.Escape];
             //TextBlockRightButtonIndicatorKey.Text = CORE.Classes.KeyConverter.GetCharFromKey(KeyKeyboardModeActivateRightClick).ToString();
             TextBlockRightButtonIndicatorKey.Opacity = 0d;
@@ -151,7 +163,7 @@ namespace IEL.GUI
                 else BlockWhileEvent = true;
                 if (e.Key == KeyKeyboardModeActivateRightClick)
                 {
-                    if (ActualKeyboardMode && !ActivateRightClickKeyboardMode)
+                    if (KeyboardModeInActualPage && !ActivateRightClickKeyboardMode)
                     {
                         AnimTextBlockRightClick(true);
                         if (SelectButtonKeyboardMode) SelectButtonKeyboardMode = false;
@@ -165,7 +177,7 @@ namespace IEL.GUI
                 else
                 {
                     if (MainPageController.ActualPage == null) return;
-                    if (ActualKeyboardMode && !SelectButtonKeyboardMode)
+                    if (KeyboardModeInActualPage && !SelectButtonKeyboardMode)
                     {
                         SelectButtonKeyboardMode = true;
                         ActiveSettingVisual.ActiveSource.ActivateElementKey<IIELButtonKey>(e.Key, ActionButton.BlinkActivate,
@@ -179,10 +191,11 @@ namespace IEL.GUI
                 else BlockWhileEvent = false;
                 if (e.Key == KeyActivateKeyboardMode)
                 {
-                    ActualKeyboardMode = !ActualKeyboardMode;
-                    if (!ActualKeyboardMode && ActivateRightClickKeyboardMode) AnimTextBlockRightClick(false);
+                    KeyboardModeInActualPage = !KeyboardModeInActualPage;
+                    ActiveKeyboardMode = KeyboardModeInActualPage;
+                    if (!KeyboardModeInActualPage && ActivateRightClickKeyboardMode) AnimTextBlockRightClick(false);
                 }
-                else if (e.Key == KeyKeyboardModeActivateRightClick && ActualKeyboardMode && ActivateRightClickKeyboardMode)
+                else if (e.Key == KeyKeyboardModeActivateRightClick && KeyboardModeInActualPage && ActivateRightClickKeyboardMode)
                 {
                     AnimTextBlockRightClick(false);
                     if (SelectButtonKeyboardMode) SelectButtonKeyboardMode = false;
@@ -194,7 +207,7 @@ namespace IEL.GUI
                 else
                 {
                     if (MainPageController.ActualPage == null) return;
-                    if (ActualKeyboardMode && SelectButtonKeyboardMode)
+                    if (KeyboardModeInActualPage && SelectButtonKeyboardMode)
                     {
                         SelectButtonKeyboardMode = false;
                         ActiveSettingVisual.ActiveSource.ActivateElementKey<IIELButtonKey>(e.Key, ActionButton.ActionActivate,
@@ -253,7 +266,7 @@ namespace IEL.GUI
             if (PanelActionActivate) return;
             Focus();
             PanelActionSettingVisual SearchSettingVisual = BufferSearchSettingVisual(SettingVisual) ?? SettingVisual;
-            SearchSettingVisual.ActiveSource.IsKeyboardMode = false;
+            SearchSettingVisual.ActiveSource.IsKeyboardMode = !IsKeyboardModeExit && ActiveKeyboardMode;
             NextPage(SearchSettingVisual, Orientation);
             DoubleAnimateObj.To = 1d;
             BeginAnimation(OpacityProperty, DoubleAnimateObj);
@@ -275,7 +288,7 @@ namespace IEL.GUI
 
             DoubleAnimateObj.To = 0d;
             if (ActivateRightClickKeyboardMode) ActivateRightClickKeyboardMode = false;
-            ActiveSettingVisual.ActiveSource.IsKeyboardMode = false;
+            if (IsKeyboardModeExit) ActiveKeyboardMode = false;
             BeginAnimation(OpacityProperty, DoubleAnimateObj);
             AnimationMovePanelAction(PositionAnim, new Size(0, 0), ActiveSettingVisual.ElementInPanel, OrientationBorderPosition.LeftUp);
             AnimateSizePanelAction(new(0, 0));
@@ -304,8 +317,8 @@ namespace IEL.GUI
             //NextPage(SettingPage, X >= Margin.Left);
             if (PanelActionActivate)
             {
-                SettingVisual.ActiveSource.IsKeyboardMode = ActualKeyboardMode;
-                ActualKeyboardMode = false;
+                SettingVisual.ActiveSource.IsKeyboardMode = KeyboardModeInActualPage;
+                KeyboardModeInActualPage = false;
             }
             ActiveSettingVisual = SettingVisual;
             MainPageController.NextPage(ActiveSettingVisual.ActiveSource.ObjectPage, X >= Margin.Left);
@@ -319,7 +332,7 @@ namespace IEL.GUI
         public void NextPage([NotNull()] PagePanelAction NextPagePanelAction, bool RightAlign = true)
         {
             if (!PanelActionActivate) return;
-            NextPagePanelAction.IsKeyboardMode = ActualKeyboardMode;
+            NextPagePanelAction.IsKeyboardMode = KeyboardModeInActualPage;
             ActiveSettingVisual.ActiveSource = NextPagePanelAction;
             MainPageController.NextPage(NextPagePanelAction.ObjectPage, RightAlign);
         }
