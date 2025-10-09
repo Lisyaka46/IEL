@@ -49,8 +49,7 @@ namespace IEL.GUI
             get => keys[0];
             set
             {
-                if (keys.Any((i) => i == value))
-                    throw new InvalidOperationException($"Нельзя задавать одинаковые значения клавиши ({value})");
+                if (keys[0] == value) return;
                 keys[0] = value;
             }
         }
@@ -63,9 +62,7 @@ namespace IEL.GUI
             get => keys[1];
             set
             {
-                if (keys.Any((i) => i == value))
-                    throw new InvalidOperationException($"Нельзя задавать одинаковые значения клавиши ({value})");
-                TextBlockRightButtonIndicatorKey.Text = Enum.GetName(typeof(Key), value) ?? "null".ToUpper();
+                if (keys[1] == value) return;
                 keys[1] = value;
             }
         }
@@ -78,8 +75,7 @@ namespace IEL.GUI
             get => keys[2];
             set
             {
-                if (keys.Any((i) => i == value))
-                    throw new InvalidOperationException($"Нельзя задавать одинаковые значения клавиши ({value})");
+                if (keys[2] == value) return;
                 keys[2] = value;
             }
         }
@@ -153,10 +149,10 @@ namespace IEL.GUI
             IsKeyboardModeExit = true;
             ActiveKeyboardMode = false;
             keys = [Key.Z, Key.Oem3, Key.Escape];
-            //TextBlockRightButtonIndicatorKey.Text = CORE.Classes.KeyConverter.GetCharFromKey(KeyKeyboardModeActivateRightClick).ToString();
             TextBlockRightButtonIndicatorKey.Opacity = 0d;
             MainPageController.LeftAnimateSwitch = new(-20, -20, 40, -3);
             MainPageController.RightAnimateSwitch = new(40, -10, -20, -3);
+            TextBlockRightButtonIndicatorKey.Text = "RIGHT";
             KeyDown += (sender, e) =>
             {
                 if (!PanelActionActivate && BlockWhileEvent) return;
