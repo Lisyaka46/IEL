@@ -2,6 +2,7 @@
 using IEL.CORE.Enums;
 using IEL.Interfaces.Front;
 using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.Tracing;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
@@ -32,7 +33,7 @@ namespace IEL.GUI
         private bool SelectButtonKeyboardMode = false;
 
         /// <summary>
-        /// Состояние бокирующее повторное 
+        /// Состояние бокирующее повторное срабатывание зажатой клавиши
         /// </summary>
         private bool BlockWhileEvent = false;
 
@@ -241,9 +242,10 @@ namespace IEL.GUI
                         SettingVisual.SizedPanel = new(SettingVisual.SizedPanel.Width, SettingVisual.ElementInPanel.ActualHeight);
                     AddBufferElementPageAction(ActiveSettingVisual);
                     ThicknessAnimate.Duration = TimeSpan.FromMilliseconds(360d);
+
                     PanelActionSettingVisual? SearchSettingVisual = BufferSearchSettingVisual(SettingVisual);
-                    PagePanelAction ActivatePage = SearchSettingVisual.HasValue ? SearchSettingVisual.Value.ActiveSource : SettingVisual.DefaultSource;
-                    NextPage(ActivatePage);
+                    MoveNextObjectPage(SearchSettingVisual ?? SettingVisual, Orientation);
+
                     ThicknessAnimate.Duration = TimeSpan.FromMilliseconds(300d);
                     AnimateSizePanelAction(SettingVisual.SizedPanel);
                     ActiveSettingVisual = SearchSettingVisual ?? SettingVisual;
@@ -263,7 +265,7 @@ namespace IEL.GUI
             Focus();
             PanelActionSettingVisual SearchSettingVisual = BufferSearchSettingVisual(SettingVisual) ?? SettingVisual;
             SearchSettingVisual.ActiveSource.IsKeyboardMode = !IsKeyboardModeExit && ActiveKeyboardMode;
-            NextPage(SearchSettingVisual, Orientation);
+            MoveNextObjectPage(SearchSettingVisual, Orientation);
             DoubleAnimateObj.To = 1d;
             BeginAnimation(OpacityProperty, DoubleAnimateObj);
             AnimationMovePanelAction(PositionAnimActionPanel.Cursor, SettingVisual.SizedPanel, SettingVisual.ElementInPanel, Orientation);
@@ -296,42 +298,39 @@ namespace IEL.GUI
             EventClosingPanelAction?.Invoke(NamePanel);
         }
 
+        #region NextPage
         /// <summary>
         /// Перенаправить страницу панели и переместиться в другой элемент
         /// </summary>
         /// <param name="SettingVisual">Настройки для переключения между объектами</param>
-        /// <exception cref="Exception">Исключение при отключённом состоянии панели действий</exception>
-        public void NextPage(PanelActionSettingVisual SettingVisual, OrientationBorderPosition Orientation)
+        /// <param name="Orientation">По какой ориентации перемещать панель действий</param>
+        /// <param name="RightAlgin">Справой стороны открывать страницу. При нулевом значении задействует позицию курсора</param>
+        public void MoveNextObjectPage([NotNull] PanelActionSettingVisual SettingVisual, OrientationBorderPosition Orientation,
+            bool? RightAlgin = null)
         {
-            //if (!PanelActionActivate)
-            //{
-            //    OpenPanelAction(SettingVisual);
-            //    return;
-            //}
-            double X = Mouse.GetPosition((IInputElement)VisualParent).X;
-            AnimationMovePanelAction(PositionAnimActionPanel.Cursor, SettingVisual.SizedPanel, SettingVisual.ElementInPanel, Orientation);
-            //NextPage(SettingPage, X >= Margin.Left);
-            if (PanelActionActivate)
-            {
-                SettingVisual.ActiveSource.IsKeyboardMode = KeyboardModeInActualPage;
-                KeyboardModeInActualPage = false;
-            }
+            AnimationMovePanelAction(PositionAnimActionPanel.Cursor, SettingVisual.SizedPanel,
+                SettingVisual.ElementInPanel, Orientation);
             ActiveSettingVisual = SettingVisual;
-            MainPageController.NextPage(ActiveSettingVisual.ActiveSource.ObjectPage, X >= Margin.Left);
+            NextPageInObject(SettingVisual.ActiveSource, RightAlgin ?? Mouse.GetPosition((IInputElement)VisualParent).X >= Margin.Left);
         }
 
         /// <summary>
-        /// Перенаправить страницу панели
+        /// Перенаправить страницу панели внутри объекта
         /// </summary>
-        /// <param name="SettingPage">Новая страница панели</param>
-        /// <param name="RightAlign">Правая ориентация движения</param>
-        public void NextPage([NotNull()] PagePanelAction NextPagePanelAction, bool RightAlign = true)
+        /// <param name="PageAction">Страница на которую переключается панель действий</param>
+        /// <param name="RightAlgin">Справой стороны открывать страницу или нет</param>
+        [NonEvent]
+        public void NextPageInObject([NotNull] PagePanelAction PageAction, bool RightAlgin = true)
         {
-            if (!PanelActionActivate) return;
-            NextPagePanelAction.IsKeyboardMode = KeyboardModeInActualPage;
-            ActiveSettingVisual.ActiveSource = NextPagePanelAction;
-            MainPageController.NextPage(NextPagePanelAction.ObjectPage, RightAlign);
+            if (PanelActionActivate)
+            {
+                PageAction.IsKeyboardMode = KeyboardModeInActualPage;
+                KeyboardModeInActualPage = false;
+            }
+            ActiveSettingVisual.ActiveSource = PageAction;
+            MainPageController.NextPage(PageAction.ObjectPage, RightAlgin);
         }
+        #endregion
 
         /// <summary>
         /// Поиск настроек страниц сохранённых в буфере
