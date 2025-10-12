@@ -9,17 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Properties\Images\**" />
-    <EmbeddedResource Remove="Properties\Images\**" />
-    <None Remove="Properties\Images\**" />
-    <Page Remove="Properties\Images\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Resource Include="Properties\Resources\Cross.png" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Compile Update="GUI\BlockInfoImage.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
