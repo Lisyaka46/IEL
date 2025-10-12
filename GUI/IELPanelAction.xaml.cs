@@ -135,6 +135,21 @@ namespace IEL.GUI
         public event ClosingPanelAction? EventClosingPanelAction;
 
         /// <summary>
+        /// Событие открытия панели действий
+        /// </summary>
+        public event EventHandler? EventOpenPanelAction;
+
+        /// <summary>
+        /// Событие перемещения панели действий
+        /// </summary>
+        public event EventHandler? EventMovePanelAction;
+
+        /// <summary>
+        /// Событие переключения панели действий в новый объект в активном режиме
+        /// </summary>
+        public event EventHandler? EventMoveNewObjectInActivePanelAction;
+
+        /// <summary>
         /// Отключать режим клавиатуры при закрытии объекта
         /// </summary>
         public bool IsKeyboardModeExit;
@@ -250,6 +265,7 @@ namespace IEL.GUI
                     AnimateSizePanelAction(SettingVisual.SizedPanel);
                     ActiveSettingVisual = SearchSettingVisual ?? SettingVisual;
                 }
+                EventMovePanelAction?.Invoke(this, EventArgs.Empty);
                 AnimationMovePanelAction(PositionAnimActionPanel.Cursor, SettingVisual.SizedPanel, SettingVisual.ElementInPanel, Orientation);
             }
         }
@@ -262,6 +278,7 @@ namespace IEL.GUI
         private void OpenPanelAction(PanelActionSettingVisual SettingVisual, OrientationBorderPosition Orientation)
         {
             if (PanelActionActivate) return;
+            EventOpenPanelAction?.Invoke(this, EventArgs.Empty);
             Focus();
             PanelActionSettingVisual SearchSettingVisual = BufferSearchSettingVisual(SettingVisual) ?? SettingVisual;
             SearchSettingVisual.ActiveSource.IsKeyboardMode = !IsKeyboardModeExit && ActiveKeyboardMode;
@@ -311,6 +328,7 @@ namespace IEL.GUI
             AnimationMovePanelAction(PositionAnimActionPanel.Cursor, SettingVisual.SizedPanel,
                 SettingVisual.ElementInPanel, Orientation);
             ActiveSettingVisual = SettingVisual;
+            EventMoveNewObjectInActivePanelAction?.Invoke(this, EventArgs.Empty);
             NextPageInObject(SettingVisual.ActiveSource, RightAlgin ?? Mouse.GetPosition((IInputElement)VisualParent).X >= Margin.Left);
         }
 

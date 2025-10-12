@@ -238,12 +238,6 @@ namespace IEL.GUI
                 EventCloseInlay?.Invoke();
             };
 
-            BitmapImage bitmap = new();
-            bitmap.BeginInit();
-            bitmap.StreamSource = new MemoryStream(Properties.Resources.Cross);
-            bitmap.EndInit();
-            Inlay.SourceCloseButtonImage = bitmap;
-
             Inlay.SetPage(Content);
             Inlay.OnActivateMouseLeft += (sender, e, Key) =>
             {

@@ -59,15 +59,5 @@ namespace IEL.Properties {
                 resourceCulture = value;
             }
         }
-        
-        /// <summary>
-        ///   Поиск локализованного ресурса типа System.Byte[].
-        /// </summary>
-        internal static byte[] Cross {
-            get {
-                object obj = ResourceManager.GetObject("Cross", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
     }
 }
