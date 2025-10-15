@@ -183,6 +183,9 @@ namespace IEL.GUI
         /// </summary>
         public double DefaultWidthNewInlay { get; set; }
 
+        /// <summary>
+        /// Инициализировать объект интерфейса отображения страничных объектов
+        /// </summary>
         public IELBrowserPage()
         {
             InitializeComponent();
@@ -210,8 +213,6 @@ namespace IEL.GUI
         /// Создать вкладку в браузере
         /// </summary>
         /// <param name="Content">Страница ссылки</param>
-        /// <param name="Head">Заголовок вкладки</param>
-        /// <param name="Description">Сигнатура-описание вкладки</param>
         /// <returns>Созданная вкладка</returns>
         private IELInlay CreateInlay(BrowserPage Content)
         {
@@ -266,12 +267,10 @@ namespace IEL.GUI
         /// Добавить новую страницу
         /// </summary>
         /// <param name="Content">Добавляемая страница в баузер страниц</param>
-        /// <param name="Head">Наименование вкладки</param>
-        /// <param name="Signature">Подпись вкладки</param>
         /// <param name="Activate">Активировать сразу или нет страницу</param>
-        public void AddInlayPage(BrowserPage? Content, bool Activate = true)
+        public IELInlay? AddInlayPage(BrowserPage? Content, bool Activate = true)
         {
-            if (Content == null) return;
+            if (Content == null) return null;
             IELInlay inlay = CreateInlay(Content);
             inlay.OnActivateMouseRight += (sender, e, Key) => EventActiveActionInInlay?.Invoke(inlay);
             inlay.Opacity = 0d;
@@ -299,6 +298,7 @@ namespace IEL.GUI
             {
                 ActivateInlayIndex(IELInlays.Count - 1);
             }
+            return inlay;
         }
 
         ///// <summary>

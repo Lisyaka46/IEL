@@ -5,6 +5,6 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d">
     <Border x:Name="BorderMessage" CornerRadius="3,13,13,13" BorderThickness="2,2,2,2" BorderBrush="Black" Padding="5,5,5,5" Background="#FFE4BDBD">
-        <TextBlock x:Name="TextBlockMessage" TextWrapping="Wrap" Text="Hello" MaxWidth="200" TextAlignment="Center" VerticalAlignment="Center" FontFamily="Bahnschrift SemiBold"/>
+        <TextBlock x:Name="TextBlockMessage" TextWrapping="Wrap" Text="Hello" MaxWidth="200" TextAlignment="Center" VerticalAlignment="Center"/>
     </Border>
 </UserControl>

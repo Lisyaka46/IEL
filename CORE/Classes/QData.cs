@@ -3,6 +3,9 @@ using System.Windows.Media;
 
 namespace IEL.CORE.Classes
 {
+    /// <summary>
+    /// Класс управляемых данных цветовой палитры отображения объекта
+    /// </summary>
     public class QData : ICloneable
     {
         /// <summary>
@@ -24,6 +27,21 @@ namespace IEL.CORE.Classes
             };
         }
 
+        /// <summary>
+        /// Инициализировать управляемый объект данных цветовой палитры отображения объекта<br/>
+        /// с константным значением цвета
+        /// </summary>
+        /// <remarks>
+        /// <b>
+        /// | A  R  G  B |<br/>
+        /// <br/>
+        /// | 0  0  0  0 | - Default<br/>
+        /// | 0  0  0  0 | - Select<br/>
+        /// | 0  0  0  0 | - Used<br/>
+        /// | 0  0  0  0 | - NotEnabled<br/>
+        /// </b>
+        /// </remarks>
+        /// <param name="ByteColorData">Массив байтовых значений цвета</param>
         public QData(byte[,] ByteColorData)
         {
             if (ByteColorData.Length / 4 == 4) Data = ByteColorData;
@@ -48,7 +66,6 @@ namespace IEL.CORE.Classes
         /// Установить цвет по спектру элемента
         /// </summary>
         /// <param name="Spectrum">Спектр</param>
-        /// <param name="DataColor">Цвет</param>
         public Color GetIndexingColor(StateSpectrum Spectrum) =>
             Color.FromArgb(Data[(int)Spectrum, 0], Data[(int)Spectrum, 1], Data[(int)Spectrum, 2], Data[(int)Spectrum, 3]);
 

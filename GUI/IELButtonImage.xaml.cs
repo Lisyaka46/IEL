@@ -141,12 +141,12 @@ namespace IEL.GUI
         /// <summary>
         /// Объект события активации левым щелчком мыши
         /// </summary>
-        public IIELButton.Activate? OnActivateMouseLeft { get; set; }
+        public IIELButton.ActivateHandler? OnActivateMouseLeft { get; set; }
 
         /// <summary>
         /// Объект события активации правым щелчком мыши
         /// </summary>
-        public IIELButton.Activate? OnActivateMouseRight { get; set; }
+        public IIELButton.ActivateHandler? OnActivateMouseRight { get; set; }
 
         /// <summary>
         /// Инициализировать объект кнопки с изображением

@@ -9,6 +9,9 @@ using System.Windows.Media;
 
 namespace IEL.CORE.Classes.ObjectSettings
 {
+    /// <summary>
+    /// Класс настроек отображения возможных использований нажатия на элемент
+    /// </summary>
     public class IELMouseImageSetting
     {
         #region ImagedEventsButton
@@ -36,9 +39,6 @@ namespace IEL.CORE.Classes.ObjectSettings
         }
 
         #region OnlyRightEventImageMouse
-        public static readonly DependencyProperty Property_OnlyRightEventImageMouse = 
-            DependencyProperty.Register("OnlyRightEventImageMouse", typeof(ImageSource), typeof(IELMouseImageSetting));
-
         /// <summary>
         /// Изображение отображения событий нажатия только при правой возможности нажатия
         /// </summary>
@@ -59,22 +59,11 @@ namespace IEL.CORE.Classes.ObjectSettings
         }
 
         /// <summary>
-        /// Узнать отображения действий над кнопкой
-        /// </summary>
-        /// <returns>Изображение мыши с действиями</returns>
-        public ImageSource? ImageMouseButton(object? Left, object? Right) =>
-            Task.FromResult(GetImageMouseEvents(
-                Left != null ?
-                    (Right != null ? EventsMouse.Full : EventsMouse.Left) :
-                    (Right != null ? EventsMouse.Right : EventsMouse.Not)
-            )).Result;
-
-        /// <summary>
         /// Получить изображение событий по перечислению
         /// </summary>
         /// <param name="Event">Тип состояния событий нажатия</param>
         /// <returns>Возможное изображение отображения событий</returns>
-        private ImageSource? GetImageMouseEvents(EventsMouse Event) => EventImageSourceMouse[(int)Event];
+        internal ImageSource? GetImageMouseEvents(EventsMouse Event) => EventImageSourceMouse[(int)Event];
         #endregion
 
         /// <summary>

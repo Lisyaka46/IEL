@@ -2,6 +2,9 @@
 
 namespace IEL.CORE.Classes.ObjectSettings
 {
+    /// <summary>
+    /// Класс настроек всех управляющих объектов интерфейса
+    /// </summary>
     public class IELUsingObjectSetting : IELObjectSetting
     {
         #region MouseHover
@@ -38,6 +41,9 @@ namespace IEL.CORE.Classes.ObjectSettings
         public event EventHandler? MouseHover;
         #endregion
 
+        /// <summary>
+        /// Инициализировать настройку всех управляющих объектов интерфейса по умолчанию
+        /// </summary>
         public IELUsingObjectSetting()
         {
             TimerBorderInfo.Tick += (sender, e) =>

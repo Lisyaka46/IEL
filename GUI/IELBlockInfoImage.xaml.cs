@@ -111,6 +111,9 @@ namespace IEL.GUI
         /// </summary>
         public Image MainFrontImage => MainImage;
 
+        /// <summary>
+        /// Инициализировать объект интерфейса отображения информации через изображение
+        /// </summary>
         public IELBlockInfoImage()
         {
             InitializeComponent();

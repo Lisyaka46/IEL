@@ -146,6 +146,9 @@ namespace IEL.CORE.Classes
         }
         #endregion
 
+        /// <summary>
+        /// Инициализация объекта цветовых настроек по умолчанию
+        /// </summary>
         public BrushSettingQ()
         {
             UsedState = false;

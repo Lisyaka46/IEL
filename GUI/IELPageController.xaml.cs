@@ -70,6 +70,9 @@ namespace IEL.GUI
         /// </remarks>
         public Thickness RightAnimateSwitch { get; set; }
 
+        /// <summary>
+        /// Горизонтальная ориентация содержимого
+        /// </summary>
         public new HorizontalAlignment HorizontalAlignment
         {
             get
@@ -84,6 +87,9 @@ namespace IEL.GUI
             }
         }
 
+        /// <summary>
+        /// Вертикальная ориентация содержимого
+        /// </summary>
         public new VerticalAlignment VerticalAlignment
         {
             get
@@ -98,6 +104,9 @@ namespace IEL.GUI
             }
         }
 
+        /// <summary>
+        /// Инициализировать объект интерфейса. Контроллер страничных объектов
+        /// </summary>
         public IELPageController()
         {
             InitializeComponent();

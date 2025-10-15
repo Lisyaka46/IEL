@@ -221,6 +221,9 @@ namespace IEL.GUI
         /// </summary>
         public bool IsFocus { get; private set; } = false;
 
+        /// <summary>
+        /// Инициализировать объект интерфейса. Текстовый ввод
+        /// </summary>
         public IELTextBox()
         {
             InitializeComponent();

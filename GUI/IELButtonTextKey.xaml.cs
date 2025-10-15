@@ -169,12 +169,12 @@ namespace IEL.GUI
         /// <summary>
         /// Объект события активации левым щелчком мыши
         /// </summary>
-        public IIELButton.Activate? OnActivateMouseLeft { get; set; }
+        public IIELButton.ActivateHandler? OnActivateMouseLeft { get; set; }
 
         /// <summary>
         /// Объект события активации правым щелчком мыши
         /// </summary>
-        public IIELButton.Activate? OnActivateMouseRight { get; set; }
+        public IIELButton.ActivateHandler? OnActivateMouseRight { get; set; }
 
         /// <summary>
         /// Смещение контента в объекте
@@ -185,6 +185,9 @@ namespace IEL.GUI
             set => BorderButton.Padding = value;
         }
 
+        /// <summary>
+        /// Инициализировать объект интерфейса кнопки с текстом поддерживающую возможность нажатия с помощью клавиши
+        /// </summary>
         public IELButtonTextKey()
         {
             InitializeComponent();

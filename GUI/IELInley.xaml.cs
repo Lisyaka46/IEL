@@ -12,7 +12,7 @@ namespace IEL.GUI
     /// <summary>
     /// Логика взаимодействия для IELInley.xaml
     /// </summary>
-    public partial class IELInlay : UserControl
+    public partial class IELInlay : UserControl, IIELButton
     {
         private IELUsingObjectSetting _IELSettingObject = new();
         /// <summary>
@@ -94,17 +94,17 @@ namespace IEL.GUI
         /// <summary>
         /// Объект события активации левым щелчком мыши
         /// </summary>
-        public IIELButton.Activate? OnActivateMouseLeft { get; set; }
+        public IIELButton.ActivateHandler? OnActivateMouseLeft { get; set; }
 
         /// <summary>
         /// Объект события активации правым щелчком мыши
         /// </summary>
-        public IIELButton.Activate? OnActivateMouseRight { get; set; }
+        public IIELButton.ActivateHandler? OnActivateMouseRight { get; set; }
 
         /// <summary>
         /// Объект события активации закрытия вкладки
         /// </summary>
-        public IIELButton.Activate? OnActivateCloseInlay { get; set; }
+        public IIELButton.ActivateHandler? OnActivateCloseInlay { get; set; }
 
         /// <summary>
         /// Страница заголовка
@@ -188,6 +188,9 @@ namespace IEL.GUI
         /// </summary>
         private Thickness BorderThicknessDiactive;
 
+        /// <summary>
+        /// Инициализировать объект интерфейса, вкладка браузера
+        /// </summary>
         public IELInlay()
         {
             InitializeComponent();

@@ -1,11 +1,24 @@
 ﻿namespace IEL.Interfaces.Core
 {
+    /// <summary>
+    /// Интерфейс элемента браузера страницы IEL
+    /// </summary>
     public interface IBrowserPage : IDisposable
     {
-        public delegate void BrowserEvent(IBrowserPage browser_page);
+        /// <summary>
+        /// Делегат обычного события реализуемое браузером
+        /// </summary>
+        /// <param name="Source">Элемент который вызвал данное событие</param>
+        public delegate void BrowserEventHandler(IBrowserPage Source);
 
-        public abstract BrowserEvent? EventUnfocusPage { get; }
+        /// <summary>
+        /// Событие отключения фокуса на элемент страницы браузера
+        /// </summary>
+        public event BrowserEventHandler? UnfocusPage;
 
-        public abstract BrowserEvent? EventFocusPage { get; }
+        /// <summary>
+        /// Событие добавления фокуса на элемент страницы браузера
+        /// </summary>
+        public event BrowserEventHandler? FocusPage;
     }
 }

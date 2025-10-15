@@ -113,6 +113,9 @@ namespace IEL.GUI
             }
         }
 
+        /// <summary>
+        /// Инициализировать объект интерфейса отображения информации через текст
+        /// </summary>
         public IELBlockInfoText()
         {
             InitializeComponent();

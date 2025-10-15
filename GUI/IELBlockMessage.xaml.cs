@@ -161,6 +161,9 @@ namespace IEL.GUI
         #endregion
 
         #region ** Inicialize Object **
+        /// <summary>
+        /// Инициализировать объект интерфейса отображения сообщения
+        /// </summary>
         public IELBlockMessage()
         {
             InitializeComponent();
@@ -194,7 +197,6 @@ namespace IEL.GUI
         /// Активировать панель сообщения по привязке к объекту
         /// </summary>
         /// <param name="Element">Элемент к которому прикрепляется панель сообщения</param>
-        /// <param name="Name">Имя объекта привязки</param>
         /// <param name="TextVisible">Текст который выводится панелью сообщения</param>
         /// <param name="Orientation">Привязка к позиционированию панели</param>
         public void UsingBorderInformation(FrameworkElement Element, string TextVisible, OrientationBorderPosition Orientation)
@@ -323,23 +325,11 @@ namespace IEL.GUI
             Point Offset = new(
                 Orientation == OrientationBorderPosition.LeftDown || Orientation == OrientationBorderPosition.LeftUp ? -OffsetLeftRight : OffsetLeftRight,
                 Orientation == OrientationBorderPosition.LeftUp || Orientation == OrientationBorderPosition.RightUp ? -OffsetUpDown : OffsetUpDown);
-            //BorderInformation.Margin = new(OffsetPosElement.X - BorderInformation.ActualWidth, OffsetPosElement.Y + Element.Height, 0, 0);
 
             ThicknessAnimate.From = new(Position.X, Position.Y, 0, 0);
             ThicknessAnimate.To = new(Position.X + Offset.X, Position.Y + Offset.Y, 0, 0);
             ThicknessAnimate.Duration = TimeSpan.FromMilliseconds(400d);
             BeginAnimation(MarginProperty, ThicknessAnimate);
-            ThicknessAnimate.Duration = TimeSpan.FromMilliseconds(300d);
-            ThicknessAnimate.From = null;
-
-            /*DoubleAnimateObj.From = 0d;
-            DoubleAnimateObj.To = (double)BorderInformation.ActualWidth;
-            BorderInformation.BeginAnimation(WidthProperty, DoubleAnimateObj);
-
-
-            DoubleAnimateObj.To = (double)BorderInformation.ActualHeight;
-            BorderInformation.BeginAnimation(HeightProperty, DoubleAnimateObj);
-            DoubleAnimateObj.From = null;*/
         }
         #endregion
     }

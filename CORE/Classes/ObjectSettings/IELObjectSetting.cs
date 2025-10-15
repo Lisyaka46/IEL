@@ -7,6 +7,9 @@ using Color = System.Windows.Media.Color;
 
 namespace IEL.CORE.Classes.ObjectSettings
 {
+    /// <summary>
+    /// Общий класс настроек объектов интерфейса
+    /// </summary>
     public partial class IELObjectSetting : DependencyObject, IIELObjectSetting
     {
         /// <summary>

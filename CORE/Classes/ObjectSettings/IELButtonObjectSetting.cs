@@ -6,6 +6,9 @@ using System.Windows.Media;
 
 namespace IEL.CORE.Classes.ObjectSettings
 {
+    /// <summary>
+    /// Класс настроек всех кнопочных видов объектов
+    /// </summary>
     public class IELButtonObjectSetting : IELUsingObjectSetting
     {
         #region StateVisualizationButton
@@ -69,7 +72,7 @@ namespace IEL.CORE.Classes.ObjectSettings
             if (SettingMouseImage == null) return;
             if (_VisibleMouseImaging)
             {
-                Element.Source = SettingMouseImage.ImageMouseButton(Button.OnActivateMouseLeft, Button.OnActivateMouseRight);
+                Element.Source = SettingMouseImage.GetImageMouseEvents(Button.GetSourceEventMouse());
                 Element.UpdateLayout();
             }
             UpdateVisibleMouseEvents(Element, Activate);

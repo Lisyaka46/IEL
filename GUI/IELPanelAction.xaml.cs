@@ -159,6 +159,9 @@ namespace IEL.GUI
         /// </summary>
         private bool ActiveKeyboardMode;
 
+        /// <summary>
+        /// Инициализировать объект интерфейса. Панель действий
+        /// </summary>
         public IELPanelAction()
         {
             InitializeComponent();
@@ -244,6 +247,7 @@ namespace IEL.GUI
         /// Метод использования панели действий независимо на её состояния
         /// </summary>
         /// <param name="SettingVisual">Объект настроек для взаимодействия с панелью действий</param>
+        /// <param name="Orientation">Ориентация привязки к объекту</param>
         public void UsingPanelAction(PanelActionSettingVisual SettingVisual, OrientationBorderPosition Orientation = OrientationBorderPosition.LeftUp)
         {
             if (!PanelActionActivate) OpenPanelAction(SettingVisual, Orientation);
@@ -274,6 +278,7 @@ namespace IEL.GUI
         /// Метод открытия панели действий
         /// </summary>
         /// <param name="SettingVisual">Объект настроек для открытия панели действий</param>
+        /// <param name="Orientation">Ориентация привязки к объекту</param>
         [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         private void OpenPanelAction(PanelActionSettingVisual SettingVisual, OrientationBorderPosition Orientation)
         {
@@ -416,10 +421,12 @@ namespace IEL.GUI
         /// <summary>
         /// Анимировать передвижение панели действий константно
         /// </summary>
-        /// <param name="StylePositionToAnimate">Вид вычисления позиции позиции анимации</param>
+        /// <param name="StylePositionToAnimate">Вид вычисления позиции анимации</param>
         /// <param name="ActionPanelSize">Размер панели действий при взаимодействии</param>
         /// <param name="Element">Элемент в котором будет находиться панель</param>
-        private void AnimationMovePanelAction(PositionAnimActionPanel StylePositionToAnimate, Size ActionPanelSize, FrameworkElement Element, OrientationBorderPosition Orientation)
+        /// <param name="Orientation">Ориентация привязки к объекту</param>
+        private void AnimationMovePanelAction(PositionAnimActionPanel StylePositionToAnimate, Size ActionPanelSize,
+            FrameworkElement Element, OrientationBorderPosition Orientation)
         {
             ThicknessAnimation animation = ThicknessAnimate.Clone();
             if (StylePositionToAnimate == PositionAnimActionPanel.Cursor)
