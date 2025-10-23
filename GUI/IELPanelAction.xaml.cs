@@ -415,7 +415,7 @@ namespace IEL.GUI
                 }
                 animation.Completed += SetZOne;
             }
-            BeginAnimation(HeightProperty, animation);
+            BeginAnimation(HeightProperty, animation, HandoffBehavior.SnapshotAndReplace);
         }
 
         /// <summary>
@@ -483,7 +483,7 @@ namespace IEL.GUI
                         Margin.Top + Height / 2,
                         0, 0);
             }
-            BeginAnimation(MarginProperty, animation);
+            BeginAnimation(MarginProperty, animation, HandoffBehavior.SnapshotAndReplace);
         }
     }
 }

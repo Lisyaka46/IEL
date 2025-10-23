@@ -31,7 +31,7 @@ namespace IEL.GUI
                     if (Animated)
                     {
                         ColorAnimation anim = IELSettingObject.ObjectAnimateSetting.GetAnimationColor(NewValue);
-                        BorderMain.Background.BeginAnimation(SolidColorBrush.ColorProperty, anim);
+                        BorderMain.Background.BeginAnimation(SolidColorBrush.ColorProperty, anim, HandoffBehavior.SnapshotAndReplace);
                     }
                     else
                     {
@@ -44,8 +44,8 @@ namespace IEL.GUI
                     if (Animated)
                     {
                         ColorAnimation anim = IELSettingObject.ObjectAnimateSetting.GetAnimationColor(NewValue);
-                        BorderMain.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, anim);
-                        BorderMainPage.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, anim);
+                        BorderMain.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, anim, HandoffBehavior.SnapshotAndReplace);
+                        BorderMainPage.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, anim, HandoffBehavior.SnapshotAndReplace);
                     }
                     else
                     {
@@ -59,7 +59,7 @@ namespace IEL.GUI
                     if (Animated)
                     {
                         ColorAnimation anim = IELSettingObject.ObjectAnimateSetting.GetAnimationColor(NewValue);
-                        TextBlockNullPage.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, anim);
+                        TextBlockNullPage.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, anim, HandoffBehavior.SnapshotAndReplace);
                     }
                     else
                     {

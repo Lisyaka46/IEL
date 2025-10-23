@@ -39,9 +39,9 @@ namespace IEL.GUI
                     if (Animated)
                     {
                         ColorAnimation anim = IELSettingObject.ObjectAnimateSetting.GetAnimationColor(NewValue);
-                        BorderButton.Background.BeginAnimation(SolidColorBrush.ColorProperty, anim);
-                        BorderRightArrow.Background.BeginAnimation(SolidColorBrush.ColorProperty, anim);
-                        BorderLeftArrow.Background.BeginAnimation(SolidColorBrush.ColorProperty, anim);
+                        BorderButton.Background.BeginAnimation(SolidColorBrush.ColorProperty, anim, HandoffBehavior.SnapshotAndReplace);
+                        BorderRightArrow.Background.BeginAnimation(SolidColorBrush.ColorProperty, anim, HandoffBehavior.SnapshotAndReplace);
+                        BorderLeftArrow.Background.BeginAnimation(SolidColorBrush.ColorProperty, anim, HandoffBehavior.SnapshotAndReplace);
                     }
                     else
                     {
@@ -56,9 +56,9 @@ namespace IEL.GUI
                     if (Animated)
                     {
                         ColorAnimation anim = IELSettingObject.ObjectAnimateSetting.GetAnimationColor(NewValue);
-                        BorderButton.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, anim);
-                        BorderRightArrow.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, anim);
-                        BorderLeftArrow.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, anim);
+                        BorderButton.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, anim, HandoffBehavior.SnapshotAndReplace);
+                        BorderRightArrow.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, anim, HandoffBehavior.SnapshotAndReplace);
+                        BorderLeftArrow.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, anim, HandoffBehavior.SnapshotAndReplace);
                     }
                     else
                     {
@@ -73,8 +73,8 @@ namespace IEL.GUI
                     if (Animated)
                     {
                         ColorAnimation anim = IELSettingObject.ObjectAnimateSetting.GetAnimationColor(NewValue);
-                        TextBlockLeftArrow.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, anim);
-                        TextBlockRightArrow.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, anim);
+                        TextBlockLeftArrow.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, anim, HandoffBehavior.SnapshotAndReplace);
+                        TextBlockRightArrow.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, anim, HandoffBehavior.SnapshotAndReplace);
                     }
                     else
                     {
