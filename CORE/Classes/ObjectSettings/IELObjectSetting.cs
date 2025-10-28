@@ -1,9 +1,6 @@
 ﻿using IEL.CORE.Enums;
 using IEL.Interfaces;
-using System.IO;
-using System.Text.RegularExpressions;
 using System.Windows;
-using Color = System.Windows.Media.Color;
 
 namespace IEL.CORE.Classes.ObjectSettings
 {

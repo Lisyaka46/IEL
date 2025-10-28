@@ -248,7 +248,7 @@ namespace IEL.GUI
         /// </summary>
         /// <param name="SettingVisual">Объект настроек для взаимодействия с панелью действий</param>
         /// <param name="Orientation">Ориентация привязки к объекту</param>
-        public void UsingPanelAction(PanelActionSettingVisual SettingVisual, OrientationBorderPosition Orientation = OrientationBorderPosition.LeftUp)
+        public void UsingPanelAction(PanelActionSettingVisual SettingVisual, OrientationPanelActionPosition Orientation)
         {
             if (!PanelActionActivate) OpenPanelAction(SettingVisual, Orientation);
             else
@@ -280,7 +280,7 @@ namespace IEL.GUI
         /// <param name="SettingVisual">Объект настроек для открытия панели действий</param>
         /// <param name="Orientation">Ориентация привязки к объекту</param>
         [MethodImpl(MethodImplOptions.AggressiveOptimization)]
-        private void OpenPanelAction(PanelActionSettingVisual SettingVisual, OrientationBorderPosition Orientation)
+        private void OpenPanelAction(PanelActionSettingVisual SettingVisual, OrientationPanelActionPosition Orientation)
         {
             if (PanelActionActivate) return;
             EventOpenPanelAction?.Invoke(this, EventArgs.Empty);
@@ -310,7 +310,7 @@ namespace IEL.GUI
             if (ActivateRightClickKeyboardMode) ActivateRightClickKeyboardMode = false;
             if (IsKeyboardModeExit) ActiveKeyboardMode = false;
             BeginAnimation(OpacityProperty, DoubleAnimateObj);
-            AnimationMovePanelAction(PositionAnim, new Size(0, 0), ActiveSettingVisual.ElementInPanel, OrientationBorderPosition.LeftUp);
+            AnimationMovePanelAction(PositionAnim, new Size(0, 0), ActiveSettingVisual.ElementInPanel, OrientationPanelActionPosition.LeftUp);
             AnimateSizePanelAction(new(0, 0));
             AddBufferElementPageAction(ActiveSettingVisual);
 
@@ -327,7 +327,7 @@ namespace IEL.GUI
         /// <param name="SettingVisual">Настройки для переключения между объектами</param>
         /// <param name="Orientation">По какой ориентации перемещать панель действий</param>
         /// <param name="RightAlgin">Справой стороны открывать страницу. При нулевом значении задействует позицию курсора</param>
-        public void MoveNextObjectPage([NotNull] PanelActionSettingVisual SettingVisual, OrientationBorderPosition Orientation,
+        public void MoveNextObjectPage([NotNull] PanelActionSettingVisual SettingVisual, OrientationPanelActionPosition Orientation,
             bool? RightAlgin = null)
         {
             AnimationMovePanelAction(PositionAnimActionPanel.Cursor, SettingVisual.SizedPanel,
@@ -426,7 +426,7 @@ namespace IEL.GUI
         /// <param name="Element">Элемент в котором будет находиться панель</param>
         /// <param name="Orientation">Ориентация привязки к объекту</param>
         private void AnimationMovePanelAction(PositionAnimActionPanel StylePositionToAnimate, Size ActionPanelSize,
-            FrameworkElement Element, OrientationBorderPosition Orientation)
+            FrameworkElement Element, OrientationPanelActionPosition Orientation)
         {
             ThicknessAnimation animation = ThicknessAnimate.Clone();
             if (StylePositionToAnimate == PositionAnimActionPanel.Cursor)
@@ -437,21 +437,21 @@ namespace IEL.GUI
                 // Смещение позиции области относительно внешнего элемента
                 Point OffsetPosElement = Element.TransformToAncestor((Visual)VisualParent).Transform(new Point(0, 0));
 
-                if (Orientation == OrientationBorderPosition.Auto)
+                if (Orientation == OrientationPanelActionPosition.Auto)
                 {
                     bool Up = MousePoint.Y <= Element.ActualHeight / 2;
                     Orientation = MousePoint.X <= Element.ActualWidth / 2 ?
-                        (Up ? OrientationBorderPosition.LeftUp : OrientationBorderPosition.LeftDown) :
-                        (Up ? OrientationBorderPosition.RightUp : OrientationBorderPosition.RightDown);
+                        (Up ? OrientationPanelActionPosition.LeftUp : OrientationPanelActionPosition.LeftDown) :
+                        (Up ? OrientationPanelActionPosition.RightUp : OrientationPanelActionPosition.RightDown);
                 }
 
                 #region (Left/Right)Position
-                if (Orientation == OrientationBorderPosition.LeftUp || Orientation == OrientationBorderPosition.LeftDown)
+                if (Orientation.Code_lr == 0x01)
                 {
                     if (MousePoint.X + ActionPanelSize.Width > Element.ActualWidth + OffsetPosElement.X)
                         MousePoint.X = Element.ActualWidth + OffsetPosElement.X - ActionPanelSize.Width - 1;
                 }
-                else if (Orientation == OrientationBorderPosition.RightUp || Orientation == OrientationBorderPosition.RightDown)
+                else if (Orientation.Code_lr == 0x00)
                 {
                     if (MousePoint.X - ActionPanelSize.Width < OffsetPosElement.X)
                         MousePoint.X = OffsetPosElement.X + 1;
@@ -459,17 +459,23 @@ namespace IEL.GUI
                 }
                 #endregion
 
-                #region (Up/Down)Position
-                if (Orientation == OrientationBorderPosition.LeftUp || Orientation == OrientationBorderPosition.RightUp)
+                #region (Up/Down/Center)Position
+                if (Orientation.Code_ud == 0x02)
                 {
                     if (MousePoint.Y + ActionPanelSize.Height > Element.ActualHeight + OffsetPosElement.Y)
                         MousePoint.Y = Element.ActualHeight + OffsetPosElement.Y - ActionPanelSize.Height - 1;
                 }
-                else if (Orientation == OrientationBorderPosition.LeftDown || Orientation == OrientationBorderPosition.RightDown)
+                else if (Orientation.Code_ud == 0x00)
                 {
                     if (MousePoint.Y - ActionPanelSize.Height < OffsetPosElement.Y)
                         MousePoint.Y = OffsetPosElement.Y + 1;
                     else MousePoint.Y -= ActionPanelSize.Height;
+                }
+                else if (Orientation.Code_ud == 0x01)
+                {
+                    if (MousePoint.Y - ActionPanelSize.Height / 2 < OffsetPosElement.Y)
+                        MousePoint.Y = OffsetPosElement.Y + 1;
+                    else MousePoint.Y -= ActionPanelSize.Height / 2;
                 }
                 #endregion
 
