@@ -4,7 +4,9 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d">
-    <Border x:Name="BorderMessage" CornerRadius="3,13,13,13" BorderThickness="2,2,2,2" BorderBrush="Black" Padding="5,5,5,5" Background="#FFE4BDBD">
-        <TextBlock x:Name="TextBlockMessage" TextWrapping="Wrap" Text="Hello" MaxWidth="200" TextAlignment="Center" VerticalAlignment="Center"/>
+    <Border x:Name="BorderMessage" CornerRadius="3,13,13,13" BorderThickness="2,2,2,2" BorderBrush="Black" Padding="13,0,13,0" Background="#FFE4BDBD">
+        <Grid x:Name="GridMessage" ClipToBounds="True">
+            <TextBlock x:Name="TextBlockMessage" TextWrapping="Wrap" Text="Hello" MaxWidth="200" TextAlignment="Center" VerticalAlignment="Top" Foreground="Black" Padding="0,1,0,1"/>
+        </Grid>
     </Border>
 </UserControl>

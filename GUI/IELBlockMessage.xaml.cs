@@ -109,10 +109,19 @@ namespace IEL.GUI
 
         #region Values Object
         #region Default
+        private uint _RadiusDefault;
         /// <summary>
         /// Радиус скруглённости обычной стороны панели сообщения
         /// </summary>
-        public uint RadiusDefault { get; set; }
+        public uint RadiusDefault
+        {
+            get => _RadiusDefault;
+            set
+            {
+                BorderMessage.Padding = new(value, 0, value, 0);
+                _RadiusDefault = value;
+            }
+        }
 
         /// <summary>
         /// Радиус скруглённости примагниченной стороны панели сообщения к объекту
@@ -168,6 +177,8 @@ namespace IEL.GUI
         {
             InitializeComponent();
             #region Set Values Object
+            TextBlockMessage.Margin = new(0);
+            TextBlockMessage.UpdateLayout();
             #region Values
             RadiusDefault = 13u;
             RadiusMagnite = 3u;
@@ -202,7 +213,25 @@ namespace IEL.GUI
         public void UsingBorderInformation(FrameworkElement Element, string TextVisible, OrientationBorderPosition Orientation)
         {
             CodeParentObject = Element.GetHashCode();
-            Text = TextVisible;
+            TextBlockMessage.Text = TextVisible;
+            TextBlockMessage.UpdateLayout();
+            GridMessage.UpdateLayout();
+            if (GridMessage.ActualHeight < TextBlockMessage.ActualHeight)
+            {
+                int Offset = (int)TextBlockMessage.ActualHeight - (int)GridMessage.ActualHeight;
+                ThicknessAnimation animation = new()
+                {
+                    EasingFunction = new SineEase() { EasingMode = EasingMode.EaseInOut, },
+                    BeginTime = TimeSpan.FromMilliseconds(160d),
+                    Duration = TimeSpan.FromMilliseconds(80d * Offset < 1200d ? 1200d : 80d * Offset),
+                    RepeatBehavior = RepeatBehavior.Forever,
+                    AutoReverse = true,
+                    From = TextBlockMessage.Margin,
+                    To = new(0, -Offset, 0, 0)
+                };
+                TextBlockMessage.BeginAnimation(MarginProperty, animation);
+            }
+            else TextBlockMessage.Margin = new(0);
             #region Auto
             if (Orientation == OrientationBorderPosition.Auto)
             {
@@ -249,6 +278,7 @@ namespace IEL.GUI
             if (!FlagMessage) return;
             FlagMessage = false;
             DoubleAnimation animation = DoubleAnimateObj.Clone();
+            TextBlockMessage.BeginAnimation(MarginProperty, null);
             void SetZOne(object? sender, EventArgs e)
             {
                 if (FlagMessage) return;
@@ -311,8 +341,9 @@ namespace IEL.GUI
             FlagMessage = true;
 
             Canvas.SetZIndex(this, 2);
-            DoubleAnimateObj.To = 0.8d;
-            BeginAnimation(OpacityProperty, DoubleAnimateObj);
+            DoubleAnimation animationD = DoubleAnimateObj.Clone();
+            animationD.To = 0.8d;
+            BeginAnimation(OpacityProperty, animationD);
 
             BorderMessage.CornerRadius = Orientation switch
             {
@@ -325,11 +356,11 @@ namespace IEL.GUI
             Point Offset = new(
                 Orientation == OrientationBorderPosition.LeftDown || Orientation == OrientationBorderPosition.LeftUp ? -OffsetLeftRight : OffsetLeftRight,
                 Orientation == OrientationBorderPosition.LeftUp || Orientation == OrientationBorderPosition.RightUp ? -OffsetUpDown : OffsetUpDown);
-
-            ThicknessAnimate.From = new(Position.X, Position.Y, 0, 0);
-            ThicknessAnimate.To = new(Position.X + Offset.X, Position.Y + Offset.Y, 0, 0);
-            ThicknessAnimate.Duration = TimeSpan.FromMilliseconds(400d);
-            BeginAnimation(MarginProperty, ThicknessAnimate);
+            ThicknessAnimation animation = ThicknessAnimate.Clone();
+            animation.From = new(Position.X, Position.Y, 0, 0);
+            animation.To = new(Position.X + Offset.X, Position.Y + Offset.Y, 0, 0);
+            animation.Duration = TimeSpan.FromMilliseconds(400d);
+            BeginAnimation(MarginProperty, animation);
         }
         #endregion
     }
