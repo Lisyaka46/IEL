@@ -3,18 +3,22 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:IEL.GUI"
-             mc:Ignorable="d" 
-             d:DesignHeight="30" d:DesignWidth="160">
+             xmlns:local="clr-namespace:IEL.GUI" MinWidth="130">
     <Grid>
-        <Border x:Name="BorderMain" Grid.ColumnSpan="2" BorderBrush="Black" BorderThickness="2,2,2,2" Background="#FF888282">
+        <Border x:Name="BorderMain" BorderBrush="Black" BorderThickness="2,2,2,2" Background="#FF888282">
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="10*"/>
-                    <ColumnDefinition Width="3*"/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <Grid x:Name="GridMain">
-                    <TextBlock x:Name="TextBlockHead" Text="Head" FontSize="16" TextWrapping="WrapWithOverflow" TextTrimming="CharacterEllipsis" AutomationProperties.IsRowHeader="True" Margin="7,0,7,0" VerticalAlignment="Center"/>
+                    <Grid.OpacityMask>
+                        <LinearGradientBrush EndPoint="1,0" StartPoint="-1,0" Opacity="1" ColorInterpolationMode="SRgbLinearInterpolation">
+                            <GradientStop Color="Black" Offset="0.8"/>
+                            <GradientStop x:Name="GradientInlayText" Color="Black" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Grid.OpacityMask>
+                    <TextBlock x:Name="TextBlockHead" Text="Text" Padding="7,0,7,0" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="16"/>
                 </Grid>
                 <Image x:Name="ImageCloseInlay" Grid.Column="1" Width="20" Height="20" Panel.ZIndex="1" AutomationProperties.IsColumnHeader="True" Margin="8,0,8,0"/>
             </Grid>

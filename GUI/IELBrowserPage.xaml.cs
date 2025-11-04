@@ -184,6 +184,32 @@ namespace IEL.GUI
         public double DefaultWidthNewInlay { get; set; }
 
         /// <summary>
+        /// Размер текста в элементе
+        /// </summary>
+        public new double FontSize
+        {
+            get => base.FontSize;
+            set
+            {
+                TextBlockNullPage.FontSize = value;
+                base.FontSize = value;
+            }
+        }
+
+        /// <summary>
+        /// Стиль текста в элементе
+        /// </summary>
+        public new FontFamily FontFamily
+        {
+            get => base.FontFamily;
+            set
+            {
+                TextBlockNullPage.FontFamily = value;
+                base.FontFamily = value;
+            }
+        }
+
+        /// <summary>
         /// Инициализировать объект интерфейса отображения страничных объектов
         /// </summary>
         public IELBrowserPage()
@@ -199,14 +225,47 @@ namespace IEL.GUI
             _IELButtonAddInlay = new();
             GridMainButtons.Children.Add(_IELButtonAddInlay);
             Grid.SetColumn(_IELButtonAddInlay, 1);
-            SizeChanged += (sender, e) =>
+            GridMainInlays.MouseWheel += (sender, e) =>
             {
-                _ = e.NewSize.Width;
-                double NewWidth = (e.NewSize.Width - 50) / IELInlays.Count;
-                if (NewWidth > DefaultWidthNewInlay) NewWidth = DefaultWidthNewInlay;
-                //if (GridMainInlays.ColumnDefinitions[0].Width.Value == NewWidth) return;
-                UpdateWidthInlays(NewWidth);
+                ScrollViewerInlays.ScrollToHorizontalOffset(ScrollViewerInlays.HorizontalOffset + (e.Delta < 0 ? 28 : -28));
+                e.Handled = true;
             };
+        }
+
+        #region ManipulateInlayAdd
+        /// <summary>
+        /// Добавить новую страницу
+        /// </summary>
+        /// <param name="Content">Добавляемая страница в баузер страниц</param>
+        /// <param name="Activate">Активировать сразу или нет страницу</param>
+        public IELInlay? AddInlayPage(BrowserPage? Content, bool Activate = true)
+        {
+            if (Content == null) return null;
+            IELInlay inlay = CreateInlay(Content);
+            inlay.OnActivateMouseRight += (sender, e, Key) => EventActiveActionInInlay?.Invoke(inlay);
+            inlay.Opacity = 0d;
+            if (InlaysCount == 0)
+            {
+                TextBlockNullPage.BeginAnimation(OpacityProperty,
+                    IELSettingObject.ObjectAnimateSetting.GetAnimationDouble(0d), HandoffBehavior.SnapshotAndReplace);
+            }
+            if (inlay.ActualWidth > DefaultWidthNewInlay)
+            {
+                ColorAnimation animation = IELSettingObject.ObjectAnimateSetting.GetAnimationColor();
+                animation.From = Colors.Black;
+                animation.To = System.Windows.Media.Color.FromArgb(0, 0, 0, 0);
+                animation.Duration = TimeSpan.FromMilliseconds(500d);
+                inlay.GradientInlayText.BeginAnimation(GradientStop.ColorProperty, animation);
+            }
+            inlay.Width = DefaultWidthNewInlay;
+            inlay.Margin = new(IELInlays.Count * DefaultWidthNewInlay, RowDefinitionMainInlays.Height.Value, 0, 0);
+
+            IELInlays.Add(inlay);
+            GridMainInlays.Children.Add(inlay);
+            AnimationNewInlayVisible(inlay);
+
+            if (Activate) ActivateInlayIndex(IELInlays.Count - 1);
+            return inlay;
         }
 
         /// <summary>
@@ -219,7 +278,7 @@ namespace IEL.GUI
             IELInlay Inlay = new()
             {
                 Text = Content.Title,
-                HorizontalAlignment = HorizontalAlignment.Stretch,
+                HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment = VerticalAlignment.Stretch,
                 //Margin = MarginDiactivateRightInlay,
                 BorderThicknessBlock = new(2),
@@ -231,8 +290,9 @@ namespace IEL.GUI
                     BorderBrushSetting = new(QDataDefaultInlayBorderBrush),
                     ForegroundSetting = new(QDataDefaultInlayForeground),
                 },
-                Padding = new(4, 4, 4, 0),
+                Padding = new(1, 4, 1, 0),
             };
+            Inlay.GradientInlayText.Color = Colors.Black;
             Inlay.OnActivateCloseInlay += (sender, e, Key) =>
             {
                 DeleteInlayPage(Inlay, ActivateIndex == IELInlays.IndexOf(Inlay));
@@ -262,102 +322,9 @@ namespace IEL.GUI
             };
             return Inlay;
         }
+        #endregion
 
-        /// <summary>
-        /// Добавить новую страницу
-        /// </summary>
-        /// <param name="Content">Добавляемая страница в баузер страниц</param>
-        /// <param name="Activate">Активировать сразу или нет страницу</param>
-        public IELInlay? AddInlayPage(BrowserPage? Content, bool Activate = true)
-        {
-            if (Content == null) return null;
-            IELInlay inlay = CreateInlay(Content);
-            inlay.OnActivateMouseRight += (sender, e, Key) => EventActiveActionInInlay?.Invoke(inlay);
-            inlay.Opacity = 0d;
-            if (InlaysCount == 0)
-            {
-                TextBlockNullPage.BeginAnimation(OpacityProperty, IELSettingObject.ObjectAnimateSetting.GetAnimationDouble(0d));
-            }
-            IELInlays.Add(inlay);
-            GridMainInlays.ColumnDefinitions.Add(
-                new()
-                {
-                    Width = new(DefaultWidthNewInlay, GridUnitType.Pixel),
-                    MaxWidth = 0d
-                });
-            GridMainInlays.Children.Add(inlay);
-            Grid.SetColumn(inlay, IELInlays.Count - 1);
-
-            double NewWidth = GridMainInlays.ActualWidth / IELInlays.Count;
-            if (NewWidth > DefaultWidthNewInlay) NewWidth = DefaultWidthNewInlay;
-            UpdateWidthInlays(NewWidth);
-
-            UsingInlayAnimationVisible(inlay);
-
-            if (Activate)
-            {
-                ActivateInlayIndex(IELInlays.Count - 1);
-            }
-            return inlay;
-        }
-
-        ///// <summary>
-        ///// Добавить новую страницу
-        ///// </summary>
-        ///// <param name="Content">Добавляемая страница в баузер страниц</param>
-        ///// <param name="Head">Наименование вкладки</param>
-        ///// <param name="Signature">Подпись вкладки</param>
-        ///// <param name="Activate">Активировать сразу или нет страницу</param>
-        //public void AddInlayPage(BrowserPage? Content, bool Activate = true)
-        //{
-        //    if (Content == null) return;
-        //    IELInlay inlay = CreateInlay(Content);
-        //    inlay.OnActivateMouseRight += (Key) => EventActiveActionInInlay?.Invoke(inlay);
-        //    inlay.Opacity = 0d;
-        //    if (InlaysCount == 0)
-        //    {
-        //        TextBlockNullPage.BeginAnimation(OpacityProperty, IELSettingObject.ObjectAnimateSetting.GetAnimationDouble(0d));
-        //    }
-        //    IELInlays.Add(inlay);
-        //    ColumnDefinition column = new()
-        //    {
-        //        Width = new(DefaultWidthNewInlay, GridUnitType.Pixel),
-        //        MaxWidth = 0d
-        //    };
-        //    GridMainInlays.ColumnDefinitions.Add(column);
-        //    GridMainInlays.Children.Add(inlay);
-        //    Grid.SetColumn(inlay, IELInlays.Count - 1);
-
-        //    double NewWidth = GridMainInlays.ActualWidth / IELInlays.Count;
-        //    if (NewWidth > DefaultWidthNewInlay) NewWidth = DefaultWidthNewInlay;
-        //    UpdateWidthInlays(NewWidth);
-
-        //    UsingInlayAnimationVisible(inlay);
-
-        //    if (Activate) ActivateInInlay(inlay);
-        //}
-
-        /// <summary>
-        /// Обновить длинну вкладок браузера
-        /// </summary>
-        /// <param name="NewWidth">Длинна к которой обновляется размер</param>
-        private void UpdateWidthInlays(double NewWidth)
-        {
-            DoubleAnimation animation = IELSettingObject.ObjectAnimateSetting.GetAnimationDouble();
-            animation.Duration = TimeSpan.FromMilliseconds(300d);
-            animation.To = NewWidth;
-            for (int i = 0; i < IELInlays.Count; i++)
-            {
-                //definition.Width = GridLength.Auto;
-                Storyboard storyboard = new();
-                storyboard.Children.Add(animation);
-                Storyboard.SetTarget(animation, GridMainInlays.ColumnDefinitions[Grid.GetColumn(IELInlays[i])]);
-                Storyboard.SetTargetProperty(animation, new PropertyPath("(ColumnDefinition.MaxWidth)"));
-                storyboard.Begin();
-                //definition.BeginAnimation(, animation);
-            }
-        }
-
+        #region ManipulateInlay
         /// <summary>
         /// Открыть страницу по индексу
         /// </summary>
@@ -397,18 +364,19 @@ namespace IEL.GUI
             }
             catch { }
         }
+        #endregion
 
+        #region ManipulateInlayAnimation
         /// <summary>
-        /// Анимировать видимость вкладки
+        /// Анимировать видимость новой вкладки
         /// </summary>
         /// <param name="Inlay">Вкладка которая анимируется</param>
-        /// <param name="Visible">Состояние стремления вкладки</param>
-        /// <param name="DurationMillisecond">Количество миллисекунд для анимации</param>
-        private void UsingInlayAnimationVisible(IELInlay Inlay, bool Visible = true, double DurationMillisecond = 800d)
+        private void AnimationNewInlayVisible(IELInlay Inlay)
         {
-            Canvas.SetZIndex(Inlay, Visible ? 1 : 0);
             Inlay.BeginAnimation(OpacityProperty, IELSettingObject.ObjectAnimateSetting.GetAnimationDouble(
-                Visible ? 1d : 0d, TimeSpan.FromMilliseconds(DurationMillisecond)));
+                1d, TimeSpan.FromMilliseconds(800d)), HandoffBehavior.SnapshotAndReplace);
+            Inlay.BeginAnimation(MarginProperty, IELSettingObject.ObjectAnimateSetting.GetAnimationThickness(
+                new(Inlay.Margin.Left, 0, 0, 0), TimeSpan.FromMilliseconds(800d)), HandoffBehavior.SnapshotAndReplace);
         }
 
         /// <summary>
@@ -416,13 +384,13 @@ namespace IEL.GUI
         /// </summary>
         /// <param name="Inlay">Вкладка которая анимируется</param>
         /// <param name="Activate">Состояние стремления вкладки</param>
-        /// <param name="DurationMillisecond">Количество миллисекунд для анимации</param>
-        private void UsingInlayAnimationActivate(IELInlay Inlay, bool Activate = true, double DurationMillisecond = 800d)
+        private void UsingInlayAnimationActivate(IELInlay Inlay, bool Activate = true)
         {
             if (!Activate) Inlay.PageElement?.EventUnfocusPage?.Invoke(Inlay.PageElement);
             Inlay.BeginAnimation(PaddingProperty, IELSettingObject.ObjectAnimateSetting.GetAnimationThickness(
-                Activate ? new(0) : new(4, 4, 4, 0), TimeSpan.FromMilliseconds(DurationMillisecond)));
+                Activate ? new(0) : new(4, 4, 4, 0), TimeSpan.FromMilliseconds(800d)), HandoffBehavior.SnapshotAndReplace);
         }
+        #endregion
 
         /// <summary>
         /// Сделать поиск страниц по типу
@@ -445,7 +413,7 @@ namespace IEL.GUI
         /// </summary>
         /// <typeparam name="T">Тип страницы поиска</typeparam>
         /// <returns>Найденная страница</returns>
-        public T? SearchPageType<T>() where T : Page
+        public T? SearchAnyPageType<T>() where T : Page
         {
             if (InlaysCount == 0) return default;
             foreach (IELInlay Inlay in IELInlays)
@@ -466,54 +434,28 @@ namespace IEL.GUI
             if (Index == -1) return;
             int IndexNext = NextIndex(Index, InlaysCount - 1), IndexColumn = Grid.GetColumn(inlay);
             IELInlay ActualInlay = IELInlays[Index];
-            GridMainInlays.ColumnDefinitions[IndexColumn].IsEnabled = false;
-            //ActualInlay.IsEnabled = false;
             ActualInlay.PageElement?.Dispose();
             Canvas.SetZIndex(ActualInlay, 0);
 
-            double NewWidth = GridMainInlays.ActualWidth / (IELInlays.Count - 1);
-            if (NewWidth > DefaultWidthNewInlay) NewWidth = DefaultWidthNewInlay;
-            UpdateWidthInlays(NewWidth);
-
             DoubleAnimation animationDouble = IELSettingObject.ObjectAnimateSetting.GetAnimationDouble();
-            //GridMainInlays.ColumnDefinitions[Index].MaxWidth = ActualInlay.ActualWidth;
-            //animationDouble.From = ActualInlay.ActualWidth;
-            animationDouble.To = 0d;
-            animationDouble.FillBehavior = FillBehavior.HoldEnd;
-            animationDouble.Duration = TimeSpan.FromMilliseconds(400d);
-            Storyboard storyboard = new();
-            storyboard.Children.Add(animationDouble);
-            storyboard.FillBehavior = FillBehavior.Stop;
-            storyboard.Completed += (sender, e) =>
-            {
-                if (Index < IELInlays.Count)
-                {
-                    while (GridMainInlays.ColumnDefinitions[IndexColumn].IsEnabled) IndexColumn--;
-                    GridMainInlays.ColumnDefinitions.RemoveAt(IndexColumn);
-                    for (int i = Index; i < IELInlays.Count; i++)
-                    {
-                        if (IELInlays[i].IsEnabled) Grid.SetColumn(IELInlays[i], Grid.GetColumn(IELInlays[i]) - 1);
-                    }
-                }
-            };
-            Storyboard.SetTarget(animationDouble, GridMainInlays.ColumnDefinitions[IndexColumn]);
-            Storyboard.SetTargetProperty(animationDouble, new PropertyPath("(ColumnDefinition.MaxWidth)"));
-            storyboard.Begin();
-
             animationDouble.FillBehavior = FillBehavior.Stop;
             animationDouble.Completed += (sender, e) =>
             {
                 ActualInlay.Opacity = 0d;
-                //Grid.SetColumnSpan(ActualInlay, 2);
-                //GridMainInlays.ColumnDefinitions[Index].MaxWidth = double.MaxValue;
                 GridMainInlays.Children.Remove(ActualInlay);
-                //GridMainInlays.Children.Remove(ActualInlay);
-                //Grid.SetColumnSpan(ActualInlay, 1);
             };
             IELInlays.RemoveAt(Index);
+            if (IndexNext > -1)
+            {
+                for (int i = IndexNext; i < IELInlays.Count; i++)
+                {
+                    IELInlays[i].BeginAnimation(MarginProperty, IELSettingObject.ObjectAnimateSetting.GetAnimationThickness(
+                        new(i * DefaultWidthNewInlay, 0, 0, 0), TimeSpan.FromMilliseconds(800d)), HandoffBehavior.SnapshotAndReplace);
+                }
+            }
+            ActualInlay.BeginAnimation(MarginProperty, IELSettingObject.ObjectAnimateSetting.GetAnimationThickness(
+                new(ActualInlay.Margin.Left, RowDefinitionMainInlays.Height.Value, 0, 0), TimeSpan.FromMilliseconds(800d)), HandoffBehavior.SnapshotAndReplace);
             ActualInlay.BeginAnimation(OpacityProperty, animationDouble);
-
-            //ActualInlay.BeginAnimation(OpacityProperty, animationDouble);
 
             if (ActivateNextInlay)
             {
@@ -526,13 +468,13 @@ namespace IEL.GUI
                 else
                 {
                     ActivateInlayIndex(IndexNext);
-                    //if (NextInlay.TextSignature.Length > 0) NextInlay.IsAnimatedSignatureText = true;
                 }
             }
             else if (ActivateIndex >= Index) ActivateIndex--;
             if (InlaysCount == 0)
             {
-                TextBlockNullPage.BeginAnimation(OpacityProperty, IELSettingObject.ObjectAnimateSetting.GetAnimationDouble(0.4d));
+                TextBlockNullPage.BeginAnimation(OpacityProperty,
+                    IELSettingObject.ObjectAnimateSetting.GetAnimationDouble(0.4d), HandoffBehavior.SnapshotAndReplace);
             }
         }
 

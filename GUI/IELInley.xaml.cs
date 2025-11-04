@@ -135,7 +135,13 @@ namespace IEL.GUI
         public string Text
         {
             get => TextBlockHead.Text;
-            set => TextBlockHead.Text = value;
+            set
+            {
+
+                TextBlockHead.Text = value;
+                TextBlockHead.UpdateLayout();
+                if (TextBlockHead.ActualWidth > MaxWidth) Width = MaxWidth;
+            }
         }
 
         private bool _UsedState;
