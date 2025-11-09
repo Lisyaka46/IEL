@@ -21,9 +21,9 @@ namespace IEL.CORE.Classes
             Data = new byte[4, 4]
             {
                 { 255, 0, 0, 0 },
-                { 255, 0, 0, 0 },
-                { 255, 0, 0, 0 },
-                { 255, 0, 0, 0 },
+                { 255, 128, 128, 128 },
+                { 255, 200, 200, 200 },
+                { 255, 255, 70, 70 },
             };
         }
 
@@ -54,20 +54,13 @@ namespace IEL.CORE.Classes
         /// </summary>
         /// <param name="Spectrum">Спектр</param>
         /// <param name="DataColor">Цвет</param>
-        internal void SetIndexingColor(StateSpectrum Spectrum, Color DataColor)
+        internal void SetIndexingColor(int Spectrum, Color DataColor)
         {
-            Data[(int)Spectrum, 0] = DataColor.A;
-            Data[(int)Spectrum, 1] = DataColor.R;
-            Data[(int)Spectrum, 2] = DataColor.G;
-            Data[(int)Spectrum, 3] = DataColor.B;
+            Data[Spectrum, 0] = DataColor.A;
+            Data[Spectrum, 1] = DataColor.R;
+            Data[Spectrum, 2] = DataColor.G;
+            Data[Spectrum, 3] = DataColor.B;
         }
-
-        /// <summary>
-        /// Установить цвет по спектру элемента
-        /// </summary>
-        /// <param name="Spectrum">Спектр</param>
-        public Color GetIndexingColor(StateSpectrum Spectrum) =>
-            Color.FromArgb(Data[(int)Spectrum, 0], Data[(int)Spectrum, 1], Data[(int)Spectrum, 2], Data[(int)Spectrum, 3]);
 
         /// <summary>
         /// Скопировать данные расположения цветов

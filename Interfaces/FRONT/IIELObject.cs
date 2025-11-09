@@ -1,4 +1,5 @@
-﻿using IEL.CORE.Classes.ObjectSettings;
+﻿using IEL.CORE.Classes;
+using IEL.CORE.Classes.ObjectSettings;
 using System.Windows.Input;
 
 namespace IEL.Interfaces.Front
@@ -8,6 +9,23 @@ namespace IEL.Interfaces.Front
     /// </summary>
     public interface IIELObject
     {
+        #region Color Setting
+        /// <summary>
+        /// Объект настройки состояний фона
+        /// </summary>
+        public BrushSettingQ Background { get; protected set; }
+
+        /// <summary>
+        /// Объект настройки состояний границы
+        /// </summary>
+        public BrushSettingQ BorderBrush { get; protected set; }
+
+        /// <summary>
+        /// Объект настройки состояний текста
+        /// </summary>
+        public BrushSettingQ Foreground { get; protected set; }
+        #endregion
+
         /// <summary>
         /// Статус активности объекта
         /// </summary>
