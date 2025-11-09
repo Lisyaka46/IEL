@@ -17,6 +17,59 @@ namespace IEL.GUI
     /// </summary>
     public partial class IELPanelAction : UserControl, IIELObject
     {
+        #region Color Setting
+        /// <summary>
+        /// Ресурсный объект настройки состояний фона
+        /// </summary>
+        private BrushSettingQ _Background;
+        /// <summary>
+        /// Объект настройки состояний фона
+        /// </summary>
+        public new BrushSettingQ Background
+        {
+            get => _Background;
+            set
+            {
+                _Background.CloneSpectrumActionInObject(value, true);
+                _Background = value;
+            }
+        }
+
+        /// <summary>
+        /// Ресурсный объект настройки состояний границы
+        /// </summary>
+        private BrushSettingQ _BorderBrush;
+        /// <summary>
+        /// Объект настройки состояний границы
+        /// </summary>
+        public new BrushSettingQ BorderBrush
+        {
+            get => _BorderBrush;
+            set
+            {
+                _BorderBrush.CloneSpectrumActionInObject(value, true);
+                _BorderBrush = value;
+            }
+        }
+
+        /// <summary>
+        /// Ресурсный объект настройки состояний текста
+        /// </summary>
+        private BrushSettingQ _Foreground;
+        /// <summary>
+        /// Объект настройки состояний текста
+        /// </summary>
+        public new BrushSettingQ Foreground
+        {
+            get => _Foreground;
+            set
+            {
+                _Foreground.CloneSpectrumActionInObject(value, true);
+                _Foreground = value;
+            }
+        }
+        #endregion
+
         /// <summary>
         /// Флаг состояния активности панели действий
         /// </summary>
@@ -80,6 +133,15 @@ namespace IEL.GUI
                 keys[2] = value;
             }
         }
+
+        /// <summary>
+        /// Объект анимации для управления размерами панели действий
+        /// </summary>
+        private static readonly ColorAnimation ColorAnimate = new(Colors.Black, TimeSpan.FromMilliseconds(200d))
+        {
+            DecelerationRatio = 0.6d,
+            EasingFunction = new CubicEase() { EasingMode = EasingMode.EaseOut }
+        };
 
         /// <summary>
         /// Объект анимации для управления размерами панели действий
@@ -165,6 +227,48 @@ namespace IEL.GUI
         public IELPanelAction()
         {
             InitializeComponent();
+            #region Background
+            _Background = new();
+            BorderActionPanel.Background = new SolidColorBrush(Background.ActiveSpectrumColor);
+            Background.SetSpectrumAction((Args) =>
+            {
+                if (Args.AnimatedEvent)
+                {
+                    ColorAnimate.To = Args.Value;
+                    BorderActionPanel.Background.BeginAnimation(SolidColorBrush.ColorProperty, ColorAnimate, HandoffBehavior.SnapshotAndReplace);
+                }
+                else
+                {
+                    ((SolidColorBrush)BorderActionPanel.Background).Color = Args.Value;
+                }
+            });
+            #endregion
+
+            #region BorderBrush
+            _BorderBrush = new();
+            BorderActionPanel.BorderBrush = new SolidColorBrush(BorderBrush.ActiveSpectrumColor);
+            BorderBrush.SetSpectrumAction((Args) =>
+            {
+                if (Args.AnimatedEvent)
+                {
+                    ColorAnimate.To = Args.Value;
+                    BorderActionPanel.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, ColorAnimate, HandoffBehavior.SnapshotAndReplace);
+                }
+                else
+                {
+                    ((SolidColorBrush)BorderActionPanel.BorderBrush).Color = Args.Value;
+                }
+            });
+            #endregion
+
+            #region Foreground
+            _Foreground = new();
+            Foreground.SetSpectrumAction((Args) =>
+            {
+
+            });
+            #endregion
+
             IsKeyboardModeExit = true;
             ActiveKeyboardMode = false;
             keys = [Key.Z, Key.Oem3, Key.Escape];

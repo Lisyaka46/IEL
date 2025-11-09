@@ -1,4 +1,5 @@
-﻿using IEL.CORE.Classes.ObjectSettings;
+﻿using IEL.CORE.Classes;
+using IEL.CORE.Classes.ObjectSettings;
 using IEL.CORE.Enums;
 using IEL.Interfaces.Front;
 using System.Windows;
@@ -14,6 +15,59 @@ namespace IEL.GUI
     /// </summary>
     public partial class IELBlockMessage : UserControl, IIELObject
     {
+        #region Color Setting
+        /// <summary>
+        /// Ресурсный объект настройки состояний фона
+        /// </summary>
+        private BrushSettingQ _Background;
+        /// <summary>
+        /// Объект настройки состояний фона
+        /// </summary>
+        public new BrushSettingQ Background
+        {
+            get => _Background;
+            set
+            {
+                _Background.CloneSpectrumActionInObject(value, true);
+                _Background = value;
+            }
+        }
+
+        /// <summary>
+        /// Ресурсный объект настройки состояний границы
+        /// </summary>
+        private BrushSettingQ _BorderBrush;
+        /// <summary>
+        /// Объект настройки состояний границы
+        /// </summary>
+        public new BrushSettingQ BorderBrush
+        {
+            get => _BorderBrush;
+            set
+            {
+                _BorderBrush.CloneSpectrumActionInObject(value, true);
+                _BorderBrush = value;
+            }
+        }
+
+        /// <summary>
+        /// Ресурсный объект настройки состояний текста
+        /// </summary>
+        private BrushSettingQ _Foreground;
+        /// <summary>
+        /// Объект настройки состояний текста
+        /// </summary>
+        public new BrushSettingQ Foreground
+        {
+            get => _Foreground;
+            set
+            {
+                _Foreground.CloneSpectrumActionInObject(value, true);
+                _Foreground = value;
+            }
+        }
+        #endregion
+
         #region Flags
         /// <summary>
         /// Флаг состояния активности панели сообщения
@@ -176,6 +230,30 @@ namespace IEL.GUI
         public IELBlockMessage()
         {
             InitializeComponent();
+            #region Background
+            _Background = new();
+            Background.SetSpectrumAction((Args) =>
+            {
+
+            });
+            #endregion
+
+            #region BorderBrush
+            _BorderBrush = new();
+            BorderBrush.SetSpectrumAction((Args) =>
+            {
+
+            });
+            #endregion
+
+            #region Foreground
+            _Foreground = new();
+            Foreground.SetSpectrumAction((Args) =>
+            {
+
+            });
+            #endregion
+
             #region Set Values Object
             TextBlockMessage.Margin = new(0);
             TextBlockMessage.UpdateLayout();

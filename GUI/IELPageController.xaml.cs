@@ -1,4 +1,5 @@
-﻿using IEL.Interfaces.Front;
+﻿using IEL.CORE.Classes;
+using IEL.Interfaces.Front;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows;
 using System.Windows.Controls;
@@ -9,8 +10,9 @@ namespace IEL.GUI
     /// <summary>
     /// Логика взаимодействия для IELPageController.xaml
     /// </summary>
-    public partial class IELPageController : UserControl, IIELObject
+    public partial class IELPageController : UserControl
     {
+
         /// <summary>
         /// Объект анимации для управления размерами панели действий
         /// </summary>
