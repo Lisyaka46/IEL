@@ -18,51 +18,48 @@ namespace IEL.GUI
         /// <summary>
         /// Ресурсный объект настройки состояний фона
         /// </summary>
-        private BrushSettingQ _Background;
+        private readonly new BrushSettingQ Background;
         /// <summary>
         /// Объект настройки состояний фона
         /// </summary>
-        public new BrushSettingQ Background
+        public BrushSettingQ QBackground
         {
-            get => _Background;
+            get => Background;
             set
             {
-                _Background.CloneSpectrumActionInObject(value, true);
-                _Background = value;
+                Background.ColorData = value.ColorData;
             }
         }
 
         /// <summary>
         /// Ресурсный объект настройки состояний границы
         /// </summary>
-        private BrushSettingQ _BorderBrush;
+        private readonly new BrushSettingQ BorderBrush;
         /// <summary>
         /// Объект настройки состояний границы
         /// </summary>
-        public new BrushSettingQ BorderBrush
+        public BrushSettingQ QBorderBrush
         {
-            get => _BorderBrush;
+            get => BorderBrush;
             set
             {
-                _BorderBrush.CloneSpectrumActionInObject(value, true);
-                _BorderBrush = value;
+                BorderBrush.ColorData = value.ColorData;
             }
         }
 
         /// <summary>
         /// Ресурсный объект настройки состояний текста
         /// </summary>
-        private BrushSettingQ _Foreground;
+        private readonly new BrushSettingQ Foreground;
         /// <summary>
         /// Объект настройки состояний текста
         /// </summary>
-        public new BrushSettingQ Foreground
+        public BrushSettingQ QForeground
         {
-            get => _Foreground;
+            get => Foreground;
             set
             {
-                _Foreground.CloneSpectrumActionInObject(value, true);
-                _Foreground = value;
+                Foreground.ColorData = value.ColorData;
             }
         }
         #endregion
@@ -136,54 +133,24 @@ namespace IEL.GUI
         {
             InitializeComponent();
             #region Background
-            _Background = new();
+            Background = new();
             MainBorder.Background = new SolidColorBrush(Background.ActiveSpectrumColor);
-            Background.SetSpectrumAction((Args) =>
-            {
-                if (Args.AnimatedEvent)
-                {
-                    ColorAnimation anim = IELSettingObject.ObjectAnimateSetting.GetAnimationColor(Args.Value);
-                    MainBorder.Background.BeginAnimation(SolidColorBrush.ColorProperty, anim, HandoffBehavior.SnapshotAndReplace);
-                }
-                else
-                {
-                    ((SolidColorBrush)MainBorder.Background).Color = Args.Value;
-                }
-            });
+
+            Background.ConnectSolidColorBrush((SolidColorBrush)MainBorder.Background);
             #endregion
 
             #region BorderBrush
-            _BorderBrush = new();
+            BorderBrush = new();
             MainBorder.BorderBrush = new SolidColorBrush(BorderBrush.ActiveSpectrumColor);
-            BorderBrush.SetSpectrumAction((Args) =>
-            {
-                if (Args.AnimatedEvent)
-                {
-                    ColorAnimation anim = IELSettingObject.ObjectAnimateSetting.GetAnimationColor(Args.Value);
-                    MainBorder.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, anim, HandoffBehavior.SnapshotAndReplace);
-                }
-                else
-                {
-                    ((SolidColorBrush)MainBorder.BorderBrush).Color = Args.Value;
-                }
-            });
+
+            BorderBrush.ConnectSolidColorBrush((SolidColorBrush)MainBorder.BorderBrush);
             #endregion
 
             #region Foreground
-            _Foreground = new();
+            Foreground = new();
             MainTextBlock.Foreground = new SolidColorBrush(Foreground.ActiveSpectrumColor);
-            Foreground.SetSpectrumAction((Args) =>
-            {
-                if (Args.AnimatedEvent)
-                {
-                    ColorAnimation anim = IELSettingObject.ObjectAnimateSetting.GetAnimationColor(Args.Value);
-                    MainTextBlock.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, anim, HandoffBehavior.SnapshotAndReplace);
-                }
-                else
-                {
-                    ((SolidColorBrush)MainTextBlock.Foreground).Color = Args.Value;
-                }
-            });
+
+            Foreground.ConnectSolidColorBrush((SolidColorBrush)MainTextBlock.Foreground);
             #endregion
 
             IELSettingObject = new();

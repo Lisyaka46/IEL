@@ -15,60 +15,57 @@ namespace IEL.GUI
     /// </summary>
     public partial class IELButtonTextKey : UserControl, IIELButtonKey
     {
-        #region Color Setting
-        /// <summary>
-        /// Ресурсный объект настройки состояний фона
-        /// </summary>
-        private BrushSettingQ _Background;
-        /// <summary>
-        /// Объект настройки состояний фона
-        /// </summary>
-        public new BrushSettingQ Background
-        {
-            get => _Background;
-            set
-            {
-                _Background.CloneSpectrumActionInObject(value, true);
-                _Background = value;
-            }
-        }
+		#region Color Setting
+		/// <summary>
+		/// Ресурсный объект настройки состояний фона
+		/// </summary>
+		private readonly new BrushSettingQ Background;
+		/// <summary>
+		/// Объект настройки состояний фона
+		/// </summary>
+		public BrushSettingQ QBackground
+		{
+			get => Background;
+			set
+			{
+				Background.ColorData = value.ColorData;
+			}
+		}
 
-        /// <summary>
-        /// Ресурсный объект настройки состояний границы
-        /// </summary>
-        private BrushSettingQ _BorderBrush;
-        /// <summary>
-        /// Объект настройки состояний границы
-        /// </summary>
-        public new BrushSettingQ BorderBrush
-        {
-            get => _BorderBrush;
-            set
-            {
-                _BorderBrush.CloneSpectrumActionInObject(value, true);
-                _BorderBrush = value;
-            }
-        }
+		/// <summary>
+		/// Ресурсный объект настройки состояний границы
+		/// </summary>
+		private readonly new BrushSettingQ BorderBrush;
+		/// <summary>
+		/// Объект настройки состояний границы
+		/// </summary>
+		public BrushSettingQ QBorderBrush
+		{
+			get => BorderBrush;
+			set
+			{
+				BorderBrush.ColorData = value.ColorData;
+			}
+		}
 
-        /// <summary>
-        /// Ресурсный объект настройки состояний текста
-        /// </summary>
-        private BrushSettingQ _Foreground;
-        /// <summary>
-        /// Объект настройки состояний текста
-        /// </summary>
-        public new BrushSettingQ Foreground
-        {
-            get => _Foreground;
-            set
-            {
-                _Foreground.CloneSpectrumActionInObject(value, true);
-                _Foreground = value;
-            }
-        }
-        #endregion
+		/// <summary>
+		/// Ресурсный объект настройки состояний текста
+		/// </summary>
+		private readonly new BrushSettingQ Foreground;
+		/// <summary>
+		/// Объект настройки состояний текста
+		/// </summary>
+		public BrushSettingQ QForeground
+		{
+			get => Foreground;
+			set
+			{
+				Foreground.ColorData = value.ColorData;
+			}
+		}
+		#endregion
 
-        private IELButtonObjectSetting _IELSettingObject = new();
+		private IELButtonObjectSetting _IELSettingObject = new();
         /// <summary>
         /// Настройка использования объекта
         /// </summary>
@@ -189,81 +186,42 @@ namespace IEL.GUI
         {
             InitializeComponent();
             #region Background
-            _Background = new();
+            Background = new();
             BorderButton.Background = new SolidColorBrush(Background.ActiveSpectrumColor);
             BorderCharKeyboard.Background = new SolidColorBrush(Background.ActiveSpectrumColor);
             BorderLeftArrow.Background = new SolidColorBrush(Background.ActiveSpectrumColor);
             BorderRightArrow.Background = new SolidColorBrush(Background.ActiveSpectrumColor);
-            Background.SetSpectrumAction((Args) =>
-            {
-                if (Args.AnimatedEvent)
-                {
-                    ColorAnimation anim = IELSettingObject.ObjectAnimateSetting.GetAnimationColor(Args.Value);
-                    BorderButton.Background.BeginAnimation(SolidColorBrush.ColorProperty, anim, HandoffBehavior.SnapshotAndReplace);
-                    BorderCharKeyboard.Background.BeginAnimation(SolidColorBrush.ColorProperty, anim, HandoffBehavior.SnapshotAndReplace);
-                    BorderRightArrow.Background.BeginAnimation(SolidColorBrush.ColorProperty, anim, HandoffBehavior.SnapshotAndReplace);
-                    BorderLeftArrow.Background.BeginAnimation(SolidColorBrush.ColorProperty, anim, HandoffBehavior.SnapshotAndReplace);
-                }
-                else
-                {
-                    ((SolidColorBrush)BorderButton.Background).Color = Args.Value;
-                    ((SolidColorBrush)BorderCharKeyboard.Background).Color = Args.Value;
-                    ((SolidColorBrush)BorderLeftArrow.Background).Color = Args.Value;
-                    ((SolidColorBrush)BorderRightArrow.Background).Color = Args.Value;
-                }
-            });
+                    
+            Background.ConnectSolidColorBrush((SolidColorBrush)BorderButton.Background);
+            Background.ConnectSolidColorBrush((SolidColorBrush)BorderCharKeyboard.Background);
+            Background.ConnectSolidColorBrush((SolidColorBrush)BorderLeftArrow.Background);
+            Background.ConnectSolidColorBrush((SolidColorBrush)BorderRightArrow.Background);
             #endregion
 
             #region BorderBrush
-            _BorderBrush = new();
+            BorderBrush = new();
             BorderButton.BorderBrush = new SolidColorBrush(BorderBrush.ActiveSpectrumColor);
             BorderCharKeyboard.BorderBrush = new SolidColorBrush(BorderBrush.ActiveSpectrumColor);
             BorderLeftArrow.BorderBrush = new SolidColorBrush(BorderBrush.ActiveSpectrumColor);
             BorderRightArrow.BorderBrush = new SolidColorBrush(BorderBrush.ActiveSpectrumColor);
-            BorderBrush.SetSpectrumAction((Args) =>
-            {
-                if (Args.AnimatedEvent)
-                {
-                    ColorAnimation anim = IELSettingObject.ObjectAnimateSetting.GetAnimationColor(Args.Value);
-                    BorderButton.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, anim, HandoffBehavior.SnapshotAndReplace);
-                    BorderCharKeyboard.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, anim, HandoffBehavior.SnapshotAndReplace);
-                    BorderRightArrow.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, anim, HandoffBehavior.SnapshotAndReplace);
-                    BorderLeftArrow.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, anim, HandoffBehavior.SnapshotAndReplace);
-                }
-                else
-                {
-                    ((SolidColorBrush)BorderButton.BorderBrush).Color = Args.Value;
-                    ((SolidColorBrush)BorderCharKeyboard.BorderBrush).Color = Args.Value;
-                    ((SolidColorBrush)BorderLeftArrow.BorderBrush).Color = Args.Value;
-                    ((SolidColorBrush)BorderRightArrow.BorderBrush).Color = Args.Value;
-                }
-            });
+
+            BorderBrush.ConnectSolidColorBrush((SolidColorBrush)BorderButton.BorderBrush);
+            BorderBrush.ConnectSolidColorBrush((SolidColorBrush)BorderCharKeyboard.BorderBrush);
+            BorderBrush.ConnectSolidColorBrush((SolidColorBrush)BorderLeftArrow.BorderBrush);
+            BorderBrush.ConnectSolidColorBrush((SolidColorBrush)BorderRightArrow.BorderBrush);
             #endregion
 
             #region Foreground
-            _Foreground = new();
+            Foreground = new();
             TextBlockButton.Foreground = new SolidColorBrush(Foreground.ActiveSpectrumColor);
             TextBlockCharKey.Foreground = new SolidColorBrush(Foreground.ActiveSpectrumColor);
             TextBlockLeftArrow.Foreground = new SolidColorBrush(Foreground.ActiveSpectrumColor);
             TextBlockRightArrow.Foreground = new SolidColorBrush(Foreground.ActiveSpectrumColor);
-            Foreground.SetSpectrumAction((Args) =>
-            {
-                if (Args.AnimatedEvent)
-                {
-                    ColorAnimation anim = IELSettingObject.ObjectAnimateSetting.GetAnimationColor(Args.Value);
-                    TextBlockButton.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, anim, HandoffBehavior.SnapshotAndReplace);
-                    TextBlockCharKey.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, anim, HandoffBehavior.SnapshotAndReplace);
-                    TextBlockLeftArrow.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, anim, HandoffBehavior.SnapshotAndReplace);
-                    TextBlockRightArrow.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, anim, HandoffBehavior.SnapshotAndReplace);
-                }
-                else
-                {
-                    ((SolidColorBrush)TextBlockButton.Foreground).Color = Args.Value;
-                    ((SolidColorBrush)TextBlockCharKey.Foreground).Color = Args.Value;
-                    ((SolidColorBrush)TextBlockLeftArrow.Foreground).Color = Args.Value;
-                    ((SolidColorBrush)TextBlockRightArrow.Foreground).Color = Args.Value;
-                }
-            });
+
+            Foreground.ConnectSolidColorBrush((SolidColorBrush)TextBlockButton.Foreground);
+            Foreground.ConnectSolidColorBrush((SolidColorBrush)TextBlockCharKey.Foreground);
+            Foreground.ConnectSolidColorBrush((SolidColorBrush)TextBlockLeftArrow.Foreground);
+            Foreground.ConnectSolidColorBrush((SolidColorBrush)TextBlockRightArrow.Foreground);
             #endregion
             IELSettingObject = new();
 

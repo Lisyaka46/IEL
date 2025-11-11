@@ -19,51 +19,48 @@ namespace IEL.GUI
         /// <summary>
         /// Ресурсный объект настройки состояний фона
         /// </summary>
-        private BrushSettingQ _Background;
+        private readonly new BrushSettingQ Background;
         /// <summary>
         /// Объект настройки состояний фона
         /// </summary>
-        public new BrushSettingQ Background
+        public BrushSettingQ QBackground
         {
-            get => _Background;
+            get => Background;
             set
             {
-                _Background.CloneSpectrumActionInObject(value, true);
-                _Background = value;
+                Background.ColorData = value.ColorData;
             }
         }
 
         /// <summary>
         /// Ресурсный объект настройки состояний границы
         /// </summary>
-        private BrushSettingQ _BorderBrush;
+        private readonly new BrushSettingQ BorderBrush;
         /// <summary>
         /// Объект настройки состояний границы
         /// </summary>
-        public new BrushSettingQ BorderBrush
+        public BrushSettingQ QBorderBrush
         {
-            get => _BorderBrush;
+            get => BorderBrush;
             set
             {
-                _BorderBrush.CloneSpectrumActionInObject(value, true);
-                _BorderBrush = value;
+                BorderBrush.ColorData = value.ColorData;
             }
         }
 
         /// <summary>
         /// Ресурсный объект настройки состояний текста
         /// </summary>
-        private BrushSettingQ _Foreground;
+        private readonly new BrushSettingQ Foreground;
         /// <summary>
         /// Объект настройки состояний текста
         /// </summary>
-        public new BrushSettingQ Foreground
+        public BrushSettingQ QForeground
         {
-            get => _Foreground;
+            get => Foreground;
             set
             {
-                _Foreground.CloneSpectrumActionInObject(value, true);
-                _Foreground = value;
+                Foreground.ColorData = value.ColorData;
             }
         }
         #endregion
@@ -231,27 +228,15 @@ namespace IEL.GUI
         {
             InitializeComponent();
             #region Background
-            _Background = new();
-            Background.SetSpectrumAction((Args) =>
-            {
-
-            });
+            Background = new();
             #endregion
 
             #region BorderBrush
-            _BorderBrush = new();
-            BorderBrush.SetSpectrumAction((Args) =>
-            {
-
-            });
+            BorderBrush = new();
             #endregion
 
             #region Foreground
-            _Foreground = new();
-            Foreground.SetSpectrumAction((Args) =>
-            {
-
-            });
+            Foreground = new();
             #endregion
 
             #region Set Values Object

@@ -17,63 +17,60 @@ namespace IEL.GUI
     /// </summary>
     public partial class IELPanelAction : UserControl, IIELObject
     {
-        #region Color Setting
-        /// <summary>
-        /// Ресурсный объект настройки состояний фона
-        /// </summary>
-        private BrushSettingQ _Background;
-        /// <summary>
-        /// Объект настройки состояний фона
-        /// </summary>
-        public new BrushSettingQ Background
-        {
-            get => _Background;
-            set
-            {
-                _Background.CloneSpectrumActionInObject(value, true);
-                _Background = value;
-            }
-        }
+		#region Color Setting
+		/// <summary>
+		/// Ресурсный объект настройки состояний фона
+		/// </summary>
+		private readonly new BrushSettingQ Background;
+		/// <summary>
+		/// Объект настройки состояний фона
+		/// </summary>
+		public BrushSettingQ QBackground
+		{
+			get => Background;
+			set
+			{
+				Background.ColorData = value.ColorData;
+			}
+		}
 
-        /// <summary>
-        /// Ресурсный объект настройки состояний границы
-        /// </summary>
-        private BrushSettingQ _BorderBrush;
-        /// <summary>
-        /// Объект настройки состояний границы
-        /// </summary>
-        public new BrushSettingQ BorderBrush
-        {
-            get => _BorderBrush;
-            set
-            {
-                _BorderBrush.CloneSpectrumActionInObject(value, true);
-                _BorderBrush = value;
-            }
-        }
+		/// <summary>
+		/// Ресурсный объект настройки состояний границы
+		/// </summary>
+		private readonly new BrushSettingQ BorderBrush;
+		/// <summary>
+		/// Объект настройки состояний границы
+		/// </summary>
+		public BrushSettingQ QBorderBrush
+		{
+			get => BorderBrush;
+			set
+			{
+				BorderBrush.ColorData = value.ColorData;
+			}
+		}
 
-        /// <summary>
-        /// Ресурсный объект настройки состояний текста
-        /// </summary>
-        private BrushSettingQ _Foreground;
-        /// <summary>
-        /// Объект настройки состояний текста
-        /// </summary>
-        public new BrushSettingQ Foreground
-        {
-            get => _Foreground;
-            set
-            {
-                _Foreground.CloneSpectrumActionInObject(value, true);
-                _Foreground = value;
-            }
-        }
-        #endregion
+		/// <summary>
+		/// Ресурсный объект настройки состояний текста
+		/// </summary>
+		private readonly new BrushSettingQ Foreground;
+		/// <summary>
+		/// Объект настройки состояний текста
+		/// </summary>
+		public BrushSettingQ QForeground
+		{
+			get => Foreground;
+			set
+			{
+				Foreground.ColorData = value.ColorData;
+			}
+		}
+		#endregion
 
-        /// <summary>
-        /// Флаг состояния активности панели действий
-        /// </summary>
-        public bool PanelActionActivate { get; private set; } = false;
+		/// <summary>
+		/// Флаг состояния активности панели действий
+		/// </summary>
+		public bool PanelActionActivate { get; private set; } = false;
 
         /// <summary>
         /// Состояние правого нажатия в режиме клавиатуры
@@ -228,45 +225,21 @@ namespace IEL.GUI
         {
             InitializeComponent();
             #region Background
-            _Background = new();
+            Background = new();
             BorderActionPanel.Background = new SolidColorBrush(Background.ActiveSpectrumColor);
-            Background.SetSpectrumAction((Args) =>
-            {
-                if (Args.AnimatedEvent)
-                {
-                    ColorAnimate.To = Args.Value;
-                    BorderActionPanel.Background.BeginAnimation(SolidColorBrush.ColorProperty, ColorAnimate, HandoffBehavior.SnapshotAndReplace);
-                }
-                else
-                {
-                    ((SolidColorBrush)BorderActionPanel.Background).Color = Args.Value;
-                }
-            });
+
+            Background.ConnectSolidColorBrush((SolidColorBrush)BorderActionPanel.Background);
             #endregion
 
             #region BorderBrush
-            _BorderBrush = new();
+            BorderBrush = new();
             BorderActionPanel.BorderBrush = new SolidColorBrush(BorderBrush.ActiveSpectrumColor);
-            BorderBrush.SetSpectrumAction((Args) =>
-            {
-                if (Args.AnimatedEvent)
-                {
-                    ColorAnimate.To = Args.Value;
-                    BorderActionPanel.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, ColorAnimate, HandoffBehavior.SnapshotAndReplace);
-                }
-                else
-                {
-                    ((SolidColorBrush)BorderActionPanel.BorderBrush).Color = Args.Value;
-                }
-            });
+
+            BorderBrush.ConnectSolidColorBrush((SolidColorBrush)BorderActionPanel.BorderBrush);
             #endregion
 
             #region Foreground
-            _Foreground = new();
-            Foreground.SetSpectrumAction((Args) =>
-            {
-
-            });
+            Foreground = new();
             #endregion
 
             IsKeyboardModeExit = true;

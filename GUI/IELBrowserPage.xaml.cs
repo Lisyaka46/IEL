@@ -1,6 +1,7 @@
 ﻿using IEL.CORE.Classes;
 using IEL.CORE.Classes.Browser;
 using IEL.CORE.Classes.ObjectSettings;
+using IEL.Interfaces.Front;
 using System.Collections.ObjectModel;
 using System.Drawing;
 using System.IO;
@@ -15,62 +16,59 @@ namespace IEL.GUI
     /// <summary>
     /// Логика взаимодействия для IELBrowserPage.xaml
     /// </summary>
-    public partial class IELBrowserPage : UserControl
+    public partial class IELBrowserPage : UserControl, IIELObject
     {
-        #region Color Setting
-        /// <summary>
-        /// Ресурсный объект настройки состояний фона
-        /// </summary>
-        private BrushSettingQ _Background;
-        /// <summary>
-        /// Объект настройки состояний фона
-        /// </summary>
-        public new BrushSettingQ Background
-        {
-            get => _Background;
-            set
-            {
-                _Background.CloneSpectrumActionInObject(value, true);
-                _Background = value;
-            }
-        }
+		#region Color Setting
+		/// <summary>
+		/// Ресурсный объект настройки состояний фона
+		/// </summary>
+		private readonly new BrushSettingQ Background;
+		/// <summary>
+		/// Объект настройки состояний фона
+		/// </summary>
+		public BrushSettingQ QBackground
+		{
+			get => Background;
+			set
+			{
+				Background.ColorData = value.ColorData;
+			}
+		}
 
-        /// <summary>
-        /// Ресурсный объект настройки состояний границы
-        /// </summary>
-        private BrushSettingQ _BorderBrush;
-        /// <summary>
-        /// Объект настройки состояний границы
-        /// </summary>
-        public new BrushSettingQ BorderBrush
-        {
-            get => _BorderBrush;
-            set
-            {
-                _BorderBrush.CloneSpectrumActionInObject(value, true);
-                _BorderBrush = value;
-            }
-        }
+		/// <summary>
+		/// Ресурсный объект настройки состояний границы
+		/// </summary>
+		private readonly new BrushSettingQ BorderBrush;
+		/// <summary>
+		/// Объект настройки состояний границы
+		/// </summary>
+		public BrushSettingQ QBorderBrush
+		{
+			get => BorderBrush;
+			set
+			{
+				BorderBrush.ColorData = value.ColorData;
+			}
+		}
 
-        /// <summary>
-        /// Ресурсный объект настройки состояний текста
-        /// </summary>
-        private BrushSettingQ _Foreground;
-        /// <summary>
-        /// Объект настройки состояний текста
-        /// </summary>
-        public new BrushSettingQ Foreground
-        {
-            get => _Foreground;
-            set
-            {
-                _Foreground.CloneSpectrumActionInObject(value, true);
-                _Foreground = value;
-            }
-        }
-        #endregion
+		/// <summary>
+		/// Ресурсный объект настройки состояний текста
+		/// </summary>
+		private readonly new BrushSettingQ Foreground;
+		/// <summary>
+		/// Объект настройки состояний текста
+		/// </summary>
+		public BrushSettingQ QForeground
+		{
+			get => Foreground;
+			set
+			{
+				Foreground.ColorData = value.ColorData;
+			}
+		}
+		#endregion
 
-        private IELObjectSetting _IELSettingObject = new();
+		private IELObjectSetting _IELSettingObject = new();
         /// <summary>
         /// Настройка использования объекта
         /// </summary>
@@ -228,57 +226,26 @@ namespace IEL.GUI
         {
             InitializeComponent();
             #region Background
-            _Background = new();
+            Background = new();
             BorderMain.Background = new SolidColorBrush(Background.ActiveSpectrumColor);
-            Background.SetSpectrumAction((Args) =>
-            {
-                if (Args.AnimatedEvent)
-                {
-                    ColorAnimation anim = IELSettingObject.ObjectAnimateSetting.GetAnimationColor(Args.Value);
-                    BorderMain.Background.BeginAnimation(SolidColorBrush.ColorProperty, anim, HandoffBehavior.SnapshotAndReplace);
-                }
-                else
-                {
-                    ((SolidColorBrush)BorderMain.Background).Color = Args.Value;
-                }
-            });
+
+            Background.ConnectSolidColorBrush((SolidColorBrush)BorderMain.Background);
             #endregion
 
             #region BorderBrush
-            _BorderBrush = new();
+            BorderBrush = new();
             BorderMain.BorderBrush = new SolidColorBrush(BorderBrush.ActiveSpectrumColor);
             BorderMainPage.BorderBrush = new SolidColorBrush(BorderBrush.ActiveSpectrumColor);
-            BorderBrush.SetSpectrumAction((Args) =>
-            {
-                if (Args.AnimatedEvent)
-                {
-                    ColorAnimation anim = IELSettingObject.ObjectAnimateSetting.GetAnimationColor(Args.Value);
-                    BorderMain.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, anim, HandoffBehavior.SnapshotAndReplace);
-                    BorderMainPage.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, anim, HandoffBehavior.SnapshotAndReplace);
-                }
-                else
-                {
-                    ((SolidColorBrush)BorderMain.BorderBrush).Color = Args.Value;
-                    ((SolidColorBrush)BorderMainPage.BorderBrush).Color = Args.Value;
-                }
-            });
+
+            BorderBrush.ConnectSolidColorBrush((SolidColorBrush)BorderMain.BorderBrush);
+            BorderBrush.ConnectSolidColorBrush((SolidColorBrush)BorderMainPage.BorderBrush);
             #endregion
 
             #region Foreground
-            _Foreground = new();
+            Foreground = new();
             TextBlockNullPage.Foreground = new SolidColorBrush(Foreground.ActiveSpectrumColor);
-            Foreground.SetSpectrumAction((Args) =>
-            {
-                if (Args.AnimatedEvent)
-                {
-                    ColorAnimation anim = IELSettingObject.ObjectAnimateSetting.GetAnimationColor(Args.Value);
-                    TextBlockNullPage.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, anim, HandoffBehavior.SnapshotAndReplace);
-                }
-                else
-                {
-                    ((SolidColorBrush)TextBlockNullPage.Foreground).Color = Args.Value;
-                }
-            });
+
+            Foreground.ConnectSolidColorBrush((SolidColorBrush)TextBlockNullPage.Foreground);
             #endregion
             IELSettingObject = new();
             QDataDefaultInlayBackground = new();
@@ -354,9 +321,9 @@ namespace IEL.GUI
                 },
                 Padding = new(1, 4, 1, 0),
             };
-            Inlay.Background.ColorData = (QData)QDataDefaultInlayBackground.Clone();
-            Inlay.BorderBrush.ColorData = (QData)QDataDefaultInlayBorderBrush.Clone();
-            Inlay.Foreground.ColorData = (QData)QDataDefaultInlayForeground.Clone();
+            Inlay.QBackground.ColorData = (QData)QDataDefaultInlayBackground.Clone();
+            Inlay.QBorderBrush.ColorData = (QData)QDataDefaultInlayBorderBrush.Clone();
+            Inlay.QForeground.ColorData = (QData)QDataDefaultInlayForeground.Clone();
             Inlay.GradientInlayText.Color = Colors.Black;
             Inlay.OnActivateCloseInlay += (sender, e, Key) =>
             {
