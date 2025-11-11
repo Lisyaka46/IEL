@@ -1,20 +1,71 @@
-﻿using IEL.CORE.Classes.Browser;
+﻿using IEL.CORE.Classes;
+using IEL.CORE.Classes.Browser;
 using IEL.CORE.Classes.ObjectSettings;
+using IEL.CORE.Enums;
 using IEL.Interfaces.Front;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
-using IEL.CORE.Enums;
 
-namespace IEL
+namespace IEL.GUI
 {
     /// <summary>
     /// Логика взаимодействия для IELInley.xaml
     /// </summary>
-    public partial class IELInlay : UserControl
+    public partial class IELInlay : UserControl, IIELButton
     {
-        private IELUsingObjectSetting _IELSettingObject = new();
+		#region Color Setting
+		/// <summary>
+		/// Ресурсный объект настройки состояний фона
+		/// </summary>
+		private readonly new BrushSettingQ Background;
+		/// <summary>
+		/// Объект настройки состояний фона
+		/// </summary>
+		public BrushSettingQ QBackground
+		{
+			get => Background;
+			set
+			{
+				Background.ColorData = value.ColorData;
+			}
+		}
+
+		/// <summary>
+		/// Ресурсный объект настройки состояний границы
+		/// </summary>
+		private readonly new BrushSettingQ BorderBrush;
+		/// <summary>
+		/// Объект настройки состояний границы
+		/// </summary>
+		public BrushSettingQ QBorderBrush
+		{
+			get => BorderBrush;
+			set
+			{
+				BorderBrush.ColorData = value.ColorData;
+			}
+		}
+
+		/// <summary>
+		/// Ресурсный объект настройки состояний текста
+		/// </summary>
+		private readonly new BrushSettingQ Foreground;
+		/// <summary>
+		/// Объект настройки состояний текста
+		/// </summary>
+		public BrushSettingQ QForeground
+		{
+			get => Foreground;
+			set
+			{
+				Foreground.ColorData = value.ColorData;
+			}
+		}
+		#endregion
+
+		private IELUsingObjectSetting _IELSettingObject = new();
         /// <summary>
         /// Настройка использования объекта
         /// </summary>
@@ -23,45 +74,7 @@ namespace IEL
             get => _IELSettingObject;
             set
             {
-                value.BackgroundSetting.SetActionColorChanged((Spectrum, NewValue, Animated) =>
-                {
-                    if (Animated)
-                    {
-                        ColorAnimation anim = IELSettingObject.ObjectAnimateSetting.GetAnimationColor(NewValue);
-                        BorderMain.Background.BeginAnimation(SolidColorBrush.ColorProperty, anim);
-                    }
-                    else
-                    {
-                        SolidColorBrush color = new(NewValue);
-                        BorderMain.Background = color;
-                    }
-                });
-                value.BorderBrushSetting.SetActionColorChanged((Spectrum, NewValue, Animated) =>
-                {
-                    if (Animated)
-                    {
-                        ColorAnimation anim = IELSettingObject.ObjectAnimateSetting.GetAnimationColor(NewValue);
-                        BorderMain.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, anim);
-                    }
-                    else
-                    {
-                        SolidColorBrush color = new(NewValue);
-                        BorderMain.BorderBrush = color;
-                    }
-                });
-                value.ForegroundSetting.SetActionColorChanged((Spectrum, NewValue, Animated) =>
-                {
-                    if (Animated)
-                    {
-                        ColorAnimation anim = IELSettingObject.ObjectAnimateSetting.GetAnimationColor(NewValue);
-                        TextBlockHead.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, anim);
-                    }
-                    else
-                    {
-                        SolidColorBrush color = new(NewValue);
-                        TextBlockHead.Foreground = color;
-                    }
-                });
+
                 _IELSettingObject = value;
             }
         }
@@ -94,17 +107,17 @@ namespace IEL
         /// <summary>
         /// Объект события активации левым щелчком мыши
         /// </summary>
-        public IIELButton.Activate? OnActivateMouseLeft { get; set; }
+        public IIELButton.ActivateHandler? OnActivateMouseLeft { get; set; }
 
         /// <summary>
         /// Объект события активации правым щелчком мыши
         /// </summary>
-        public IIELButton.Activate? OnActivateMouseRight { get; set; }
+        public IIELButton.ActivateHandler? OnActivateMouseRight { get; set; }
 
         /// <summary>
         /// Объект события активации закрытия вкладки
         /// </summary>
-        public IIELButton.Activate? OnActivateCloseInlay { get; set; }
+        public IIELButton.ActivateHandler? OnActivateCloseInlay { get; set; }
 
         /// <summary>
         /// Страница заголовка
@@ -135,7 +148,13 @@ namespace IEL
         public string Text
         {
             get => TextBlockHead.Text;
-            set => TextBlockHead.Text = value;
+            set
+            {
+
+                TextBlockHead.Text = value;
+                TextBlockHead.UpdateLayout();
+                if (TextBlockHead.ActualWidth > MaxWidth) Width = MaxWidth;
+            }
         }
 
         private bool _UsedState;
@@ -151,7 +170,9 @@ namespace IEL
                 _UsedState = value;
                 BorderMain.BeginAnimation(BorderThicknessProperty,
                     IELSettingObject.ObjectAnimateSetting.GetAnimationThickness(value ? BorderThicknessActive : BorderThicknessDiactive, TimeSpan.FromMilliseconds(800d)));
-                IELSettingObject.UseActiveQSetting(StateSpectrum.Default);
+                Background.SetActiveSpecrum(StateSpectrum.Default, true);
+                BorderBrush.SetActiveSpecrum(StateSpectrum.Default, true);
+                Foreground.SetActiveSpecrum(StateSpectrum.Default, true);
             }
         }
 
@@ -188,9 +209,33 @@ namespace IEL
         /// </summary>
         private Thickness BorderThicknessDiactive;
 
+        /// <summary>
+        /// Инициализировать объект интерфейса, вкладка браузера
+        /// </summary>
         public IELInlay()
         {
             InitializeComponent();
+            #region Background
+            Background = new();
+            BorderMain.Background = new SolidColorBrush(Background.ActiveSpectrumColor);
+                    
+            Background.ConnectSolidColorBrush((SolidColorBrush)BorderMain.Background);
+            #endregion
+
+            #region BorderBrush
+            BorderBrush = new();
+            BorderMain.BorderBrush = new SolidColorBrush(BorderBrush.ActiveSpectrumColor);
+                    
+            BorderBrush.ConnectSolidColorBrush((SolidColorBrush)BorderMain.BorderBrush);
+            #endregion
+
+            #region Foreground
+            Foreground = new();
+            TextBlockHead.Foreground = new SolidColorBrush(Foreground.ActiveSpectrumColor);
+
+            Foreground.ConnectSolidColorBrush((SolidColorBrush)TextBlockHead.Foreground);
+            #endregion
+
             BorderThicknessActive = new(
                 BorderThicknessBlock.Left + OffsetBorder, BorderThicknessBlock.Top + OffsetBorder,
                 BorderThicknessBlock.Right + OffsetBorder, BorderThicknessBlock.Bottom + OffsetBorder);
@@ -212,7 +257,9 @@ namespace IEL
             {
                 if (IsEnabled)
                 {
-                    IELSettingObject.UseActiveQSetting(StateSpectrum.Select);
+                    Background.SetActiveSpecrum(StateSpectrum.Select, true);
+                    BorderBrush.SetActiveSpecrum(StateSpectrum.Select, true);
+                    Foreground.SetActiveSpecrum(StateSpectrum.Select, true);
                     IELSettingObject.StartHover();
                 }
             };
@@ -227,7 +274,9 @@ namespace IEL
             {
                 if (IsEnabled)
                 {
-                    IELSettingObject.UseActiveQSetting(StateSpectrum.Default);
+                    Background.SetActiveSpecrum(StateSpectrum.Default, true);
+                    BorderBrush.SetActiveSpecrum(StateSpectrum.Default, true);
+                    Foreground.SetActiveSpecrum(StateSpectrum.Default, true);
                     IELSettingObject.StopHover();
                 }
             };
@@ -238,7 +287,9 @@ namespace IEL
             };
             BorderMain.MouseDown += (sender, e) =>
             {
-                IELSettingObject.UseActiveQSetting(StateSpectrum.Used, false);
+                Background.SetActiveSpecrum(StateSpectrum.Used, false);
+                BorderBrush.SetActiveSpecrum(StateSpectrum.Used, false);
+                Foreground.SetActiveSpecrum(StateSpectrum.Used, false);
                 IELSettingObject.StopHover();
             };
 
@@ -246,7 +297,9 @@ namespace IEL
             {
                 if (IsEnabled && OnActivateMouseLeft != null)
                 {
-                    IELSettingObject.UseActiveQSetting(StateSpectrum.Select);
+                    Background.SetActiveSpecrum(StateSpectrum.Select, true);
+                    BorderBrush.SetActiveSpecrum(StateSpectrum.Select, true);
+                    Foreground.SetActiveSpecrum(StateSpectrum.Select, true);
                     OnActivateMouseLeft?.Invoke(this, e);
                 }
             };
@@ -255,15 +308,19 @@ namespace IEL
             {
                 if (IsEnabled && OnActivateMouseRight != null)
                 {
-                    IELSettingObject.UseActiveQSetting(StateSpectrum.Select);
+                    Background.SetActiveSpecrum(StateSpectrum.Select, true);
+                    BorderBrush.SetActiveSpecrum(StateSpectrum.Select, true);
+                    Foreground.SetActiveSpecrum(StateSpectrum.Select, true);
                     OnActivateMouseRight?.Invoke(this, e);
                 }
             };
 
             IsEnabledChanged += (sender, e) =>
             {
-                bool NewValue = (bool)e.NewValue;
-                IELSettingObject.UseActiveQSetting(NewValue ? StateSpectrum.Default : StateSpectrum.NotEnabled);
+                StateSpectrum Value = (bool)e.NewValue ? StateSpectrum.Default : StateSpectrum.NotEnabled;
+                Background.SetActiveSpecrum(Value, true);
+                BorderBrush.SetActiveSpecrum(Value, true);
+                Foreground.SetActiveSpecrum(Value, true);
             };
         }
 

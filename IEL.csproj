@@ -1,25 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
-    <TargetFramework>net8.0-windows10.0.26100.0</TargetFramework>
+    <TargetFramework>net8.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
+	<GenerateDocumentationFile>true</GenerateDocumentationFile>
     <ImplicitUsings>enable</ImplicitUsings>
-    <Platforms>AnyCPU;x86;x64</Platforms>
+    <Platforms>AnyCPU</Platforms>
     <Configurations>Debug;Release;Testing</Configurations>
-    <SupportedOSPlatformVersion>10.0.26100.0</SupportedOSPlatformVersion>
+    <RepositoryUrl>https://github.com/Lisyaka46/IEL</RepositoryUrl>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Remove="Properties\Images\**" />
-    <EmbeddedResource Remove="Properties\Images\**" />
-    <None Remove="Properties\Images\**" />
-    <Page Remove="Properties\Images\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Resource Include="Properties\Resources\Cross.png" />
-  </ItemGroup>
 
   <ItemGroup>
     <Compile Update="GUI\BlockInfoImage.xaml.cs">

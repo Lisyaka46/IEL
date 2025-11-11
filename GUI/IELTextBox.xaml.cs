@@ -1,18 +1,69 @@
-﻿using IEL.CORE.Classes.ObjectSettings;
+﻿using IEL.CORE.Classes;
+using IEL.CORE.Classes.ObjectSettings;
+using IEL.CORE.Enums;
+using IEL.Interfaces.Front;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
-using IEL.CORE.Enums;
 
-namespace IEL
+namespace IEL.GUI
 {
     /// <summary>
     /// Логика взаимодействия для IELTextBox.xaml
     /// </summary>
-    public partial class IELTextBox : UserControl
+    public partial class IELTextBox : UserControl, IIELObject
     {
+        #region Color Setting
+        /// <summary>
+        /// Ресурсный объект настройки состояний фона
+        /// </summary>
+        private readonly new BrushSettingQ Background;
+        /// <summary>
+        /// Объект настройки состояний фона
+        /// </summary>
+        public BrushSettingQ QBackground
+        {
+            get => Background;
+            set
+            {
+                Background.ColorData = value.ColorData;
+            }
+        }
+
+        /// <summary>
+        /// Ресурсный объект настройки состояний границы
+        /// </summary>
+        private readonly new BrushSettingQ BorderBrush;
+        /// <summary>
+        /// Объект настройки состояний границы
+        /// </summary>
+        public BrushSettingQ QBorderBrush
+        {
+            get => BorderBrush;
+            set
+            {
+                BorderBrush.ColorData = value.ColorData;
+            }
+        }
+
+        /// <summary>
+        /// Ресурсный объект настройки состояний текста
+        /// </summary>
+        private readonly new BrushSettingQ Foreground;
+        /// <summary>
+        /// Объект настройки состояний текста
+        /// </summary>
+        public BrushSettingQ QForeground
+        {
+            get => Foreground;
+            set
+            {
+                Foreground.ColorData = value.ColorData;
+            }
+        }
+        #endregion
 
         private IELObjectSetting _IELSettingObject = new();
         /// <summary>
@@ -23,45 +74,6 @@ namespace IEL
             get => _IELSettingObject;
             set
             {
-                value.BackgroundSetting.SetActionColorChanged((Spectrum, NewValue, Animated) =>
-                {
-                    if (Animated)
-                    {
-                        ColorAnimation anim = IELSettingObject.ObjectAnimateSetting.GetAnimationColor(NewValue);
-                        TextBoxBorder.Background.BeginAnimation(SolidColorBrush.ColorProperty, anim);
-                    }
-                    else
-                    {
-                        SolidColorBrush color = new(NewValue);
-                        TextBoxBorder.Background = color;
-                    }
-                });
-                value.BorderBrushSetting.SetActionColorChanged((Spectrum, NewValue, Animated) =>
-                {
-                    if (Animated)
-                    {
-                        ColorAnimation anim = IELSettingObject.ObjectAnimateSetting.GetAnimationColor(NewValue);
-                        TextBoxBorder.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, anim);
-                    }
-                    else
-                    {
-                        SolidColorBrush color = new(NewValue);
-                        TextBoxBorder.BorderBrush = color;
-                    }
-                });
-                value.ForegroundSetting.SetActionColorChanged((Spectrum, NewValue, Animated) =>
-                {
-                    if (Animated)
-                    {
-                        ColorAnimation anim = IELSettingObject.ObjectAnimateSetting.GetAnimationColor(NewValue);
-                        TextBoxMain.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, anim);
-                    }
-                    else
-                    {
-                        SolidColorBrush color = new(NewValue);
-                        TextBoxMain.Foreground = color;
-                    }
-                });
                 _IELSettingObject = value;
             }
         }
@@ -173,15 +185,6 @@ namespace IEL
         }
 
         /// <summary>
-        /// Переопределённый объект фона
-        /// </summary>
-        public new Brush Background
-        {
-            get => TextBoxBorder.Background;
-            set => TextBoxBorder.Background = value;
-        }
-
-        /// <summary>
         /// Сделать фокус на элементе
         /// </summary>
         public new void Focus()
@@ -221,9 +224,32 @@ namespace IEL
         /// </summary>
         public bool IsFocus { get; private set; } = false;
 
+        /// <summary>
+        /// Инициализировать объект интерфейса. Текстовый ввод
+        /// </summary>
         public IELTextBox()
         {
             InitializeComponent();
+            #region Background
+            Background = new();
+            TextBoxBorder.Background = new SolidColorBrush(Background.ActiveSpectrumColor);
+                    
+            Background.ConnectSolidColorBrush((SolidColorBrush)TextBoxBorder.Background);
+            #endregion
+
+            #region BorderBrush
+            BorderBrush = new();
+            TextBoxBorder.BorderBrush = new SolidColorBrush(BorderBrush.ActiveSpectrumColor);
+
+            BorderBrush.ConnectSolidColorBrush((SolidColorBrush)TextBoxBorder.BorderBrush);
+            #endregion
+
+            #region Foreground
+            Foreground = new();
+            TextBoxMain.Foreground = new SolidColorBrush(Foreground.ActiveSpectrumColor);
+
+            Foreground.ConnectSolidColorBrush((SolidColorBrush)TextBoxMain.Foreground);
+            #endregion
             IELSettingObject = new();
 
             TextBoxMain.ContextMenu = null;
@@ -232,28 +258,44 @@ namespace IEL
             GotKeyboardFocus += (sender, e) =>
             {
                 IsFocus = true;
-                IELSettingObject.UseActiveQSetting(StateSpectrum.Used);
+                Background.SetActiveSpecrum(StateSpectrum.Used, true);
+                BorderBrush.SetActiveSpecrum(StateSpectrum.Used, true);
+                Foreground.SetActiveSpecrum(StateSpectrum.Used, true);
             };
             LostKeyboardFocus += (sender, e) =>
             {
                 IsFocus = false;
-                IELSettingObject.UseActiveQSetting(StateSpectrum.Default);
+                Background.SetActiveSpecrum(StateSpectrum.Default, true);
+                BorderBrush.SetActiveSpecrum(StateSpectrum.Default, true);
+                Foreground.SetActiveSpecrum(StateSpectrum.Default, true);
             };
 
             MouseEnter += (sender, e) =>
             {
-                if (IsEnabled && !IsFocus) IELSettingObject.UseActiveQSetting(StateSpectrum.Select);
+                if (IsEnabled && !IsFocus)
+                {
+                    Background.SetActiveSpecrum(StateSpectrum.Select, true);
+                    BorderBrush.SetActiveSpecrum(StateSpectrum.Select, true);
+                    Foreground.SetActiveSpecrum(StateSpectrum.Select, true);
+                }
             };
 
             MouseLeave += (sender, e) =>
             {
-                if (IsEnabled && !IsFocus) IELSettingObject.UseActiveQSetting(StateSpectrum.Default);
+                if (IsEnabled && !IsFocus)
+                {
+                    Background.SetActiveSpecrum(StateSpectrum.Default, true);
+                    BorderBrush.SetActiveSpecrum(StateSpectrum.Default, true);
+                    Foreground.SetActiveSpecrum(StateSpectrum.Default, true);
+                }
             };
 
             IsEnabledChanged += (sender, e) =>
             {
-                bool NewValue = (bool)e.NewValue;
-                IELSettingObject.UseActiveQSetting(NewValue ? StateSpectrum.Default : StateSpectrum.NotEnabled);
+                StateSpectrum Value = (bool)e.NewValue ? StateSpectrum.Default : StateSpectrum.NotEnabled;
+                Background.SetActiveSpecrum(Value, true);
+                BorderBrush.SetActiveSpecrum(Value, true);
+                Foreground.SetActiveSpecrum(Value, true);
             };
 
             MouseDown += (sender, e) =>

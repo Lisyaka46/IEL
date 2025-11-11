@@ -4,6 +4,12 @@ using static IEL.Interfaces.Core.IBrowserPage;
 
 namespace IEL.CORE.Classes.Browser
 {
+    /// <summary>
+    /// Инициализация класса браузерной страницы
+    /// </summary>
+    /// <param name="ElementPage"></param>
+    /// <param name="title"></param>
+    /// <param name="description"></param>
     public class BrowserPage(Page ElementPage, string title, string? description) : IBrowserPage
     {
         /// <summary>
@@ -21,11 +27,14 @@ namespace IEL.CORE.Classes.Browser
         /// </summary>
         public string Description { get; set; } = description ?? string.Empty;
 
-        public BrowserEvent? EventUnfocusPage { get; set; }
+        /// <summary>
+        /// Объект события фокусировки на элемент страницы браузера
+        /// </summary>
+        internal BrowserEventHandler? EventUnfocusPage { get; set; }
         /// <summary>
         /// Событие получения выключения отображения
         /// </summary>
-        public event BrowserEvent? UnfocusPage
+        public event BrowserEventHandler? UnfocusPage
         {
             add
             {
@@ -37,12 +46,14 @@ namespace IEL.CORE.Classes.Browser
             }
         }
 
-
-        public BrowserEvent? EventFocusPage { get; set; }
+        /// <summary>
+        /// Объект события фокусировки на элемент страницы браузера
+        /// </summary>
+        internal BrowserEventHandler? EventFocusPage { get; set; }
         /// <summary>
         /// Событие получения отображения страницы
         /// </summary>
-        public event BrowserEvent? FocusPage
+        public event BrowserEventHandler? FocusPage
         {
             add
             {
@@ -54,11 +65,11 @@ namespace IEL.CORE.Classes.Browser
             }
         }
 
-        public BrowserEvent? EventDisposed { get; set; }
+        internal BrowserEventHandler? EventDisposed { get; set; }
         /// <summary>
         /// Событие отключение или закрытия или удаления страницы из браузера
         /// </summary>
-        public event BrowserEvent? Disposed
+        public event BrowserEventHandler? Disposed
         {
             add
             {

@@ -42,10 +42,16 @@ namespace IEL.CORE.Classes
     /// <summary>
     /// Инициализатор класса управления страницей
     /// </summary>
-    /// <param name="Source">Страница данных</param>
+    /// <param name="DefaultSource">Страница данных</param>
     public class PagePanelAction(Page DefaultSource)
     {
         #region ElementChangedHandler
+        /// <summary>
+        /// Делегат события изменения параметра панели действий
+        /// </summary>
+        /// <typeparam name="T_Value">Тип изменяемого параметра</typeparam>
+        /// <param name="Source"></param>
+        /// <param name="NewValue">Новое значение параметра</param>
         public delegate void ElementChangedHandler<T_Value>(Page Source, T_Value NewValue);
 
         /// <summary>
@@ -121,8 +127,10 @@ namespace IEL.CORE.Classes
             {
                 case ActionButton.ActionActivate:
                     Button.UnfocusAnimation();
-                    if (Orientation == OrientationActivate.LeftButton) Button.OnActivateMouseLeft?.Invoke(ElementAction, new(Mouse.PrimaryDevice, 1, MouseButton.Left), true);
-                    else if (Orientation == OrientationActivate.RightButton) Button.OnActivateMouseRight?.Invoke(ElementAction, new(Mouse.PrimaryDevice, 1, MouseButton.Left), true);
+                    if (Orientation == OrientationActivate.LeftButton)
+                        Button.OnActivateMouseLeft?.Invoke(Button, new MouseButtonEventArgs(Mouse.PrimaryDevice, 0, MouseButton.Left), true);
+                    else if (Orientation == OrientationActivate.RightButton)
+                        Button.OnActivateMouseRight?.Invoke(Button, new MouseButtonEventArgs(Mouse.PrimaryDevice, 0, MouseButton.Right), true);
                     break;
                 case ActionButton.BlinkActivate:
                     Button.BlinkAnimation();

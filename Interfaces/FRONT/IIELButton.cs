@@ -1,20 +1,19 @@
 ﻿using IEL.CORE.Classes.ObjectSettings;
+using IEL.CORE.Enums;
 using System.Windows;
 using System.Windows.Input;
 
 namespace IEL.Interfaces.Front
 {
+    /// <summary>
+    /// Интерфейс реализации всех кнопочных элементов
+    /// </summary>
     public interface IIELButton : IIELObject
     {
         /// <summary>
         /// Делегат события активации
         /// </summary>
-        public delegate void Activate(object Source, MouseButtonEventArgs eventArgs, bool KeyActivate = false);
-
-        ///// <summary>
-        ///// Настройки объекта
-        ///// </summary>
-        //public IELObjectSetting IELSettingObject { get; }
+        public delegate void ActivateHandler(object Source, MouseButtonEventArgs eventArgs, bool KeyActivate = false);
 
         /// <summary>
         /// Скругление границ
@@ -32,13 +31,28 @@ namespace IEL.Interfaces.Front
         public Thickness PaddingContent { get; protected set; }
 
         /// <summary>
-        /// Объект события активации кнопки левым щелчком мыши
+        /// Объект события нажатия на левую кнопку мыши
         /// </summary>
-        public Activate? OnActivateMouseLeft { get; protected set; }
+        public ActivateHandler? OnActivateMouseLeft { get; set; }
 
         /// <summary>
-        /// Объект события активации кнопки правым щелчком мыши
+        /// Объект события нажатия на правую кнопку мыши
         /// </summary>
-        public Activate? OnActivateMouseRight { get; protected set; }
+        public ActivateHandler? OnActivateMouseRight { get; set; }
+
+        /// <summary>
+        /// Узнать тип доступных нажатий на элемент
+        /// </summary>
+        /// <returns>Объект пересичления возможных нажатий</returns>
+        internal EventsMouse GetSourceEventMouse()
+        {
+            if (OnActivateMouseLeft != null)
+            {
+                if (OnActivateMouseRight != null) return EventsMouse.Full;
+                return EventsMouse.Left;
+            }
+            else if (OnActivateMouseRight != null) return EventsMouse.Right;
+            return EventsMouse.Not;
+        }
     }
 }

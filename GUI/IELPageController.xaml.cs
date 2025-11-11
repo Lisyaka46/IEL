@@ -1,16 +1,18 @@
-﻿using IEL.Interfaces.Front;
+﻿using IEL.CORE.Classes;
+using IEL.Interfaces.Front;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Animation;
 
-namespace IEL
+namespace IEL.GUI
 {
     /// <summary>
     /// Логика взаимодействия для IELPageController.xaml
     /// </summary>
-    public partial class IELPageController : UserControl, IIELObject
+    public partial class IELPageController : UserControl
     {
+
         /// <summary>
         /// Объект анимации для управления размерами панели действий
         /// </summary>
@@ -70,6 +72,9 @@ namespace IEL
         /// </remarks>
         public Thickness RightAnimateSwitch { get; set; }
 
+        /// <summary>
+        /// Горизонтальная ориентация содержимого
+        /// </summary>
         public new HorizontalAlignment HorizontalAlignment
         {
             get
@@ -84,6 +89,9 @@ namespace IEL
             }
         }
 
+        /// <summary>
+        /// Вертикальная ориентация содержимого
+        /// </summary>
         public new VerticalAlignment VerticalAlignment
         {
             get
@@ -98,6 +106,9 @@ namespace IEL
             }
         }
 
+        /// <summary>
+        /// Инициализировать объект интерфейса. Контроллер страничных объектов
+        /// </summary>
         public IELPageController()
         {
             InitializeComponent();

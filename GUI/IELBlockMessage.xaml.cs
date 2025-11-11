@@ -1,4 +1,5 @@
-﻿using IEL.CORE.Classes.ObjectSettings;
+﻿using IEL.CORE.Classes;
+using IEL.CORE.Classes.ObjectSettings;
 using IEL.CORE.Enums;
 using IEL.Interfaces.Front;
 using System.Windows;
@@ -7,13 +8,63 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 
-namespace IEL
+namespace IEL.GUI
 {
     /// <summary>
     /// Логика взаимодействия для IELBlockMessage.xaml
     /// </summary>
     public partial class IELBlockMessage : UserControl, IIELObject
     {
+        #region Color Setting
+        /// <summary>
+        /// Ресурсный объект настройки состояний фона
+        /// </summary>
+        private readonly new BrushSettingQ Background;
+        /// <summary>
+        /// Объект настройки состояний фона
+        /// </summary>
+        public BrushSettingQ QBackground
+        {
+            get => Background;
+            set
+            {
+                Background.ColorData = value.ColorData;
+            }
+        }
+
+        /// <summary>
+        /// Ресурсный объект настройки состояний границы
+        /// </summary>
+        private readonly new BrushSettingQ BorderBrush;
+        /// <summary>
+        /// Объект настройки состояний границы
+        /// </summary>
+        public BrushSettingQ QBorderBrush
+        {
+            get => BorderBrush;
+            set
+            {
+                BorderBrush.ColorData = value.ColorData;
+            }
+        }
+
+        /// <summary>
+        /// Ресурсный объект настройки состояний текста
+        /// </summary>
+        private readonly new BrushSettingQ Foreground;
+        /// <summary>
+        /// Объект настройки состояний текста
+        /// </summary>
+        public BrushSettingQ QForeground
+        {
+            get => Foreground;
+            set
+            {
+                Foreground.ColorData = value.ColorData;
+            }
+        }
+        #endregion
+
         #region Flags
         /// <summary>
         /// Флаг состояния активности панели сообщения
@@ -109,10 +160,19 @@ namespace IEL
 
         #region Values Object
         #region Default
+        private uint _RadiusDefault;
         /// <summary>
         /// Радиус скруглённости обычной стороны панели сообщения
         /// </summary>
-        public uint RadiusDefault { get; set; }
+        public uint RadiusDefault
+        {
+            get => _RadiusDefault;
+            set
+            {
+                BorderMessage.Padding = new(value, 0, value, 0);
+                _RadiusDefault = value;
+            }
+        }
 
         /// <summary>
         /// Радиус скруглённости примагниченной стороны панели сообщения к объекту
@@ -161,10 +221,27 @@ namespace IEL
         #endregion
 
         #region ** Inicialize Object **
+        /// <summary>
+        /// Инициализировать объект интерфейса отображения сообщения
+        /// </summary>
         public IELBlockMessage()
         {
             InitializeComponent();
+            #region Background
+            Background = new();
+            #endregion
+
+            #region BorderBrush
+            BorderBrush = new();
+            #endregion
+
+            #region Foreground
+            Foreground = new();
+            #endregion
+
             #region Set Values Object
+            TextBlockMessage.Margin = new(0);
+            TextBlockMessage.UpdateLayout();
             #region Values
             RadiusDefault = 13u;
             RadiusMagnite = 3u;
@@ -194,13 +271,30 @@ namespace IEL
         /// Активировать панель сообщения по привязке к объекту
         /// </summary>
         /// <param name="Element">Элемент к которому прикрепляется панель сообщения</param>
-        /// <param name="Name">Имя объекта привязки</param>
         /// <param name="TextVisible">Текст который выводится панелью сообщения</param>
         /// <param name="Orientation">Привязка к позиционированию панели</param>
         public void UsingBorderInformation(FrameworkElement Element, string TextVisible, OrientationBorderPosition Orientation)
         {
             CodeParentObject = Element.GetHashCode();
-            Text = TextVisible;
+            TextBlockMessage.Text = TextVisible;
+            TextBlockMessage.UpdateLayout();
+            GridMessage.UpdateLayout();
+            if (GridMessage.ActualHeight < TextBlockMessage.ActualHeight)
+            {
+                int Offset = (int)TextBlockMessage.ActualHeight - (int)GridMessage.ActualHeight;
+                ThicknessAnimation animation = new()
+                {
+                    EasingFunction = new SineEase() { EasingMode = EasingMode.EaseInOut, },
+                    BeginTime = TimeSpan.FromMilliseconds(160d),
+                    Duration = TimeSpan.FromMilliseconds(80d * Offset < 1200d ? 1200d : 80d * Offset),
+                    RepeatBehavior = RepeatBehavior.Forever,
+                    AutoReverse = true,
+                    From = TextBlockMessage.Margin,
+                    To = new(0, -Offset, 0, 0)
+                };
+                TextBlockMessage.BeginAnimation(MarginProperty, animation);
+            }
+            else TextBlockMessage.Margin = new(0);
             #region Auto
             if (Orientation == OrientationBorderPosition.Auto)
             {
@@ -247,6 +341,7 @@ namespace IEL
             if (!FlagMessage) return;
             FlagMessage = false;
             DoubleAnimation animation = DoubleAnimateObj.Clone();
+            TextBlockMessage.BeginAnimation(MarginProperty, null);
             void SetZOne(object? sender, EventArgs e)
             {
                 if (FlagMessage) return;
@@ -309,8 +404,9 @@ namespace IEL
             FlagMessage = true;
 
             Canvas.SetZIndex(this, 2);
-            DoubleAnimateObj.To = 0.8d;
-            BeginAnimation(OpacityProperty, DoubleAnimateObj);
+            DoubleAnimation animationD = DoubleAnimateObj.Clone();
+            animationD.To = 0.8d;
+            BeginAnimation(OpacityProperty, animationD);
 
             BorderMessage.CornerRadius = Orientation switch
             {
@@ -323,23 +419,11 @@ namespace IEL
             Point Offset = new(
                 Orientation == OrientationBorderPosition.LeftDown || Orientation == OrientationBorderPosition.LeftUp ? -OffsetLeftRight : OffsetLeftRight,
                 Orientation == OrientationBorderPosition.LeftUp || Orientation == OrientationBorderPosition.RightUp ? -OffsetUpDown : OffsetUpDown);
-            //BorderInformation.Margin = new(OffsetPosElement.X - BorderInformation.ActualWidth, OffsetPosElement.Y + Element.Height, 0, 0);
-
-            ThicknessAnimate.From = new(Position.X, Position.Y, 0, 0);
-            ThicknessAnimate.To = new(Position.X + Offset.X, Position.Y + Offset.Y, 0, 0);
-            ThicknessAnimate.Duration = TimeSpan.FromMilliseconds(400d);
-            BeginAnimation(MarginProperty, ThicknessAnimate);
-            ThicknessAnimate.Duration = TimeSpan.FromMilliseconds(300d);
-            ThicknessAnimate.From = null;
-
-            /*DoubleAnimateObj.From = 0d;
-            DoubleAnimateObj.To = (double)BorderInformation.ActualWidth;
-            BorderInformation.BeginAnimation(WidthProperty, DoubleAnimateObj);
-
-
-            DoubleAnimateObj.To = (double)BorderInformation.ActualHeight;
-            BorderInformation.BeginAnimation(HeightProperty, DoubleAnimateObj);
-            DoubleAnimateObj.From = null;*/
+            ThicknessAnimation animation = ThicknessAnimate.Clone();
+            animation.From = new(Position.X, Position.Y, 0, 0);
+            animation.To = new(Position.X + Offset.X, Position.Y + Offset.Y, 0, 0);
+            animation.Duration = TimeSpan.FromMilliseconds(400d);
+            BeginAnimation(MarginProperty, animation);
         }
         #endregion
     }

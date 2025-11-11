@@ -3,20 +3,23 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:IEL"
-             xmlns:GUI="clr-namespace:IEL"
-             x:Class="IEL.IELBrowserPage"
+             xmlns:local="clr-namespace:IEL.GUI"
+             xmlns:GUI="clr-namespace:IEL.GUI"
+             x:Class="IEL.GUI.IELBrowserPage"
              mc:Ignorable="d" 
              d:DesignHeight="380.454" d:DesignWidth="487.727">
+    <UserControl.Resources>
+        <ResourceDictionary Source="/IEL;component/CORE/Resources/VisualDictionary.xaml"/>
+    </UserControl.Resources>
     <Border x:Name="BorderMain">
         <Grid x:Name="GridMain">
             <Grid.RowDefinitions>
-                <RowDefinition Height="50"/>
+                <RowDefinition x:Name="RowDefinitionMainInlays" Height="65"/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
-            <TextBlock x:Name="TextBlockNullPage" Text="Нет доступных вкладок" FontSize="16" TextTrimming="CharacterEllipsis" FontStyle="Italic" Opacity="0.4" FontFamily="Lucida Sans Unicode" Grid.Row="1" Padding="15,5,15,5" VerticalAlignment="Center" TextAlignment="Center"/>
+            <TextBlock x:Name="TextBlockNullPage" Text="Нет доступных вкладок" Opacity="0.4" VerticalAlignment="Center" TextAlignment="Center" Grid.Row="1"/>
             <Grid Grid.Row="1">
-                <GUI:IELPageController x:Name="MainPageController" LeftAnimateSwitch="5,5,5,5" RightAnimateSwitch="-5,-5,-5,-5"/>
+                <local:IELPageController x:Name="MainPageController" LeftAnimateSwitch="5,5,5,5" RightAnimateSwitch="-5,-5,-5,-5"/>
             </Grid>
             <Grid>
                 <Border x:Name="BorderMainPage" Grid.Column="1" BorderThickness="0,0,0,2" BorderBrush="Black">
@@ -24,13 +27,15 @@
                         <Grid x:Name="GridMainButtons">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition/>
-                                <ColumnDefinition Width="50" MaxWidth="50" MinWidth="50"/>
+                                <ColumnDefinition x:Name="ColumnDefinitionMainInlays" Width="50"/>
                             </Grid.ColumnDefinitions>
-                            <Grid>
-
-                                <Grid x:Name="GridMainInlays">
-                                </Grid>
-                            </Grid>
+                            <Border x:Name="BorderInlays" BorderThickness="0,0,2,0" BorderBrush="Black">
+                                <ScrollViewer x:Name="ScrollViewerInlays" VerticalScrollBarVisibility="Disabled" Template="{DynamicResource ScrollViewerHorizontalOnTopTemplate}" HorizontalScrollBarVisibility="Visible">
+                                    <Grid x:Name="GridMainInlays">
+                                    </Grid>
+                                </ScrollViewer>
+                            </Border>
+                            
                         </Grid>
                     </Grid>
                 </Border>

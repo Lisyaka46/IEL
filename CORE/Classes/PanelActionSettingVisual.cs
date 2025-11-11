@@ -2,7 +2,14 @@
 
 namespace IEL.CORE.Classes
 {
-    public struct PanelActionSettingVisual(FrameworkElement Element, PagePanelAction SettingPage, Size size, int ZIndex = 2)
+    /// <summary>
+    /// Инициализратор структуры настройки визуализации страницы в панели действий
+    /// </summary>
+    /// <param name="Element">Элемент который является зависимым для панели действий</param>
+    /// <param name="SourcePage">Страница отображаемая в панели действий</param>
+    /// <param name="size">Размер панели действий для страниц данной настройки</param>
+    /// <param name="ZIndex">Индекс верхней позиции для корректного отображения страницы</param>
+    public struct PanelActionSettingVisual(FrameworkElement Element, PagePanelAction SourcePage, Size size, int ZIndex = 2)
     {
         /// <summary>
         /// Элемент интерфейса в границах которого будет находится панель действий
@@ -22,9 +29,9 @@ namespace IEL.CORE.Classes
         /// <summary>
         /// Активная страница управления
         /// </summary>
-        public PagePanelAction ActiveSource { get; internal set; } = SettingPage;
+        public PagePanelAction ActiveSource { get; internal set; } = SourcePage;
 
-        private readonly PagePanelAction _DefaultSourcePage = SettingPage;
+        private readonly PagePanelAction _DefaultSourcePage = SourcePage;
         /// <summary>
         /// Стартовая страница управления
         /// </summary>

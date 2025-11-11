@@ -1,17 +1,69 @@
-﻿using IEL.CORE.Classes.ObjectSettings;
+﻿using IEL.CORE.Classes;
+using IEL.CORE.Classes.ObjectSettings;
+using IEL.CORE.Enums;
+using IEL.Interfaces.Front;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
-using IEL.CORE.Enums;
 
-namespace IEL
+namespace IEL.GUI
 {
     /// <summary>
     /// Логика взаимодействия для IELBlockInfoText.xaml
     /// </summary>
-    public partial class IELBlockInfoText : UserControl
+    public partial class IELBlockInfoText : UserControl, IIELObject
     {
+        #region Color Setting
+        /// <summary>
+        /// Ресурсный объект настройки состояний фона
+        /// </summary>
+        private readonly new BrushSettingQ Background;
+        /// <summary>
+        /// Объект настройки состояний фона
+        /// </summary>
+        public BrushSettingQ QBackground
+        {
+            get => Background;
+            set
+            {
+                Background.ColorData = value.ColorData;
+            }
+        }
+
+        /// <summary>
+        /// Ресурсный объект настройки состояний границы
+        /// </summary>
+        private readonly new BrushSettingQ BorderBrush;
+        /// <summary>
+        /// Объект настройки состояний границы
+        /// </summary>
+        public BrushSettingQ QBorderBrush
+        {
+            get => BorderBrush;
+            set
+            {
+                BorderBrush.ColorData = value.ColorData;
+            }
+        }
+
+        /// <summary>
+        /// Ресурсный объект настройки состояний текста
+        /// </summary>
+        private readonly new BrushSettingQ Foreground;
+        /// <summary>
+        /// Объект настройки состояний текста
+        /// </summary>
+        public BrushSettingQ QForeground
+        {
+            get => Foreground;
+            set
+            {
+                Foreground.ColorData = value.ColorData;
+            }
+        }
+        #endregion
+
         private IELUsingObjectSetting _IELSettingObject = new();
         /// <summary>
         /// Настройка использования объекта
@@ -21,45 +73,6 @@ namespace IEL
             get => _IELSettingObject;
             set
             {
-                value.BackgroundSetting.SetActionColorChanged((Spectrum, NewValue, Animated) =>
-                {
-                    if (Animated)
-                    {
-                        ColorAnimation anim = IELSettingObject.ObjectAnimateSetting.GetAnimationColor(NewValue);
-                        MainBorder.Background.BeginAnimation(SolidColorBrush.ColorProperty, anim);
-                    }
-                    else
-                    {
-                        SolidColorBrush color = new(NewValue);
-                        MainBorder.Background = color;
-                    }
-                });
-                value.BorderBrushSetting.SetActionColorChanged((Spectrum, NewValue, Animated) =>
-                {
-                    if (Animated)
-                    {
-                        ColorAnimation anim = IELSettingObject.ObjectAnimateSetting.GetAnimationColor(NewValue);
-                        MainBorder.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, anim);
-                    }
-                    else
-                    {
-                        SolidColorBrush color = new(NewValue);
-                        MainBorder.BorderBrush = color;
-                    }
-                });
-                value.ForegroundSetting.SetActionColorChanged((Spectrum, NewValue, Animated) =>
-                {
-                    if (Animated)
-                    {
-                        ColorAnimation anim = IELSettingObject.ObjectAnimateSetting.GetAnimationColor(NewValue);
-                        MainTextBlock.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, anim);
-                    }
-                    else
-                    {
-                        SolidColorBrush color = new(NewValue);
-                        MainTextBlock.Foreground = color;
-                    }
-                });
                 _IELSettingObject = value;
             }
         }
@@ -113,9 +126,33 @@ namespace IEL
             }
         }
 
+        /// <summary>
+        /// Инициализировать объект интерфейса отображения информации через текст
+        /// </summary>
         public IELBlockInfoText()
         {
             InitializeComponent();
+            #region Background
+            Background = new();
+            MainBorder.Background = new SolidColorBrush(Background.ActiveSpectrumColor);
+
+            Background.ConnectSolidColorBrush((SolidColorBrush)MainBorder.Background);
+            #endregion
+
+            #region BorderBrush
+            BorderBrush = new();
+            MainBorder.BorderBrush = new SolidColorBrush(BorderBrush.ActiveSpectrumColor);
+
+            BorderBrush.ConnectSolidColorBrush((SolidColorBrush)MainBorder.BorderBrush);
+            #endregion
+
+            #region Foreground
+            Foreground = new();
+            MainTextBlock.Foreground = new SolidColorBrush(Foreground.ActiveSpectrumColor);
+
+            Foreground.ConnectSolidColorBrush((SolidColorBrush)MainTextBlock.Foreground);
+            #endregion
+
             IELSettingObject = new();
             CornerRadius = new CornerRadius(10);
 
@@ -123,7 +160,9 @@ namespace IEL
             {
                 if (IsEnabled)
                 {
-                    IELSettingObject.UseActiveQSetting(StateSpectrum.Select);
+                    Background.SetActiveSpecrum(StateSpectrum.Select, true);
+                    BorderBrush.SetActiveSpecrum(StateSpectrum.Select, true);
+                    Foreground.SetActiveSpecrum(StateSpectrum.Select, true);
                     IELSettingObject.StartHover();
                 }
             };
@@ -132,15 +171,19 @@ namespace IEL
             {
                 if (IsEnabled)
                 {
-                    IELSettingObject.UseActiveQSetting(StateSpectrum.Default);
+                    Background.SetActiveSpecrum(StateSpectrum.Default, true);
+                    BorderBrush.SetActiveSpecrum(StateSpectrum.Default, true);
+                    Foreground.SetActiveSpecrum(StateSpectrum.Default, true);
                     IELSettingObject.StopHover();
                 }
             };
 
             IsEnabledChanged += (sender, e) =>
             {
-                bool NewValue = (bool)e.NewValue;
-                IELSettingObject.UseActiveQSetting(NewValue ? StateSpectrum.Default : StateSpectrum.NotEnabled);
+                StateSpectrum Value = (bool)e.NewValue ? StateSpectrum.Default : StateSpectrum.NotEnabled;
+                Background.SetActiveSpecrum(Value, true);
+                BorderBrush.SetActiveSpecrum(Value, true);
+                Foreground.SetActiveSpecrum(Value, true);
             };
         }
     }

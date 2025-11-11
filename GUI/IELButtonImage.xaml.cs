@@ -1,4 +1,5 @@
-﻿using IEL.CORE.Classes.ObjectSettings;
+﻿using IEL.CORE.Classes;
+using IEL.CORE.Classes.ObjectSettings;
 using IEL.CORE.Enums;
 using IEL.Interfaces.Front;
 using System.Windows;
@@ -6,13 +7,63 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 
-namespace IEL
+namespace IEL.GUI
 {
     /// <summary>
     /// Логика взаимодействия для IELButtonImage.xaml
     /// </summary>
     public partial class IELButtonImage : UserControl, IIELButton
     {
+        #region Color Setting
+        /// <summary>
+        /// Ресурсный объект настройки состояний фона
+        /// </summary>
+        private readonly new BrushSettingQ Background;
+        /// <summary>
+        /// Объект настройки состояний фона
+        /// </summary>
+        public BrushSettingQ QBackground
+        {
+            get => Background;
+            set
+            {
+                Background.ColorData = value.ColorData;
+            }
+        }
+
+        /// <summary>
+        /// Ресурсный объект настройки состояний границы
+        /// </summary>
+        private readonly new BrushSettingQ BorderBrush;
+        /// <summary>
+        /// Объект настройки состояний границы
+        /// </summary>
+        public BrushSettingQ QBorderBrush
+        {
+            get => BorderBrush;
+            set
+            {
+                BorderBrush.ColorData = value.ColorData;
+            }
+        }
+
+        /// <summary>
+        /// Ресурсный объект настройки состояний текста
+        /// </summary>
+        private readonly new BrushSettingQ Foreground;
+        /// <summary>
+        /// Объект настройки состояний текста
+        /// </summary>
+        public BrushSettingQ QForeground
+        {
+            get => Foreground;
+            set
+            {
+                Foreground.ColorData = value.ColorData;
+            }
+        }
+        #endregion
+
         private IELButtonObjectSetting _IELSettingObject = new();
         /// <summary>
         /// Настройка использования объекта
@@ -34,55 +85,6 @@ namespace IEL
                     BorderLeftArrow.Opacity = Left ? 1d : 0d;
                     ImageMouseButtonsUse.HorizontalAlignment = Right ? HorizontalAlignment.Left : HorizontalAlignment.Right;
                 };
-                value.BackgroundSetting.SetActionColorChanged((Spectrum, NewValue, Animated) =>
-                {
-                    if (Animated)
-                    {
-                        ColorAnimation anim = IELSettingObject.ObjectAnimateSetting.GetAnimationColor(NewValue);
-                        BorderButton.Background.BeginAnimation(SolidColorBrush.ColorProperty, anim);
-                        BorderRightArrow.Background.BeginAnimation(SolidColorBrush.ColorProperty, anim);
-                        BorderLeftArrow.Background.BeginAnimation(SolidColorBrush.ColorProperty, anim);
-                    }
-                    else
-                    {
-                        SolidColorBrush color = new(NewValue);
-                        BorderButton.Background = color;
-                        BorderRightArrow.Background = color;
-                        BorderLeftArrow.Background = color;
-                    }
-                });
-                value.BorderBrushSetting.SetActionColorChanged((Spectrum, NewValue, Animated) =>
-                {
-                    if (Animated)
-                    {
-                        ColorAnimation anim = IELSettingObject.ObjectAnimateSetting.GetAnimationColor(NewValue);
-                        BorderButton.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, anim);
-                        BorderRightArrow.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, anim);
-                        BorderLeftArrow.BorderBrush.BeginAnimation(SolidColorBrush.ColorProperty, anim);
-                    }
-                    else
-                    {
-                        SolidColorBrush color = new(NewValue);
-                        BorderButton.BorderBrush = color;
-                        BorderRightArrow.BorderBrush = color;
-                        BorderLeftArrow.BorderBrush = color;
-                    }
-                });
-                value.ForegroundSetting.SetActionColorChanged((Spectrum, NewValue, Animated) =>
-                {
-                    if (Animated)
-                    {
-                        ColorAnimation anim = IELSettingObject.ObjectAnimateSetting.GetAnimationColor(NewValue);
-                        TextBlockLeftArrow.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, anim);
-                        TextBlockRightArrow.Foreground.BeginAnimation(SolidColorBrush.ColorProperty, anim);
-                    }
-                    else
-                    {
-                        SolidColorBrush color = new(NewValue);
-                        TextBlockLeftArrow.Foreground = color;
-                        TextBlockRightArrow.Foreground = color;
-                    }
-                });
                 _IELSettingObject = value;
             }
         }
@@ -141,12 +143,12 @@ namespace IEL
         /// <summary>
         /// Объект события активации левым щелчком мыши
         /// </summary>
-        public IIELButton.Activate? OnActivateMouseLeft { get; set; }
+        public IIELButton.ActivateHandler? OnActivateMouseLeft { get; set; }
 
         /// <summary>
         /// Объект события активации правым щелчком мыши
         /// </summary>
-        public IIELButton.Activate? OnActivateMouseRight { get; set; }
+        public IIELButton.ActivateHandler? OnActivateMouseRight { get; set; }
 
         /// <summary>
         /// Инициализировать объект кнопки с изображением
@@ -154,6 +156,36 @@ namespace IEL
         public IELButtonImage()
         {
             InitializeComponent();
+            #region Background
+            Background = new();
+            BorderButton.Background = new SolidColorBrush(Background.ActiveSpectrumColor);
+            BorderRightArrow.Background = new SolidColorBrush(Background.ActiveSpectrumColor);
+            BorderLeftArrow.Background = new SolidColorBrush(Background.ActiveSpectrumColor);
+
+            Background.ConnectSolidColorBrush((SolidColorBrush)BorderButton.Background);
+            Background.ConnectSolidColorBrush((SolidColorBrush)BorderRightArrow.Background);
+            Background.ConnectSolidColorBrush((SolidColorBrush)BorderLeftArrow.Background);
+            #endregion
+
+            #region BorderBrush
+            BorderBrush = new();
+            BorderButton.BorderBrush = new SolidColorBrush(BorderBrush.ActiveSpectrumColor);
+            BorderRightArrow.BorderBrush = new SolidColorBrush(BorderBrush.ActiveSpectrumColor);
+            BorderLeftArrow.BorderBrush = new SolidColorBrush(BorderBrush.ActiveSpectrumColor);
+
+            BorderBrush.ConnectSolidColorBrush((SolidColorBrush)BorderButton.BorderBrush);
+            BorderBrush.ConnectSolidColorBrush((SolidColorBrush)BorderRightArrow.BorderBrush);
+            BorderBrush.ConnectSolidColorBrush((SolidColorBrush)BorderLeftArrow.BorderBrush);
+            #endregion
+
+            #region Foreground
+            Foreground = new();
+            TextBlockLeftArrow.Foreground = new SolidColorBrush(Foreground.ActiveSpectrumColor);
+            TextBlockRightArrow.Foreground = new SolidColorBrush(Foreground.ActiveSpectrumColor);
+
+            Foreground.ConnectSolidColorBrush((SolidColorBrush)TextBlockLeftArrow.Foreground);
+            Foreground.ConnectSolidColorBrush((SolidColorBrush)TextBlockRightArrow.Foreground);
+            #endregion
             IELSettingObject = new();
 
             ImageMouseButtonsUse.Opacity = 0d;
@@ -162,8 +194,10 @@ namespace IEL
             {
                 if (IsEnabled)
                 {
-                    IELSettingObject.UseActiveQSetting(StateSpectrum.Select);
-                    IELSettingObject.UpdateVisibleMouseEvents(ImageMouseButtonsUse, this, true);
+                    Background.SetActiveSpecrum(StateSpectrum.Select, true);
+                    BorderBrush.SetActiveSpecrum(StateSpectrum.Select, true);
+                    Foreground.SetActiveSpecrum(StateSpectrum.Select, true);
+                    //IELSettingObject.UpdateVisibleMouseEvents(ImageMouseButtonsUse, this, true);
                     IELSettingObject.StartHover();
                 }
             };
@@ -171,7 +205,9 @@ namespace IEL
             {
                 if (IsEnabled)
                 {
-                    IELSettingObject.UseActiveQSetting(StateSpectrum.Default);
+                    Background.SetActiveSpecrum(StateSpectrum.Default, true);
+                    BorderBrush.SetActiveSpecrum(StateSpectrum.Default, true);
+                    Foreground.SetActiveSpecrum(StateSpectrum.Default, true);
                     IELSettingObject.UpdateVisibleMouseEvents(ImageMouseButtonsUse, false);
                     IELSettingObject.StopHover();
                 }
@@ -179,8 +215,10 @@ namespace IEL
 
             IsEnabledChanged += (sender, e) =>
             {
-                bool NewValue = (bool)e.NewValue;
-                IELSettingObject.UseActiveQSetting(NewValue ? StateSpectrum.Default : StateSpectrum.NotEnabled);
+                StateSpectrum Value = (bool)e.NewValue ? StateSpectrum.Default : StateSpectrum.NotEnabled;
+                Background.SetActiveSpecrum(Value, true);
+                BorderBrush.SetActiveSpecrum(Value, true);
+                Foreground.SetActiveSpecrum(Value, true);
                 IELSettingObject.UpdateVisibleMouseEvents(ImageMouseButtonsUse, false);
             };
 
@@ -188,7 +226,9 @@ namespace IEL
             {
                 if (IsEnabled && OnActivateMouseLeft != null)
                 {
-                    IELSettingObject.UseActiveQSetting(StateSpectrum.Used, false);
+                    Background.SetActiveSpecrum(StateSpectrum.Used, false);
+                    BorderBrush.SetActiveSpecrum(StateSpectrum.Used, false);
+                    Foreground.SetActiveSpecrum(StateSpectrum.Used, false);
                     IELSettingObject.UpdateVisibleMouseEvents(ImageMouseButtonsUse, false);
                     IELSettingObject.StopHover();
                 }
@@ -198,7 +238,9 @@ namespace IEL
             {
                 if (IsEnabled && OnActivateMouseRight != null)
                 {
-                    IELSettingObject.UseActiveQSetting(StateSpectrum.Used, false);
+                    Background.SetActiveSpecrum(StateSpectrum.Used, false);
+                    BorderBrush.SetActiveSpecrum(StateSpectrum.Used, false);
+                    Foreground.SetActiveSpecrum(StateSpectrum.Used, false);
                     IELSettingObject.UpdateVisibleMouseEvents(ImageMouseButtonsUse, false);
                     IELSettingObject.StopHover();
                 }
@@ -208,8 +250,10 @@ namespace IEL
             {
                 if (IsEnabled && OnActivateMouseLeft != null)
                 {
-                    IELSettingObject.UseActiveQSetting(StateSpectrum.Select);
-                    IELSettingObject.UpdateVisibleMouseEvents(ImageMouseButtonsUse, this, true);
+                    Background.SetActiveSpecrum(StateSpectrum.Select, true);
+                    BorderBrush.SetActiveSpecrum(StateSpectrum.Select, true);
+                    Foreground.SetActiveSpecrum(StateSpectrum.Select, true);
+                    //IELSettingObject.UpdateVisibleMouseEvents(ImageMouseButtonsUse, this, true);
                     OnActivateMouseLeft?.Invoke(this, e);
                 }
             };
@@ -218,8 +262,10 @@ namespace IEL
             {
                 if (IsEnabled && OnActivateMouseRight != null)
                 {
-                    IELSettingObject.UseActiveQSetting(StateSpectrum.Select);
-                    IELSettingObject.UpdateVisibleMouseEvents(ImageMouseButtonsUse, this, true);
+                    Background.SetActiveSpecrum(StateSpectrum.Select, true);
+                    BorderBrush.SetActiveSpecrum(StateSpectrum.Select, true);
+                    Foreground.SetActiveSpecrum(StateSpectrum.Select, true);
+                    //IELSettingObject.UpdateVisibleMouseEvents(ImageMouseButtonsUse, this, true);
                     OnActivateMouseRight?.Invoke(this, e);
                 }
             };
