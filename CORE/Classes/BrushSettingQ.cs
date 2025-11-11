@@ -1,72 +1,71 @@
 ﻿using IEL.CORE.Enums;
 using System.Buffers;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 
 namespace IEL.CORE.Classes
 {
     /// <summary>
     /// Класс настройки поведения цвета при разных состояниях объекта
     /// </summary>
-    public class BrushSettingQ
+    public sealed class BrushSettingQ
     {
+        #region ConectedBrush
         /// <summary>
-        /// Структура аргументов для управления событием изменения активного спекта увета
+        /// Стек всех подключённых к настройки свойств цвета
         /// </summary>
-        /// <param name="IsSpectrum">Изменяемый спектр цвета</param>
-        /// <param name="IsColor">Изменяемое значение цвета</param>
-        /// <param name="IsAnimated">Состояние ожидания анимирования</param>
-        public readonly struct SpectrumColorChangedEventArgs(StateSpectrum IsSpectrum, Color IsColor, bool IsAnimated)
+        private Stack<SolidColorBrush> ConectedBrush = new();
+
+        /// <summary>
+        /// Подключить свойство цвета объекта к настройке Q-логики
+        /// </summary>
+        /// <param name="SourceBrush">Подключаемое свойство цвета</param>
+        public void ConnectSolidColorBrush(SolidColorBrush SourceBrush) => ConectedBrush.Push(SourceBrush);
+        #endregion
+
+        #region AnimationBrushSettingQ
+        /// <summary>
+        /// Объект анимации текущего свойства цвета объектов
+        /// </summary>
+        private ColorAnimation SourceAnimation = new()
         {
-            /// <summary>
-            /// Спектр состояния управляемого события
-            /// </summary>
-            public readonly StateSpectrum Spectrum = IsSpectrum;
+            EasingFunction = new ExponentialEase() { EasingMode = EasingMode.EaseOut, Exponent = 1.4d },
+            Duration = TimeSpan.FromMilliseconds(200d),
+        };
 
-            /// <summary>
-            /// Значение цвета управляемого события
-            /// </summary>
-            public readonly Color Value = IsColor;
-
-            /// <summary>
-            /// Состояние ожидания анимирования управляемого события
-            /// </summary>
-            public readonly bool AnimatedEvent = IsAnimated;
+        /// <summary>
+        /// Время управляемое анимацией для свойств цвета
+        /// </summary>
+        public TimeSpan DurationBrushSettingQ
+        {
+            get => SourceAnimation.Duration.TimeSpan;
+            set => SourceAnimation.Duration = value;
         }
 
         /// <summary>
-        /// Узнать активную структуру аргументов для управляемого события
+        /// Объект представляющий анимацию текущего свойства цвета объектов
         /// </summary>
-        /// <param name="Animated">Состояние ожидания анимирования спектра</param>
-        /// <returns>Структура аргументов</returns>
-        private SpectrumColorChangedEventArgs ActiveArgs(bool Animated) => new(ActiveSpectrum, ActiveSpectrumColor, Animated);
-
-        /// <summary>
-        /// Делегат события изменения цвета определённого спектра элемента
-        /// </summary>
-        /// <param name="SpectrumColorEventArgs">Объект представляющий состояние выполнения события</param>
-        public delegate void SpectrumColorChangedEventHandler(SpectrumColorChangedEventArgs SpectrumColorEventArgs);
-
-        /// <summary>
-        /// Событие изменения цвета определённого спектра
-        /// </summary>
-        private SpectrumColorChangedEventHandler? SpectrumColorChanged;
-
-        /// <summary>
-        /// Установить событие изменения спектра цвета
-        /// </summary>
-        /// <param name="Action">Событие</param>
-        public void SetSpectrumAction(SpectrumColorChangedEventHandler Action) => SpectrumColorChanged = Action;
-
-        /// <summary>
-        /// Копировать событие изменения спектра цвета в новый объект
-        /// </summary>
-        /// <param name="NewObject">Новый объект, в который копируется действие</param>
-        /// <param name="ActivateUpdate">Состояние активации принудительного обновления события по новым данным <b>(Будет анимироваться)</b></param>
-        public void CloneSpectrumActionInObject(BrushSettingQ NewObject, bool ActivateUpdate)
+        public IEasingFunction EasingFunctionBrushSettingQ
         {
-            NewObject.SpectrumColorChanged = (SpectrumColorChangedEventHandler?)SpectrumColorChanged?.Clone();
-            if (ActivateUpdate) NewObject.SpectrumColorChanged?.Invoke(new(NewObject.ActiveSpectrum, NewObject.ActiveSpectrumColor, true));
+            get => SourceAnimation.EasingFunction;
+            set => SourceAnimation.EasingFunction = value;
         }
+
+        /// <summary>
+        /// Анимировать все подключённые свойства цвета к настройке Q-логики
+        /// </summary>
+        /// <param name="AnimatedEvent">Ожидается ли анирование</param>
+        private void AnimateConectedBrush(bool AnimatedEvent)
+        {
+            ColorAnimation? animation = AnimatedEvent ? SourceAnimation : null;
+            if (animation != null) animation.To = ActiveSpectrumColor;
+            foreach (SolidColorBrush Element in ConectedBrush.AsEnumerable())
+            {
+                Element.BeginAnimation(SolidColorBrush.ColorProperty, animation, HandoffBehavior.SnapshotAndReplace);
+                if (!AnimatedEvent || animation == null) Element.Color = ActiveSpectrumColor;
+            }
+        }
+        #endregion
 
         private QData _ColorData;
         /// <summary>
@@ -78,7 +77,7 @@ namespace IEL.CORE.Classes
             set
             {
                 _ColorData = value;
-                SpectrumColorChanged?.Invoke(ActiveArgs(true));
+                AnimateConectedBrush(true);
             }
         }
 
@@ -92,7 +91,7 @@ namespace IEL.CORE.Classes
             set
             {
                 ColorData.SetIndexingColor(0, value);
-                if (ActiveSpectrum == StateSpectrum.Default) SpectrumColorChanged?.Invoke(new(StateSpectrum.Default, value, false));
+                if (ActiveSpectrum == StateSpectrum.Default) AnimateConectedBrush(false);
             }
         }
         #endregion
@@ -107,7 +106,7 @@ namespace IEL.CORE.Classes
             set
             {
                 ColorData.SetIndexingColor(3, value);
-                if (ActiveSpectrum == StateSpectrum.NotEnabled) SpectrumColorChanged?.Invoke(new(StateSpectrum.NotEnabled, value, false));
+                if (ActiveSpectrum == StateSpectrum.NotEnabled) AnimateConectedBrush(false);
             }
         }
         #endregion
@@ -122,7 +121,7 @@ namespace IEL.CORE.Classes
             set
             {
                 ColorData.SetIndexingColor(1, value);
-                if (ActiveSpectrum == StateSpectrum.Select) SpectrumColorChanged?.Invoke(new(StateSpectrum.Select, value, false));
+                if (ActiveSpectrum == StateSpectrum.Select) AnimateConectedBrush(false);
             }
         }
 
@@ -138,10 +137,15 @@ namespace IEL.CORE.Classes
             set
             {
                 ColorData.SetIndexingColor(2, value);
-                if (ActiveSpectrum == StateSpectrum.Used) SpectrumColorChanged?.Invoke(new(StateSpectrum.Used, value, false));
+                if (ActiveSpectrum == StateSpectrum.Used) AnimateConectedBrush(false);
             }
         }
         #endregion
+
+        /// <summary>
+        /// Собственный цвет выделения свойств цвета
+        /// </summary>
+        private Color Custom = Colors.Black;
 
         #region UsedState
         /// <summary>
@@ -152,7 +156,7 @@ namespace IEL.CORE.Classes
         /// <code></code>
         /// <b>Default <![CDATA[<]]>=<![CDATA[>]]> Used</b>
         /// </remarks>
-        private bool UsedState;
+        private bool UsedState = false;
 
         /// <summary>
         /// Узнать состояние использования
@@ -170,7 +174,7 @@ namespace IEL.CORE.Classes
             if (ActiveSpectrum == StateSpectrum.Default || ActiveSpectrum == StateSpectrum.Used)
             {
                 ActiveSpectrum = Value ? (ActiveSpectrum == StateSpectrum.Default ? StateSpectrum.Used : StateSpectrum.Default) : StateSpectrum.Default;
-                SpectrumColorChanged?.Invoke(ActiveArgs(true));
+                AnimateConectedBrush(true);
             }
         }
         #endregion
@@ -178,9 +182,15 @@ namespace IEL.CORE.Classes
         /// <summary>
         /// Активный цвет по используемому спектру состояния цвета
         /// </summary>
-        public Color ActiveSpectrumColor =>
-            Color.FromArgb(ColorData.Data[(int)ActiveSpectrum, 0], ColorData.Data[(int)ActiveSpectrum, 1],
-                ColorData.Data[(int)ActiveSpectrum, 2], ColorData.Data[(int)ActiveSpectrum, 3]);
+        public Color ActiveSpectrumColor => ActiveSpectrum switch
+        {
+            StateSpectrum.Default => Default,
+            StateSpectrum.Used => Used,
+            StateSpectrum.Select => Select,
+            StateSpectrum.NotEnabled => NotEnabled,
+            StateSpectrum.Custom => Custom,
+            _ => Default,
+        };
 
         #region ActiveSpectrum
         /// <summary>
@@ -195,11 +205,11 @@ namespace IEL.CORE.Classes
         /// <param name="AnimatedEvent">Состояние отвечающее за анимацию установки</param>
         public void SetActiveSpecrum(StateSpectrum Value, bool AnimatedEvent)
         {
-            if (ActiveSpectrum == Value) return;
-            if (Value == StateSpectrum.Default || Value == StateSpectrum.Used)
+            if (ActiveSpectrum == Value || Value == StateSpectrum.Custom) return;
+            else if (Value == StateSpectrum.Default || Value == StateSpectrum.Used)
                 ActiveSpectrum = UsedState ? (Value == StateSpectrum.Default ? StateSpectrum.Used : StateSpectrum.Default) : Value;
             else ActiveSpectrum = Value;
-            SpectrumColorChanged?.Invoke(ActiveArgs(AnimatedEvent));
+            AnimateConectedBrush(AnimatedEvent);
         }
 
         /// <summary>
@@ -212,7 +222,8 @@ namespace IEL.CORE.Classes
         public void SetActiveSpecrum(Color Value)
         {
             ActiveSpectrum = StateSpectrum.Custom;
-            SpectrumColorChanged?.Invoke(new(ActiveSpectrum, Value, true));
+            Custom = Value;
+            AnimateConectedBrush(true);
         }
 
         /// <summary>
@@ -228,7 +239,6 @@ namespace IEL.CORE.Classes
         public BrushSettingQ()
         {
             _ColorData = new();
-            UsedState = false;
             ActiveSpectrum = StateSpectrum.Default;
         }
 
@@ -239,7 +249,6 @@ namespace IEL.CORE.Classes
         public BrushSettingQ(byte[,] ByteColorData)
         {
             _ColorData = new(ByteColorData);
-            UsedState = false;
             ActiveSpectrum = StateSpectrum.Default;
         }
 
@@ -250,7 +259,6 @@ namespace IEL.CORE.Classes
         public BrushSettingQ(QData ByteColorData)
         {
             _ColorData = (QData)ByteColorData.Clone();
-            UsedState = false;
             ActiveSpectrum = StateSpectrum.Default;
         }
     }
