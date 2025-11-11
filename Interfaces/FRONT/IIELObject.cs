@@ -13,17 +13,17 @@ namespace IEL.Interfaces.Front
         /// <summary>
         /// Объект настройки состояний фона
         /// </summary>
-        public BrushSettingQ Background { get; protected set; }
+        public BrushSettingQ QBackground { get; protected set; }
 
         /// <summary>
         /// Объект настройки состояний границы
         /// </summary>
-        public BrushSettingQ BorderBrush { get; protected set; }
+        public BrushSettingQ QBorderBrush { get; protected set; }
 
         /// <summary>
         /// Объект настройки состояний текста
         /// </summary>
-        public BrushSettingQ Foreground { get; protected set; }
+        public BrushSettingQ QForeground { get; protected set; }
         #endregion
 
         /// <summary>
