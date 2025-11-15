@@ -1,9 +1,11 @@
-﻿namespace IEL.CORE.Enums
+﻿using static IEL.CORE.Classes.QData;
+
+namespace IEL.CORE.Enums
 {
     /// <summary>
     /// Перечисление спектров цвета
     /// </summary>
-    public enum StateSpectrum
+    public enum StateSpectrum : byte
     {
         /// <summary>
         /// Спектр цвета который не контролируется типом QData
@@ -11,26 +13,26 @@
         /// <remarks>
         /// <c>Такое состояние устанавливается в случае изменения цвета на собственный, даже если он совпадает с одним из спектров QData</c>
         /// </remarks>
-        Custom = -1,
+        Custom = 0,
 
         /// <summary>
         /// Спектр обычного состояния
         /// </summary>
-        Default = 0,
+        Default = 1,
 
         /// <summary>
         /// Спектр выделенного состояния
         /// </summary>
-        Select = 1,
+        Select = 2,
 
         /// <summary>
         /// Спектр использованного цвета
         /// </summary>
-        Used = 2,
+        Used = 3,
 
         /// <summary>
         /// Спектр отключённого цвета
         /// </summary>
-        NotEnabled = 3,
+        NotEnabled = 4,
     }
 }
