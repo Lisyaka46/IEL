@@ -31,7 +31,7 @@ namespace IEL.GUI
 			get => Background;
 			set
 			{
-				Background.ColorData = value.ColorData;
+				Background.SetQData(value);
 			}
 		}
 
@@ -47,7 +47,7 @@ namespace IEL.GUI
 			get => BorderBrush;
 			set
 			{
-				BorderBrush.ColorData = value.ColorData;
+				BorderBrush.SetQData(value);
 			}
 		}
 
@@ -63,7 +63,7 @@ namespace IEL.GUI
 			get => Foreground;
 			set
 			{
-				Foreground.ColorData = value.ColorData;
+				Foreground.SetQData(value);
 			}
 		}
 		#endregion
@@ -321,9 +321,9 @@ namespace IEL.GUI
                 },
                 Padding = new(1, 4, 1, 0),
             };
-            Inlay.QBackground.ColorData = (QData)QDataDefaultInlayBackground.Clone();
-            Inlay.QBorderBrush.ColorData = (QData)QDataDefaultInlayBorderBrush.Clone();
-            Inlay.QForeground.ColorData = (QData)QDataDefaultInlayForeground.Clone();
+            Inlay.QBackground.SetQData(QDataDefaultInlayBackground);
+            Inlay.QBorderBrush.SetQData(QDataDefaultInlayBorderBrush);
+            Inlay.QForeground.SetQData(QDataDefaultInlayForeground);
             Inlay.GradientInlayText.Color = Colors.Black;
             Inlay.OnActivateCloseInlay += (sender, e, Key) =>
             {

@@ -28,7 +28,7 @@ namespace IEL.GUI
             get => Background;
             set
             {
-                Background.ColorData = value.ColorData;
+                Background.SetQData(value);
             }
         }
 
@@ -44,7 +44,7 @@ namespace IEL.GUI
             get => BorderBrush;
             set
             {
-                BorderBrush.ColorData = value.ColorData;
+                BorderBrush.SetQData(value);
             }
         }
 
@@ -60,7 +60,7 @@ namespace IEL.GUI
             get => Foreground;
             set
             {
-                Foreground.ColorData = value.ColorData;
+                Foreground.SetQData(value);
             }
         }
         #endregion
@@ -178,7 +178,7 @@ namespace IEL.GUI
             #endregion
 
             #region Foreground
-            Foreground = new();
+            Foreground = new([255, 255, 255, 255]);
             TextBlockButton.Foreground = new SolidColorBrush(Foreground.ActiveSpectrumColor);
             TextBlockLeftArrow.Foreground = new SolidColorBrush(Foreground.ActiveSpectrumColor);
             TextBlockRightArrow.Foreground = new SolidColorBrush(Foreground.ActiveSpectrumColor);
