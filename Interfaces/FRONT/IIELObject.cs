@@ -7,7 +7,7 @@ namespace IEL.Interfaces.Front
     /// <summary>
     /// Интерфейс объекта IEL
     /// </summary>
-    public interface IIELObject
+    internal interface IIELObject
     {
         #region Color Setting
         /// <summary>
@@ -25,11 +25,6 @@ namespace IEL.Interfaces.Front
         /// </summary>
         public BrushSettingQ QForeground { get; protected set; }
         #endregion
-
-        /// <summary>
-        /// Статус активности объекта
-        /// </summary>
-        public bool IsEnabled { get; }
 
         /// <summary>
         /// Узнать символ клавиши по коду клавиши

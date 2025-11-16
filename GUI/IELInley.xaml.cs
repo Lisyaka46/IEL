@@ -1,4 +1,5 @@
-﻿using IEL.CORE.Classes;
+﻿using IEL.CORE.BaseUserControls;
+using IEL.CORE.Classes;
 using IEL.CORE.Classes.Browser;
 using IEL.CORE.Classes.ObjectSettings;
 using IEL.CORE.Enums;
@@ -13,58 +14,8 @@ namespace IEL.GUI
     /// <summary>
     /// Логика взаимодействия для IELInley.xaml
     /// </summary>
-    public partial class IELInlay : UserControl, IIELButton
+    public partial class IELInlay : IELButton
     {
-		#region Color Setting
-		/// <summary>
-		/// Ресурсный объект настройки состояний фона
-		/// </summary>
-		private readonly new BrushSettingQ Background;
-		/// <summary>
-		/// Объект настройки состояний фона
-		/// </summary>
-		public BrushSettingQ QBackground
-		{
-			get => Background;
-			set
-			{
-				Background.SetQData(value);
-			}
-		}
-
-		/// <summary>
-		/// Ресурсный объект настройки состояний границы
-		/// </summary>
-		private readonly new BrushSettingQ BorderBrush;
-		/// <summary>
-		/// Объект настройки состояний границы
-		/// </summary>
-		public BrushSettingQ QBorderBrush
-		{
-			get => BorderBrush;
-			set
-			{
-				BorderBrush.SetQData(value);
-			}
-		}
-
-		/// <summary>
-		/// Ресурсный объект настройки состояний текста
-		/// </summary>
-		private readonly new BrushSettingQ Foreground;
-		/// <summary>
-		/// Объект настройки состояний текста
-		/// </summary>
-		public BrushSettingQ QForeground
-		{
-			get => Foreground;
-			set
-			{
-				Foreground.SetQData(value);
-			}
-		}
-		#endregion
-
 		private IELUsingObjectSetting _IELSettingObject = new();
         /// <summary>
         /// Настройка использования объекта
@@ -79,45 +30,45 @@ namespace IEL.GUI
             }
         }
 
-        /// <summary>
-        /// Скругление границ
-        /// </summary>
-        public CornerRadius CornerRadius
-        {
-            get => BorderMain.CornerRadius;
-            set => BorderMain.CornerRadius = value;
-        }
+        ///// <summary>
+        ///// Скругление границ
+        ///// </summary>
+        //public CornerRadius CornerRadius
+        //{
+        //    get => BorderMain.CornerRadius;
+        //    set => BorderMain.CornerRadius = value;
+        //}
 
-        /// <summary>
-        /// Толщина границ
-        /// </summary>
-        public Thickness BorderThicknessBlock
-        {
-            get => BorderMain.BorderThickness;
-            set
-            {
-                BorderMain.BorderThickness = value;
-                BorderThicknessActive = new(
-                value.Left + OffsetBorder, value.Top + OffsetBorder,
-                value.Right + OffsetBorder, value.Bottom + OffsetBorder);
-                BorderThicknessDiactive = value;
-            }
-        }
+        ///// <summary>
+        ///// Толщина границ
+        ///// </summary>
+        //public Thickness BorderThicknessBlock
+        //{
+        //    get => BorderMain.BorderThickness;
+        //    set
+        //    {
+        //        BorderMain.BorderThickness = value;
+        //        BorderThicknessActive = new(
+        //        value.Left + OffsetBorder, value.Top + OffsetBorder,
+        //        value.Right + OffsetBorder, value.Bottom + OffsetBorder);
+        //        BorderThicknessDiactive = value;
+        //    }
+        //}
 
-        /// <summary>
-        /// Объект события активации левым щелчком мыши
-        /// </summary>
-        public IIELButton.ActivateHandler? OnActivateMouseLeft { get; set; }
+        ///// <summary>
+        ///// Объект события активации левым щелчком мыши
+        ///// </summary>
+        //public IIELButton.ActivateHandler? OnActivateMouseLeft { get; set; }
 
-        /// <summary>
-        /// Объект события активации правым щелчком мыши
-        /// </summary>
-        public IIELButton.ActivateHandler? OnActivateMouseRight { get; set; }
+        ///// <summary>
+        ///// Объект события активации правым щелчком мыши
+        ///// </summary>
+        //public IIELButton.ActivateHandler? OnActivateMouseRight { get; set; }
 
         /// <summary>
         /// Объект события активации закрытия вкладки
         /// </summary>
-        public IIELButton.ActivateHandler? OnActivateCloseInlay { get; set; }
+        public IELButton.ActivateHandler? OnActivateCloseInlay { get; set; }
 
         /// <summary>
         /// Страница заголовка
@@ -170,20 +121,18 @@ namespace IEL.GUI
                 _UsedState = value;
                 BorderMain.BeginAnimation(BorderThicknessProperty,
                     IELSettingObject.ObjectAnimateSetting.GetAnimationThickness(value ? BorderThicknessActive : BorderThicknessDiactive, TimeSpan.FromMilliseconds(800d)));
-                Background.SetActiveSpecrum(StateSpectrum.Default, true);
-                BorderBrush.SetActiveSpecrum(StateSpectrum.Default, true);
-                Foreground.SetActiveSpecrum(StateSpectrum.Default, true);
+                SetActiveSpecrum(StateSpectrum.Default, true);
             }
         }
 
-        /// <summary>
-        /// Смещение контента в объекте
-        /// </summary>
-        public Thickness PaddingContent
-        {
-            get => BorderMain.Padding;
-            set => BorderMain.Padding = value;
-        }
+        ///// <summary>
+        ///// Смещение контента в объекте
+        ///// </summary>
+        //public Thickness PaddingContent
+        //{
+        //    get => BorderMain.Padding;
+        //    set => BorderMain.Padding = value;
+        //}
 
         /// <summary>
         /// Изображение кнопки закрытия вкладки
@@ -215,25 +164,16 @@ namespace IEL.GUI
         public IELInlay()
         {
             InitializeComponent();
-            #region Background
-            Background = new();
-            BorderMain.Background = new SolidColorBrush(Background.ActiveSpectrumColor);
-                    
-            Background.ConnectSolidColorBrush((SolidColorBrush)BorderMain.Background);
+            #region Background     
+            BorderMain.Background = QBackground.InicializeConnectedSolidColorBrush();
             #endregion
 
             #region BorderBrush
-            BorderBrush = new();
-            BorderMain.BorderBrush = new SolidColorBrush(BorderBrush.ActiveSpectrumColor);
-                    
-            BorderBrush.ConnectSolidColorBrush((SolidColorBrush)BorderMain.BorderBrush);
+            BorderMain.BorderBrush = QBorderBrush.InicializeConnectedSolidColorBrush();
             #endregion
 
             #region Foreground
-            Foreground = new();
-            TextBlockHead.Foreground = new SolidColorBrush(Foreground.ActiveSpectrumColor);
-
-            Foreground.ConnectSolidColorBrush((SolidColorBrush)TextBlockHead.Foreground);
+            TextBlockHead.Foreground = QForeground.InicializeConnectedSolidColorBrush();
             #endregion
 
             BorderThicknessActive = new(
@@ -257,9 +197,7 @@ namespace IEL.GUI
             {
                 if (IsEnabled)
                 {
-                    Background.SetActiveSpecrum(StateSpectrum.Select, true);
-                    BorderBrush.SetActiveSpecrum(StateSpectrum.Select, true);
-                    Foreground.SetActiveSpecrum(StateSpectrum.Select, true);
+                    SetActiveSpecrum(StateSpectrum.Select, true);
                     IELSettingObject.StartHover();
                 }
             };
@@ -274,9 +212,7 @@ namespace IEL.GUI
             {
                 if (IsEnabled)
                 {
-                    Background.SetActiveSpecrum(StateSpectrum.Default, true);
-                    BorderBrush.SetActiveSpecrum(StateSpectrum.Default, true);
-                    Foreground.SetActiveSpecrum(StateSpectrum.Default, true);
+                    SetActiveSpecrum(StateSpectrum.Default, true);
                     IELSettingObject.StopHover();
                 }
             };
@@ -287,9 +223,7 @@ namespace IEL.GUI
             };
             BorderMain.MouseDown += (sender, e) =>
             {
-                Background.SetActiveSpecrum(StateSpectrum.Used, false);
-                BorderBrush.SetActiveSpecrum(StateSpectrum.Used, false);
-                Foreground.SetActiveSpecrum(StateSpectrum.Used, false);
+                SetActiveSpecrum(StateSpectrum.Used, false);
                 IELSettingObject.StopHover();
             };
 
@@ -297,9 +231,7 @@ namespace IEL.GUI
             {
                 if (IsEnabled && OnActivateMouseLeft != null)
                 {
-                    Background.SetActiveSpecrum(StateSpectrum.Select, true);
-                    BorderBrush.SetActiveSpecrum(StateSpectrum.Select, true);
-                    Foreground.SetActiveSpecrum(StateSpectrum.Select, true);
+                    SetActiveSpecrum(StateSpectrum.Select, true);
                     OnActivateMouseLeft?.Invoke(this, e);
                 }
             };
@@ -308,9 +240,7 @@ namespace IEL.GUI
             {
                 if (IsEnabled && OnActivateMouseRight != null)
                 {
-                    Background.SetActiveSpecrum(StateSpectrum.Select, true);
-                    BorderBrush.SetActiveSpecrum(StateSpectrum.Select, true);
-                    Foreground.SetActiveSpecrum(StateSpectrum.Select, true);
+                    SetActiveSpecrum(StateSpectrum.Select, true);
                     OnActivateMouseRight?.Invoke(this, e);
                 }
             };
@@ -318,9 +248,7 @@ namespace IEL.GUI
             IsEnabledChanged += (sender, e) =>
             {
                 StateSpectrum Value = (bool)e.NewValue ? StateSpectrum.Default : StateSpectrum.NotEnabled;
-                Background.SetActiveSpecrum(Value, true);
-                BorderBrush.SetActiveSpecrum(Value, true);
-                Foreground.SetActiveSpecrum(Value, true);
+                SetActiveSpecrum(Value, true);
             };
         }
 

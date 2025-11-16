@@ -1,16 +1,17 @@
-﻿<UserControl
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:IEL.GUI"
-             xmlns:GUI="clr-namespace:IEL.GUI"
-             x:Class="IEL.GUI.IELBrowserPage"
-             mc:Ignorable="d" 
-             d:DesignHeight="380.454" d:DesignWidth="487.727">
-    <UserControl.Resources>
+﻿<Base:IELObject
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:Base="clr-namespace:IEL.CORE.BaseUserControls"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+    xmlns:local="clr-namespace:IEL.GUI"
+    xmlns:GUI="clr-namespace:IEL.GUI"
+    x:Class="IEL.GUI.IELBrowserPage"
+    mc:Ignorable="d" 
+    d:DesignHeight="380.454" d:DesignWidth="487.727">
+    <Control.Resources>
         <ResourceDictionary Source="/IEL;component/CORE/Resources/VisualDictionary.xaml"/>
-    </UserControl.Resources>
+    </Control.Resources>
     <Border x:Name="BorderMain">
         <Grid x:Name="GridMain">
             <Grid.RowDefinitions>
@@ -35,7 +36,7 @@
                                     </Grid>
                                 </ScrollViewer>
                             </Border>
-                            
+
                         </Grid>
                     </Grid>
                 </Border>
@@ -43,4 +44,4 @@
         </Grid>
 
     </Border>
-</UserControl>
+</Base:IELObject>

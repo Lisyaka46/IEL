@@ -1,4 +1,5 @@
-﻿using IEL.CORE.Enums;
+﻿using IEL.CORE.BaseUserControls;
+using IEL.CORE.Enums;
 using IEL.Interfaces.Front;
 using System.Windows;
 using System.Windows.Controls;
@@ -67,7 +68,7 @@ namespace IEL.CORE.Classes.ObjectSettings
         /// <summary>
         /// Обновить видимость и отображение событий мыши
         /// </summary>
-        public void UpdateVisibleMouseEvents(Image Element, IIELButton Button, bool Activate)
+        public void UpdateVisibleMouseEvents(Image Element, IELButton Button, bool Activate)
         {
             if (SettingMouseImage == null) return;
             if (_VisibleMouseImaging)

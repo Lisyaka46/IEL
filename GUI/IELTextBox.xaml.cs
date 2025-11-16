@@ -1,4 +1,5 @@
-﻿using IEL.CORE.Classes;
+﻿using IEL.CORE.BaseUserControls;
+using IEL.CORE.Classes;
 using IEL.CORE.Classes.ObjectSettings;
 using IEL.CORE.Enums;
 using IEL.Interfaces.Front;
@@ -13,58 +14,8 @@ namespace IEL.GUI
     /// <summary>
     /// Логика взаимодействия для IELTextBox.xaml
     /// </summary>
-    public partial class IELTextBox : UserControl, IIELObject
+    public partial class IELTextBox : IELObject, IIELButton
     {
-        #region Color Setting
-        /// <summary>
-        /// Ресурсный объект настройки состояний фона
-        /// </summary>
-        private readonly new BrushSettingQ Background;
-        /// <summary>
-        /// Объект настройки состояний фона
-        /// </summary>
-        public BrushSettingQ QBackground
-        {
-            get => Background;
-            set
-            {
-                Background.SetQData(value);
-            }
-        }
-
-        /// <summary>
-        /// Ресурсный объект настройки состояний границы
-        /// </summary>
-        private readonly new BrushSettingQ BorderBrush;
-        /// <summary>
-        /// Объект настройки состояний границы
-        /// </summary>
-        public BrushSettingQ QBorderBrush
-        {
-            get => BorderBrush;
-            set
-            {
-                BorderBrush.SetQData(value);
-            }
-        }
-
-        /// <summary>
-        /// Ресурсный объект настройки состояний текста
-        /// </summary>
-        private readonly new BrushSettingQ Foreground;
-        /// <summary>
-        /// Объект настройки состояний текста
-        /// </summary>
-        public BrushSettingQ QForeground
-        {
-            get => Foreground;
-            set
-            {
-                Foreground.SetQData(value);
-            }
-        }
-        #endregion
-
         private IELObjectSetting _IELSettingObject = new();
         /// <summary>
         /// Настройка использования объекта
@@ -94,6 +45,15 @@ namespace IEL.GUI
         {
             get => TextBoxBorder.BorderThickness;
             set => TextBoxBorder.BorderThickness = value;
+        }
+
+        /// <summary>
+        /// Смещение контента в объекте
+        /// </summary>
+        public Thickness PaddingContent
+        {
+            get => Padding;
+            set => Padding = value;
         }
 
         /// <summary>
@@ -231,24 +191,15 @@ namespace IEL.GUI
         {
             InitializeComponent();
             #region Background
-            Background = new();
-            TextBoxBorder.Background = new SolidColorBrush(Background.ActiveSpectrumColor);
-                    
-            Background.ConnectSolidColorBrush((SolidColorBrush)TextBoxBorder.Background);
+            TextBoxBorder.Background = QBackground.InicializeConnectedSolidColorBrush();
             #endregion
 
             #region BorderBrush
-            BorderBrush = new();
-            TextBoxBorder.BorderBrush = new SolidColorBrush(BorderBrush.ActiveSpectrumColor);
-
-            BorderBrush.ConnectSolidColorBrush((SolidColorBrush)TextBoxBorder.BorderBrush);
+            TextBoxBorder.BorderBrush = QBorderBrush.InicializeConnectedSolidColorBrush();
             #endregion
 
             #region Foreground
-            Foreground = new();
-            TextBoxMain.Foreground = new SolidColorBrush(Foreground.ActiveSpectrumColor);
-
-            Foreground.ConnectSolidColorBrush((SolidColorBrush)TextBoxMain.Foreground);
+            TextBoxMain.Foreground = QForeground.InicializeConnectedSolidColorBrush();
             #endregion
             IELSettingObject = new();
 
@@ -258,25 +209,19 @@ namespace IEL.GUI
             GotKeyboardFocus += (sender, e) =>
             {
                 IsFocus = true;
-                Background.SetActiveSpecrum(StateSpectrum.Used, true);
-                BorderBrush.SetActiveSpecrum(StateSpectrum.Used, true);
-                Foreground.SetActiveSpecrum(StateSpectrum.Used, true);
+                SetActiveSpecrum(StateSpectrum.Used, true);
             };
             LostKeyboardFocus += (sender, e) =>
             {
                 IsFocus = false;
-                Background.SetActiveSpecrum(StateSpectrum.Default, true);
-                BorderBrush.SetActiveSpecrum(StateSpectrum.Default, true);
-                Foreground.SetActiveSpecrum(StateSpectrum.Default, true);
+                SetActiveSpecrum(StateSpectrum.Default, true);
             };
 
             MouseEnter += (sender, e) =>
             {
                 if (IsEnabled && !IsFocus)
                 {
-                    Background.SetActiveSpecrum(StateSpectrum.Select, true);
-                    BorderBrush.SetActiveSpecrum(StateSpectrum.Select, true);
-                    Foreground.SetActiveSpecrum(StateSpectrum.Select, true);
+                    SetActiveSpecrum(StateSpectrum.Select, true);
                 }
             };
 
@@ -284,18 +229,14 @@ namespace IEL.GUI
             {
                 if (IsEnabled && !IsFocus)
                 {
-                    Background.SetActiveSpecrum(StateSpectrum.Default, true);
-                    BorderBrush.SetActiveSpecrum(StateSpectrum.Default, true);
-                    Foreground.SetActiveSpecrum(StateSpectrum.Default, true);
+                    SetActiveSpecrum(StateSpectrum.Default, true);
                 }
             };
 
             IsEnabledChanged += (sender, e) =>
             {
                 StateSpectrum Value = (bool)e.NewValue ? StateSpectrum.Default : StateSpectrum.NotEnabled;
-                Background.SetActiveSpecrum(Value, true);
-                BorderBrush.SetActiveSpecrum(Value, true);
-                Foreground.SetActiveSpecrum(Value, true);
+                SetActiveSpecrum(Value, true);
             };
 
             MouseDown += (sender, e) =>

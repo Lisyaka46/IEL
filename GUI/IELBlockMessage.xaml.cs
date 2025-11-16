@@ -1,4 +1,5 @@
-﻿using IEL.CORE.Classes;
+﻿using IEL.CORE.BaseUserControls;
+using IEL.CORE.Classes;
 using IEL.CORE.Classes.ObjectSettings;
 using IEL.CORE.Enums;
 using IEL.Interfaces.Front;
@@ -13,58 +14,8 @@ namespace IEL.GUI
     /// <summary>
     /// Логика взаимодействия для IELBlockMessage.xaml
     /// </summary>
-    public partial class IELBlockMessage : UserControl, IIELObject
+    public partial class IELBlockMessage : IELObject
     {
-        #region Color Setting
-        /// <summary>
-        /// Ресурсный объект настройки состояний фона
-        /// </summary>
-        private readonly new BrushSettingQ Background;
-        /// <summary>
-        /// Объект настройки состояний фона
-        /// </summary>
-        public BrushSettingQ QBackground
-        {
-            get => Background;
-            set
-            {
-                Background.SetQData(value);
-            }
-        }
-
-        /// <summary>
-        /// Ресурсный объект настройки состояний границы
-        /// </summary>
-        private readonly new BrushSettingQ BorderBrush;
-        /// <summary>
-        /// Объект настройки состояний границы
-        /// </summary>
-        public BrushSettingQ QBorderBrush
-        {
-            get => BorderBrush;
-            set
-            {
-                BorderBrush.SetQData(value);
-            }
-        }
-
-        /// <summary>
-        /// Ресурсный объект настройки состояний текста
-        /// </summary>
-        private readonly new BrushSettingQ Foreground;
-        /// <summary>
-        /// Объект настройки состояний текста
-        /// </summary>
-        public BrushSettingQ QForeground
-        {
-            get => Foreground;
-            set
-            {
-                Foreground.SetQData(value);
-            }
-        }
-        #endregion
-
         #region Flags
         /// <summary>
         /// Флаг состояния активности панели сообщения
@@ -228,15 +179,12 @@ namespace IEL.GUI
         {
             InitializeComponent();
             #region Background
-            Background = new();
             #endregion
 
             #region BorderBrush
-            BorderBrush = new();
             #endregion
 
             #region Foreground
-            Foreground = new();
             #endregion
 
             #region Set Values Object

@@ -1,10 +1,12 @@
-﻿<UserControl x:Class="IEL.GUI.IELButtonImageKey"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             mc:Ignorable="d" 
-             d:DesignHeight="38.818" d:DesignWidth="123.81" Cursor="Hand">
+﻿<Base:IELButtonKey 
+    x:Class="IEL.GUI.IELButtonImageKey"
+    xmlns:Base="clr-namespace:IEL.CORE.BaseUserControls"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+    mc:Ignorable="d" 
+    d:DesignHeight="38.818" d:DesignWidth="123.81" Cursor="Hand">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="24"/>
@@ -32,4 +34,4 @@
         </Border>
 
     </Grid>
-</UserControl>
+</Base:IELButtonKey>

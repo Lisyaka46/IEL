@@ -1,4 +1,5 @@
-﻿using IEL.CORE.Classes;
+﻿using IEL.CORE.BaseUserControls;
+using IEL.CORE.Classes;
 using IEL.CORE.Classes.ObjectSettings;
 using IEL.CORE.Enums;
 using IEL.Interfaces.Front;
@@ -12,58 +13,8 @@ namespace IEL.GUI
     /// <summary>
     /// Логика взаимодействия для IELBlockInfoText.xaml
     /// </summary>
-    public partial class IELBlockInfoText : UserControl, IIELObject
+    public partial class IELBlockInfoText : IELObject
     {
-        #region Color Setting
-        /// <summary>
-        /// Ресурсный объект настройки состояний фона
-        /// </summary>
-        private readonly new BrushSettingQ Background;
-        /// <summary>
-        /// Объект настройки состояний фона
-        /// </summary>
-        public BrushSettingQ QBackground
-        {
-            get => Background;
-            set
-            {
-                Background.SetQData(value);
-            }
-        }
-
-        /// <summary>
-        /// Ресурсный объект настройки состояний границы
-        /// </summary>
-        private readonly new BrushSettingQ BorderBrush;
-        /// <summary>
-        /// Объект настройки состояний границы
-        /// </summary>
-        public BrushSettingQ QBorderBrush
-        {
-            get => BorderBrush;
-            set
-            {
-                BorderBrush.SetQData(value);
-            }
-        }
-
-        /// <summary>
-        /// Ресурсный объект настройки состояний текста
-        /// </summary>
-        private readonly new BrushSettingQ Foreground;
-        /// <summary>
-        /// Объект настройки состояний текста
-        /// </summary>
-        public BrushSettingQ QForeground
-        {
-            get => Foreground;
-            set
-            {
-                Foreground.SetQData(value);
-            }
-        }
-        #endregion
-
         private IELUsingObjectSetting _IELSettingObject = new();
         /// <summary>
         /// Настройка использования объекта
@@ -133,24 +84,15 @@ namespace IEL.GUI
         {
             InitializeComponent();
             #region Background
-            Background = new();
-            MainBorder.Background = new SolidColorBrush(Background.ActiveSpectrumColor);
-
-            Background.ConnectSolidColorBrush((SolidColorBrush)MainBorder.Background);
+            MainBorder.Background = QBackground.InicializeConnectedSolidColorBrush();
             #endregion
 
             #region BorderBrush
-            BorderBrush = new();
-            MainBorder.BorderBrush = new SolidColorBrush(BorderBrush.ActiveSpectrumColor);
-
-            BorderBrush.ConnectSolidColorBrush((SolidColorBrush)MainBorder.BorderBrush);
+            MainBorder.BorderBrush = QBorderBrush.InicializeConnectedSolidColorBrush();
             #endregion
 
             #region Foreground
-            Foreground = new();
-            MainTextBlock.Foreground = new SolidColorBrush(Foreground.ActiveSpectrumColor);
-
-            Foreground.ConnectSolidColorBrush((SolidColorBrush)MainTextBlock.Foreground);
+            MainTextBlock.Foreground = QBackground.InicializeConnectedSolidColorBrush();
             #endregion
 
             IELSettingObject = new();
@@ -160,9 +102,7 @@ namespace IEL.GUI
             {
                 if (IsEnabled)
                 {
-                    Background.SetActiveSpecrum(StateSpectrum.Select, true);
-                    BorderBrush.SetActiveSpecrum(StateSpectrum.Select, true);
-                    Foreground.SetActiveSpecrum(StateSpectrum.Select, true);
+                    SetActiveSpecrum(StateSpectrum.Select, true);
                     IELSettingObject.StartHover();
                 }
             };
@@ -171,9 +111,7 @@ namespace IEL.GUI
             {
                 if (IsEnabled)
                 {
-                    Background.SetActiveSpecrum(StateSpectrum.Default, true);
-                    BorderBrush.SetActiveSpecrum(StateSpectrum.Default, true);
-                    Foreground.SetActiveSpecrum(StateSpectrum.Default, true);
+                    SetActiveSpecrum(StateSpectrum.Default, true);
                     IELSettingObject.StopHover();
                 }
             };
@@ -181,9 +119,7 @@ namespace IEL.GUI
             IsEnabledChanged += (sender, e) =>
             {
                 StateSpectrum Value = (bool)e.NewValue ? StateSpectrum.Default : StateSpectrum.NotEnabled;
-                Background.SetActiveSpecrum(Value, true);
-                BorderBrush.SetActiveSpecrum(Value, true);
-                Foreground.SetActiveSpecrum(Value, true);
+                SetActiveSpecrum(Value, true);
             };
         }
     }

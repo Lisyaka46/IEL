@@ -4,10 +4,21 @@ using System.Windows.Media;
 
 namespace IEL.CORE.Classes
 {
+    internal static class QDataView
+    {
+        public static Color ToColor(this byte[] rgb)
+        {
+            if (rgb == null || rgb.Length < 3)
+                throw new ArgumentException("Массив должен содержать минимум 3 элемента");
+
+            return Color.FromRgb(rgb[0], rgb[1], rgb[2]);
+        }
+    }
+
     /// <summary>
     /// Класс управляемых данных цветовой палитры отображения объекта
     /// </summary>
-    public class QData : ICloneable
+    public class QData
     {
         /// <summary>
         /// Объект перечисления спектров данных цвета
@@ -49,34 +60,13 @@ namespace IEL.CORE.Classes
         /// <summary>
         /// Массив данных цвета
         /// </summary>
-        internal byte[][] Data { get; set; }
-
-        /// <summary>
-        /// Получить значение по определённому спектру
-        /// </summary>
-        /// <param name="Spectrum">Спектр которому присваивается значение</param>
-        public byte[] GetFromSpectrumData(EnumDataSpectrum Spectrum) => Data[(int)Spectrum];
-
-        /// <summary>
-        /// Установить значение по определённому спектру
-        /// </summary>
-        /// <param name="Spectrum">Спектр которому присваивается значение</param>
-        /// <param name="A">Значение Alpha</param>
-        /// <param name="R">Значение Red</param>
-        /// <param name="G">Значение Green</param>
-        /// <param name="B">Значение Blue</param>
-        public void SetFromSpectrumData(EnumDataSpectrum Spectrum, byte A, byte R, byte G, byte B)
-        {
-            Data[(int)Spectrum] = [A, R, G, B];
-            ChangedData?.Invoke(Spectrum);
-        }
+        private byte[][] Data;
 
         /// <summary>
         /// Получить цвет по определённому спектру
         /// </summary>
         /// <param name="Spectrum">Спектр которому присваивается значение</param>
-        public Color GetFromSpectrumColor(EnumDataSpectrum Spectrum) =>
-            Color.FromArgb(Data[(int)Spectrum][0], Data[(int)Spectrum][1], Data[(int)Spectrum][2], Data[(int)Spectrum][3]);
+        public Color GetFromSpectrumColor(EnumDataSpectrum Spectrum) => Data[(int)Spectrum].ToColor();
 
         /// <summary>
         /// Установить цвет по определённому спектру
@@ -120,8 +110,9 @@ namespace IEL.CORE.Classes
         /// <param name="ByteColorData">Массив байтовых значений цвета</param>
         public QData(byte[][] ByteColorData)
         {
-            if (ByteColorData.Length == 4) Data = ByteColorData;
-            else throw new Exception("Не хватает данных, массив не имеет размеры 4/4");
+            if (ByteColorData == null || ByteColorData.Length != 4 || ByteColorData.Any(i => i == null || i.Length != 4))
+                throw new Exception("Не хватает данных, массив не имеет размеры 4/4");
+            Data = ByteColorData;
         }
 
         /// <summary>
@@ -155,6 +146,6 @@ namespace IEL.CORE.Classes
         /// Скопировать данные расположения цветов
         /// </summary>
         /// <returns>Склонированный элемент</returns>
-        public object Clone() => Data.Clone();
+        public byte[][] Clone() => (byte[][])Data.Clone();
     }
 }

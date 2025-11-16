@@ -9,8 +9,19 @@ namespace IEL.CORE.Classes
     /// <summary>
     /// Класс настройки поведения цвета при разных состояниях объекта
     /// </summary>
-    public sealed class BrushSettingQ : QData
+    public sealed class BrushSettingQ
     {
+        /// <summary>
+        /// Дата которая используется для отображения
+        /// </summary>
+        private QData Source;
+
+        /// <summary>
+        /// Клонировать текущую настройку цвета <b>БЕЗ ЗАВИСИМОСТИ СОБЫТИЙ</b>
+        /// </summary>
+        /// <returns></returns>
+        public QData Clone() => new(Source.Clone());
+
         #region ConectedBrush
         /// <summary>
         /// Стек всех подключённых к настройки свойств цвета
@@ -20,8 +31,11 @@ namespace IEL.CORE.Classes
         /// <summary>
         /// Подключить свойство цвета объекта к настройке Q-логики
         /// </summary>
-        /// <param name="SourceBrush">Подключаемое свойство цвета</param>
-        public void ConnectSolidColorBrush(SolidColorBrush SourceBrush) => ConectedBrush.Push(SourceBrush);
+        public SolidColorBrush InicializeConnectedSolidColorBrush()
+        {
+            ConectedBrush.Push(new SolidColorBrush(ActiveSpectrumColor));
+            return ConectedBrush.Peek();
+        }
         #endregion
 
         #region AnimationBrushSettingQ
@@ -110,12 +124,12 @@ namespace IEL.CORE.Classes
         /// </summary>
         public Color ActiveSpectrumColor => ActiveSpectrum switch
         {
-            StateSpectrum.Default => GetFromSpectrumColor(EnumDataSpectrum.Default),
-            StateSpectrum.Used => GetFromSpectrumColor(EnumDataSpectrum.Used),
-            StateSpectrum.Select => GetFromSpectrumColor(EnumDataSpectrum.Select),
-            StateSpectrum.NotEnabled => GetFromSpectrumColor(EnumDataSpectrum.NotEnabled),
+            StateSpectrum.Default => Source.GetFromSpectrumColor(EnumDataSpectrum.Default),
+            StateSpectrum.Used => Source.GetFromSpectrumColor(EnumDataSpectrum.Used),
+            StateSpectrum.Select => Source.GetFromSpectrumColor(EnumDataSpectrum.Select),
+            StateSpectrum.NotEnabled => Source.GetFromSpectrumColor(EnumDataSpectrum.NotEnabled),
             StateSpectrum.Custom => Custom,
-            _ => GetFromSpectrumColor(EnumDataSpectrum.Default),
+            _ => Source.GetFromSpectrumColor(EnumDataSpectrum.Default),
         };
 
         #region ActiveSpectrum
@@ -160,14 +174,13 @@ namespace IEL.CORE.Classes
         #endregion
 
         #region QDataManipulate
-
         /// <summary>
         /// Спектр обычного сотояния цвета
         /// </summary>
         public Color Default
         {
-            get => GetFromSpectrumColor(EnumDataSpectrum.Default);
-            set => StaticSetFromSpectrumColor(EnumDataSpectrum.Default, value);
+            get => Source.GetFromSpectrumColor(EnumDataSpectrum.Default);
+            set => Source.SetFromSpectrumColor(EnumDataSpectrum.Default, value);
         }
 
         /// <summary>
@@ -175,8 +188,8 @@ namespace IEL.CORE.Classes
         /// </summary>
         public Color Select
         {
-            get => GetFromSpectrumColor(EnumDataSpectrum.Select);
-            set => StaticSetFromSpectrumColor(EnumDataSpectrum.Select, value);
+            get => Source.GetFromSpectrumColor(EnumDataSpectrum.Select);
+            set => Source.SetFromSpectrumColor(EnumDataSpectrum.Select, value);
         }
 
         /// <summary>
@@ -184,8 +197,8 @@ namespace IEL.CORE.Classes
         /// </summary>
         public Color Used
         {
-            get => GetFromSpectrumColor(EnumDataSpectrum.Used);
-            set => StaticSetFromSpectrumColor(EnumDataSpectrum.Used, value);
+            get => Source.GetFromSpectrumColor(EnumDataSpectrum.Used);
+            set => Source.SetFromSpectrumColor(EnumDataSpectrum.Used, value);
         }
 
         /// <summary>
@@ -193,62 +206,22 @@ namespace IEL.CORE.Classes
         /// </summary>
         public Color NotEnabled
         {
-            get => GetFromSpectrumColor(EnumDataSpectrum.NotEnabled);
-            set => StaticSetFromSpectrumColor(EnumDataSpectrum.NotEnabled, value);
-        }
-
-        /// <summary>
-        /// Установить значение по определённому спектру
-        /// </summary>
-        /// <param name="Spectrum">Спектр которому присваивается значение</param>
-        /// <param name="A">Значение Alpha</param>
-        /// <param name="R">Значение Red</param>
-        /// <param name="G">Значение Green</param>
-        /// <param name="B">Значение Blue</param>
-        public new void SetFromSpectrumData(EnumDataSpectrum Spectrum, byte A, byte R, byte G, byte B)
-        {
-            Data[(int)Spectrum] = [A, R, G, B];
-            if ((int)Spectrum == (int)ActiveSpectrum - 1) AnimateConectedBrush(true);
-        }
-
-        /// <summary>
-        /// Установить цвет по определённому спектру
-        /// </summary>
-        /// <param name="Spectrum">Спектр которому присваивается значение</param>
-        /// <param name="Value">Значение цвета</param>
-        public new void SetFromSpectrumColor(EnumDataSpectrum Spectrum, Color Value)
-        {
-            Data[(int)Spectrum] = [Value.A, Value.R, Value.G, Value.B];
-            if ((int)Spectrum == (int)ActiveSpectrum - 1) AnimateConectedBrush(true);
-        }
-
-        /// <summary>
-        /// Установить цвет по определённому спектру <b>Без анимации</b>
-        /// </summary>
-        /// <param name="Spectrum">Спектр которому присваивается значение</param>
-        /// <param name="Value">Значение цвета</param>
-        private void StaticSetFromSpectrumColor(EnumDataSpectrum Spectrum, Color Value)
-        {
-            Data[(int)Spectrum] = [Value.A, Value.R, Value.G, Value.B];
-            if ((int)Spectrum == (int)ActiveSpectrum - 1) AnimateConectedBrush(false);
+            get => Source.GetFromSpectrumColor(EnumDataSpectrum.NotEnabled);
+            set => Source.SetFromSpectrumColor(EnumDataSpectrum.NotEnabled, value);
         }
 
         /// <summary>
         /// Установить новый экземпляр данных Q-логики
         /// </summary>
-        /// <param name="Source">Спектр которому присваивается значение</param>
-        public void SetQData(QData Source)
+        /// <param name="Data">Спектр которому присваивается значение</param>
+        public void SetQData(QData Data)
         {
-            Data = Source.Data;
-            Source.ChangedData += Source_ChangedData;
+            Source = Data;
+            Source.ChangedData += UpdateVisualActiveSpectrumData;
             AnimateConectedBrush(true);
         }
 
-        /// <summary>
-        /// Функция обновление спектра данных если он равен активному
-        /// </summary>
-        /// <param name="Spectrum">Текущий изменённый спектр данных</param>
-        private void Source_ChangedData(EnumDataSpectrum Spectrum) { if ((int)Spectrum == (int)ActiveSpectrum - 1) AnimateConectedBrush(false); }
+        private void UpdateVisualActiveSpectrumData(EnumDataSpectrum Spectrum) { if ((int)Spectrum == (int)ActiveSpectrum - 1) AnimateConectedBrush(false); }
         #endregion
 
         /// <summary>
@@ -256,14 +229,8 @@ namespace IEL.CORE.Classes
         /// </summary>
         public BrushSettingQ()
         {
-            Data =
-            [
-                [255, 0, 0, 0],
-                [255, 128, 128, 128],
-                [255, 200, 200, 200],
-                [255, 255, 70, 70],
-            ];
-            ChangedData += Source_ChangedData;
+            Source = new();
+            Source.ChangedData += UpdateVisualActiveSpectrumData;
             ActiveSpectrum = StateSpectrum.Default;
         }
 
@@ -284,9 +251,8 @@ namespace IEL.CORE.Classes
         /// <param name="ByteColorData">Массив байтовых значений цвета</param>
         public BrushSettingQ(byte[][] ByteColorData)
         {
-            if (ByteColorData.Length == 4) Data = ByteColorData;
-            else throw new Exception("Не хватает данных, массив не имеет размеры 4/4");
-            ChangedData += Source_ChangedData;
+            Source = new(ByteColorData);
+            Source.ChangedData += UpdateVisualActiveSpectrumData;
             ActiveSpectrum = StateSpectrum.Default;
         }
 
@@ -304,18 +270,8 @@ namespace IEL.CORE.Classes
         /// <param name="ByteColorData">Массив байтовых значений цвета</param>
         public BrushSettingQ(byte[] ByteColorData)
         {
-            if (ByteColorData.Length == 4)
-            {
-                Data =
-                    [
-                    ByteColorData,
-                    ByteColorData,
-                    ByteColorData,
-                    ByteColorData,
-                    ];
-            }
-            else throw new Exception("Не хватает данных, массив не имеет размера 4");
-            ChangedData += Source_ChangedData;
+            Source = new(ByteColorData);
+            Source.ChangedData += UpdateVisualActiveSpectrumData;
             ActiveSpectrum = StateSpectrum.Default;
         }
     }

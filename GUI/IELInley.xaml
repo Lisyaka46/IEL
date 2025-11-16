@@ -1,9 +1,11 @@
-﻿<UserControl x:Class="IEL.GUI.IELInlay"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:IEL.GUI" MinWidth="130">
+﻿<Base:IELButton
+    x:Class="IEL.GUI.IELInlay"
+    xmlns:Base="clr-namespace:IEL.CORE.BaseUserControls"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+    xmlns:local="clr-namespace:IEL.GUI" MinWidth="130">
     <Grid>
         <Border x:Name="BorderMain" BorderBrush="Black" BorderThickness="2,2,2,2" Background="#FF888282">
             <Grid>
@@ -24,4 +26,4 @@
             </Grid>
         </Border>
     </Grid>
-</UserControl>
+</Base:IELButton>

@@ -1,9 +1,11 @@
-﻿<UserControl x:Class="IEL.GUI.IELButtonText"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             mc:Ignorable="d" d:DesignHeight="41.935" d:DesignWidth="124.698" Cursor="Hand">
+﻿<Base:IELButton
+    x:Class="IEL.GUI.IELButtonText"
+    xmlns:Base="clr-namespace:IEL.CORE.BaseUserControls"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+    mc:Ignorable="d" d:DesignHeight="41.935" d:DesignWidth="124.698" Cursor="Hand">
     <Grid>
         <Border x:Name="BorderButton" BorderBrush="Black" CornerRadius="10,10,10,10" Background="White" Grid.ColumnSpan="1">
             <Grid x:Name="GridButton">
@@ -26,4 +28,4 @@
             </Grid>
         </Border>
     </Grid>
-</UserControl>
+</Base:IELButton>

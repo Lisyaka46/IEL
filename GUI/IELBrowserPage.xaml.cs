@@ -1,4 +1,5 @@
-﻿using IEL.CORE.Classes;
+﻿using IEL.CORE.BaseUserControls;
+using IEL.CORE.Classes;
 using IEL.CORE.Classes.Browser;
 using IEL.CORE.Classes.ObjectSettings;
 using IEL.Interfaces.Front;
@@ -16,58 +17,8 @@ namespace IEL.GUI
     /// <summary>
     /// Логика взаимодействия для IELBrowserPage.xaml
     /// </summary>
-    public partial class IELBrowserPage : UserControl, IIELObject
+    public partial class IELBrowserPage : IELObject
     {
-		#region Color Setting
-		/// <summary>
-		/// Ресурсный объект настройки состояний фона
-		/// </summary>
-		private readonly new BrushSettingQ Background;
-		/// <summary>
-		/// Объект настройки состояний фона
-		/// </summary>
-		public BrushSettingQ QBackground
-		{
-			get => Background;
-			set
-			{
-				Background.SetQData(value);
-			}
-		}
-
-		/// <summary>
-		/// Ресурсный объект настройки состояний границы
-		/// </summary>
-		private readonly new BrushSettingQ BorderBrush;
-		/// <summary>
-		/// Объект настройки состояний границы
-		/// </summary>
-		public BrushSettingQ QBorderBrush
-		{
-			get => BorderBrush;
-			set
-			{
-				BorderBrush.SetQData(value);
-			}
-		}
-
-		/// <summary>
-		/// Ресурсный объект настройки состояний текста
-		/// </summary>
-		private readonly new BrushSettingQ Foreground;
-		/// <summary>
-		/// Объект настройки состояний текста
-		/// </summary>
-		public BrushSettingQ QForeground
-		{
-			get => Foreground;
-			set
-			{
-				Foreground.SetQData(value);
-			}
-		}
-		#endregion
-
 		private IELObjectSetting _IELSettingObject = new();
         /// <summary>
         /// Настройка использования объекта
@@ -226,26 +177,16 @@ namespace IEL.GUI
         {
             InitializeComponent();
             #region Background
-            Background = new();
-            BorderMain.Background = new SolidColorBrush(Background.ActiveSpectrumColor);
-
-            Background.ConnectSolidColorBrush((SolidColorBrush)BorderMain.Background);
+            BorderMain.Background = QBackground.InicializeConnectedSolidColorBrush();
             #endregion
 
             #region BorderBrush
-            BorderBrush = new();
-            BorderMain.BorderBrush = new SolidColorBrush(BorderBrush.ActiveSpectrumColor);
-            BorderMainPage.BorderBrush = new SolidColorBrush(BorderBrush.ActiveSpectrumColor);
-
-            BorderBrush.ConnectSolidColorBrush((SolidColorBrush)BorderMain.BorderBrush);
-            BorderBrush.ConnectSolidColorBrush((SolidColorBrush)BorderMainPage.BorderBrush);
+            BorderMain.BorderBrush = QBorderBrush.InicializeConnectedSolidColorBrush();
+            BorderMainPage.BorderBrush = QBorderBrush.InicializeConnectedSolidColorBrush();
             #endregion
 
             #region Foreground
-            Foreground = new();
-            TextBlockNullPage.Foreground = new SolidColorBrush(Foreground.ActiveSpectrumColor);
-
-            Foreground.ConnectSolidColorBrush((SolidColorBrush)TextBlockNullPage.Foreground);
+            TextBlockNullPage.Foreground = QForeground.InicializeConnectedSolidColorBrush();
             #endregion
             IELSettingObject = new();
             QDataDefaultInlayBackground = new();

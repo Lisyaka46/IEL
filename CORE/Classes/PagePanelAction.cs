@@ -1,4 +1,5 @@
-﻿using IEL.Interfaces.Front;
+﻿using IEL.CORE.BaseUserControls;
+using IEL.Interfaces.Front;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -95,7 +96,7 @@ namespace IEL.CORE.Classes
                 try
                 {
                     T ObjectButton = (T)(IIELButtonKey)ChildVisualElement;
-                    if (ObjectButton.CharKeyKeyboard == key && ObjectButton.IsEnabled) return ObjectButton;
+                    if (ObjectButton.CharKeyKeyboard == key) return ObjectButton; // && ObjectButton.IsEnabled
                 }
                 catch
                 {
@@ -119,7 +120,7 @@ namespace IEL.CORE.Classes
         /// <remarks>Производится поиск и реализация действия над объектом</remarks>
         /// <returns>Выполнилось удачно или нет</returns>
         internal bool ActivateElementKey<T>(Key key, ActionButton ElementAction,
-            OrientationActivate Orientation = OrientationActivate.LeftButton) where T : IIELButtonKey
+            OrientationActivate Orientation = OrientationActivate.LeftButton) where T : IELButtonKey
         {
             T? Button = SearchButton<T>((Visual)ObjectPage.Content, key);
             if (Button == null) return false;

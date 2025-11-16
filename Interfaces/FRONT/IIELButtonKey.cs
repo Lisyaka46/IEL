@@ -2,7 +2,7 @@
 
 namespace IEL.Interfaces.Front
 {
-    internal interface IIELButtonKey : IIELButton
+    internal interface IIELButtonKey
     {
         /// <summary>
         /// Активность видимости символа действия активации
@@ -12,16 +12,16 @@ namespace IEL.Interfaces.Front
         /// <summary>
         /// Клавиша отвечающая за активацию
         /// </summary>
-        public Key? CharKeyKeyboard { get; }
+        public Key CharKeyKeyboard { get; }
 
         /// <summary>
         /// Воспроизвести анимацию мерцания
         /// </summary>
-        internal abstract void BlinkAnimation();
+        protected void BlinkAnimation();
 
         /// <summary>
         /// Воспроизвести анимацию выделения
         /// </summary>
-        internal abstract void UnfocusAnimation();
+        protected void UnfocusAnimation();
     }
 }
