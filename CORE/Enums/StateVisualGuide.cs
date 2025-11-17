@@ -3,7 +3,7 @@
     /// <summary>
     /// Перечисление состояний отображения
     /// </summary>
-    public enum StateVisualButton
+    public enum StateVisualGuide : byte
     {
         /// <summary>
         /// Обычное отображение
@@ -19,5 +19,10 @@
         /// Отображение с правосторонней стрелкой
         /// </summary>
         RightArrow = 2,
+
+        /// <summary>
+        /// Отображение с двумя стрелками
+        /// </summary>
+        DuoArrow = 3,
     }
 }

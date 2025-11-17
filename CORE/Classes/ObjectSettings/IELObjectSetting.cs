@@ -7,7 +7,7 @@ namespace IEL.CORE.Classes.ObjectSettings
     /// <summary>
     /// Общий класс настроек объектов интерфейса
     /// </summary>
-    public partial class IELObjectSetting : DependencyObject, IIELObjectSetting
+    public partial class IELObjectSetting : IIELObjectSetting
     {
         /// <summary>
         /// Делегат события изменения поля значения
