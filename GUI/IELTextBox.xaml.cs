@@ -46,10 +46,10 @@ namespace IEL.GUI
         /// <summary>
         /// Смещение контента в объекте
         /// </summary>
-        public Thickness PaddingContent
+        public new Thickness Padding
         {
-            get => Padding;
-            set => Padding = value;
+            get => TextBoxBorder.Padding;
+            set => TextBoxBorder.Padding = value;
         }
 
         /// <summary>

@@ -6,22 +6,20 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
     xmlns:local="clr-namespace:IEL.GUI" MinWidth="130">
-    <Border x:Name="BorderMain" BorderBrush="Black" BorderThickness="2,2,2,2" Background="#FF888282">
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
-            <Grid x:Name="GridMain">
-                <Grid.OpacityMask>
-                    <LinearGradientBrush EndPoint="1,0" StartPoint="-1,0" Opacity="1" ColorInterpolationMode="SRgbLinearInterpolation">
-                        <GradientStop Color="Black" Offset="0.8"/>
-                        <GradientStop x:Name="GradientInlayText" Color="Black" Offset="1"/>
-                    </LinearGradientBrush>
-                </Grid.OpacityMask>
-                <TextBlock x:Name="TextBlockHead" Text="Text" Padding="7,0,7,0" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="16"/>
-            </Grid>
-            <Image x:Name="ImageCloseInlay" Grid.Column="1" Width="20" Height="20" Panel.ZIndex="1" AutomationProperties.IsColumnHeader="True" Margin="8,0,8,0"/>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <Grid x:Name="GridMain">
+            <Grid.OpacityMask>
+                <LinearGradientBrush EndPoint="1,0" StartPoint="-1,0" Opacity="1" ColorInterpolationMode="SRgbLinearInterpolation">
+                    <GradientStop Color="Black" Offset="0.8"/>
+                    <GradientStop x:Name="GradientInlayText" Color="Black" Offset="1"/>
+                </LinearGradientBrush>
+            </Grid.OpacityMask>
+            <TextBlock x:Name="TextBlockHead" Text="Text" Padding="7,0,7,0" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="16"/>
         </Grid>
-    </Border>
+        <Image x:Name="ImageCloseInlay" Grid.Column="1" Width="20" Height="20" Panel.ZIndex="1" AutomationProperties.IsColumnHeader="True" Margin="8,0,8,0"/>
+    </Grid>
 </Base:IELButton>

@@ -8,23 +8,18 @@
     mc:Ignorable="d" 
     d:DesignHeight="36.794" d:DesignWidth="95.838" Cursor="Hand">
     <Grid>
-        <Border x:Name="BorderButton" CornerRadius="10,10,10,10" BorderBrush="Black" Background="White">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition x:Name="ColumnLeftArrow" Width="25"/>
-                    <ColumnDefinition/>
-                    <ColumnDefinition x:Name="ColumnRightArrow" Width="25"/>
-                </Grid.ColumnDefinitions>
-                <Image x:Name="ImageButton" Grid.Column="1"/>
-                <Border x:Name="BorderLeftArrow" BorderBrush="Black" BorderThickness="2,2,2,2" CornerRadius="6,6,6,6" Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Right">
-                    <TextBlock x:Name="TextBlockLeftArrow" TextWrapping="Wrap" Text="&lt;" HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="Arial Black" FontSize="14" Padding="0,0.7,1,0"/>
-                </Border>
-                <Border x:Name="BorderRightArrow" BorderBrush="Black" BorderThickness="2,2,2,2" CornerRadius="6,6,6,6" Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Left" Grid.Column="2">
-                    <TextBlock x:Name="TextBlockRightArrow" TextWrapping="Wrap" Text="&gt;" HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="Arial Black" FontSize="14" Padding="1,0.7,0,0"/>
-                </Border>
-                <Image x:Name="ImageMouseButtonsUse" Grid.Column="2" MinWidth="15" MinHeight="15" MaxWidth="25" MaxHeight="25" VerticalAlignment="Top" Width="20" Height="20" HorizontalAlignment="Right" Opacity="0.4" Grid.ColumnSpan="1"/>
-            </Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition x:Name="ColumnLeftArrow" Width="25"/>
+            <ColumnDefinition/>
+            <ColumnDefinition x:Name="ColumnRightArrow" Width="25"/>
+        </Grid.ColumnDefinitions>
+        <Image x:Name="ImageButton" Grid.Column="1"/>
+        <Border x:Name="BorderLeftArrow" BorderBrush="Black" BorderThickness="2,2,2,2" CornerRadius="6,6,6,6" Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Right">
+            <TextBlock x:Name="TextBlockLeftArrow" TextWrapping="Wrap" Text="&lt;" HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="Arial Black" FontSize="14" Padding="0,0.7,1,0"/>
         </Border>
-
+        <Border x:Name="BorderRightArrow" BorderBrush="Black" BorderThickness="2,2,2,2" CornerRadius="6,6,6,6" Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Left" Grid.Column="2">
+            <TextBlock x:Name="TextBlockRightArrow" TextWrapping="Wrap" Text="&gt;" HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="Arial Black" FontSize="14" Padding="1,0.7,0,0"/>
+        </Border>
+        <Image x:Name="ImageMouseButtonsUse" Grid.Column="2" MinWidth="15" MinHeight="15" MaxWidth="25" MaxHeight="25" VerticalAlignment="Top" Width="20" Height="20" HorizontalAlignment="Right" Opacity="0.4" Grid.ColumnSpan="1"/>
     </Grid>
 </Base:IELButton>

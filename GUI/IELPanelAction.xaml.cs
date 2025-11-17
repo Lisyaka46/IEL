@@ -1,5 +1,4 @@
 ﻿using IEL.CORE.BaseUserControls;
-using IEL.CORE.BaseUserControls.Interfaces;
 using IEL.CORE.Classes;
 using IEL.CORE.Enums;
 
@@ -17,7 +16,7 @@ namespace IEL.GUI
     /// <summary>
     /// Логика взаимодействия для IELPanelAction.xaml
     /// </summary>
-    public partial class IELPanelAction : IELObject, IVisualIELButton
+    public partial class IELPanelAction : IELContainerBase
     {
 		/// <summary>
 		/// Флаг состояния активности панели действий
@@ -170,47 +169,6 @@ namespace IEL.GUI
         /// </summary>
         private bool ActiveKeyboardMode;
 
-        #region IVisualIELButton
-        /// <summary>
-        /// Скругление границ
-        /// </summary>
-        public CornerRadius CornerRadius
-        {
-            get => BorderActionPanel.CornerRadius;
-            set
-            {
-                BorderActionPanel.CornerRadius = value;
-                BorderActionPanel.CornerRadius = value;
-            }
-        }
-
-        /// <summary>
-        /// Толщина границ
-        /// </summary>
-        public new Thickness BorderThickness
-        {
-            get => BorderActionPanel.BorderThickness;
-            set
-            {
-                BorderActionPanel.BorderThickness = value;
-                BorderActionPanel.BorderThickness = value;
-            }
-        }
-
-        /// <summary>
-        /// Смещение контента в объекте
-        /// </summary>
-        public Thickness PaddingContent
-        {
-            get => BorderActionPanel.Padding;
-            set
-            {
-                BorderActionPanel.Padding = value;
-                BorderActionPanel.Padding = value;
-            }
-        }
-        #endregion
-
         /// <summary>
         /// Инициализировать объект интерфейса. Панель действий
         /// </summary>
@@ -218,15 +176,9 @@ namespace IEL.GUI
         {
             InitializeComponent();
             #region Background
-            BorderActionPanel.Background = new SolidColorBrush(QBackground.ActiveSpectrumColor);
-
-            BorderActionPanel.Background = QBackground.InicializeConnectedSolidColorBrush();
             #endregion
 
             #region BorderBrush
-            BorderActionPanel.BorderBrush = new SolidColorBrush(QBorderBrush.ActiveSpectrumColor);
-
-            BorderActionPanel.BorderBrush = QBorderBrush.InicializeConnectedSolidColorBrush();
             #endregion
 
             #region Foreground
@@ -239,7 +191,7 @@ namespace IEL.GUI
             MainPageController.LeftAnimateSwitch = new(-20, -20, 40, -3);
             MainPageController.RightAnimateSwitch = new(40, -10, -20, -3);
             TextBlockRightButtonIndicatorKey.Text = "RIGHT";
-            KeyDown += (sender, e) =>
+            Base_BorderButton.KeyDown += (sender, e) =>
             {
                 if (!PanelActionActivate && BlockWhileEvent) return;
                 else BlockWhileEvent = true;
@@ -267,7 +219,7 @@ namespace IEL.GUI
                     }
                 }
             };
-            KeyUp += (sender, e) =>
+            Base_BorderButton.KeyUp += (sender, e) =>
             {
                 if (!PanelActionActivate && !BlockWhileEvent) return;
                 else BlockWhileEvent = false;
@@ -297,7 +249,7 @@ namespace IEL.GUI
                     }
                 }
             };
-            LostFocus += (sender, e) => ClosePanelAction(PositionAnimActionPanel.CenterObject);
+            Base_BorderButton.LostFocus += (sender, e) => ClosePanelAction(PositionAnimActionPanel.CenterObject);
         }
 
         /// <summary>

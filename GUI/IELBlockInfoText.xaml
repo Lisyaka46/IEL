@@ -1,4 +1,4 @@
-﻿<Base:IELObject
+﻿<Base:IELContainerBase
     x:Class="IEL.GUI.IELBlockInfoText"
     xmlns:Base="clr-namespace:IEL.CORE.BaseUserControls"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -11,4 +11,4 @@
     <Border x:Name="MainBorder" BorderBrush="Black" BorderThickness="2,2,2,2" CornerRadius="5,5,5,5" Background="White" Cursor="Help" ClipToBounds="True">
         <TextBlock x:Name="MainTextBlock" Text="A" TextTrimming="CharacterEllipsis" TextAlignment="Center" VerticalAlignment="Center" Padding="0,1,0,1" />
     </Border>
-</Base:IELObject>
+</Base:IELContainerBase>

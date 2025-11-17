@@ -252,10 +252,6 @@ namespace IEL.GUI
                 //Margin = MarginDiactivateRightInlay,
                 BorderThickness = new(2),
                 CornerRadius = new(8, 8, 0, 0),
-                IELSettingObject = new()
-                {
-                    AnimationMillisecond = 200,
-                },
                 Padding = new(1, 4, 1, 0),
             };
             Inlay.QBackground.SetQData(QDataDefaultInlayBackground);
@@ -273,18 +269,18 @@ namespace IEL.GUI
             {
                 ActivateInlayInBrowserPage(Inlay.PageElement);
             };
-            Inlay.IELSettingObject.MouseHover += (sender, e) =>
+            Inlay.MouseHover += (sender, e) =>
             {
                 if (Inlay.PageElement == null) return;
                 else if (Inlay.PageElement?.Description.Length == 0) return;
                 EventOnDescriptionInlay?.Invoke(Inlay, Inlay.PageElement?.Description ?? string.Empty);
             };
-            Inlay.BorderMain.MouseLeave += (sender, e) =>
+            Inlay.MouseLeave += (sender, e) =>
             {
                 if (Inlay.PageElement?.Description.Length == 0) return;
                 EventOffDescriptionInlay?.Invoke();
             };
-            Inlay.BorderMain.MouseDown += (sender, e) =>
+            Inlay.MouseDown += (sender, e) =>
             {
                 if (Inlay.PageElement?.Description.Length == 0) return;
                 EventOffDescriptionInlay?.Invoke();

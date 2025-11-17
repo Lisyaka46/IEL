@@ -1,4 +1,4 @@
-﻿<Base:IELObject
+﻿<Base:IELContainerBase
     x:Class="IEL.GUI.IELBlockInfoImage"
     xmlns:Base="clr-namespace:IEL.CORE.BaseUserControls"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -16,4 +16,4 @@
             </Border.Background>
         </Border>
     </Grid>
-</Base:IELObject>
+</Base:IELContainerBase>

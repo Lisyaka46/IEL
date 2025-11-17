@@ -1,7 +1,4 @@
 ﻿using IEL.CORE.BaseUserControls;
-using IEL.CORE.BaseUserControls.Interfaces;
-using IEL.CORE.Classes;
-using IEL.CORE.Classes.ObjectSettings;
 using IEL.CORE.Enums;
 
 using System.Windows;
@@ -15,7 +12,7 @@ namespace IEL.GUI
     /// <summary>
     /// Логика взаимодействия для IELBlockMessage.xaml
     /// </summary>
-    public partial class IELBlockMessage : IELObject, IVisualIELButton
+    public partial class IELBlockMessage : IELObject
     {
         #region Flags
         /// <summary>
@@ -194,7 +191,7 @@ namespace IEL.GUI
         /// <summary>
         /// Смещение контента в объекте
         /// </summary>
-        public Thickness PaddingContent
+        public new Thickness Padding
         {
             get => BorderMessage.Padding;
             set => BorderMessage.Padding = value;
