@@ -6,13 +6,7 @@ namespace IEL.CORE.Classes
 {
     internal static class QDataView
     {
-        public static Color ToColor(this byte[] rgb)
-        {
-            if (rgb == null || rgb.Length < 3)
-                throw new ArgumentException("Массив должен содержать минимум 3 элемента");
-
-            return Color.FromRgb(rgb[0], rgb[1], rgb[2]);
-        }
+        public static Color ToColor(this byte[] rgb) => Color.FromArgb(rgb[0], rgb[1], rgb[2], rgb[3]);
     }
 
     /// <summary>

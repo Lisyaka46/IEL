@@ -1,8 +1,9 @@
 ﻿using IEL.CORE.BaseUserControls;
+using IEL.CORE.BaseUserControls.Interfaces;
 using IEL.CORE.Classes;
 using IEL.CORE.Classes.ObjectSettings;
 using IEL.CORE.Enums;
-using IEL.Interfaces.Front;
+
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -14,7 +15,7 @@ namespace IEL.GUI
     /// <summary>
     /// Логика взаимодействия для IELButtonImageKey.xaml
     /// </summary>
-    public partial class IELButtonImageKey : IELButtonKey
+    public partial class IELButtonImageKey : IELButtonKey, IVisualIELButtonKey
     {
 		private IELButtonObjectSetting _IELSettingObject = new();
         /// <summary>
@@ -64,6 +65,76 @@ namespace IEL.GUI
             get => ImageButton.Margin;
             set => ImageButton.Margin = value;
         }
+
+        #region IVisualIELButtonKey
+        /// <summary>
+        /// Скругление границ
+        /// </summary>
+        public CornerRadius CornerRadius
+        {
+            get => BorderButton.CornerRadius;
+            set
+            {
+                BorderButton.CornerRadius = value;
+                BorderButtonKey.CornerRadius = value;
+            }
+        }
+
+        /// <summary>
+        /// Толщина границ
+        /// </summary>
+        public new Thickness BorderThickness
+        {
+            get => BorderButton.BorderThickness;
+            set
+            {
+                BorderButton.BorderThickness = value;
+                BorderButtonKey.BorderThickness = value;
+            }
+        }
+
+        /// <summary>
+        /// Смещение контента в объекте
+        /// </summary>
+        public Thickness PaddingContent
+        {
+            get => BorderButton.Padding;
+            set
+            {
+                BorderButton.Padding = value;
+                BorderButtonKey.Padding = value;
+            }
+        }
+
+        private bool _CharKeyboardActivate = false;
+        /// <summary>
+        /// Активность видимости символа действия активации кнопки
+        /// </summary>
+        public bool CharKeyboardActivate
+        {
+            get => _CharKeyboardActivate;
+            set
+            {
+                BorderButton.BeginAnimation(MarginProperty, IELSettingObject.ObjectAnimateSetting.GetAnimationThickness(new(!value ? -24 : 0, 0, 0, 0)));
+                BorderButtonKey.BeginAnimation(OpacityProperty, IELSettingObject.ObjectAnimateSetting.GetAnimationDouble(value ? 1d : 0d));
+                _CharKeyboardActivate = value;
+            }
+        }
+
+        private Key? _CharKeyKeyboard;
+        /// <summary>
+        /// Клавиша отвечающая за активацию кнопки
+        /// </summary>
+        public Key? CharKeyKeyboard
+        {
+            get => _CharKeyKeyboard;
+            set
+            {
+                _CharKeyKeyboard = value;
+                //TextBlockCharKey.Text = IIELObject.KeyName(value).ToString();
+            }
+        }
+        #endregion
 
         /// <summary>
         /// Инициализировать объект кнопки с изображением

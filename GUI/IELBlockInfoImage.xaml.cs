@@ -1,8 +1,9 @@
 ﻿using IEL.CORE.BaseUserControls;
+using IEL.CORE.BaseUserControls.Interfaces;
 using IEL.CORE.Classes;
 using IEL.CORE.Classes.ObjectSettings;
 using IEL.CORE.Enums;
-using IEL.Interfaces.Front;
+
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -13,7 +14,7 @@ namespace IEL.GUI
     /// <summary>
     /// Логика взаимодействия для IELBlockInfo.xaml
     /// </summary>
-    public partial class IELBlockInfoImage : IELObject
+    public partial class IELBlockInfoImage : IELObject, IVisualIELButton
     {
         private IELUsingObjectSetting _IELSettingObject = new();
         /// <summary>
@@ -29,6 +30,7 @@ namespace IEL.GUI
             }
         }
 
+        #region IVisualIELButton
         /// <summary>
         /// Скругление границ
         /// </summary>
@@ -41,7 +43,7 @@ namespace IEL.GUI
         /// <summary>
         /// Толщина границ
         /// </summary>
-        public Thickness BorderThicknessBlock
+        public new Thickness BorderThickness
         {
             get => MainBorder.BorderThickness;
             set => MainBorder.BorderThickness = value;
@@ -55,6 +57,7 @@ namespace IEL.GUI
             get => MainBorder.Padding;
             set => MainBorder.Padding = value;
         }
+        #endregion
 
         /// <summary>
         /// Инициализировать объект интерфейса отображения информации через изображение

@@ -1,7 +1,8 @@
 ﻿using IEL.CORE.BaseUserControls;
+using IEL.CORE.BaseUserControls.Interfaces;
 using IEL.CORE.Classes;
 using IEL.CORE.Enums;
-using IEL.Interfaces.Front;
+
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Tracing;
 using System.Runtime.CompilerServices;
@@ -16,7 +17,7 @@ namespace IEL.GUI
     /// <summary>
     /// Логика взаимодействия для IELPanelAction.xaml
     /// </summary>
-    public partial class IELPanelAction : IELObject
+    public partial class IELPanelAction : IELObject, IVisualIELButton
     {
 		/// <summary>
 		/// Флаг состояния активности панели действий
@@ -168,6 +169,47 @@ namespace IEL.GUI
         /// Сохранённое состояние активности режима клавиатуры
         /// </summary>
         private bool ActiveKeyboardMode;
+
+        #region IVisualIELButton
+        /// <summary>
+        /// Скругление границ
+        /// </summary>
+        public CornerRadius CornerRadius
+        {
+            get => BorderActionPanel.CornerRadius;
+            set
+            {
+                BorderActionPanel.CornerRadius = value;
+                BorderActionPanel.CornerRadius = value;
+            }
+        }
+
+        /// <summary>
+        /// Толщина границ
+        /// </summary>
+        public new Thickness BorderThickness
+        {
+            get => BorderActionPanel.BorderThickness;
+            set
+            {
+                BorderActionPanel.BorderThickness = value;
+                BorderActionPanel.BorderThickness = value;
+            }
+        }
+
+        /// <summary>
+        /// Смещение контента в объекте
+        /// </summary>
+        public Thickness PaddingContent
+        {
+            get => BorderActionPanel.Padding;
+            set
+            {
+                BorderActionPanel.Padding = value;
+                BorderActionPanel.Padding = value;
+            }
+        }
+        #endregion
 
         /// <summary>
         /// Инициализировать объект интерфейса. Панель действий

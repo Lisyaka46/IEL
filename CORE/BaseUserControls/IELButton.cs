@@ -1,19 +1,15 @@
 ﻿using IEL.CORE.Enums;
-using IEL.Interfaces.Front;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace IEL.CORE.BaseUserControls
 {
     /// <summary>
     /// БАЗОВЫЙ КЛАСС для отображения кнопки IEL
     /// </summary>
-    public class IELButton : IELObject, IIELButton
+    public class IELButton : IELObject
     {
         /// <summary>
         /// Делегат события активации
@@ -21,49 +17,14 @@ namespace IEL.CORE.BaseUserControls
         public delegate void ActivateHandler(object Source, MouseButtonEventArgs eventArgs, bool KeyActivate = false);
 
         /// <summary>
-        /// Скругление границ
-        /// </summary>
-        public CornerRadius CornerRadius { get; set; }
-
-        /// <summary>
-        /// Толщина границ
-        /// </summary>
-        public Thickness BorderThicknessBlock { get; set; }
-        //{
-        //    get => BorderThickness;
-        //    set => BorderThickness = value;
-        //}
-
-        /// <summary>
-        /// Смещение контента в объекте
-        /// </summary>
-        public Thickness PaddingContent { get; set; }
-        //{
-        //    get => Padding;
-        //    set => Padding = value;
-        //}
-
-        private new event MouseButtonEventHandler? MouseLeftButtonDown;
-        private new event MouseButtonEventHandler? MouseLeftButtonUp;
-        /// <summary>
         /// Объект события активации левым щелчком мыши
         /// </summary>
         public ActivateHandler? OnActivateMouseLeft { get; set; }
 
-        private new event MouseButtonEventHandler? MouseRightButtonDown;
-        private new event MouseButtonEventHandler? MouseRightButtonUp;
         /// <summary>
         /// Объект события активации правым щелчком мыши
         /// </summary>
         public ActivateHandler? OnActivateMouseRight { get; set; }
-
-        /// <summary>
-        /// Инициализировать <b>БАЗОВОЕ ПРЕДСТАВЛЕНИЕ</b> кнопки IEL
-        /// </summary>
-        public IELButton()
-        {
-            //InitializeComponent();
-        }
 
         /// <summary>
         /// Узнать тип доступных нажатий на элемент

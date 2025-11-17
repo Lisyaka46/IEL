@@ -1,9 +1,10 @@
 ﻿using IEL.CORE.BaseUserControls;
+using IEL.CORE.BaseUserControls.Interfaces;
 using IEL.CORE.Classes;
 using IEL.CORE.Classes.Browser;
 using IEL.CORE.Classes.ObjectSettings;
 using IEL.CORE.Enums;
-using IEL.Interfaces.Front;
+
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -14,7 +15,7 @@ namespace IEL.GUI
     /// <summary>
     /// Логика взаимодействия для IELInley.xaml
     /// </summary>
-    public partial class IELInlay : IELButton
+    public partial class IELInlay : IELButton, IVisualIELButton
     {
 		private IELUsingObjectSetting _IELSettingObject = new();
         /// <summary>
@@ -30,45 +31,46 @@ namespace IEL.GUI
             }
         }
 
-        ///// <summary>
-        ///// Скругление границ
-        ///// </summary>
-        //public CornerRadius CornerRadius
-        //{
-        //    get => BorderMain.CornerRadius;
-        //    set => BorderMain.CornerRadius = value;
-        //}
+        #region IVisualIELButton
+        /// <summary>
+        /// Скругление границ
+        /// </summary>
+        public CornerRadius CornerRadius
+        {
+            get => BorderMain.CornerRadius;
+            set => BorderMain.CornerRadius = value;
+        }
 
-        ///// <summary>
-        ///// Толщина границ
-        ///// </summary>
-        //public Thickness BorderThicknessBlock
-        //{
-        //    get => BorderMain.BorderThickness;
-        //    set
-        //    {
-        //        BorderMain.BorderThickness = value;
-        //        BorderThicknessActive = new(
-        //        value.Left + OffsetBorder, value.Top + OffsetBorder,
-        //        value.Right + OffsetBorder, value.Bottom + OffsetBorder);
-        //        BorderThicknessDiactive = value;
-        //    }
-        //}
+        /// <summary>
+        /// Толщина границ
+        /// </summary>
+        public new Thickness BorderThickness
+        {
+            get => BorderMain.BorderThickness;
+            set
+            {
+                BorderMain.BorderThickness = value;
+                BorderThicknessActive = new(
+                value.Left + OffsetBorder, value.Top + OffsetBorder,
+                value.Right + OffsetBorder, value.Bottom + OffsetBorder);
+                BorderThicknessDiactive = value;
+            }
+        }
 
-        ///// <summary>
-        ///// Объект события активации левым щелчком мыши
-        ///// </summary>
-        //public IIELButton.ActivateHandler? OnActivateMouseLeft { get; set; }
-
-        ///// <summary>
-        ///// Объект события активации правым щелчком мыши
-        ///// </summary>
-        //public IIELButton.ActivateHandler? OnActivateMouseRight { get; set; }
+        /// <summary>
+        /// Смещение контента в объекте
+        /// </summary>
+        public Thickness PaddingContent
+        {
+            get => BorderMain.Padding;
+            set => BorderMain.Padding = value;
+        }
+        #endregion
 
         /// <summary>
         /// Объект события активации закрытия вкладки
         /// </summary>
-        public IELButton.ActivateHandler? OnActivateCloseInlay { get; set; }
+        public ActivateHandler? OnActivateCloseInlay { get; set; }
 
         /// <summary>
         /// Страница заголовка
@@ -125,15 +127,6 @@ namespace IEL.GUI
             }
         }
 
-        ///// <summary>
-        ///// Смещение контента в объекте
-        ///// </summary>
-        //public Thickness PaddingContent
-        //{
-        //    get => BorderMain.Padding;
-        //    set => BorderMain.Padding = value;
-        //}
-
         /// <summary>
         /// Изображение кнопки закрытия вкладки
         /// </summary>
@@ -177,9 +170,9 @@ namespace IEL.GUI
             #endregion
 
             BorderThicknessActive = new(
-                BorderThicknessBlock.Left + OffsetBorder, BorderThicknessBlock.Top + OffsetBorder,
-                BorderThicknessBlock.Right + OffsetBorder, BorderThicknessBlock.Bottom + OffsetBorder);
-            BorderThicknessDiactive = BorderThicknessBlock;
+                BorderThickness.Left + OffsetBorder, BorderThickness.Top + OffsetBorder,
+                BorderThickness.Right + OffsetBorder, BorderThickness.Bottom + OffsetBorder);
+            BorderThicknessDiactive = BorderThickness;
             _UsedState = false;
             ContentPage = null;
             // this

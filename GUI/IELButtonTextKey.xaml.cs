@@ -1,8 +1,9 @@
 ﻿using IEL.CORE.BaseUserControls;
+using IEL.CORE.BaseUserControls.Interfaces;
 using IEL.CORE.Classes;
 using IEL.CORE.Classes.ObjectSettings;
 using IEL.CORE.Enums;
-using IEL.Interfaces.Front;
+
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -14,7 +15,7 @@ namespace IEL.GUI
     /// <summary>
     /// Логика взаимодействия для IELButtonTextKey.xaml
     /// </summary>
-    public partial class IELButtonTextKey : IELButtonKey
+    public partial class IELButtonTextKey : IELButtonKey, IVisualIELButtonKey
     {
 		private IELButtonObjectSetting _IELSettingObject = new();
         /// <summary>
@@ -50,23 +51,75 @@ namespace IEL.GUI
             set => TextBlockButton.Text = value;
         }
 
-        ///// <summary>
-        ///// Скругление границ кнопки (по умолчанию 10, 10, 10, 10)
-        ///// </summary>
-        //public CornerRadius CornerRadius
-        //{
-        //    get => BorderButton.CornerRadius;
-        //    set => BorderButton.CornerRadius = value;
-        //}
+        #region IVisualIELButtonKey
+        /// <summary>
+        /// Скругление границ
+        /// </summary>
+        public CornerRadius CornerRadius
+        {
+            get => BorderButton.CornerRadius;
+            set
+            {
+                BorderButton.CornerRadius = value;
+                BorderCharKeyboard.CornerRadius = value;
+            }
+        }
 
-        ///// <summary>
-        ///// Толщина границ
-        ///// </summary>
-        //public Thickness BorderThicknessBlock
-        //{
-        //    get => BorderButton.BorderThickness;
-        //    set => BorderButton.BorderThickness = value;
-        //}
+        /// <summary>
+        /// Толщина границ
+        /// </summary>
+        public new Thickness BorderThickness
+        {
+            get => BorderButton.BorderThickness;
+            set
+            {
+                BorderButton.BorderThickness = value;
+                BorderCharKeyboard.BorderThickness = value;
+            }
+        }
+
+        /// <summary>
+        /// Смещение контента в объекте
+        /// </summary>
+        public Thickness PaddingContent
+        {
+            get => BorderButton.Padding;
+            set
+            {
+                BorderButton.Padding = value;
+                BorderCharKeyboard.Padding = value;
+            }
+        }
+
+        private bool _CharKeyboardActivate = false;
+        /// <summary>
+        /// Активность видимости символа действия активации кнопки
+        /// </summary>
+        public bool CharKeyboardActivate
+        {
+            get => _CharKeyboardActivate;
+            set
+            {
+                BorderButton.BeginAnimation(MarginProperty, IELSettingObject.ObjectAnimateSetting.GetAnimationThickness(new(!value ? -24 : 0, 0, 0, 0)));
+                BorderCharKeyboard.BeginAnimation(OpacityProperty, IELSettingObject.ObjectAnimateSetting.GetAnimationDouble(value ? 1d : 0d));
+                _CharKeyboardActivate = value;
+            }
+        }
+
+        private Key? _CharKeyKeyboard;
+        /// <summary>
+        /// Клавиша отвечающая за активацию кнопки
+        /// </summary>
+        public Key? CharKeyKeyboard
+        {
+            get => _CharKeyKeyboard;
+            set
+            {
+                _CharKeyKeyboard = value;
+                //TextBlockCharKey.Text = this.KeyName(value).ToString();
+            }
+        }
+        #endregion
 
         /// <summary>
         /// Шрифт текста в кнопке
@@ -81,54 +134,6 @@ namespace IEL.GUI
                 base.FontFamily = value;
             }
         }
-
-        //private bool _CharKeyboardActivate = false;
-        ///// <summary>
-        ///// Активность видимости символа действия активации кнопки
-        ///// </summary>
-        //public bool CharKeyboardActivate
-        //{
-        //    get => _CharKeyboardActivate;
-        //    set
-        //    {
-        //        BorderButton.BeginAnimation(MarginProperty, IELSettingObject.ObjectAnimateSetting.GetAnimationThickness(new(!value ? -24 : 0, 0, 0, 0)));
-        //        BorderCharKeyboard.BeginAnimation(OpacityProperty, IELSettingObject.ObjectAnimateSetting.GetAnimationDouble(value ? 1d : 0d));
-        //        _CharKeyboardActivate = value;
-        //    }
-        //}
-
-        //private Key? _CharKeyKeyboard;
-        ///// <summary>
-        ///// Клавиша отвечающая за активацию кнопки
-        ///// </summary>
-        //public Key? CharKeyKeyboard
-        //{
-        //    get => _CharKeyKeyboard;
-        //    set
-        //    {
-        //        _CharKeyKeyboard = value;
-        //        TextBlockCharKey.Text = IIELObject.KeyName(value).ToString();
-        //    }
-        //}
-
-        ///// <summary>
-        ///// Объект события активации левым щелчком мыши
-        ///// </summary>
-        //public IIELButton.ActivateHandler? OnActivateMouseLeft { get; set; }
-
-        ///// <summary>
-        ///// Объект события активации правым щелчком мыши
-        ///// </summary>
-        //public IIELButton.ActivateHandler? OnActivateMouseRight { get; set; }
-
-        ///// <summary>
-        ///// Смещение контента в объекте
-        ///// </summary>
-        //public Thickness PaddingContent
-        //{
-        //    get => BorderButton.Padding;
-        //    set => BorderButton.Padding = value;
-        //}
 
         /// <summary>
         /// Инициализировать объект интерфейса кнопки с текстом поддерживающую возможность нажатия с помощью клавиши

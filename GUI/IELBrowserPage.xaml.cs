@@ -2,15 +2,11 @@
 using IEL.CORE.Classes;
 using IEL.CORE.Classes.Browser;
 using IEL.CORE.Classes.ObjectSettings;
-using IEL.Interfaces.Front;
 using System.Collections.ObjectModel;
-using System.Drawing;
-using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
-using System.Windows.Media.Imaging;
 
 namespace IEL.GUI
 {
@@ -254,7 +250,7 @@ namespace IEL.GUI
                 HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment = VerticalAlignment.Stretch,
                 //Margin = MarginDiactivateRightInlay,
-                BorderThicknessBlock = new(2),
+                BorderThickness = new(2),
                 CornerRadius = new(8, 8, 0, 0),
                 IELSettingObject = new()
                 {

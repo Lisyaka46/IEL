@@ -1,20 +1,16 @@
 ﻿using IEL.CORE.BaseUserControls;
-using IEL.CORE.Classes;
 using IEL.CORE.Classes.ObjectSettings;
 using IEL.CORE.Enums;
-using IEL.Interfaces.Front;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
 
 namespace IEL.GUI
 {
     /// <summary>
     /// Логика взаимодействия для IELTextBox.xaml
     /// </summary>
-    public partial class IELTextBox : IELObject, IIELButton
+    public partial class IELTextBox : IELObject
     {
         private IELObjectSetting _IELSettingObject = new();
         /// <summary>

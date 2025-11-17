@@ -1,6 +1,6 @@
 ﻿using IEL.CORE.BaseUserControls;
 using IEL.CORE.Enums;
-using IEL.Interfaces.Front;
+
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;

@@ -13,10 +13,27 @@ namespace IEL.CORE.BaseUserControls
     /// <summary>
     /// БАЗОВЫЙ КЛАСС для отображения элемента IEL
     /// </summary>
-    public abstract class IELObject : ContentControl
+    public class IELObject : ContentControl
     {
+        /// <summary>
+        /// Устаревшее свойство
+        /// </summary>
+        [Obsolete("Для установки используются стили - Перегружено под свойством объекта IELObject (QBackground)", true)]
+        public new Brush? Background;
+
+        /// <summary>
+        /// Устаревшее свойство
+        /// </summary>
+        [Obsolete("Для установки используются стили - Перегружено под свойством объекта IELObject (QBorderBrush)", true)]
+        public new Brush? BorderBrush;
+
+        /// <summary>
+        /// Устаревшее свойство
+        /// </summary>
+        [Obsolete("Для установки используются стили - Перегружено под свойством объекта IELObject (QForeground)", true)]
+        public new Brush? Foreground;
+
         #region Color Setting
-        private readonly new Brush? Background;
         /// <summary>
         /// Ресурсный объект настройки состояний фона
         /// </summary>
@@ -33,7 +50,6 @@ namespace IEL.CORE.BaseUserControls
             }
         }
 
-        private readonly new Brush? BorderBrush;
         /// <summary>
         /// Ресурсный объект настройки состояний границы
         /// </summary>
@@ -50,7 +66,6 @@ namespace IEL.CORE.BaseUserControls
             }
         }
 
-        private readonly new Brush? Foreground;
         /// <summary>
         /// Ресурсный объект настройки состояний текста
         /// </summary>
@@ -67,14 +82,6 @@ namespace IEL.CORE.BaseUserControls
             }
         }
         #endregion
-
-        /// <summary>
-        /// Инициализировать <b>БАЗОВОЕ ПРЕДСТАВЛЕНИЕ</b> объекта IEL
-        /// </summary>
-        public IELObject()
-        {
-            //InitializeComponent();
-        }
 
         /// <summary>
         /// Активировать визуализацию спектра для всех Q сегментов

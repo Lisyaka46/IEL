@@ -1,5 +1,4 @@
 ﻿using IEL.CORE.BaseUserControls;
-using IEL.Interfaces.Front;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -88,15 +87,15 @@ namespace IEL.CORE.Classes
         /// <typeparam name="T">Тип элемента поддерживающего подключение по клавише</typeparam>
         /// <param name="VisualObject">Ссылка на объект поиска</param>
         /// <param name="key">Ключ клавиши</param>
-        private static T? SearchButton<T>(Visual VisualObject, Key key) where T : IIELButtonKey
+        private static T? SearchButton<T>(Visual VisualObject, Key key) where T : IELButtonKey
         {
             for (int i = 0; i < VisualTreeHelper.GetChildrenCount(VisualObject); i++)
             {
                 Visual ChildVisualElement = (Visual)VisualTreeHelper.GetChild(VisualObject, i);
                 try
                 {
-                    T ObjectButton = (T)(IIELButtonKey)ChildVisualElement;
-                    if (ObjectButton.CharKeyKeyboard == key) return ObjectButton; // && ObjectButton.IsEnabled
+                    T ObjectButton = (T)ChildVisualElement;
+                    //if (ObjectButton.CharKeyKeyboard == key) return ObjectButton; // && ObjectButton.IsEnabled
                 }
                 catch
                 {

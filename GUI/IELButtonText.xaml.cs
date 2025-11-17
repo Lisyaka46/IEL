@@ -1,8 +1,9 @@
 ﻿using IEL.CORE.BaseUserControls;
+using IEL.CORE.BaseUserControls.Interfaces;
 using IEL.CORE.Classes;
 using IEL.CORE.Classes.ObjectSettings;
 using IEL.CORE.Enums;
-using IEL.Interfaces.Front;
+
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -14,7 +15,7 @@ namespace IEL.GUI
     /// <summary>
     /// Логика взаимодействия для IELButtonText.xaml
     /// </summary>
-    public partial class IELButtonText : IELButton
+    public partial class IELButtonText : IELButton, IVisualIELButton
     {
         private IELButtonObjectSetting _IELSettingObject = new();
         /// <summary>
@@ -40,6 +41,35 @@ namespace IEL.GUI
                 _IELSettingObject = value;
             }
         }
+
+        #region IVisualIELButton
+        /// <summary>
+        /// Скругление границ
+        /// </summary>
+        public CornerRadius CornerRadius
+        {
+            get => BorderButton.CornerRadius;
+            set => BorderButton.CornerRadius = value;
+        }
+
+        /// <summary>
+        /// Толщина границ
+        /// </summary>
+        public new Thickness BorderThickness
+        {
+            get => BorderButton.BorderThickness;
+            set => BorderButton.BorderThickness = value;
+        }
+
+        /// <summary>
+        /// Смещение контента в объекте
+        /// </summary>
+        public Thickness PaddingContent
+        {
+            get => BorderButton.Padding;
+            set => BorderButton.Padding = value;
+        }
+        #endregion
 
         /// <summary>
         /// Текст кнопки

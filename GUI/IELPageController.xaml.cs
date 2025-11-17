@@ -1,5 +1,5 @@
 ﻿using IEL.CORE.Classes;
-using IEL.Interfaces.Front;
+
 using System.Diagnostics.CodeAnalysis;
 using System.Windows;
 using System.Windows.Controls;
