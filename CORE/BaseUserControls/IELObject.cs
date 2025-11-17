@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
@@ -19,19 +20,19 @@ namespace IEL.CORE.BaseUserControls
         /// Устаревшее свойство
         /// </summary>
         [Obsolete("Для установки используются стили - Перегружено под свойством объекта IELObject (QBackground)", true)]
-        public new Brush? Background;
+        protected new Brush? Background;
 
         /// <summary>
         /// Устаревшее свойство
         /// </summary>
         [Obsolete("Для установки используются стили - Перегружено под свойством объекта IELObject (QBorderBrush)", true)]
-        public new Brush? BorderBrush;
+        protected new Brush? BorderBrush;
 
         /// <summary>
         /// Устаревшее свойство
         /// </summary>
         [Obsolete("Для установки используются стили - Перегружено под свойством объекта IELObject (QForeground)", true)]
-        public new Brush? Foreground;
+        protected new Brush? Foreground;
 
         #region Color Setting
         /// <summary>

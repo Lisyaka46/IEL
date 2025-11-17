@@ -1,6 +1,4 @@
-﻿using IEL.CORE.BaseUserControls.Interfaces;
-using IEL.CORE.Enums;
-using System.Windows.Input;
+﻿using IEL.CORE.Enums;
 
 namespace IEL.CORE.BaseUserControls
 {
