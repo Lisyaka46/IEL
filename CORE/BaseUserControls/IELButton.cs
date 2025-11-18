@@ -31,6 +31,28 @@ namespace IEL.CORE.BaseUserControls
         /// </summary>
         protected Image? VisualElementMouseEvents { get; set; }
 
+        #region UIElements
+        /// <summary>
+        /// Главный контейнер кнопки
+        /// </summary>
+        private Grid Base_HeadGridButton;
+
+        /// <summary>
+        /// Левый элемент отображения направляющей
+        /// </summary>
+        private Border Base_LeftBorderGuideButton; // < |=|
+
+        /// <summary>
+        /// Правый элемент отображения направляющей
+        /// </summary>
+        private Border Base_RightBorderGuideButton; // |=| >
+
+        /// <summary>
+        /// Главный контейнер содержимого кнопки
+        /// </summary>
+        protected Grid Base_GridButton;
+        #endregion
+
         #region OnActivateMouse
         /// <summary>
         /// Делегат события активации
@@ -49,6 +71,28 @@ namespace IEL.CORE.BaseUserControls
         #endregion
 
         #region Properties
+
+        #region Content
+        /// <summary>
+        /// Данные конкретного свойства
+        /// </summary>
+        public static readonly new DependencyProperty ContentProperty =
+            DependencyProperty.Register("Content", typeof(UIElement), typeof(IELButton),
+                new(
+                    (sender, e) =>
+                    {
+                        ((IELButton)sender).Base_GridButton.Children.Insert(0, (UIElement)e.NewValue);
+                    }));
+
+        /// <summary>
+        /// Внутренний элемент объекта
+        /// </summary>
+        public new UIElement Content
+        {
+            get => (UIElement)GetValue(ContentProperty);
+            set => SetValue(ContentProperty, value);
+        }
+        #endregion
 
         #region OpacityVisibleVisualImageMouseEvents
         /// <summary>
@@ -80,16 +124,67 @@ namespace IEL.CORE.BaseUserControls
         }
         #endregion
 
+        #region CornerRadiusGuides
+        /// <summary>
+        /// Данные конкретного свойства
+        /// </summary>
+        public static readonly DependencyProperty CornerRadiusGuidesProperty =
+            DependencyProperty.Register("CornerRadiusGuides", typeof(CornerRadius), typeof(IELButton),
+                new(new CornerRadius(0),
+                    (sender, e) =>
+                    {
+                        ((IELButton)sender).Base_LeftBorderGuideButton.CornerRadius = (CornerRadius)e.NewValue;
+                        ((IELButton)sender).Base_RightBorderGuideButton.CornerRadius = (CornerRadius)e.NewValue;
+                    }));
+
+        /// <summary>
+        /// Скругление границ объектов направляющих кнопки
+        /// </summary>
+        public CornerRadius CornerRadiusGuides
+        {
+            get => (CornerRadius)GetValue(CornerRadiusGuidesProperty);
+            set => SetValue(CornerRadiusGuidesProperty, value);
+        }
+        #endregion
+
+        #region BorderThicknessGuides
+        /// <summary>
+        /// Данные конкретного свойства
+        /// </summary>
+        public static readonly DependencyProperty BorderThicknessGuidesProperty =
+            DependencyProperty.Register("BorderThicknessGuides", typeof(Thickness), typeof(IELButton),
+                new(new Thickness(2),
+                    (sender, e) =>
+                    {
+                        ((IELButton)sender).Base_LeftBorderGuideButton.BorderThickness = (Thickness)e.NewValue;
+                        ((IELButton)sender).Base_RightBorderGuideButton.BorderThickness = (Thickness)e.NewValue;
+                    }));
+
+        /// <summary>
+        /// Толщина границ объектов направляющей кнопки
+        /// </summary>
+        public Thickness BorderThicknessGuides
+        {
+            get => (Thickness)GetValue(BorderThicknessGuidesProperty);
+            set => SetValue(BorderThicknessGuidesProperty, value);
+        }
+        #endregion
+
         #region VisualGuide
         /// <summary>
         /// Данные конкретного свойства
         /// </summary>
         public static readonly DependencyProperty VisualGuideProperty =
             DependencyProperty.Register("VisualGuide", typeof(StateVisualGuide), typeof(IELButton),
-                new(
+                new(StateVisualGuide.Default,
                     (sender, e) =>
                     {
-                        ((IELButton)sender).VisualGuideChanged?.Invoke((StateVisualGuide)e.NewValue);
+                        var NV = (StateVisualGuide)e.NewValue;
+                        ((IELButton)sender).Base_HeadGridButton.ColumnDefinitions[0].Width = new(0d,
+                            NV == StateVisualGuide.LeftArrow || NV == StateVisualGuide.DuoArrow ? GridUnitType.Auto : GridUnitType.Pixel);
+                        ((IELButton)sender).Base_HeadGridButton.ColumnDefinitions[2].Width = new(0d,
+                            NV == StateVisualGuide.RightArrow || NV == StateVisualGuide.DuoArrow ? GridUnitType.Auto : GridUnitType.Pixel);
+                        ((IELButton)sender).VisualGuideChanged?.Invoke(NV);
                     }));
 
         /// <summary>
@@ -138,7 +233,72 @@ namespace IEL.CORE.BaseUserControls
 
         protected IELButton()
         {
-            Base_BorderButton.MouseEnter += (sender, e) =>
+            Base_HeadGridButton = new()
+            {
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                VerticalAlignment = VerticalAlignment.Stretch,
+            };
+            Base_HeadGridButton.ColumnDefinitions.Add(new() { Width = new(0d, GridUnitType.Pixel) });
+            Base_HeadGridButton.ColumnDefinitions.Add(new() { Width = new(1d, GridUnitType.Star) });
+            Base_HeadGridButton.ColumnDefinitions.Add(new() { Width = new(0d, GridUnitType.Pixel) });
+
+            Base_LeftBorderGuideButton = new() // < |=|
+            {
+                Width = 20d,
+                Height = 20d,
+                Margin = new(2),
+                HorizontalAlignment = HorizontalAlignment.Right,
+                VerticalAlignment = VerticalAlignment.Center,
+                CornerRadius = new(0),
+                BorderThickness = new(2),
+                BorderBrush = SourceBorderBrush.InicializeConnectedSolidColorBrush(),
+                Child = new TextBlock()
+                {
+                    Padding = new(0d, 0.7d, 1d, 0d),
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    Foreground = SourceForeground.InicializeConnectedSolidColorBrush(),
+                    Text = "<",
+                    FontSize = 14d,
+                    FontFamily = new("Arial Black"),
+                }
+            };
+            Base_RightBorderGuideButton = new() // |=| >
+            {
+                Width = 20d,
+                Height = 20d,
+                Margin = new(2),
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Center,
+                CornerRadius = new(0),
+                BorderThickness = new(2),
+                BorderBrush = SourceBorderBrush.InicializeConnectedSolidColorBrush(),
+                Child = new TextBlock()
+                {
+                    Padding = new(1d, 0.7d, 0d, 0d),
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    Foreground = SourceForeground.InicializeConnectedSolidColorBrush(),
+                    Text = ">",
+                    FontSize = 14d,
+                    FontFamily = new("Arial Black"),
+                }
+            };
+
+            Base_GridButton = new()
+            {
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center,
+            };
+            Grid.SetColumn(Base_LeftBorderGuideButton, 0);
+            Grid.SetColumn(Base_GridButton, 1);
+            Grid.SetColumn(Base_RightBorderGuideButton, 2);
+            Base_HeadGridButton.Children.Add(Base_LeftBorderGuideButton);
+            Base_HeadGridButton.Children.Add(Base_GridButton);
+            Base_HeadGridButton.Children.Add(Base_RightBorderGuideButton);
+
+
+            Base_BorderContainer.MouseEnter += (sender, e) =>
             {
                 if (IsEnabled)
                 {
@@ -146,7 +306,7 @@ namespace IEL.CORE.BaseUserControls
                 }
             };
 
-            Base_BorderButton.MouseLeave += (sender, e) =>
+            Base_BorderContainer.MouseLeave += (sender, e) =>
             {
                 if (IsEnabled)
                 {
@@ -154,7 +314,7 @@ namespace IEL.CORE.BaseUserControls
                 }
             };
 
-            Base_BorderButton.MouseDown += (sender, e) =>
+            Base_BorderContainer.MouseDown += (sender, e) =>
             {
                 if (IsEnabled)
                 {
@@ -168,7 +328,7 @@ namespace IEL.CORE.BaseUserControls
                 }
             };
 
-            Base_BorderButton.MouseLeftButtonUp += (sender, e) =>
+            Base_BorderContainer.MouseLeftButtonUp += (sender, e) =>
             {
                 if (IsEnabled && OnActivateMouseLeft != null)
                 {
@@ -177,7 +337,7 @@ namespace IEL.CORE.BaseUserControls
                 }
             };
 
-            Base_BorderButton.MouseRightButtonUp += (sender, e) =>
+            Base_BorderContainer.MouseRightButtonUp += (sender, e) =>
             {
                 if (IsEnabled && OnActivateMouseRight != null)
                 {
@@ -186,11 +346,12 @@ namespace IEL.CORE.BaseUserControls
                 }
             };
 
-            Base_BorderButton.IsEnabledChanged += (sender, e) =>
+            Base_BorderContainer.IsEnabledChanged += (sender, e) =>
             {
                 if (VisualElementMouseEvents != null)
                     VisualElementMouseEvents.Opacity = 0d;
             };
+            base.SetValue(IELContainerBase.ContentProperty, Base_HeadGridButton);
         }
 
         /// <summary>

@@ -173,16 +173,16 @@ namespace IEL.GUI
         {
             InitializeComponent();
             #region Background
-            BorderMain.Background = QBackground.InicializeConnectedSolidColorBrush();
+            BorderMain.Background = SourceBackground.InicializeConnectedSolidColorBrush();
             #endregion
 
             #region BorderBrush
-            BorderMain.BorderBrush = QBorderBrush.InicializeConnectedSolidColorBrush();
-            BorderMainPage.BorderBrush = QBorderBrush.InicializeConnectedSolidColorBrush();
+            BorderMain.BorderBrush = SourceBorderBrush.InicializeConnectedSolidColorBrush();
+            BorderMainPage.BorderBrush = SourceBorderBrush.InicializeConnectedSolidColorBrush();
             #endregion
 
             #region Foreground
-            TextBlockNullPage.Foreground = QForeground.InicializeConnectedSolidColorBrush();
+            TextBlockNullPage.Foreground = SourceForeground.InicializeConnectedSolidColorBrush();
             #endregion
             IELSettingObject = new();
             QDataDefaultInlayBackground = new();
@@ -254,9 +254,9 @@ namespace IEL.GUI
                 CornerRadius = new(8, 8, 0, 0),
                 Padding = new(1, 4, 1, 0),
             };
-            Inlay.QBackground.SetQData(QDataDefaultInlayBackground);
-            Inlay.QBorderBrush.SetQData(QDataDefaultInlayBorderBrush);
-            Inlay.QForeground.SetQData(QDataDefaultInlayForeground);
+            Inlay.Background = QDataDefaultInlayBackground;
+            Inlay.BorderBrush = QDataDefaultInlayBorderBrush;
+            Inlay.Foreground = QDataDefaultInlayForeground;
             Inlay.GradientInlayText.Color = Colors.Black;
             Inlay.OnActivateCloseInlay += (sender, e, Key) =>
             {

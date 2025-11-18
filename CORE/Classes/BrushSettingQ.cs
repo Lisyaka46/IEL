@@ -14,13 +14,7 @@ namespace IEL.CORE.Classes
         /// <summary>
         /// Дата которая используется для отображения
         /// </summary>
-        private QData Source;
-
-        /// <summary>
-        /// Клонировать текущую настройку цвета <b>БЕЗ ЗАВИСИМОСТИ СОБЫТИЙ</b>
-        /// </summary>
-        /// <returns></returns>
-        public QData Clone() => new(Source.Clone());
+        public QData Source { get; private set; }
 
         #region ConectedBrush
         /// <summary>
@@ -173,48 +167,11 @@ namespace IEL.CORE.Classes
         public StateSpectrum GetActiveSpecrum() => ActiveSpectrum;
         #endregion
 
-        #region QDataManipulate
-        /// <summary>
-        /// Спектр обычного сотояния цвета
-        /// </summary>
-        public Color Default
-        {
-            get => Source.GetFromSpectrumColor(EnumDataSpectrum.Default);
-            set => Source.SetFromSpectrumColor(EnumDataSpectrum.Default, value);
-        }
-
-        /// <summary>
-        /// Спектр выделенного состояния цвета
-        /// </summary>
-        public Color Select
-        {
-            get => Source.GetFromSpectrumColor(EnumDataSpectrum.Select);
-            set => Source.SetFromSpectrumColor(EnumDataSpectrum.Select, value);
-        }
-
-        /// <summary>
-        /// Спектр используемого цвета
-        /// </summary>
-        public Color Used
-        {
-            get => Source.GetFromSpectrumColor(EnumDataSpectrum.Used);
-            set => Source.SetFromSpectrumColor(EnumDataSpectrum.Used, value);
-        }
-
-        /// <summary>
-        /// Спектр отключённого цвета
-        /// </summary>
-        public Color NotEnabled
-        {
-            get => Source.GetFromSpectrumColor(EnumDataSpectrum.NotEnabled);
-            set => Source.SetFromSpectrumColor(EnumDataSpectrum.NotEnabled, value);
-        }
-
         /// <summary>
         /// Установить новый экземпляр данных Q-логики
         /// </summary>
         /// <param name="Data">Спектр которому присваивается значение</param>
-        public void SetQData(QData Data)
+        internal void SetQData(QData Data)
         {
             Source = Data;
             Source.ChangedData += UpdateVisualActiveSpectrumData;
@@ -222,7 +179,6 @@ namespace IEL.CORE.Classes
         }
 
         private void UpdateVisualActiveSpectrumData(EnumDataSpectrum Spectrum) { if ((int)Spectrum == (int)ActiveSpectrum - 1) AnimateConectedBrush(false); }
-        #endregion
 
         /// <summary>
         /// Инициализация объекта цветовых настроек по умолчанию

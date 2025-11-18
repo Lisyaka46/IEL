@@ -44,23 +44,17 @@ namespace IEL.GUI
         {
             InitializeComponent();
             #region Background
-            BorderButton.Background = QBackground.InicializeConnectedSolidColorBrush();
-            BorderButtonKey.Background = QBackground.InicializeConnectedSolidColorBrush();
-            BorderRightArrow.Background = QBackground.InicializeConnectedSolidColorBrush();
-            BorderLeftArrow.Background = QBackground.InicializeConnectedSolidColorBrush();
+            BorderButton.Background = SourceBackground.InicializeConnectedSolidColorBrush();
+            BorderButtonKey.Background = SourceBackground.InicializeConnectedSolidColorBrush();
             #endregion
 
             #region BorderBrush
-            BorderButton.BorderBrush = QBorderBrush.InicializeConnectedSolidColorBrush();
-            BorderButtonKey.BorderBrush = QBorderBrush.InicializeConnectedSolidColorBrush();
-            BorderRightArrow.BorderBrush = QBorderBrush.InicializeConnectedSolidColorBrush();
-            BorderLeftArrow.BorderBrush = QBorderBrush.InicializeConnectedSolidColorBrush();
+            BorderButton.BorderBrush = SourceBorderBrush.InicializeConnectedSolidColorBrush();
+            BorderButtonKey.BorderBrush = SourceBorderBrush.InicializeConnectedSolidColorBrush();
             #endregion
 
             #region Foreground
-            TextBlockKey.Foreground = QForeground.InicializeConnectedSolidColorBrush();
-            TextBlockLeftArrow.Foreground = QForeground.InicializeConnectedSolidColorBrush();
-            TextBlockRightArrow.Foreground = QForeground.InicializeConnectedSolidColorBrush();
+            TextBlockKey.Foreground = SourceForeground.InicializeConnectedSolidColorBrush();
             #endregion
 
             ImageButton.Margin = new Thickness(10, 10, 10, 10);

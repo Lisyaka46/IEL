@@ -9,29 +9,27 @@ namespace IEL.GUI
     /// </summary>
     public partial class IELButtonImage : IELButton
     {
+        #region Source
         /// <summary>
-        /// Изображение которое отображается в элементе
+        /// Данные конкретного свойства
         /// </summary>
-        public ImageSource Imaging
-        {
-            get
-            {
-                return ImageButton.Source;
-            }
-            set
-            {
-                ImageButton.Source = value;
-            }
-        }
+        public static readonly DependencyProperty SourceProperty =
+            DependencyProperty.Register("BorderThicknessGuides", typeof(ImageSource), typeof(IELButtonImage),
+                new(null,
+                    (sender, e) =>
+                    {
+                        ((IELButtonImage)sender).ImageButton.Source = (ImageSource)e.NewValue;
+                    }));
 
         /// <summary>
-        /// Позиционирование картинки в элементе
+        /// Ссылка на элемент изображения
         /// </summary>
-        public Thickness ImageMargin
+        public ImageSource Source
         {
-            get => ImageButton.Margin;
-            set => ImageButton.Margin = value;
+            get => (ImageSource)GetValue(SourceProperty);
+            set => SetValue(SourceProperty, value);
         }
+        #endregion
 
         /// <summary>
         /// Инициализировать объект кнопки с изображением
@@ -39,23 +37,14 @@ namespace IEL.GUI
         public IELButtonImage()
         {
             InitializeComponent();
-            VisualElementMouseEvents = ImageMouseButtonsUse;
             #region Background
-            BorderRightArrow.Background = QBackground.InicializeConnectedSolidColorBrush();
-            BorderLeftArrow.Background = QBackground.InicializeConnectedSolidColorBrush();
             #endregion
 
             #region BorderBrush
-            BorderRightArrow.BorderBrush = QBorderBrush.InicializeConnectedSolidColorBrush();
-            BorderLeftArrow.BorderBrush = QBorderBrush.InicializeConnectedSolidColorBrush();
             #endregion
 
             #region Foreground
-            TextBlockLeftArrow.Foreground = QForeground.InicializeConnectedSolidColorBrush();
-            TextBlockRightArrow.Foreground = QForeground.InicializeConnectedSolidColorBrush();
             #endregion
-
-            ImageMouseButtonsUse.Opacity = 0d;
         }
     }
 }

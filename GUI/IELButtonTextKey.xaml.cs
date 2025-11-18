@@ -43,25 +43,19 @@ namespace IEL.GUI
         {
             InitializeComponent();
             #region Background
-            BorderButton.Background = QBackground.InicializeConnectedSolidColorBrush();
-            BorderCharKeyboard.Background = QBackground.InicializeConnectedSolidColorBrush();
-            BorderLeftArrow.Background = QBackground.InicializeConnectedSolidColorBrush();
-            BorderRightArrow.Background = QBackground.InicializeConnectedSolidColorBrush();
+            BorderButton.Background = SourceBackground.InicializeConnectedSolidColorBrush();
+            BorderCharKeyboard.Background = SourceBackground.InicializeConnectedSolidColorBrush();
             #endregion
 
             #region BorderBrush
-            BorderButton.BorderBrush = QBorderBrush.InicializeConnectedSolidColorBrush();
-            BorderCharKeyboard.BorderBrush = QBorderBrush.InicializeConnectedSolidColorBrush();
-            BorderLeftArrow.BorderBrush = QBorderBrush.InicializeConnectedSolidColorBrush();
-            BorderRightArrow.BorderBrush = QBorderBrush.InicializeConnectedSolidColorBrush();
+            BorderButton.BorderBrush = SourceBorderBrush.InicializeConnectedSolidColorBrush();
+            BorderCharKeyboard.BorderBrush = SourceBorderBrush.InicializeConnectedSolidColorBrush();
             #endregion
 
             #region Foreground
-            QForeground = new([255, 255, 255, 255]);
-            TextBlockButton.Foreground = QForeground.InicializeConnectedSolidColorBrush();
-            TextBlockCharKey.Foreground = QForeground.InicializeConnectedSolidColorBrush();
-            TextBlockLeftArrow.Foreground = QForeground.InicializeConnectedSolidColorBrush();
-            TextBlockRightArrow.Foreground = QForeground.InicializeConnectedSolidColorBrush();
+            Foreground = new([255, 255, 255, 255]);
+            TextBlockButton.Foreground = SourceForeground.InicializeConnectedSolidColorBrush();
+            TextBlockCharKey.Foreground = SourceForeground.InicializeConnectedSolidColorBrush();
             #endregion
 
             BorderButton.Margin = new(-24, 0, 0, 0);

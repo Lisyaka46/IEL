@@ -39,15 +39,15 @@ namespace IEL.GUI
         {
             InitializeComponent();
             #region Background
-            MainBorder.Background = QBackground.InicializeConnectedSolidColorBrush();
+            MainBorder.Background = SourceBackground.InicializeConnectedSolidColorBrush();
             #endregion
 
             #region BorderBrush
-            MainBorder.BorderBrush = QBorderBrush.InicializeConnectedSolidColorBrush();
+            MainBorder.BorderBrush = SourceBorderBrush.InicializeConnectedSolidColorBrush();
             #endregion
 
             #region Foreground
-            MainTextBlock.Foreground = QBackground.InicializeConnectedSolidColorBrush();
+            MainTextBlock.Foreground = SourceBackground.InicializeConnectedSolidColorBrush();
             #endregion
 
             CornerRadius = new CornerRadius(10);

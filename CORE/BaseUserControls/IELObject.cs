@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Threading;
 
 namespace IEL.CORE.BaseUserControls
 {
@@ -16,72 +17,98 @@ namespace IEL.CORE.BaseUserControls
     /// </summary>
     public class IELObject : ContentControl
     {
+        #region Properties
+
+        #region Background
         /// <summary>
-        /// Устаревшее свойство
+        /// Объект настройки анимации отображения фона в объекте
         /// </summary>
-        [Obsolete("Для установки используются стили - Перегружено под свойством объекта IELObject (QBackground)", true)]
-        protected new Brush? Background;
+        public BrushSettingQ SourceBackground { get; } = new();
 
         /// <summary>
-        /// Устаревшее свойство
+        /// Данные конкретного свойства
         /// </summary>
-        [Obsolete("Для установки используются стили - Перегружено под свойством объекта IELObject (QBorderBrush)", true)]
-        protected new Brush? BorderBrush;
+        public static readonly new DependencyProperty BackgroundProperty =
+            DependencyProperty.Register("Background", typeof(QData), typeof(IELObject),
+                new(new QData(),
+                    (sender, e) =>
+                    {
+                        ((IELObject)sender).SourceBackground.SetQData((QData)e.NewValue);
+                    }));
 
         /// <summary>
-        /// Устаревшее свойство
+        /// Объект настройки отображения фона 
         /// </summary>
-        [Obsolete("Для установки используются стили - Перегружено под свойством объекта IELObject (QForeground)", true)]
-        protected new Brush? Foreground;
-
-        #region Color Setting
-        /// <summary>
-        /// Ресурсный объект настройки состояний фона
-        /// </summary>
-        private readonly BrushSettingQ _QBackground = new();
-        /// <summary>
-        /// Объект настройки состояний фона
-        /// </summary>
-        public BrushSettingQ QBackground
+        public new QData Background
         {
-            get => _QBackground;
+            get => (QData)GetValue(BackgroundProperty);
             set
             {
-                _QBackground.SetQData(value.Clone());
+                SetValue(BackgroundProperty, value);
             }
         }
+        #endregion
+
+        #region BorderBrush
+        /// <summary>
+        /// Объект настройки анимирования отображения границ в объекте
+        /// </summary>
+        public BrushSettingQ SourceBorderBrush { get; } = new();
 
         /// <summary>
-        /// Ресурсный объект настройки состояний границы
+        /// Данные конкретного свойства
         /// </summary>
-        private readonly BrushSettingQ _QBorderBrush = new();
-        /// <summary>
-        /// Объект настройки состояний границы
-        /// </summary>
-        public BrushSettingQ QBorderBrush
-        {
-            get => _QBorderBrush;
-            set
-            {
-                _QBorderBrush.SetQData(value.Clone());
-            }
-        }
+        public static readonly new DependencyProperty BorderBrushProperty =
+            DependencyProperty.Register("BorderBrush", typeof(QData), typeof(IELObject),
+                new(new QData(),
+                    (sender, e) =>
+                    {
+                        ((IELObject)sender).SourceBorderBrush.SetQData((QData)e.NewValue);
+                    }));
 
         /// <summary>
-        /// Ресурсный объект настройки состояний текста
+        /// Объект настройки отображения границ
         /// </summary>
-        private readonly BrushSettingQ _QForeground = new();
-        /// <summary>
-        /// Объект настройки состояний текста
-        /// </summary>
-        public BrushSettingQ QForeground
+        public new QData BorderBrush
         {
-            get => _QForeground;
+            get => (QData)GetValue(BorderBrushProperty);
             set
             {
-                _QForeground.SetQData(value.Clone());
+                SetValue(BorderBrushProperty, value);
             }
         }
+        #endregion
+
+        #region Foreground
+        /// <summary>
+        /// Объект настройки анимирования отображения текста в объекте
+        /// </summary>
+        public BrushSettingQ SourceForeground { get; } = new();
+
+        /// <summary>
+        /// Данные конкретного свойства
+        /// </summary>
+        public static readonly new DependencyProperty ForegroundProperty =
+            DependencyProperty.Register("Foreground", typeof(QData), typeof(IELObject),
+                new(new QData(),
+                    (sender, e) =>
+                    {
+                        ((IELObject)sender).SourceForeground.SetQData((QData)e.NewValue);
+                    }));
+
+        /// <summary>
+        /// Объект настройки отображения текста
+        /// </summary>
+        public new QData Foreground
+        {
+            get => (QData)GetValue(ForegroundProperty);
+            set
+            {
+                SetValue(ForegroundProperty, value);
+            }
+        }
+        #endregion
+
         #endregion
 
         /// <summary>
@@ -91,9 +118,9 @@ namespace IEL.CORE.BaseUserControls
         /// <param name="Animated">Состояние анимирования изменения</param>
         public void SetActiveSpecrum(StateSpectrum Spectrum, bool Animated)
         {
-            QBackground.SetActiveSpecrum(Spectrum, Animated);
-            QBorderBrush.SetActiveSpecrum(Spectrum, Animated);
-            QForeground.SetActiveSpecrum(Spectrum, Animated);
+            SourceBackground.SetActiveSpecrum(Spectrum, Animated);
+            SourceBorderBrush.SetActiveSpecrum(Spectrum, Animated);
+            SourceForeground.SetActiveSpecrum(Spectrum, Animated);
         }
     }
 }

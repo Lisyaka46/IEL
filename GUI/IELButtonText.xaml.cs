@@ -39,24 +39,15 @@ namespace IEL.GUI
         {
             InitializeComponent();
             #region Background
-            BorderRightArrow.Background = QBackground.InicializeConnectedSolidColorBrush();
-            BorderLeftArrow.Background = QBackground.InicializeConnectedSolidColorBrush();
             #endregion
 
             #region BorderBrush
-            BorderRightArrow.BorderBrush = QBorderBrush.InicializeConnectedSolidColorBrush();
-            BorderLeftArrow.BorderBrush = QBorderBrush.InicializeConnectedSolidColorBrush();
             #endregion
 
             #region Foreground
-            QForeground = new([255, 255, 255, 255]);
-            TextBlockButton.Foreground = QForeground.InicializeConnectedSolidColorBrush();
-            TextBlockLeftArrow.Foreground = QForeground.InicializeConnectedSolidColorBrush();
-            TextBlockRightArrow.Foreground = QForeground.InicializeConnectedSolidColorBrush();
+            Foreground = new([255, 255, 255, 255]);
+            TextBlockButton.Foreground = SourceForeground.InicializeConnectedSolidColorBrush();
             #endregion
-
-            VisualElementMouseEvents = ImageMouseButtonsUse;
-            ImageMouseButtonsUse.Opacity = 0d;
             Text = "Text";
             CornerRadius = new CornerRadius(10);
         }

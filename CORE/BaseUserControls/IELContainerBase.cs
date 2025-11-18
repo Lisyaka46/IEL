@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Channels;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -15,10 +16,12 @@ namespace IEL.CORE.BaseUserControls
     /// </summary>
     public class IELContainerBase : IELObject
     {
+        #region UIElements
         /// <summary>
         /// Базовый объект в котором реализуется наследуемый элемент
         /// </summary>
-        protected Border Base_BorderButton { get; private set; }
+        protected Border Base_BorderContainer { get; private set; }
+        #endregion
 
         #region Properties
 
@@ -63,7 +66,7 @@ namespace IEL.CORE.BaseUserControls
                 new(
                     (sender, e) =>
                     {
-                        ((IELContainerBase)sender).Base_BorderButton.Child = (UIElement)e.NewValue;
+                        ((IELContainerBase)sender).Base_BorderContainer.Child = (UIElement)e.NewValue;
                     }));
 
         /// <summary>
@@ -85,7 +88,7 @@ namespace IEL.CORE.BaseUserControls
                 new(new CornerRadius(0),
                     (sender, e) =>
                     {
-                        ((IELContainerBase)sender).Base_BorderButton.CornerRadius = (CornerRadius)e.NewValue;
+                        ((IELContainerBase)sender).Base_BorderContainer.CornerRadius = (CornerRadius)e.NewValue;
                     }));
 
         /// <summary>
@@ -93,8 +96,8 @@ namespace IEL.CORE.BaseUserControls
         /// </summary>
         public CornerRadius CornerRadius
         {
-            get => (CornerRadius)Base_BorderButton.GetValue(CornerRadiusProperty);
-            set => Base_BorderButton.SetValue(CornerRadiusProperty, value);
+            get => (CornerRadius)Base_BorderContainer.GetValue(CornerRadiusProperty);
+            set => Base_BorderContainer.SetValue(CornerRadiusProperty, value);
         }
         #endregion
 
@@ -107,7 +110,7 @@ namespace IEL.CORE.BaseUserControls
                 new(new Thickness(2),
                     (sender, e) =>
                     {
-                        ((IELContainerBase)sender).Base_BorderButton.BorderThickness = (Thickness)e.NewValue;
+                        ((IELContainerBase)sender).Base_BorderContainer.BorderThickness = (Thickness)e.NewValue;
                     }));
 
         /// <summary>
@@ -115,8 +118,8 @@ namespace IEL.CORE.BaseUserControls
         /// </summary>
         public new Thickness BorderThickness
         {
-            get => (Thickness)Base_BorderButton.GetValue(BorderThicknessProperty);
-            set => Base_BorderButton.SetValue(BorderThicknessProperty, value);
+            get => (Thickness)Base_BorderContainer.GetValue(BorderThicknessProperty);
+            set => Base_BorderContainer.SetValue(BorderThicknessProperty, value);
         }
         #endregion
 
@@ -129,7 +132,7 @@ namespace IEL.CORE.BaseUserControls
                 new(new Thickness(0),
                     (sender, e) =>
                     {
-                        ((IELContainerBase)sender).Base_BorderButton.Padding = (Thickness)e.NewValue;
+                        ((IELContainerBase)sender).Base_BorderContainer.Padding = (Thickness)e.NewValue;
                     }));
 
         /// <summary>
@@ -137,8 +140,8 @@ namespace IEL.CORE.BaseUserControls
         /// </summary>
         public new Thickness Padding
         {
-            get => (Thickness)Base_BorderButton.GetValue(PaddingProperty);
-            set => Base_BorderButton.SetValue(PaddingProperty, value);
+            get => (Thickness)Base_BorderContainer.GetValue(PaddingProperty);
+            set => Base_BorderContainer.SetValue(PaddingProperty, value);
         }
         #endregion
 
@@ -151,7 +154,8 @@ namespace IEL.CORE.BaseUserControls
                 new(true,
                     (sender, e) =>
                     {
-                        ((IELContainerBase)sender).Base_BorderButton.IsEnabled = (bool)e.NewValue;
+                        ((IELContainerBase)sender).Base_BorderContainer.IsEnabled = (bool)e.NewValue;
+                        ((IELContainerBase)sender).IsEnabledChanged.Invoke(sender, new(IsEnabledProperty, e.OldValue, e.NewValue));
                     }));
 
         /// <summary>
@@ -159,16 +163,21 @@ namespace IEL.CORE.BaseUserControls
         /// </summary>
         public new bool IsEnabled
         {
-            get => (bool)Base_BorderButton.GetValue(IsEnabledProperty);
-            set => Base_BorderButton.SetValue(IsEnabledProperty, value);
+            get => (bool)Base_BorderContainer.GetValue(IsEnabledProperty);
+            set => Base_BorderContainer.SetValue(IsEnabledProperty, value);
         }
+        
+        /// <summary>
+        /// Событие изменения состояния активности элемента
+        /// </summary>
+        public new event DependencyPropertyChangedEventHandler IsEnabledChanged;
         #endregion
 
         #endregion
 
         protected IELContainerBase()
         {
-            Base_BorderButton = new()
+            Base_BorderContainer = new()
             {
                 BorderThickness = new(2),
             };
@@ -182,7 +191,7 @@ namespace IEL.CORE.BaseUserControls
                 SourceTimer.Stop();
             };
 
-            Base_BorderButton.MouseEnter += (sender, e) =>
+            Base_BorderContainer.MouseEnter += (sender, e) =>
             {
                 if (IsEnabled)
                 {
@@ -191,7 +200,7 @@ namespace IEL.CORE.BaseUserControls
                 }
             };
 
-            Base_BorderButton.MouseLeave += (sender, e) =>
+            Base_BorderContainer.MouseLeave += (sender, e) =>
             {
                 if (IsEnabled)
                 {
@@ -200,15 +209,15 @@ namespace IEL.CORE.BaseUserControls
                 }
             };
 
-            Base_BorderButton.IsEnabledChanged += (sender, e) =>
+            IsEnabledChanged += (sender, e) =>
             {
                 SourceTimer.Stop();
                 StateSpectrum Value = (bool)e.NewValue ? StateSpectrum.Default : StateSpectrum.NotEnabled;
                 SetActiveSpecrum(Value, true);
             };
-            Base_BorderButton.Background = QBackground.InicializeConnectedSolidColorBrush();
-            Base_BorderButton.BorderBrush = QBorderBrush.InicializeConnectedSolidColorBrush();
-            SetValue(ContentControl.ContentProperty, Base_BorderButton);
+            Base_BorderContainer.Background = SourceBackground.InicializeConnectedSolidColorBrush();
+            Base_BorderContainer.BorderBrush = SourceBorderBrush.InicializeConnectedSolidColorBrush();
+            SetValue(ContentControl.ContentProperty, Base_BorderContainer);
         }
     }
 }

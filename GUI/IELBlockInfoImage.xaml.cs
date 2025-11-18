@@ -14,11 +14,11 @@ namespace IEL.GUI
         {
             InitializeComponent();
             #region Background
-            RectangleBackground.Fill = QBackground.InicializeConnectedSolidColorBrush();
+            RectangleBackground.Fill = SourceBackground.InicializeConnectedSolidColorBrush();
             #endregion
 
             #region BorderBrush
-            MainBorder.BorderBrush = QBorderBrush.InicializeConnectedSolidColorBrush();
+            MainBorder.BorderBrush = SourceBorderBrush.InicializeConnectedSolidColorBrush();
             #endregion
 
             #region Foreground

@@ -187,15 +187,15 @@ namespace IEL.GUI
         {
             InitializeComponent();
             #region Background
-            TextBoxBorder.Background = QBackground.InicializeConnectedSolidColorBrush();
+            TextBoxBorder.Background = SourceBackground.InicializeConnectedSolidColorBrush();
             #endregion
 
             #region BorderBrush
-            TextBoxBorder.BorderBrush = QBorderBrush.InicializeConnectedSolidColorBrush();
+            TextBoxBorder.BorderBrush = SourceBorderBrush.InicializeConnectedSolidColorBrush();
             #endregion
 
             #region Foreground
-            TextBoxMain.Foreground = QForeground.InicializeConnectedSolidColorBrush();
+            TextBoxMain.Foreground = SourceForeground.InicializeConnectedSolidColorBrush();
             #endregion
             IELSettingObject = new();
 

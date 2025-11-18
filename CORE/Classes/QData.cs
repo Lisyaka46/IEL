@@ -56,6 +56,44 @@ namespace IEL.CORE.Classes
         /// </summary>
         private byte[][] Data;
 
+        #region QDataManipulate
+        /// <summary>
+        /// Спектр обычного сотояния цвета
+        /// </summary>
+        public Color Default
+        {
+            get => GetFromSpectrumColor(EnumDataSpectrum.Default);
+            set => SetFromSpectrumColor(EnumDataSpectrum.Default, value);
+        }
+
+        /// <summary>
+        /// Спектр выделенного состояния цвета
+        /// </summary>
+        public Color Select
+        {
+            get => GetFromSpectrumColor(EnumDataSpectrum.Select);
+            set => SetFromSpectrumColor(EnumDataSpectrum.Select, value);
+        }
+
+        /// <summary>
+        /// Спектр используемого цвета
+        /// </summary>
+        public Color Used
+        {
+            get => GetFromSpectrumColor(EnumDataSpectrum.Used);
+            set => SetFromSpectrumColor(EnumDataSpectrum.Used, value);
+        }
+
+        /// <summary>
+        /// Спектр отключённого цвета
+        /// </summary>
+        public Color NotEnabled
+        {
+            get => GetFromSpectrumColor(EnumDataSpectrum.NotEnabled);
+            set => SetFromSpectrumColor(EnumDataSpectrum.NotEnabled, value);
+        }
+        #endregion
+
         /// <summary>
         /// Получить цвет по определённому спектру
         /// </summary>
@@ -140,6 +178,6 @@ namespace IEL.CORE.Classes
         /// Скопировать данные расположения цветов
         /// </summary>
         /// <returns>Склонированный элемент</returns>
-        public byte[][] Clone() => (byte[][])Data.Clone();
+        public QData Clone() => new(Data);
     }
 }

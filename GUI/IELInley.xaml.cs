@@ -110,7 +110,7 @@ namespace IEL.GUI
             #endregion
 
             #region Foreground
-            TextBlockHead.Foreground = QForeground.InicializeConnectedSolidColorBrush();
+            TextBlockHead.Foreground = SourceForeground.InicializeConnectedSolidColorBrush();
             #endregion
 
             BorderThicknessActive = new(

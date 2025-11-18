@@ -191,7 +191,7 @@ namespace IEL.GUI
             MainPageController.LeftAnimateSwitch = new(-20, -20, 40, -3);
             MainPageController.RightAnimateSwitch = new(40, -10, -20, -3);
             TextBlockRightButtonIndicatorKey.Text = "RIGHT";
-            Base_BorderButton.KeyDown += (sender, e) =>
+            Base_BorderContainer.KeyDown += (sender, e) =>
             {
                 if (!PanelActionActivate && BlockWhileEvent) return;
                 else BlockWhileEvent = true;
@@ -219,7 +219,7 @@ namespace IEL.GUI
                     }
                 }
             };
-            Base_BorderButton.KeyUp += (sender, e) =>
+            Base_BorderContainer.KeyUp += (sender, e) =>
             {
                 if (!PanelActionActivate && !BlockWhileEvent) return;
                 else BlockWhileEvent = false;
@@ -249,7 +249,7 @@ namespace IEL.GUI
                     }
                 }
             };
-            Base_BorderButton.LostFocus += (sender, e) => ClosePanelAction(PositionAnimActionPanel.CenterObject);
+            Base_BorderContainer.LostFocus += (sender, e) => ClosePanelAction(PositionAnimActionPanel.CenterObject);
         }
 
         /// <summary>
