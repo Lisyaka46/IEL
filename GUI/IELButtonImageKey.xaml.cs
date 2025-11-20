@@ -11,7 +11,7 @@ namespace IEL.GUI
     /// <summary>
     /// Логика взаимодействия для IELButtonImageKey.xaml
     /// </summary>
-    public partial class IELButtonImageKey : IELButtonKey
+    public partial class IELButtonImageKey : IELButtonKeyBase
     {
         /// <summary>
         /// Изображение которое отображается в кнопке
@@ -43,23 +43,6 @@ namespace IEL.GUI
         public IELButtonImageKey()
         {
             InitializeComponent();
-            #region Background
-            BorderButton.Background = SourceBackground.InicializeConnectedSolidColorBrush();
-            BorderButtonKey.Background = SourceBackground.InicializeConnectedSolidColorBrush();
-            #endregion
-
-            #region BorderBrush
-            BorderButton.BorderBrush = SourceBorderBrush.InicializeConnectedSolidColorBrush();
-            BorderButtonKey.BorderBrush = SourceBorderBrush.InicializeConnectedSolidColorBrush();
-            #endregion
-
-            #region Foreground
-            TextBlockKey.Foreground = SourceForeground.InicializeConnectedSolidColorBrush();
-            #endregion
-
-            ImageButton.Margin = new Thickness(10, 10, 10, 10);
-
-            ImageMouseButtonsUse.Opacity = 0d;
         }
     }
 }

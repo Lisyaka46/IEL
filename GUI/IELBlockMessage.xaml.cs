@@ -12,7 +12,7 @@ namespace IEL.GUI
     /// <summary>
     /// Логика взаимодействия для IELBlockMessage.xaml
     /// </summary>
-    public partial class IELBlockMessage : IELObject
+    public partial class IELBlockMessage : IELObjectBase
     {
         #region Flags
         /// <summary>

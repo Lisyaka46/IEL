@@ -65,10 +65,5 @@ namespace IEL.CORE.Classes.ObjectSettings
         /// <returns>Возможное изображение отображения событий</returns>
         internal ImageSource? GetImageMouseEvents(EventsMouse Event) => EventImageSourceMouse[(int)Event];
         #endregion
-
-        /// <summary>
-        /// Значение прозрачности показания изображения действий элемента
-        /// </summary>
-        public double VisibleOpacityImageMouse { get; set; } = 0.6d;
     }
 }

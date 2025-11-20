@@ -11,30 +11,29 @@ namespace IEL.GUI
     /// <summary>
     /// Логика взаимодействия для IELButtonTextKey.xaml
     /// </summary>
-    public partial class IELButtonTextKey : IELButtonKey
+    public partial class IELButtonTextKey : IELButtonKeyBase
     {
+        #region Text
+        /// <summary>
+        /// Данные конкретного свойства
+        /// </summary>
+        public static readonly DependencyProperty TextProperty =
+            DependencyProperty.Register("Text", typeof(string), typeof(IELButtonTextKey),
+                new("Text",
+                    (sender, e) =>
+                    {
+                        ((IELButtonTextKey)sender).TextBlockButton.Text = (string)e.NewValue;
+                    }));
+
         /// <summary>
         /// Текст кнопки
         /// </summary>
         public string Text
         {
-            get => TextBlockButton.Text;
-            set => TextBlockButton.Text = value;
+            get => (string)GetValue(TextProperty);
+            set => SetValue(TextProperty, value);
         }
-
-        /// <summary>
-        /// Шрифт текста в кнопке
-        /// </summary>
-        public new FontFamily FontFamily
-        {
-            get => base.FontFamily;
-            set
-            {
-                TextBlockCharKey.FontFamily = value;
-                TextBlockButton.FontFamily = value;
-                base.FontFamily = value;
-            }
-        }
+        #endregion
 
         /// <summary>
         /// Инициализировать объект интерфейса кнопки с текстом поддерживающую возможность нажатия с помощью клавиши
@@ -43,24 +42,16 @@ namespace IEL.GUI
         {
             InitializeComponent();
             #region Background
-            BorderButton.Background = SourceBackground.InicializeConnectedSolidColorBrush();
-            BorderCharKeyboard.Background = SourceBackground.InicializeConnectedSolidColorBrush();
             #endregion
 
             #region BorderBrush
-            BorderButton.BorderBrush = SourceBorderBrush.InicializeConnectedSolidColorBrush();
-            BorderCharKeyboard.BorderBrush = SourceBorderBrush.InicializeConnectedSolidColorBrush();
             #endregion
 
             #region Foreground
             Foreground = new([255, 255, 255, 255]);
             TextBlockButton.Foreground = SourceForeground.InicializeConnectedSolidColorBrush();
-            TextBlockCharKey.Foreground = SourceForeground.InicializeConnectedSolidColorBrush();
             #endregion
 
-            BorderButton.Margin = new(-24, 0, 0, 0);
-            BorderCharKeyboard.Opacity = 0d;
-            ImageMouseButtonsUse.Opacity = 0d;
             Text = "Text";
             CornerRadius = new CornerRadius(10);
         }

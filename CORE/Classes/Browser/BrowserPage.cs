@@ -18,7 +18,7 @@ namespace IEL.CORE.Classes.Browser
         public Page PageContent { get; } = ElementPage;
 
         /// <summary>
-        /// Название фкладки браузера страниц
+        /// Название вкладки браузера страниц
         /// </summary>
         public string Title { get; set; } = title;
 
@@ -31,6 +31,7 @@ namespace IEL.CORE.Classes.Browser
         /// Объект события фокусировки на элемент страницы браузера
         /// </summary>
         internal BrowserEventHandler? EventUnfocusPage { get; set; }
+
         /// <summary>
         /// Событие получения выключения отображения
         /// </summary>

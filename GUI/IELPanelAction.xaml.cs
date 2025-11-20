@@ -214,7 +214,7 @@ namespace IEL.GUI
                     if (KeyboardModeInActualPage && !SelectButtonKeyboardMode)
                     {
                         SelectButtonKeyboardMode = true;
-                        ActiveSettingVisual.ActiveSource.ActivateElementKey<IELButtonKey>(e.Key, ActionButton.BlinkActivate,
+                        ActiveSettingVisual.ActiveSource.ActivateElementKey<IELButtonKeyBase>(e.Key, ActionButton.BlinkActivate,
                             ActivateRightClickKeyboardMode ? OrientationActivate.RightButton : OrientationActivate.LeftButton);
                     }
                 }
@@ -244,7 +244,7 @@ namespace IEL.GUI
                     if (KeyboardModeInActualPage && SelectButtonKeyboardMode)
                     {
                         SelectButtonKeyboardMode = false;
-                        ActiveSettingVisual.ActiveSource.ActivateElementKey<IELButtonKey>(e.Key, ActionButton.ActionActivate,
+                        ActiveSettingVisual.ActiveSource.ActivateElementKey<IELButtonKeyBase>(e.Key, ActionButton.ActionActivate,
                             ActivateRightClickKeyboardMode ? OrientationActivate.RightButton : OrientationActivate.LeftButton);
                     }
                 }

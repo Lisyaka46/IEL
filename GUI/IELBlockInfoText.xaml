@@ -5,10 +5,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-    xmlns:local="clr-namespace:IEL.GUI"
-    mc:Ignorable="d" 
-    d:DesignHeight="30" d:DesignWidth="30">
-    <Border x:Name="MainBorder" BorderBrush="Black" BorderThickness="2,2,2,2" CornerRadius="5,5,5,5" Background="White" Cursor="Help" ClipToBounds="True">
-        <TextBlock x:Name="MainTextBlock" Text="A" TextTrimming="CharacterEllipsis" TextAlignment="Center" VerticalAlignment="Center" Padding="0,1,0,1" />
-    </Border>
+    xmlns:local="clr-namespace:IEL.GUI">
+    <TextBlock x:Name="MainTextBlock" Text="A" TextTrimming="CharacterEllipsis" TextAlignment="Center" VerticalAlignment="Center"/>
 </Base:IELContainerBase>

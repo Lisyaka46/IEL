@@ -13,16 +13,6 @@ namespace IEL.GUI
         public IELBlockInfoImage()
         {
             InitializeComponent();
-            #region Background
-            RectangleBackground.Fill = SourceBackground.InicializeConnectedSolidColorBrush();
-            #endregion
-
-            #region BorderBrush
-            MainBorder.BorderBrush = SourceBorderBrush.InicializeConnectedSolidColorBrush();
-            #endregion
-
-            #region Foreground
-            #endregion
         }
     }
 }

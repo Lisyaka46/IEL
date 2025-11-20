@@ -1,4 +1,4 @@
-﻿<Base:IELButton
+﻿<Base:IELButtonBase
     x:Class="IEL.GUI.IELButtonImage"
     xmlns:Base="clr-namespace:IEL.CORE.BaseUserControls"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -8,4 +8,4 @@
     mc:Ignorable="d" 
     d:DesignHeight="36.794" d:DesignWidth="95.838" Cursor="Hand">
     <Image x:Name="ImageButton" Margin="2,2,2,2" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-</Base:IELButton>
+</Base:IELButtonBase>

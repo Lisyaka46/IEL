@@ -39,18 +39,14 @@ namespace IEL.GUI
         {
             InitializeComponent();
             #region Background
-            MainBorder.Background = SourceBackground.InicializeConnectedSolidColorBrush();
             #endregion
 
             #region BorderBrush
-            MainBorder.BorderBrush = SourceBorderBrush.InicializeConnectedSolidColorBrush();
             #endregion
 
             #region Foreground
-            MainTextBlock.Foreground = SourceBackground.InicializeConnectedSolidColorBrush();
+            MainTextBlock.Foreground = SourceForeground.InicializeConnectedSolidColorBrush();
             #endregion
-
-            CornerRadius = new CornerRadius(10);
         }
     }
 }

@@ -13,7 +13,7 @@ namespace IEL.GUI
     /// <summary>
     /// Логика взаимодействия для IELBrowserPage.xaml
     /// </summary>
-    public partial class IELBrowserPage : IELObject
+    public partial class IELBrowserPage : IELObjectBase
     {
 		private IELObjectSetting _IELSettingObject = new();
         /// <summary>
@@ -224,7 +224,6 @@ namespace IEL.GUI
                 animation.From = Colors.Black;
                 animation.To = System.Windows.Media.Color.FromArgb(0, 0, 0, 0);
                 animation.Duration = TimeSpan.FromMilliseconds(500d);
-                inlay.GradientInlayText.BeginAnimation(GradientStop.ColorProperty, animation);
             }
             inlay.Width = DefaultWidthNewInlay;
             inlay.Margin = new(IELInlays.Count * DefaultWidthNewInlay, RowDefinitionMainInlays.Height.Value, 0, 0);
@@ -257,7 +256,6 @@ namespace IEL.GUI
             Inlay.Background = QDataDefaultInlayBackground;
             Inlay.BorderBrush = QDataDefaultInlayBorderBrush;
             Inlay.Foreground = QDataDefaultInlayForeground;
-            Inlay.GradientInlayText.Color = Colors.Black;
             Inlay.OnActivateCloseInlay += (sender, e, Key) =>
             {
                 DeleteInlayPage(Inlay, ActivateIndex == IELInlays.IndexOf(Inlay));
@@ -297,17 +295,17 @@ namespace IEL.GUI
         /// <exception cref="Exception">Исключение при пустой странице в найденой вкладке</exception>
         public void ActivateInlayIndex(Index index)
         {
-            if (index.Value == ActivateIndex && IELInlays[index].UsedState) return;
+            if (index.Value == ActivateIndex && IELInlays[index].SourceBackground.GetUsedState()) return;
             BrowserPage Page = IELInlays[index].PageElement ?? throw new Exception("Объект заголовка не может быть без страницы!");
             if (ActivateIndex > -1 && IELInlays.Count > ActivateIndex)
             {
                 IELInlay BackInlay = IELInlays[ActivateIndex];
-                BackInlay.UsedState = false;
+                BackInlay.SourceBackground.SetUsedState(false);
                 UsingInlayAnimationActivate(BackInlay, false);
             }
             IELInlay NextInlay = IELInlays[index];
             UsingInlayAnimationActivate(NextInlay);
-            NextInlay.UsedState = true;
+            NextInlay.SourceBackground.SetUsedState(true);
             MainPageController.NextPage(Page.PageContent, index.Value >= ActivateIndex);
             ActivateIndex = index.Value;
             Page.EventFocusPage?.Invoke(Page);

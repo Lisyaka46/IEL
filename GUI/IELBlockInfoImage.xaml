@@ -8,12 +8,5 @@
     xmlns:local="clr-namespace:IEL.GUI"
     mc:Ignorable="d" 
     d:DesignHeight="30" d:DesignWidth="30">
-    <Grid>
-        <Rectangle x:Name="RectangleBackground" Fill="Red" RadiusX="6.1" RadiusY="6.1"/>
-        <Border x:Name="MainBorder" BorderThickness="2,2,2,2" CornerRadius="5,5,5,5" Cursor="Help" ClipToBounds="True" BorderBrush="Black">
-            <Border.Background>
-                <ImageBrush/>
-            </Border.Background>
-        </Border>
-    </Grid>
+    <Image x:Name="ImageBlock" Margin="2,2,2,2"/>
 </Base:IELContainerBase>

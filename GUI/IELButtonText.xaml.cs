@@ -8,7 +8,7 @@ namespace IEL.GUI
     /// <summary>
     /// Логика взаимодействия для IELButtonText.xaml
     /// </summary>
-    public partial class IELButtonText : IELButton
+    public partial class IELButtonText : IELButtonBase
     {
         /// <summary>
         /// Текст кнопки

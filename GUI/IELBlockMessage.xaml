@@ -1,4 +1,4 @@
-﻿<Base:IELObject
+﻿<Base:IELObjectBase
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     x:Class="IEL.GUI.IELBlockMessage"
     xmlns:Base="clr-namespace:IEL.CORE.BaseUserControls"
@@ -11,4 +11,4 @@
             <TextBlock x:Name="TextBlockMessage" TextWrapping="Wrap" Text="Hello" MaxWidth="200" TextAlignment="Center" VerticalAlignment="Top" Foreground="Black" Padding="0,1,0,1"/>
         </Grid>
     </Border>
-</Base:IELObject>
+</Base:IELObjectBase>

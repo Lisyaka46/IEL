@@ -87,7 +87,7 @@ namespace IEL.CORE.Classes
         /// <typeparam name="T">Тип элемента поддерживающего подключение по клавише</typeparam>
         /// <param name="VisualObject">Ссылка на объект поиска</param>
         /// <param name="key">Ключ клавиши</param>
-        private static T? SearchButton<T>(Visual VisualObject, Key key) where T : IELButtonKey
+        private static T? SearchButton<T>(Visual VisualObject, Key key) where T : IELButtonKeyBase
         {
             for (int i = 0; i < VisualTreeHelper.GetChildrenCount(VisualObject); i++)
             {
@@ -119,7 +119,7 @@ namespace IEL.CORE.Classes
         /// <remarks>Производится поиск и реализация действия над объектом</remarks>
         /// <returns>Выполнилось удачно или нет</returns>
         internal bool ActivateElementKey<T>(Key key, ActionButton ElementAction,
-            OrientationActivate Orientation = OrientationActivate.LeftButton) where T : IELButtonKey
+            OrientationActivate Orientation = OrientationActivate.LeftButton) where T : IELButtonKeyBase
         {
             T? Button = SearchButton<T>((Visual)ObjectPage.Content, key);
             if (Button == null) return false;

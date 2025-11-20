@@ -7,7 +7,7 @@ namespace IEL.GUI
     /// <summary>
     /// Логика взаимодействия для IELButtonImage.xaml
     /// </summary>
-    public partial class IELButtonImage : IELButton
+    public partial class IELButtonImage : IELButtonBase
     {
         #region Source
         /// <summary>

@@ -10,7 +10,7 @@ namespace IEL.GUI
     /// <summary>
     /// Логика взаимодействия для IELTextBox.xaml
     /// </summary>
-    public partial class IELTextBox : IELObject
+    public partial class IELTextBox : IELContainerBase
     {
         private IELObjectSetting _IELSettingObject = new();
         /// <summary>
@@ -23,33 +23,6 @@ namespace IEL.GUI
             {
                 _IELSettingObject = value;
             }
-        }
-
-        /// <summary>
-        /// Скруглённость границ объекта
-        /// </summary>
-        public CornerRadius CornerRadius
-        {
-            get => TextBoxBorder.CornerRadius;
-            set => TextBoxBorder.CornerRadius = value;
-        }
-
-        /// <summary>
-        /// Толщина границ объекта
-        /// </summary>
-        public Thickness BorderThicknessBlock
-        {
-            get => TextBoxBorder.BorderThickness;
-            set => TextBoxBorder.BorderThickness = value;
-        }
-
-        /// <summary>
-        /// Смещение контента в объекте
-        /// </summary>
-        public new Thickness Padding
-        {
-            get => TextBoxBorder.Padding;
-            set => TextBoxBorder.Padding = value;
         }
 
         /// <summary>
@@ -68,18 +41,6 @@ namespace IEL.GUI
         {
             get => TextBoxMain.HorizontalAlignment;
             set => TextBoxMain.HorizontalAlignment = value;
-        }
-
-        /// <summary>
-        /// Размер текста в элементе
-        /// </summary>
-        public double FontSizeText
-        {
-            get => TextBoxMain.FontSize;
-            set
-            {
-                TextBoxMain.FontSize = value;
-            }
         }
 
         /// <summary>
@@ -107,24 +68,6 @@ namespace IEL.GUI
         {
             get => TextBoxMain.MaxHeight;
             set => TextBoxMain.MaxHeight = value;
-        }
-
-        /// <summary>
-        /// Максимальное значение линий
-        /// </summary>
-        public int MaxLines
-        {
-            get => TextBoxMain.MaxLines;
-            set => TextBoxMain.MaxLines = value;
-        }
-
-        /// <summary>
-        /// Минимальное значение линий
-        /// </summary>
-        public int MinLines
-        {
-            get => TextBoxMain.MinLines;
-            set => TextBoxMain.MinLines = value;
         }
 
         /// <summary>
@@ -186,53 +129,22 @@ namespace IEL.GUI
         public IELTextBox()
         {
             InitializeComponent();
-            #region Background
-            TextBoxBorder.Background = SourceBackground.InicializeConnectedSolidColorBrush();
-            #endregion
-
-            #region BorderBrush
-            TextBoxBorder.BorderBrush = SourceBorderBrush.InicializeConnectedSolidColorBrush();
-            #endregion
-
             #region Foreground
             TextBoxMain.Foreground = SourceForeground.InicializeConnectedSolidColorBrush();
             #endregion
             IELSettingObject = new();
 
             TextBoxMain.ContextMenu = null;
-            MaxLines = 1;
 
             GotKeyboardFocus += (sender, e) =>
             {
                 IsFocus = true;
                 SetActiveSpecrum(StateSpectrum.Used, true);
             };
-            LostKeyboardFocus += (sender, e) =>
+            TextBoxMain.LostKeyboardFocus += (sender, e) =>
             {
                 IsFocus = false;
                 SetActiveSpecrum(StateSpectrum.Default, true);
-            };
-
-            MouseEnter += (sender, e) =>
-            {
-                if (IsEnabled && !IsFocus)
-                {
-                    SetActiveSpecrum(StateSpectrum.Select, true);
-                }
-            };
-
-            MouseLeave += (sender, e) =>
-            {
-                if (IsEnabled && !IsFocus)
-                {
-                    SetActiveSpecrum(StateSpectrum.Default, true);
-                }
-            };
-
-            IsEnabledChanged += (sender, e) =>
-            {
-                StateSpectrum Value = (bool)e.NewValue ? StateSpectrum.Default : StateSpectrum.NotEnabled;
-                SetActiveSpecrum(Value, true);
             };
 
             MouseDown += (sender, e) =>

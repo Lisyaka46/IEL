@@ -1,4 +1,5 @@
 ﻿using IEL.CORE.BaseUserControls;
+using IEL.CORE.Classes;
 using IEL.CORE.Classes.Browser;
 using IEL.CORE.Enums;
 
@@ -11,7 +12,7 @@ namespace IEL.GUI
     /// <summary>
     /// Логика взаимодействия для IELInley.xaml
     /// </summary>
-    public partial class IELInlay : IELButton
+    public partial class IELInlay : IELButtonBase
     {
         /// <summary>
         /// Объект события активации закрытия вкладки
@@ -27,6 +28,45 @@ namespace IEL.GUI
         /// Объект страницы
         /// </summary>
         internal object? ContentPage { get; private set; }
+
+        /// <summary>
+        /// Объект настройки отображения фона
+        /// </summary>
+        public new QData Background
+        {
+            get => (QData)GetValue(BackgroundProperty);
+            set
+            {
+                IELButtonCloseInlay.Background = value;
+                SetValue(BackgroundProperty, value);
+            }
+        }
+
+        /// <summary>
+        /// Объект настройки отображения границ
+        /// </summary>
+        public new QData BorderBrush
+        {
+            get => (QData)GetValue(BorderBrushProperty);
+            set
+            {
+                IELButtonCloseInlay.BorderBrush = value;
+                SetValue(BorderBrushProperty, value);
+            }
+        }
+
+        /// <summary>
+        /// Объект настройки отображения текста
+        /// </summary>
+        public new QData Foreground
+        {
+            get => (QData)GetValue(ForegroundProperty);
+            set
+            {
+                IELButtonCloseInlay.Foreground = value;
+                SetValue(ForegroundProperty, value);
+            }
+        }
 
         /// <summary>
         /// Шрифт текста в кнопке
@@ -56,93 +96,26 @@ namespace IEL.GUI
             }
         }
 
-        private bool _UsedState;
-        /// <summary>
-        /// Состояние использования
-        /// </summary>
-        public bool UsedState
-        {
-            get => _UsedState;
-            set
-            {
-                if (_UsedState == value) return;
-                _UsedState = value;
-                //BorderMain.BeginAnimation(BorderThicknessProperty,
-                //    IELSettingObject.ObjectAnimateSetting.GetAnimationThickness(value ? BorderThicknessActive : BorderThicknessDiactive, TimeSpan.FromMilliseconds(800d)));
-                SetActiveSpecrum(StateSpectrum.Default, true);
-            }
-        }
-
-        /// <summary>
-        /// Изображение кнопки закрытия вкладки
-        /// </summary>
-        public ImageSource SourceCloseButtonImage
-        {
-            get => ImageCloseInlay.Source;
-            set => ImageCloseInlay.Source = value;
-        }
-
-        /// <summary>
-        /// Константа оффсета изменения между состояниями барьера
-        /// </summary>
-        private const int OffsetBorder = 2;
-
-        /// <summary>
-        /// Активное значение барьера вкладки
-        /// </summary>
-        private Thickness BorderThicknessActive;
-
-        /// <summary>
-        /// Диактивированное значение барьера вкладки
-        /// </summary>
-        private Thickness BorderThicknessDiactive;
-
         /// <summary>
         /// Инициализировать объект интерфейса, вкладка браузера
         /// </summary>
         public IELInlay()
         {
             InitializeComponent();
-            #region Background     
-            #endregion
-
-            #region BorderBrush
-            #endregion
-
-            #region Foreground
             TextBlockHead.Foreground = SourceForeground.InicializeConnectedSolidColorBrush();
-            #endregion
-
-            BorderThicknessActive = new(
-                BorderThickness.Left + OffsetBorder, BorderThickness.Top + OffsetBorder,
-                BorderThickness.Right + OffsetBorder, BorderThickness.Bottom + OffsetBorder);
-            BorderThicknessDiactive = BorderThickness;
-            _UsedState = false;
             ContentPage = null;
-            // this
 
-            ImageCloseInlay.MouseEnter += (sender, e) =>
-            {
-                if (sender.GetType() == typeof(Image))
-                {
-                    //DoubleAnimation animation = IELSettingObject.ObjectAnimateSetting.GetAnimationDouble(25d);
-                    //ImageCloseInlay.BeginAnimation(WidthProperty, animation);
-                    //ImageCloseInlay.BeginAnimation(HeightProperty, animation);
-                }
-            };
-
-            ImageCloseInlay.MouseLeave += (sender, e) =>
-            {
-                //DoubleAnimation animation = IELSettingObject.ObjectAnimateSetting.GetAnimationDouble(20d);
-                //ImageCloseInlay.BeginAnimation(WidthProperty, animation);
-                //ImageCloseInlay.BeginAnimation(HeightProperty, animation);
-            };
-
-            ImageCloseInlay.MouseLeftButtonDown += (sender, e) =>
+            IELButtonCloseInlay.OnActivateMouseLeft += (sender, e, Key) =>
             {
                 OnActivateCloseInlay?.Invoke(this, e);
             };
         }
+
+        /// <summary>
+        /// Установить изображение кнопке закрытия вкладки
+        /// </summary>
+        /// <param name="Source">Объект изображения</param>
+        public void SetImageButtonCloseInlay(ImageSource Source) => IELButtonCloseInlay.Source = Source;
 
         /// <summary>
         /// Установить вкладке объект страницы
