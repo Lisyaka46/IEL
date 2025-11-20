@@ -14,7 +14,7 @@ namespace IEL.CORE.BaseUserControls
     /// <summary>
     /// БАЗОВЫЙ КЛАСС для отображения контейнера IEL
     /// </summary>
-    public class IELContainerBase : IELObject
+    public class IELContainerBase : IELObjectBase
     {
         #region UIElements
         /// <summary>
@@ -175,11 +175,18 @@ namespace IEL.CORE.BaseUserControls
 
         #endregion
 
+        /// <summary>
+        /// Инициализировать базовый класс визуализации контейнера
+        /// </summary>
         protected IELContainerBase()
         {
             Base_BorderContainer = new()
             {
                 BorderThickness = new(2),
+                Background = SourceBackground.InicializeConnectedSolidColorBrush(),
+                BorderBrush = SourceBorderBrush.InicializeConnectedSolidColorBrush(),
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                VerticalAlignment = VerticalAlignment.Stretch,
             };
             SourceTimer = new()
             {
@@ -215,8 +222,6 @@ namespace IEL.CORE.BaseUserControls
                 StateSpectrum Value = (bool)e.NewValue ? StateSpectrum.Default : StateSpectrum.NotEnabled;
                 SetActiveSpecrum(Value, true);
             };
-            Base_BorderContainer.Background = SourceBackground.InicializeConnectedSolidColorBrush();
-            Base_BorderContainer.BorderBrush = SourceBorderBrush.InicializeConnectedSolidColorBrush();
             SetValue(ContentControl.ContentProperty, Base_BorderContainer);
         }
     }

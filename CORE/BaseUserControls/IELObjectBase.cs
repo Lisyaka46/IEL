@@ -15,7 +15,7 @@ namespace IEL.CORE.BaseUserControls
     /// <summary>
     /// БАЗОВЫЙ КЛАСС для отображения элемента IEL
     /// </summary>
-    public class IELObject : ContentControl
+    public class IELObjectBase : ContentControl
     {
         #region Properties
 
@@ -29,11 +29,11 @@ namespace IEL.CORE.BaseUserControls
         /// Данные конкретного свойства
         /// </summary>
         public static readonly new DependencyProperty BackgroundProperty =
-            DependencyProperty.Register("Background", typeof(QData), typeof(IELObject),
+            DependencyProperty.Register("Background", typeof(QData), typeof(IELObjectBase),
                 new(new QData(),
                     (sender, e) =>
                     {
-                        ((IELObject)sender).SourceBackground.SetQData((QData)e.NewValue);
+                        ((IELObjectBase)sender).SourceBackground.SetQData((QData)e.NewValue);
                     }));
 
         /// <summary>
@@ -59,11 +59,11 @@ namespace IEL.CORE.BaseUserControls
         /// Данные конкретного свойства
         /// </summary>
         public static readonly new DependencyProperty BorderBrushProperty =
-            DependencyProperty.Register("BorderBrush", typeof(QData), typeof(IELObject),
+            DependencyProperty.Register("BorderBrush", typeof(QData), typeof(IELObjectBase),
                 new(new QData(),
                     (sender, e) =>
                     {
-                        ((IELObject)sender).SourceBorderBrush.SetQData((QData)e.NewValue);
+                        ((IELObjectBase)sender).SourceBorderBrush.SetQData((QData)e.NewValue);
                     }));
 
         /// <summary>
@@ -89,11 +89,11 @@ namespace IEL.CORE.BaseUserControls
         /// Данные конкретного свойства
         /// </summary>
         public static readonly new DependencyProperty ForegroundProperty =
-            DependencyProperty.Register("Foreground", typeof(QData), typeof(IELObject),
+            DependencyProperty.Register("Foreground", typeof(QData), typeof(IELObjectBase),
                 new(new QData(),
                     (sender, e) =>
                     {
-                        ((IELObject)sender).SourceForeground.SetQData((QData)e.NewValue);
+                        ((IELObjectBase)sender).SourceForeground.SetQData((QData)e.NewValue);
                     }));
 
         /// <summary>
