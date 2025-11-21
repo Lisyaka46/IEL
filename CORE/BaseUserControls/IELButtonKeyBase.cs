@@ -111,7 +111,7 @@ namespace IEL.CORE.BaseUserControls
                 new(null,
                     (sender, e) =>
                     {
-                        ((IELButtonKeyBase)sender).Base_TextCharKey.Text = GetKeyName((Key?)e.NewValue).ToString();
+                        ((IELButtonKeyBase)sender).Base_TextCharKey.Text = GetKeyName((Key?)e.NewValue);
                     }));
 
         /// <summary>
@@ -205,7 +205,7 @@ namespace IEL.CORE.BaseUserControls
             {
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center,
-                Text = "DEL",
+                Text = "?",
                 Padding = new(5, 0, 5, 0),
                 Foreground = SourceForeground.InicializeConnectedSolidColorBrush(),
             };
@@ -228,7 +228,7 @@ namespace IEL.CORE.BaseUserControls
         [MTAThread()]
         public void BlinkAnimation()
         {
-            SetActiveSpecrum(StateSpectrum.Used, false);
+            SourceBackground.SetActiveSpecrum(StateSpectrum.Used, false);
 
             SetActiveSpecrum(StateSpectrum.Select, true);
         }
@@ -242,9 +242,24 @@ namespace IEL.CORE.BaseUserControls
             SetActiveSpecrum(StateSpectrum.Default, true);
         }
 
-        private static char GetKeyName(Key? key)
-        {
-            return '?';
-        }
+        private static string GetKeyName(Key? key) =>
+            !key.HasValue ? "?" :
+                key.Value switch
+                {
+                    Key.D0 => "0",
+                    Key.D1 => "1",
+                    Key.D2 => "2",
+                    Key.D3 => "3",
+                    Key.D4 => "4",
+                    Key.D5 => "5",
+                    Key.D6 => "6",
+                    Key.D7 => "7",
+                    Key.D8 => "8",
+                    Key.D9 => "9",
+                    Key.Delete => "DEL",
+                    Key.Escape => "ESC",
+                    Key.Oem3 => "~",
+                    _ => key.Value.ToString(),
+                };
     }
 }

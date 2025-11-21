@@ -7,13 +7,14 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using System.Windows.Navigation;
 
 namespace IEL.GUI
 {
     /// <summary>
     /// Логика взаимодействия для IELBrowserPage.xaml
     /// </summary>
-    public partial class IELBrowserPage : IELObjectBase
+    public partial class IELBrowserPage : UserControl
     {
 		private IELObjectSetting _IELSettingObject = new();
         /// <summary>
@@ -104,31 +105,14 @@ namespace IEL.GUI
         public event DelegateVoidHandler? EventCloseInlay;
 
         /// <summary>
+        /// Событие Добавления новой вкладки
+        /// </summary>
+        public event DelegateVoidHandler? EventAddInlay;
+
+        /// <summary>
         /// Событие открытия действий над выбранной вкладкой
         /// </summary>
         public event ActiveActionInInlay? EventActiveActionInInlay;
-
-
-
-        private IELButtonImage _IELButtonAddInlay;
-
-        /// <summary>
-        /// Кнопка добавления новой вкладки
-        /// </summary>
-        public IELButtonImage IELButtonAddInlay
-        {
-            get => _IELButtonAddInlay;
-            set
-            {
-                if (_IELButtonAddInlay != null)
-                {
-                    GridMainButtons.Children.Remove(_IELButtonAddInlay);
-                }
-                _IELButtonAddInlay = value;
-                GridMainButtons.Children.Add(_IELButtonAddInlay);
-                Grid.SetColumn(_IELButtonAddInlay, 1);
-            }
-        }
 
         /// <summary>
         /// Активная вкладка в браузере
@@ -139,6 +123,29 @@ namespace IEL.GUI
         /// Значение длинны новой вкладки по умолчанию
         /// </summary>
         public double DefaultWidthNewInlay { get; set; }
+
+        #region BorderBrush
+        /// <summary>
+        /// Данные конкретного свойства
+        /// </summary>
+        public static readonly new DependencyProperty BorderBrushProperty =
+            DependencyProperty.Register("BorderBrush", typeof(Brush), typeof(IELBrowserPage),
+                new(
+                    (sender, e) =>
+                    {
+                        ((IELBrowserPage)sender).BorderMain.BorderBrush = (Brush)e.NewValue;
+                        ((IELBrowserPage)sender).BorderMainPage.BorderBrush = (Brush)e.NewValue;
+                    }));
+
+        /// <summary>
+        /// Цвет отображения границ элемента
+        /// </summary>
+        public new Brush BorderBrush
+        {
+            get => (Brush)GetValue(BorderBrushProperty);
+            set => SetValue(BorderBrushProperty, value);
+        }
+        #endregion
 
         /// <summary>
         /// Размер текста в элементе
@@ -172,18 +179,6 @@ namespace IEL.GUI
         public IELBrowserPage()
         {
             InitializeComponent();
-            #region Background
-            BorderMain.Background = SourceBackground.InicializeConnectedSolidColorBrush();
-            #endregion
-
-            #region BorderBrush
-            BorderMain.BorderBrush = SourceBorderBrush.InicializeConnectedSolidColorBrush();
-            BorderMainPage.BorderBrush = SourceBorderBrush.InicializeConnectedSolidColorBrush();
-            #endregion
-
-            #region Foreground
-            TextBlockNullPage.Foreground = SourceForeground.InicializeConnectedSolidColorBrush();
-            #endregion
             IELSettingObject = new();
             QDataDefaultInlayBackground = new();
             QDataDefaultInlayBorderBrush = new();
@@ -191,15 +186,27 @@ namespace IEL.GUI
             IELInlays = [];
             DefaultWidthNewInlay = 180d;
 
-            _IELButtonAddInlay = new();
-            GridMainButtons.Children.Add(_IELButtonAddInlay);
-            Grid.SetColumn(_IELButtonAddInlay, 1);
             GridMainInlays.MouseWheel += (sender, e) =>
             {
                 ScrollViewerInlays.ScrollToHorizontalOffset(ScrollViewerInlays.HorizontalOffset + (e.Delta < 0 ? 28 : -28));
                 e.Handled = true;
             };
+
+            IELButtonAddInlay.OnActivateMouseLeft += (sender, e, Key) => EventAddInlay?.Invoke();
         }
+
+        #region IELButtonAddInlay
+        /// <summary>
+        /// Установить картинку для кнопки добавления вкладки
+        /// </summary>
+        /// <param name="Source"></param>
+        public void SetSourceImageButtonAddInlay(ImageSource Source) => IELButtonAddInlay.Source = Source;
+
+        /// <summary>
+        /// Получить объект кнопки добавления вкладки
+        /// </summary>
+        public IELObjectBase GetButtonAddInlay() => IELButtonAddInlay;
+        #endregion
 
         #region ManipulateInlayAdd
         /// <summary>

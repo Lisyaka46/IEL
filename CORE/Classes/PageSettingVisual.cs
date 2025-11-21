@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using System.Windows.Controls;
 
 namespace IEL.CORE.Classes
 {
@@ -9,7 +10,7 @@ namespace IEL.CORE.Classes
     /// <param name="SourcePage">Страница отображаемая в панели действий</param>
     /// <param name="size">Размер панели действий для страниц данной настройки</param>
     /// <param name="ZIndex">Индекс верхней позиции для корректного отображения страницы</param>
-    public struct PanelActionSettingVisual(FrameworkElement Element, PagePanelAction SourcePage, Size size, int ZIndex = 2)
+    public struct PageSettingVisual(FrameworkElement Element, Page SourcePage, Size size, int ZIndex = 2)
     {
         /// <summary>
         /// Элемент интерфейса в границах которого будет находится панель действий
@@ -27,21 +28,8 @@ namespace IEL.CORE.Classes
         public Size SizedPanel { get; set; } = size;
 
         /// <summary>
-        /// Активная страница управления
+        /// Cтраница управления
         /// </summary>
-        public PagePanelAction ActiveSource { get; internal set; } = SourcePage;
-
-        private readonly PagePanelAction _DefaultSourcePage = SourcePage;
-        /// <summary>
-        /// Стартовая страница управления
-        /// </summary>
-        public PagePanelAction DefaultSource
-        {
-            get
-            {
-                ActiveSource = _DefaultSourcePage;
-                return _DefaultSourcePage;
-            }
-        }
+        public Page PageSource { get; set; } = SourcePage;
     }
 }
