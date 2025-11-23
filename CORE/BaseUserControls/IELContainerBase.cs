@@ -7,6 +7,7 @@ using System.Threading.Channels;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Threading;
 
 namespace IEL.CORE.BaseUserControls
@@ -163,8 +164,8 @@ namespace IEL.CORE.BaseUserControls
         /// </summary>
         public new bool IsEnabled
         {
-            get => (bool)Base_BorderContainer.GetValue(IsEnabledProperty);
-            set => Base_BorderContainer.SetValue(IsEnabledProperty, value);
+            get => (bool)GetValue(IsEnabledProperty);
+            set => SetValue(IsEnabledProperty, value);
         }
         
         /// <summary>
@@ -219,6 +220,7 @@ namespace IEL.CORE.BaseUserControls
             IsEnabledChanged += (sender, e) =>
             {
                 SourceTimer.Stop();
+                Cursor = (bool)e.NewValue ? Cursors.Hand : Cursors.No;
                 StateSpectrum Value = (bool)e.NewValue ? StateSpectrum.Default : StateSpectrum.NotEnabled;
                 SetActiveSpecrum(Value, true);
             };
