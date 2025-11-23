@@ -34,7 +34,7 @@
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition/>
                             </Grid.RowDefinitions>
-                            <Rectangle x:Name="Rectangle" x:FieldModifier="private" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,2,0,2" Height="8" Fill="White" Width="20" RadiusY="4" RadiusX="4"/>
+                            <Rectangle x:Name="RectangleScrollbar" x:FieldModifier="private" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,2,0,2" Height="8" Fill="White" Width="20" RadiusY="4" RadiusX="4"/>
                             <ScrollViewer x:Name="ScrollViewerInlays" VerticalScrollBarVisibility="Disabled" Grid.RowSpan="1" Grid.Row="1">
                                 <Grid x:Name="GridMainInlays">
                                 </Grid>

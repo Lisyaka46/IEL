@@ -12,19 +12,6 @@ namespace IEL.GUI
     /// </summary>
     public partial class IELTextBox : IELContainerBase
     {
-        private IELObjectSetting _IELSettingObject = new();
-        /// <summary>
-        /// Настройка использования объекта
-        /// </summary>
-        public IELObjectSetting IELSettingObject
-        {
-            get => _IELSettingObject;
-            set
-            {
-                _IELSettingObject = value;
-            }
-        }
-
         /// <summary>
         /// Вертикальная ориентация контента элемента
         /// </summary>
@@ -132,7 +119,6 @@ namespace IEL.GUI
             #region Foreground
             TextBoxMain.Foreground = SourceForeground.InicializeConnectedSolidColorBrush();
             #endregion
-            IELSettingObject = new();
 
             TextBoxMain.ContextMenu = null;
 
