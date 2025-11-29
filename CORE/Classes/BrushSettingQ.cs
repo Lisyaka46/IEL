@@ -2,6 +2,7 @@
 using System.Buffers;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using System.Windows.Threading;
 using static IEL.CORE.Classes.QData;
 
 namespace IEL.CORE.Classes
@@ -70,8 +71,9 @@ namespace IEL.CORE.Classes
             if (animation != null) animation.To = ActiveSpectrumColor;
             foreach (SolidColorBrush Element in ConectedBrush.AsEnumerable())
             {
-                Element.BeginAnimation(SolidColorBrush.ColorProperty, animation, HandoffBehavior.SnapshotAndReplace);
-                if (!AnimatedEvent || animation == null) Element.Color = ActiveSpectrumColor;
+                Element.Dispatcher.Invoke(() =>
+                    Element.BeginAnimation(SolidColorBrush.ColorProperty, animation, HandoffBehavior.SnapshotAndReplace));
+                if (!AnimatedEvent || animation == null) Element.Dispatcher.Invoke(() => Element.Color = ActiveSpectrumColor);
             }
         }
         #endregion
@@ -171,8 +173,9 @@ namespace IEL.CORE.Classes
         /// Установить новый экземпляр данных Q-логики
         /// </summary>
         /// <param name="Data">Спектр которому присваивается значение</param>
-        internal void SetQData(QData Data)
+        public void SetQData(QData Data)
         {
+            Source.ChangedData -= UpdateVisualActiveSpectrumData;
             Source = Data;
             Source.ChangedData += UpdateVisualActiveSpectrumData;
             AnimateConectedBrush(true);

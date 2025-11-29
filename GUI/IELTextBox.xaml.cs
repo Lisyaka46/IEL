@@ -39,36 +39,42 @@ namespace IEL.GUI
             set => TextBoxMain.IsReadOnly = value;
         }
 
+        #region FontSize
         /// <summary>
-        /// Максимальный горизонтальный размер элемента текста
+        /// Данные конкретного свойства
         /// </summary>
-        public new double MaxWidth
-        {
-            get => TextBoxMain.MaxWidth;
-            set => TextBoxMain.MaxWidth = value;
-        }
+        public static readonly new DependencyProperty FontSizeProperty =
+            DependencyProperty.Register(nameof(FontSize), typeof(double), typeof(IELTextBox),
+                new(14d,
+                    (sender, e) =>
+                    {
+                        ((IELTextBox)sender).TextBoxMain.FontSize = (double)e.NewValue;
+                    }));
 
         /// <summary>
-        /// Максимальный вертикальный размер элемента текста
+        /// Размер текста
         /// </summary>
-        public new double MaxHeight
+        public new double FontSize
         {
-            get => TextBoxMain.MaxHeight;
-            set => TextBoxMain.MaxHeight = value;
+            get => (double)GetValue(FontSizeProperty);
+            set => SetValue(FontSizeProperty, value);
         }
+        #endregion
 
+        #region Text
         /// <summary>
-        /// Текст элемента
+        /// Текст отображаемый в панели ввода
         /// </summary>
         public string Text
         {
-            get => TextBoxMain.Text;
+            get => (string)TextBoxMain.GetValue(TextBox.TextProperty);
             set
             {
-                TextBoxMain.Text = value;
-                TextBoxMain.SelectionStart = value.Length;
+                TextBoxMain.SetValue(TextBox.TextProperty, value);
+                TextBoxMain.SelectionStart = TextBoxMain.Text.Length;
             }
         }
+        #endregion
 
         /// <summary>
         /// Сделать фокус на элементе
@@ -76,24 +82,6 @@ namespace IEL.GUI
         public new void Focus()
         {
             TextBoxMain.Focus();
-        }
-
-        /// <summary>
-        /// Событие нажатия клавиши
-        /// </summary>
-        public new event KeyEventHandler? KeyDown
-        {
-            add => TextBoxMain.KeyDown += value;
-            remove => TextBoxMain.KeyDown -= value;
-        }
-
-        /// <summary>
-        /// Событие отпускания клавиши
-        /// </summary>
-        public new event KeyEventHandler? KeyUp
-        {
-            add => TextBoxMain.KeyUp += value;
-            remove => TextBoxMain.KeyUp -= value;
         }
 
         /// <summary>
@@ -125,12 +113,12 @@ namespace IEL.GUI
             GotKeyboardFocus += (sender, e) =>
             {
                 IsFocus = true;
-                SetActiveSpecrum(StateSpectrum.Used, true);
+                SourceBackground.SetUsedState(true);
             };
             TextBoxMain.LostKeyboardFocus += (sender, e) =>
             {
                 IsFocus = false;
-                SetActiveSpecrum(StateSpectrum.Default, true);
+                SourceBackground.SetUsedState(false);
             };
 
             MouseDown += (sender, e) =>

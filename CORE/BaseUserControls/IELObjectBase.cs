@@ -19,6 +19,34 @@ namespace IEL.CORE.BaseUserControls
     {
         #region Properties
 
+        #region SourcePaletteElement
+        /// <summary>
+        /// Данные конкретного свойства
+        /// </summary>
+        public static readonly DependencyProperty PaletteElementProperty =
+            DependencyProperty.Register("PaletteElement", typeof(PaletteSpectrum), typeof(IELObjectBase),
+                new(new PaletteSpectrum(),
+                    (sender, e) =>
+                    {
+                        PaletteSpectrum palette = (PaletteSpectrum)e.NewValue;
+                        ((IELObjectBase)sender).SourceBackground.SetQData(palette.BG);
+                        ((IELObjectBase)sender).SourceBorderBrush.SetQData(palette.BB);
+                        ((IELObjectBase)sender).SourceForeground.SetQData(palette.FG);
+                    }));
+
+        /// <summary>
+        /// Объект палитры
+        /// </summary>
+        public PaletteSpectrum PaletteElement
+        {
+            get => (PaletteSpectrum)GetValue(PaletteElementProperty);
+            set
+            {
+                SetValue(PaletteElementProperty, value);
+            }
+        }
+        #endregion
+
         #region Background
         /// <summary>
         /// Объект настройки анимации отображения фона в объекте
@@ -33,7 +61,7 @@ namespace IEL.CORE.BaseUserControls
                 new(new QData(),
                     (sender, e) =>
                     {
-                        ((IELObjectBase)sender).SourceBackground.SetQData((QData)e.NewValue);
+                        ((IELObjectBase)sender).PaletteElement.BG.ChangeSourceQData((QData)e.NewValue);
                     }));
 
         /// <summary>
@@ -63,7 +91,7 @@ namespace IEL.CORE.BaseUserControls
                 new(new QData(),
                     (sender, e) =>
                     {
-                        ((IELObjectBase)sender).SourceBorderBrush.SetQData((QData)e.NewValue);
+                        ((IELObjectBase)sender).PaletteElement.BB.ChangeSourceQData((QData)e.NewValue);
                     }));
 
         /// <summary>
@@ -93,7 +121,7 @@ namespace IEL.CORE.BaseUserControls
                 new(new QData(),
                     (sender, e) =>
                     {
-                        ((IELObjectBase)sender).SourceForeground.SetQData((QData)e.NewValue);
+                        ((IELObjectBase)sender).PaletteElement.FG.ChangeSourceQData((QData)e.NewValue);
                     }));
 
         /// <summary>

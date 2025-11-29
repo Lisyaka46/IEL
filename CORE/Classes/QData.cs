@@ -1,6 +1,8 @@
 ﻿using IEL.CORE.Enums;
 using System;
+using System.Collections.Generic;
 using System.Windows.Media;
+using System.Windows.Threading;
 
 namespace IEL.CORE.Classes
 {
@@ -41,6 +43,16 @@ namespace IEL.CORE.Classes
         }
 
         /// <summary>
+        /// Константа размера хранимых байтов одного цвета
+        /// </summary>
+        public static int CountBytesFromColor => 4;
+
+        /// <summary>
+        /// Константа количества состояний цветов
+        /// </summary>
+        public static int CountSpectrumColor => 4;
+
+        /// <summary>
         /// Делегат события изменения данных спектра
         /// </summary>
         /// <param name="Spectrum">Изменяемый спектр</param>
@@ -55,6 +67,17 @@ namespace IEL.CORE.Classes
         /// Массив данных цвета
         /// </summary>
         private byte[][] Data;
+
+        /// <summary>
+        /// Получить неуправляемый объект байтов текущего объекта QData
+        /// </summary>
+        /// <returns>[16 bytes color values (A R G B)]</returns>
+        public byte[] GetSourceBytes() => [
+                (byte)(Data[0][0] - 128), Data[0][1], Data[0][2], Data[0][3],
+                (byte)(Data[1][0] - 128), Data[1][1], Data[1][2], Data[1][3],
+                (byte)(Data[2][0] - 128), Data[2][1], Data[2][2], Data[2][3],
+                (byte)(Data[3][0] - 128), Data[3][1], Data[3][2], Data[3][3]
+                ];
 
         #region QDataManipulate
         /// <summary>
@@ -112,6 +135,16 @@ namespace IEL.CORE.Classes
         }
 
         /// <summary>
+        /// Изменить данные цветов по экземпляру QData
+        /// </summary>
+        /// <param name="Source">Опорный экземпляр</param>
+        public void ChangeSourceQData(QData Source)
+        {
+            Data = Source.Data;
+            Dispatcher.CurrentDispatcher.Invoke(() => ChangedData?.Invoke(EnumDataSpectrum.Default));
+        }
+
+        /// <summary>
         /// Инициализировать управляемый объект данных спектра цвета со значениями по умолчанию
         /// </summary>
         public QData()
@@ -142,8 +175,8 @@ namespace IEL.CORE.Classes
         /// <param name="ByteColorData">Массив байтовых значений цвета</param>
         public QData(byte[][] ByteColorData)
         {
-            if (ByteColorData == null || ByteColorData.Length != 4 || ByteColorData.Any(i => i == null || i.Length != 4))
-                throw new Exception("Не хватает данных, массив не имеет размеры 4/4");
+            if (ByteColorData == null || ByteColorData.Length != CountSpectrumColor || ByteColorData.Any(i => i == null || i.Length != CountBytesFromColor))
+                throw new Exception($"Не хватает данных, массив не имеет размеры {CountSpectrumColor}/{CountBytesFromColor}");
             Data = ByteColorData;
         }
 
