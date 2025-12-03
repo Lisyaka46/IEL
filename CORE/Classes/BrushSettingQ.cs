@@ -21,16 +21,7 @@ namespace IEL.CORE.Classes
         /// <summary>
         /// Стек всех подключённых к настройки свойств цвета
         /// </summary>
-        private Stack<SolidColorBrush> ConectedBrush = new();
-
-        /// <summary>
-        /// Подключить свойство цвета объекта к настройке Q-логики
-        /// </summary>
-        public SolidColorBrush InicializeConnectedSolidColorBrush()
-        {
-            ConectedBrush.Push(new SolidColorBrush(ActiveSpectrumColor));
-            return ConectedBrush.Peek();
-        }
+        public SolidColorBrush SourceBrush { get; private set; }
         #endregion
 
         #region AnimationBrushSettingQ
@@ -69,12 +60,9 @@ namespace IEL.CORE.Classes
         {
             ColorAnimation? animation = AnimatedEvent ? SourceAnimation : null;
             if (animation != null) animation.To = ActiveSpectrumColor;
-            foreach (SolidColorBrush Element in ConectedBrush.AsEnumerable())
-            {
-                Element.Dispatcher.Invoke(() =>
-                    Element.BeginAnimation(SolidColorBrush.ColorProperty, animation, HandoffBehavior.SnapshotAndReplace));
-                if (!AnimatedEvent || animation == null) Element.Dispatcher.Invoke(() => Element.Color = ActiveSpectrumColor);
-            }
+            SourceBrush.Dispatcher.Invoke(() =>
+                    SourceBrush.BeginAnimation(SolidColorBrush.ColorProperty, animation, HandoffBehavior.SnapshotAndReplace));
+            if (!AnimatedEvent || animation == null) SourceBrush.Dispatcher.Invoke(() => SourceBrush.Color = ActiveSpectrumColor);
         }
         #endregion
 
@@ -106,6 +94,7 @@ namespace IEL.CORE.Classes
         /// <param name="Value">Новое значение</param>
         public void SetUsedState(bool Value)
         {
+            if (UsedState == Value) return;
             UsedState = Value;
             if (ActiveSpectrum == StateSpectrum.Default || ActiveSpectrum == StateSpectrum.Used)
             {
@@ -191,6 +180,7 @@ namespace IEL.CORE.Classes
             Source = new();
             Source.ChangedData += UpdateVisualActiveSpectrumData;
             ActiveSpectrum = StateSpectrum.Default;
+            SourceBrush = new(ActiveSpectrumColor);
         }
 
         /// <summary>
@@ -213,6 +203,7 @@ namespace IEL.CORE.Classes
             Source = new(ByteColorData);
             Source.ChangedData += UpdateVisualActiveSpectrumData;
             ActiveSpectrum = StateSpectrum.Default;
+            SourceBrush = new(ActiveSpectrumColor);
         }
 
         /// <summary>
@@ -232,6 +223,7 @@ namespace IEL.CORE.Classes
             Source = new(ByteColorData);
             Source.ChangedData += UpdateVisualActiveSpectrumData;
             ActiveSpectrum = StateSpectrum.Default;
+            SourceBrush = new(ActiveSpectrumColor);
         }
     }
 }

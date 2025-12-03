@@ -1,6 +1,7 @@
 ﻿using IEL.CORE.Enums;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Windows.Media;
 using System.Windows.Threading;
 
@@ -73,10 +74,10 @@ namespace IEL.CORE.Classes
         /// </summary>
         /// <returns>[16 bytes color values (A R G B)]</returns>
         public byte[] GetSourceBytes() => [
-                (byte)(Data[0][0] - 128), Data[0][1], Data[0][2], Data[0][3],
-                (byte)(Data[1][0] - 128), Data[1][1], Data[1][2], Data[1][3],
-                (byte)(Data[2][0] - 128), Data[2][1], Data[2][2], Data[2][3],
-                (byte)(Data[3][0] - 128), Data[3][1], Data[3][2], Data[3][3]
+                Data[0][0], Data[0][1], Data[0][2], Data[0][3],
+                Data[1][0], Data[1][1], Data[1][2], Data[1][3],
+                Data[2][0], Data[2][1], Data[2][2], Data[2][3],
+                Data[3][0], Data[3][1], Data[3][2], Data[3][3]
                 ];
 
         #region QDataManipulate
@@ -212,5 +213,20 @@ namespace IEL.CORE.Classes
         /// </summary>
         /// <returns>Склонированный элемент</returns>
         public QData Clone() => new(Data);
+
+        /// <summary>
+        /// Записать в поток данных файла данные QData
+        /// </summary>
+        /// <param name="Stream">Поток файла</param>
+        /// <returns></returns>
+        /// <exception cref="Exception">Исключение несоответствия режима открытия файла</exception>
+        public async Task WriteQdata(FileStream Stream)
+        {
+            if (!Stream.CanWrite) throw new Exception("Поток работы с файлом не открыт для записи!");
+            var bytes = GetSourceBytes();
+            IAsyncResult result = Stream.BeginWrite(bytes, 0, bytes.Length, null, null);
+            await Task.Run(() => { while (!result.IsCompleted) ; });
+            Stream.EndWrite(result);
+        }
     }
 }

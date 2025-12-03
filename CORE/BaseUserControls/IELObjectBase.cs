@@ -69,7 +69,7 @@ namespace IEL.CORE.BaseUserControls
         /// </summary>
         public new QData Background
         {
-            get => (QData)GetValue(BackgroundProperty);
+            get => PaletteElement.BG;
             set
             {
                 SetValue(BackgroundProperty, value);
@@ -99,7 +99,7 @@ namespace IEL.CORE.BaseUserControls
         /// </summary>
         public new QData BorderBrush
         {
-            get => (QData)GetValue(BorderBrushProperty);
+            get => PaletteElement.BB;
             set
             {
                 SetValue(BorderBrushProperty, value);
@@ -129,7 +129,7 @@ namespace IEL.CORE.BaseUserControls
         /// </summary>
         public new QData Foreground
         {
-            get => (QData)GetValue(ForegroundProperty);
+            get => PaletteElement.FG;
             set
             {
                 SetValue(ForegroundProperty, value);

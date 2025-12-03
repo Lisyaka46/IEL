@@ -102,20 +102,19 @@ namespace IEL.GUI
         public IELInlay()
         {
             InitializeComponent();
-            TextBlockHead.Foreground = SourceForeground.InicializeConnectedSolidColorBrush();
+            TextBlockHead.Foreground = SourceForeground.SourceBrush;
             ContentPage = null;
 
-            IELButtonCloseInlay.OnActivateMouseLeft += (sender, e, Key) =>
+            IELButtonCloseInlay.OnActivateMouseLeft += (sender, e) =>
             {
                 OnActivateCloseInlay?.Invoke(this, e);
             };
         }
 
         /// <summary>
-        /// Установить изображение кнопке закрытия вкладки
+        /// Получить кнопку закрытия вкладки
         /// </summary>
-        /// <param name="Source">Объект изображения</param>
-        public void SetImageButtonCloseInlay(ImageSource Source) => IELButtonCloseInlay.Source = Source;
+        public IELButtonImage GetButtonCloseInlay() => IELButtonCloseInlay;
 
         /// <summary>
         /// Установить вкладке объект страницы

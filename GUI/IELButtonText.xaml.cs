@@ -46,7 +46,7 @@ namespace IEL.GUI
 
             #region Foreground
             Foreground = new([255, 255, 255, 255]);
-            TextBlockButton.Foreground = SourceForeground.InicializeConnectedSolidColorBrush();
+            TextBlockButton.Foreground = SourceForeground.SourceBrush;
             #endregion
             Text = "Text";
             CornerRadius = new CornerRadius(10);

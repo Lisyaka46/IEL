@@ -28,11 +28,16 @@ namespace IEL.GUI
         /// Состояние правого нажатия в режиме клавиатуры
         /// </summary>
         private bool ActivateRightClickKeyboardMode = false;
-
+        
         /// <summary>
         /// Состояние выделения кнопки через режим клавиатуры
         /// </summary>
         private bool SelectButtonKeyboardMode = false;
+
+        /// <summary>
+        /// Кнопка которая выделенна клавишей клавиатуры
+        /// </summary>
+        private IELButtonKeyBase? ButtonKeySelect;
 
         /// <summary>
         /// Состояние бокирующее повторное срабатывание зажатой клавиши
@@ -110,16 +115,6 @@ namespace IEL.GUI
             EasingFunction = new PowerEase() { EasingMode = EasingMode.EaseOut }
         };
 
-        /// <summary>
-        /// История используемых страниц
-        /// </summary>
-        private readonly List<PageSettingVisual> HistoryBufferPages = [];
-
-        /// <summary>
-        /// Активный объект страницы в панели действий
-        /// </summary>
-        public Page? ActualFrameElement => PanelActionActivate ? ActiveSettingVisual.PageSource : null;
-
         private bool _KeyboardModeInActualPage;
         /// <summary>
         /// Актуальный статус активности режима клавиатуры в активной странице
@@ -129,17 +124,7 @@ namespace IEL.GUI
             get => _KeyboardModeInActualPage;
             set
             {
-                if (ActualFrameElement != null)
-                {
-                    IELButtonKeyBase[]? Buttons = SearchButton<IELButtonKeyBase>((Visual)ActiveSettingVisual.PageSource.Content);
-                    if (Buttons != null)
-                    {
-                        foreach (IELButtonKeyBase Element in Buttons)
-                        {
-                            Element.IsVisibleKeyActivate = value;
-                        }
-                    }
-                }
+                if (MainPageController.ActualPage != null) UpdateVisualKeyboardMode(MainPageController.ActualPage, value);
                 _KeyboardModeInActualPage = value;
             }
         }
@@ -230,8 +215,8 @@ namespace IEL.GUI
                     if (KeyboardModeInActualPage && !SelectButtonKeyboardMode)
                     {
                         SelectButtonKeyboardMode = true;
-                        var ButtonKey = SearchButton<IELButtonKeyBase>((Visual)ActiveSettingVisual.PageSource.Content, e.Key);
-                        ButtonKey?.BlinkAnimation();
+                        ButtonKeySelect = SearchButton<IELButtonKeyBase>((Visual)MainPageController.ActualPage.Content, e.Key);
+                        ButtonKeySelect?.BlinkAnimation();
                     }
                 }
             };
@@ -260,14 +245,12 @@ namespace IEL.GUI
                     if (KeyboardModeInActualPage && SelectButtonKeyboardMode)
                     {
                         SelectButtonKeyboardMode = false;
-                        IELButtonKeyBase? ButtonKey = SearchButton<IELButtonKeyBase>((Visual)ActiveSettingVisual.PageSource.Content, e.Key);
-                        if (ButtonKey != null)
+                        if (ButtonKeySelect != null)
                         {
-
-                            ((ActivateRightClickKeyboardMode ? ButtonKey?.OnActivateMouseRight : ButtonKey?.OnActivateMouseLeft) ??
+                            ((ActivateRightClickKeyboardMode ? ButtonKeySelect.OnActivateMouseRight : ButtonKeySelect.OnActivateMouseLeft) ??
                                 throw new Exception("Недопустимое значение объекта")).Invoke(
-                                    ButtonKey, new(Mouse.PrimaryDevice, 0, ActivateRightClickKeyboardMode ? MouseButton.Right : MouseButton.Left), true);
-                            ButtonKey.BlinkAnimation();
+                                    ButtonKeySelect, new(Mouse.PrimaryDevice, 0, ActivateRightClickKeyboardMode ? MouseButton.Right : MouseButton.Left), true);
+                            ButtonKeySelect.UnfocusAnimation();
                         }
                     }
                 }
@@ -275,6 +258,22 @@ namespace IEL.GUI
             Base_BorderContainer.LostFocus += (sender, e) => ClosePanelAction(PositionAnimActionPanel.CenterObject);
         }
 
+        /// <summary>
+        /// Обновить отображение режима клавиатуры
+        /// </summary>
+        /// <param name="SourceUpdate">Страница в которой обновляется состояние</param>
+        /// <param name="Value">Значение на которое обновляется визуализация</param>
+        private void UpdateVisualKeyboardMode(Page SourceUpdate, bool Value)
+        {
+            IELButtonKeyBase[]? Buttons = SearchButton<IELButtonKeyBase>((Visual)SourceUpdate.Content);
+            if (Buttons != null)
+            {
+                foreach (IELButtonKeyBase Element in Buttons)
+                {
+                    Element.IsVisibleKeyActivate = Value;
+                }
+            }
+        }
 
         /// <summary>
         /// Найти элемент поддерживающий клавишу в странице
@@ -361,15 +360,13 @@ namespace IEL.GUI
                         SettingVisual.SizedPanel = new(SettingVisual.ElementInPanel.ActualWidth, SettingVisual.SizedPanel.Height);
                     if (SettingVisual.ElementInPanel.ActualHeight < SettingVisual.SizedPanel.Height)
                         SettingVisual.SizedPanel = new(SettingVisual.SizedPanel.Width, SettingVisual.ElementInPanel.ActualHeight);
-                    AddBufferElementPageAction(ActiveSettingVisual);
                     ThicknessAnimate.Duration = TimeSpan.FromMilliseconds(360d);
 
-                    PageSettingVisual? SearchSettingVisual = BufferSearchSettingVisual(SettingVisual);
-                    MoveNextObjectPage(SearchSettingVisual ?? SettingVisual, Orientation);
+                    MoveNextObjectPage(SettingVisual, Orientation);
 
                     ThicknessAnimate.Duration = TimeSpan.FromMilliseconds(300d);
                     AnimateSizePanelAction(SettingVisual.SizedPanel);
-                    ActiveSettingVisual = SearchSettingVisual ?? SettingVisual;
+                    ActiveSettingVisual = SettingVisual;
                 }
                 EventMovePanelAction?.Invoke(this, EventArgs.Empty);
                 AnimationMovePanelAction(PositionAnimActionPanel.Cursor, SettingVisual.SizedPanel, SettingVisual.ElementInPanel, Orientation);
@@ -387,14 +384,13 @@ namespace IEL.GUI
             if (PanelActionActivate) return;
             EventOpenPanelAction?.Invoke(this, EventArgs.Empty);
             Focus();
-            PageSettingVisual SearchSettingVisual = BufferSearchSettingVisual(SettingVisual) ?? SettingVisual;
             KeyboardModeInActualPage = !IsKeyboardModeExit && ActiveKeyboardMode;
-            MoveNextObjectPage(SearchSettingVisual, Orientation);
+            MoveNextObjectPage(SettingVisual, Orientation);
             DoubleAnimateObj.To = 1d;
             BeginAnimation(OpacityProperty, DoubleAnimateObj);
             AnimationMovePanelAction(PositionAnimActionPanel.Cursor, SettingVisual.SizedPanel, SettingVisual.ElementInPanel, Orientation);
             AnimateSizePanelAction(SettingVisual.SizedPanel);
-            ActiveSettingVisual = SearchSettingVisual;
+            ActiveSettingVisual = SettingVisual;
             PanelActionActivate = true;
             Canvas.SetZIndex(this, ActiveSettingVisual.Z);
         }
@@ -418,7 +414,6 @@ namespace IEL.GUI
             BeginAnimation(OpacityProperty, DoubleAnimateObj);
             AnimationMovePanelAction(PositionAnim, new Size(0, 0), ActiveSettingVisual.ElementInPanel, OrientationPanelActionPosition.LeftUp);
             AnimateSizePanelAction(new(0, 0));
-            AddBufferElementPageAction(ActiveSettingVisual);
 
             PanelActionActivate = false;
             string NamePanel = ActiveSettingVisual.ElementInPanel.Name;
@@ -452,34 +447,9 @@ namespace IEL.GUI
         public void NextPageInObject([NotNull] Page PageAction, bool RightAlgin = true)
         {
             MainPageController.NextPage(PageAction, RightAlgin);
+            UpdateVisualKeyboardMode(PageAction, ActiveKeyboardMode);
         }
         #endregion
-
-        /// <summary>
-        /// Поиск настроек страниц сохранённых в буфере
-        /// </summary>
-        /// <param name="SettingVisual">Настройка визуализации страниц</param>
-        /// <returns>Возможно найденный объект настроек</returns>
-        private PageSettingVisual? BufferSearchSettingVisual(PageSettingVisual SettingVisual)
-        {
-            FrameworkElement[] FrameElements = [.. HistoryBufferPages.Select((i) => i.ElementInPanel)];
-            int index = Array.IndexOf(FrameElements, SettingVisual.ElementInPanel);
-            return index == -1 ? null : HistoryBufferPages[index];
-        }
-
-        /// <summary>
-        /// Метод добавления объекта в буфер
-        /// </summary>
-        /// <param name="SettingsElement">Объект настроек для добавления в буфер</param>
-        private void AddBufferElementPageAction(PageSettingVisual SettingsElement)
-        {
-            FrameworkElement[] FrameElements = [.. HistoryBufferPages.Select((i) => i.ElementInPanel)];
-            int index = Array.IndexOf(FrameElements, SettingsElement.ElementInPanel);
-            if (index == -1 || HistoryBufferPages.Count == 0)
-                HistoryBufferPages.Add(SettingsElement);
-            else if (!HistoryBufferPages[index].PageSource.Equals(SettingsElement.PageSource))
-                HistoryBufferPages[index] = SettingsElement;
-        }
 
         /// <summary>
         /// Метод очистки информации при закрытой панели действий

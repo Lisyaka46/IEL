@@ -1,11 +1,7 @@
-﻿using IEL.CORE.Classes.ObjectSettings;
-using IEL.CORE.Enums;
-using IEL.GUI;
+﻿using IEL.CORE.Enums;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Threading;
 
 namespace IEL.CORE.BaseUserControls
 {
@@ -47,7 +43,7 @@ namespace IEL.CORE.BaseUserControls
         /// <summary>
         /// Делегат события активации
         /// </summary>
-        public delegate void ActivateHandler(object Source, MouseButtonEventArgs eventArgs, bool KeyActivate = false);
+        public delegate void ActivateHandler(object Source, MouseButtonEventArgs eventArgs);
 
         /// <summary>
         /// Объект события активации левым щелчком мыши
@@ -189,13 +185,13 @@ namespace IEL.CORE.BaseUserControls
                 VerticalAlignment = VerticalAlignment.Center,
                 CornerRadius = new(0),
                 BorderThickness = new(2),
-                BorderBrush = SourceBorderBrush.InicializeConnectedSolidColorBrush(),
+                BorderBrush = SourceBorderBrush.SourceBrush,
                 Child = new TextBlock()
                 {
                     Padding = new(0d, 0.7d, 1d, 0d),
                     HorizontalAlignment = HorizontalAlignment.Center,
                     VerticalAlignment = VerticalAlignment.Center,
-                    Foreground = SourceForeground.InicializeConnectedSolidColorBrush(),
+                    Foreground = SourceForeground.SourceBrush,
                     Text = "<",
                     FontFamily = new("Arial Black"),
                 }
@@ -209,13 +205,13 @@ namespace IEL.CORE.BaseUserControls
                 VerticalAlignment = VerticalAlignment.Center,
                 CornerRadius = new(0),
                 BorderThickness = new(2),
-                BorderBrush = SourceBorderBrush.InicializeConnectedSolidColorBrush(),
+                BorderBrush = SourceBorderBrush.SourceBrush,
                 Child = new TextBlock()
                 {
                     Padding = new(1d, 0.7d, 0d, 0d),
                     HorizontalAlignment = HorizontalAlignment.Center,
                     VerticalAlignment = VerticalAlignment.Center,
-                    Foreground = SourceForeground.InicializeConnectedSolidColorBrush(),
+                    Foreground = SourceForeground.SourceBrush,
                     Text = ">",
                     FontFamily = new("Arial Black"),
                 }

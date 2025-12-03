@@ -184,8 +184,8 @@ namespace IEL.CORE.BaseUserControls
             Base_BorderContainer = new()
             {
                 BorderThickness = new(2),
-                Background = SourceBackground.InicializeConnectedSolidColorBrush(),
-                BorderBrush = SourceBorderBrush.InicializeConnectedSolidColorBrush(),
+                Background = SourceBackground.SourceBrush,
+                BorderBrush = SourceBorderBrush.SourceBrush,
                 HorizontalAlignment = HorizontalAlignment.Stretch,
                 VerticalAlignment = VerticalAlignment.Stretch,
             };

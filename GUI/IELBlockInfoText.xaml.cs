@@ -45,7 +45,7 @@ namespace IEL.GUI
             #endregion
 
             #region Foreground
-            MainTextBlock.Foreground = SourceForeground.InicializeConnectedSolidColorBrush();
+            MainTextBlock.Foreground = SourceForeground.SourceBrush;
             #endregion
         }
     }

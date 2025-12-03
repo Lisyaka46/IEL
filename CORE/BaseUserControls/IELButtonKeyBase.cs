@@ -12,6 +12,20 @@ namespace IEL.CORE.BaseUserControls
     /// </summary>
     public class IELButtonKeyBase : IELButtonBase
     {
+        /// <summary>
+        /// Делегат события активации
+        /// </summary>
+        public new delegate void ActivateHandler(object Source, MouseButtonEventArgs eventArgs, bool KeyActivate = false);
+
+        /// <summary>
+        /// Объект события активации левым щелчком мыши
+        /// </summary>
+        public new ActivateHandler? OnActivateMouseLeft { get; set; }
+
+        /// <summary>
+        /// Объект события активации правым щелчком мыши
+        /// </summary>
+        public new ActivateHandler? OnActivateMouseRight { get; set; }
 
         #region UIElements
         /// <summary>
@@ -200,7 +214,7 @@ namespace IEL.CORE.BaseUserControls
                 Margin = new(2),
                 BorderThickness = new(2),
                 CornerRadius = new(0),
-                BorderBrush = SourceBorderBrush.InicializeConnectedSolidColorBrush(),
+                BorderBrush = SourceBorderBrush.SourceBrush,
             };
             Base_TextCharKey = new()
             {
@@ -208,7 +222,7 @@ namespace IEL.CORE.BaseUserControls
                 VerticalAlignment = VerticalAlignment.Center,
                 Text = "?",
                 Padding = new(5, 0, 5, 0),
-                Foreground = SourceForeground.InicializeConnectedSolidColorBrush(),
+                Foreground = SourceForeground.SourceBrush,
             };
             Base_BorderKey.Child = Base_TextCharKey;
 
@@ -219,6 +233,23 @@ namespace IEL.CORE.BaseUserControls
             Grid.SetColumn(Base_GridButtonKey, 1);
             Base_HeadGridButtonKey.Children.Add(Base_GridButtonKey);
 
+            Base_BorderContainer.MouseLeftButtonUp += (sender, e) =>
+            {
+                if (IsEnabled && OnActivateMouseLeft != null)
+                {
+                    SetActiveSpecrum(StateSpectrum.Select, true);
+                    OnActivateMouseLeft.Invoke(this, e);
+                }
+            };
+
+            Base_BorderContainer.MouseRightButtonUp += (sender, e) =>
+            {
+                if (IsEnabled && OnActivateMouseRight != null)
+                {
+                    SetActiveSpecrum(StateSpectrum.Select, true);
+                    OnActivateMouseRight.Invoke(this, e);
+                }
+            };
 
             base.SetValue(IELButtonBase.ContentProperty, Base_HeadGridButtonKey);
         }

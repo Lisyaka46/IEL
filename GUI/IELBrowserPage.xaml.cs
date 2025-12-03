@@ -196,7 +196,7 @@ namespace IEL.GUI
                 e.Handled = true;
             };
 
-            IELButtonAddInlay.OnActivateMouseLeft += (sender, e, Key) => EventAddInlay?.Invoke();
+            IELButtonAddInlay.OnActivateMouseLeft += (sender, e) => EventAddInlay?.Invoke();
         }
 
         #region IELButtonAddInlay
@@ -222,7 +222,7 @@ namespace IEL.GUI
         {
             if (Content == null) return null;
             IELInlay inlay = CreateInlay(Content);
-            inlay.OnActivateMouseRight += (sender, e, Key) => EventActiveActionInInlay?.Invoke(inlay);
+            inlay.OnActivateMouseRight += (sender, e) => EventActiveActionInInlay?.Invoke(inlay);
             inlay.Width = DefaultWidthNewInlay;
             inlay.Margin = new(IELInlays.Count * DefaultWidthNewInlay - 10, RowDefinitionMainInlays.Height.Value, 0, 0);
             if (InlaysCount == 0)
@@ -261,14 +261,14 @@ namespace IEL.GUI
                 BorderBrush = QDataDefaultInlayBorderBrush,
                 Foreground = QDataDefaultInlayForeground
             };
-            Inlay.OnActivateCloseInlay += (sender, e, Key) =>
+            Inlay.OnActivateCloseInlay += (sender, e) =>
             {
                 DeleteInlayPage(Inlay, ActivateIndex == IELInlays.IndexOf(Inlay));
                 EventCloseInlay?.Invoke();
             };
 
             Inlay.SetPage(Content);
-            Inlay.OnActivateMouseLeft += (sender, e, Key) =>
+            Inlay.OnActivateMouseLeft += (sender, e) =>
             {
                 ActivateInlayInBrowserPage(Inlay.PageElement);
             };

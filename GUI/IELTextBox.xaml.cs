@@ -105,7 +105,7 @@ namespace IEL.GUI
         {
             InitializeComponent();
             #region Foreground
-            TextBoxMain.Foreground = SourceForeground.InicializeConnectedSolidColorBrush();
+            TextBoxMain.Foreground = SourceForeground.SourceBrush;
             #endregion
 
             TextBoxMain.ContextMenu = null;
