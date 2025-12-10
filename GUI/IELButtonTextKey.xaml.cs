@@ -48,7 +48,6 @@ namespace IEL.GUI
             #endregion
 
             #region Foreground
-            Foreground = new([255, 255, 255, 255]);
             TextBlockButton.Foreground = SourceForeground.SourceBrush;
             #endregion
 

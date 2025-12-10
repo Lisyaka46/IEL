@@ -97,8 +97,8 @@ namespace IEL.CORE.BaseUserControls
         /// </summary>
         public CornerRadius CornerRadius
         {
-            get => (CornerRadius)Base_BorderContainer.GetValue(CornerRadiusProperty);
-            set => Base_BorderContainer.SetValue(CornerRadiusProperty, value);
+            get => (CornerRadius)GetValue(CornerRadiusProperty);
+            set => SetValue(CornerRadiusProperty, value);
         }
         #endregion
 
@@ -141,8 +141,8 @@ namespace IEL.CORE.BaseUserControls
         /// </summary>
         public new Thickness Padding
         {
-            get => (Thickness)Base_BorderContainer.GetValue(PaddingProperty);
-            set => Base_BorderContainer.SetValue(PaddingProperty, value);
+            get => (Thickness)GetValue(PaddingProperty);
+            set => SetValue(PaddingProperty, value);
         }
         #endregion
 

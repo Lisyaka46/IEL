@@ -9,6 +9,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Threading;
+using static IEL.CORE.Classes.QData;
 
 namespace IEL.CORE.BaseUserControls
 {
@@ -29,9 +30,9 @@ namespace IEL.CORE.BaseUserControls
                     (sender, e) =>
                     {
                         PaletteSpectrum palette = (PaletteSpectrum)e.NewValue;
-                        ((IELObjectBase)sender).SourceBackground.SetQData(palette.BG);
-                        ((IELObjectBase)sender).SourceBorderBrush.SetQData(palette.BB);
-                        ((IELObjectBase)sender).SourceForeground.SetQData(palette.FG);
+                        ((IELObjectBase)sender).SourceBackground.Source = palette.BG;
+                        ((IELObjectBase)sender).SourceBorderBrush.Source = palette.BB;
+                        ((IELObjectBase)sender).SourceForeground.Source = palette.FG;
                     }));
 
         /// <summary>
@@ -61,7 +62,7 @@ namespace IEL.CORE.BaseUserControls
                 new(new QData(),
                     (sender, e) =>
                     {
-                        ((IELObjectBase)sender).PaletteElement.BG.ChangeSourceQData((QData)e.NewValue);
+                        ((IELObjectBase)sender).SourceBackground.ChangeSourceQData((QData)e.NewValue);
                     }));
 
         /// <summary>
@@ -91,7 +92,7 @@ namespace IEL.CORE.BaseUserControls
                 new(new QData(),
                     (sender, e) =>
                     {
-                        ((IELObjectBase)sender).PaletteElement.BB.ChangeSourceQData((QData)e.NewValue);
+                        ((IELObjectBase)sender).SourceBorderBrush.ChangeSourceQData((QData)e.NewValue);
                     }));
 
         /// <summary>
@@ -121,7 +122,7 @@ namespace IEL.CORE.BaseUserControls
                 new(new QData(),
                     (sender, e) =>
                     {
-                        ((IELObjectBase)sender).PaletteElement.FG.ChangeSourceQData((QData)e.NewValue);
+                        ((IELObjectBase)sender).SourceForeground.ChangeSourceQData((QData)e.NewValue);
                     }));
 
         /// <summary>

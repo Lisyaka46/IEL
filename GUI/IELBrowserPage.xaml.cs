@@ -257,9 +257,9 @@ namespace IEL.GUI
                 CornerRadius = new(8, 8, 0, 0),
                 Padding = new(1, 4, 1, 0),
                 Opacity = 0d,
-                Background = QDataDefaultInlayBackground,
-                BorderBrush = QDataDefaultInlayBorderBrush,
-                Foreground = QDataDefaultInlayForeground
+                //Background = QDataDefaultInlayBackground,
+                //BorderBrush = QDataDefaultInlayBorderBrush,
+                //Foreground = QDataDefaultInlayForeground
             };
             Inlay.OnActivateCloseInlay += (sender, e) =>
             {
