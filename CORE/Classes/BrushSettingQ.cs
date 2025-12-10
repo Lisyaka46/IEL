@@ -1,8 +1,6 @@
 ﻿using IEL.CORE.Enums;
-using System.Buffers;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
-using System.Windows.Threading;
 using static IEL.CORE.Classes.QData;
 
 namespace IEL.CORE.Classes
@@ -12,10 +10,36 @@ namespace IEL.CORE.Classes
     /// </summary>
     public sealed class BrushSettingQ
     {
+        private QData _Source;
         /// <summary>
-        /// Дата которая используется для отображения
+        /// Объект который физуализируется
         /// </summary>
-        public QData Source { get; private set; }
+        internal QData Source
+        {
+            get => _Source;
+            set
+            {
+                value.ChangedData += _Source.ChangedData;
+                _Source = value;
+                if (ActiveSpectrum != StateSpectrum.Custom)
+                    _Source.ChangedData?.Invoke((EnumDataSpectrum)ActiveSpectrum - 1);
+            }
+        }
+
+        /// <summary>
+        /// Изменить данные цветов по экземпляру массива байтов
+        /// </summary>
+        /// <remarks>
+        /// Массив должен представлять собой размер <b>"CountSpectrumColor * CountBytesFromColor"</b>
+        /// <br/>Определяется <b>CountSpectrumColor</b> количество спектров по <b>CountBytesFromColor</b> значениям цвета
+        /// </remarks>
+        /// <param name="NewObj">Опорный экземпляр значений</param>
+        public void ChangeSourceQData(QData NewObj)
+        {
+            Source.Data = NewObj.Data;
+            if (ActiveSpectrum != StateSpectrum.Custom)
+                Source.ChangedData?.Invoke((EnumDataSpectrum)ActiveSpectrum - 1);
+        }
 
         #region ConectedBrush
         /// <summary>
@@ -60,9 +84,8 @@ namespace IEL.CORE.Classes
         {
             ColorAnimation? animation = AnimatedEvent ? SourceAnimation : null;
             if (animation != null) animation.To = ActiveSpectrumColor;
-            SourceBrush.Dispatcher.Invoke(() =>
-                    SourceBrush.BeginAnimation(SolidColorBrush.ColorProperty, animation, HandoffBehavior.SnapshotAndReplace));
-            if (!AnimatedEvent || animation == null) SourceBrush.Dispatcher.Invoke(() => SourceBrush.Color = ActiveSpectrumColor);
+            SourceBrush.BeginAnimation(SolidColorBrush.ColorProperty, animation, HandoffBehavior.SnapshotAndReplace);
+            if (!AnimatedEvent || animation == null) SourceBrush.Color = ActiveSpectrumColor;
         }
         #endregion
 
@@ -109,12 +132,12 @@ namespace IEL.CORE.Classes
         /// </summary>
         public Color ActiveSpectrumColor => ActiveSpectrum switch
         {
-            StateSpectrum.Default => Source.GetFromSpectrumColor(EnumDataSpectrum.Default),
-            StateSpectrum.Used => Source.GetFromSpectrumColor(EnumDataSpectrum.Used),
-            StateSpectrum.Select => Source.GetFromSpectrumColor(EnumDataSpectrum.Select),
-            StateSpectrum.NotEnabled => Source.GetFromSpectrumColor(EnumDataSpectrum.NotEnabled),
+            StateSpectrum.Default => Source.Default,
+            StateSpectrum.Select => Source.Select,
+            StateSpectrum.Used => Source.Used,
+            StateSpectrum.NotEnabled => Source.NotEnabled,
             StateSpectrum.Custom => Custom,
-            _ => Source.GetFromSpectrumColor(EnumDataSpectrum.Default),
+            _ => Source.Default,
         };
 
         #region ActiveSpectrum
@@ -159,26 +182,16 @@ namespace IEL.CORE.Classes
         #endregion
 
         /// <summary>
-        /// Установить новый экземпляр данных Q-логики
-        /// </summary>
-        /// <param name="Data">Спектр которому присваивается значение</param>
-        public void SetQData(QData Data)
-        {
-            Source.ChangedData -= UpdateVisualActiveSpectrumData;
-            Source = Data;
-            Source.ChangedData += UpdateVisualActiveSpectrumData;
-            AnimateConectedBrush(true);
-        }
-
-        private void UpdateVisualActiveSpectrumData(EnumDataSpectrum Spectrum) { if ((int)Spectrum == (int)ActiveSpectrum - 1) AnimateConectedBrush(false); }
-
-        /// <summary>
         /// Инициализация объекта цветовых настроек по умолчанию
         /// </summary>
         public BrushSettingQ()
         {
-            Source = new();
-            Source.ChangedData += UpdateVisualActiveSpectrumData;
+            _Source = new();
+            Source.ChangedData += (spectrum) =>
+            {
+                if ((int)spectrum == (int)ActiveSpectrum - 1)
+                    AnimateConectedBrush(false);
+            };
             ActiveSpectrum = StateSpectrum.Default;
             SourceBrush = new(ActiveSpectrumColor);
         }
@@ -200,8 +213,12 @@ namespace IEL.CORE.Classes
         /// <param name="ByteColorData">Массив байтовых значений цвета</param>
         public BrushSettingQ(byte[][] ByteColorData)
         {
-            Source = new(ByteColorData);
-            Source.ChangedData += UpdateVisualActiveSpectrumData;
+            _Source = new();
+            Source.ChangedData += (spectrum) =>
+            {
+                if ((int)spectrum == (int)ActiveSpectrum - 1)
+                    AnimateConectedBrush(false);
+            };
             ActiveSpectrum = StateSpectrum.Default;
             SourceBrush = new(ActiveSpectrumColor);
         }
@@ -220,8 +237,12 @@ namespace IEL.CORE.Classes
         /// <param name="ByteColorData">Массив байтовых значений цвета</param>
         public BrushSettingQ(byte[] ByteColorData)
         {
-            Source = new(ByteColorData);
-            Source.ChangedData += UpdateVisualActiveSpectrumData;
+            _Source = new();
+            Source.ChangedData += (spectrum) =>
+            {
+                if ((int)spectrum == (int)ActiveSpectrum - 1)
+                    AnimateConectedBrush(false);
+            };
             ActiveSpectrum = StateSpectrum.Default;
             SourceBrush = new(ActiveSpectrumColor);
         }

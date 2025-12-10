@@ -1,9 +1,6 @@
 ﻿using IEL.CORE.Enums;
-using System;
-using System.Collections.Generic;
-using System.IO;
+using System.Collections.ObjectModel;
 using System.Windows.Media;
-using System.Windows.Threading;
 
 namespace IEL.CORE.Classes
 {
@@ -54,6 +51,28 @@ namespace IEL.CORE.Classes
         public static int CountSpectrumColor => 4;
 
         /// <summary>
+        /// Массив данных цвета
+        /// </summary>
+        internal protected byte[][] Data;
+
+        /// <summary>
+        /// Исключение неверного размера <b>одномерного</b> массива
+        /// </summary>
+        internal static readonly Exception ExceptionArrayNotLengthBytes =
+            new($"Массив не имеет размер {CountSpectrumColor * CountBytesFromColor} байт");
+
+        /// <summary>
+        /// Фиксированные значения по умолчанию объекта QData
+        /// </summary>
+        public static readonly ReadOnlyCollection<byte> DefaultBytesValues = new byte[]
+            {
+                255, 0, 0, 0,
+                255, 128, 128, 128,
+                255, 200, 200, 200,
+                255, 255, 70, 70,
+            }.AsReadOnly();
+
+        /// <summary>
         /// Делегат события изменения данных спектра
         /// </summary>
         /// <param name="Spectrum">Изменяемый спектр</param>
@@ -62,23 +81,7 @@ namespace IEL.CORE.Classes
         /// <summary>
         /// Событие изменения данных конкретного спектра
         /// </summary>
-        internal event ChangeDataFromSpectrum? ChangedData;
-
-        /// <summary>
-        /// Массив данных цвета
-        /// </summary>
-        private byte[][] Data;
-
-        /// <summary>
-        /// Получить неуправляемый объект байтов текущего объекта QData
-        /// </summary>
-        /// <returns>[16 bytes color values (A R G B)]</returns>
-        public byte[] GetSourceBytes() => [
-                Data[0][0], Data[0][1], Data[0][2], Data[0][3],
-                Data[1][0], Data[1][1], Data[1][2], Data[1][3],
-                Data[2][0], Data[2][1], Data[2][2], Data[2][3],
-                Data[3][0], Data[3][1], Data[3][2], Data[3][3]
-                ];
+        internal ChangeDataFromSpectrum? ChangedData;
 
         #region QDataManipulate
         /// <summary>
@@ -119,9 +122,22 @@ namespace IEL.CORE.Classes
         #endregion
 
         /// <summary>
-        /// Получить цвет по определённому спектру
+        /// Получить объект байтов текущего объекта QData
+        /// <br/>Массив представляет собой размер <b>"CountSpectrumColor * CountBytesFromColor"</b>
+        /// <br/>Имеет определение всех спектров цвета текущего объекта в байтовом представлении
         /// </summary>
-        /// <param name="Spectrum">Спектр которому присваивается значение</param>
+        /// <returns>[<b>"CountSpectrumColor * CountBytesFromColor"</b> байт]</returns>
+        public byte[] GetSourceBytes() => [
+                Data[0][0], Data[0][1], Data[0][2], Data[0][3],
+                Data[1][0], Data[1][1], Data[1][2], Data[1][3],
+                Data[2][0], Data[2][1], Data[2][2], Data[2][3],
+                Data[3][0], Data[3][1], Data[3][2], Data[3][3]
+                ];
+
+        /// <summary>
+        /// Получить цвет определённого спектра
+        /// </summary>
+        /// <param name="Spectrum">Спектр из которого берётся значение</param>
         public Color GetFromSpectrumColor(EnumDataSpectrum Spectrum) => Data[(int)Spectrum].ToColor();
 
         /// <summary>
@@ -136,13 +152,23 @@ namespace IEL.CORE.Classes
         }
 
         /// <summary>
-        /// Изменить данные цветов по экземпляру QData
+        /// Изменить данные цветов по экземпляру массива байтов
         /// </summary>
-        /// <param name="Source">Опорный экземпляр</param>
-        public void ChangeSourceQData(QData Source)
+        /// <remarks>
+        /// Массив должен представлять собой размер <b>"CountSpectrumColor * CountBytesFromColor"</b>
+        /// <br/>Определяется <b>CountSpectrumColor</b> количество спектров по <b>CountBytesFromColor</b> значениям цвета
+        /// </remarks>
+        /// <param name="NewObj">Опорный экземпляр значений</param>
+        public void ChangeSourceQData(QData NewObj)
         {
-            Data = Source.Data;
-            Dispatcher.CurrentDispatcher.Invoke(() => ChangedData?.Invoke(EnumDataSpectrum.Default));
+            Data = NewObj.Data;
+            if (ChangedData != null)
+            {
+                ChangedData.Invoke(EnumDataSpectrum.Default);
+                ChangedData.Invoke(EnumDataSpectrum.Select);
+                ChangedData.Invoke(EnumDataSpectrum.Used);
+                ChangedData.Invoke(EnumDataSpectrum.NotEnabled);
+            }
         }
 
         /// <summary>
@@ -206,27 +232,6 @@ namespace IEL.CORE.Classes
                     ];
             }
             else throw new Exception("Не хватает данных, массив не имеет размера 4");
-        }
-
-        /// <summary>
-        /// Скопировать данные расположения цветов
-        /// </summary>
-        /// <returns>Склонированный элемент</returns>
-        public QData Clone() => new(Data);
-
-        /// <summary>
-        /// Записать в поток данных файла данные QData
-        /// </summary>
-        /// <param name="Stream">Поток файла</param>
-        /// <returns></returns>
-        /// <exception cref="Exception">Исключение несоответствия режима открытия файла</exception>
-        public async Task WriteQdata(FileStream Stream)
-        {
-            if (!Stream.CanWrite) throw new Exception("Поток работы с файлом не открыт для записи!");
-            var bytes = GetSourceBytes();
-            IAsyncResult result = Stream.BeginWrite(bytes, 0, bytes.Length, null, null);
-            await Task.Run(() => { while (!result.IsCompleted) ; });
-            Stream.EndWrite(result);
         }
     }
 }

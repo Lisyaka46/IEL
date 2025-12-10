@@ -12,7 +12,7 @@ namespace IEL.CORE.Classes
     /// <summary>
     /// Объект элемента палитры
     /// </summary>
-    public class PaletteSpectrum
+    public class PaletteSpectrum : ICloneable
     {
         /// <summary>
         /// Константа количества объектов данных для 1 элемента палитры
@@ -49,5 +49,35 @@ namespace IEL.CORE.Classes
         /// </summary>
         /// <param name="IelObj">Объект который присоеденяется к палитре</param>
         public void ConnectPalleteFromIELElement([DisallowNull] IELObjectBase IelObj) => IelObj.PaletteElement = this;
+
+        /// <summary>
+        /// Записать в поток данных файла данные QData
+        /// </summary>
+        /// <param name="Stream">Поток файла</param>
+        /// <param name="Spectrum">"Элемент палитры, который записывается в файл</param>
+        /// <returns></returns>
+        /// <exception cref="Exception">Исключение несоответствия режима открытия файла</exception>
+        public static void WritePalettespectrum(ref FileStream Stream, ref PaletteSpectrum Spectrum)
+        {
+            if (!Stream.CanWrite) throw new Exception("Поток работы с файлом не открыт для записи!");
+            List<byte> BytesFromPaletteSpectrum = [];
+            BytesFromPaletteSpectrum.AddRange(Spectrum.BG.GetSourceBytes());
+            BytesFromPaletteSpectrum.AddRange(Spectrum.BB.GetSourceBytes());
+            BytesFromPaletteSpectrum.AddRange(Spectrum.FG.GetSourceBytes());
+            Stream.Write([.. BytesFromPaletteSpectrum], 0, BytesFromPaletteSpectrum.Count);
+        }
+
+        /// <summary>
+        /// Скопировать объект спектра палитры в новый объект
+        /// </summary>
+        /// <returns></returns>
+        public object Clone()
+        {
+            PaletteSpectrum Result = new();
+            Result.BG.Data = BG.Data;
+            Result.BB.Data = BB.Data;
+            Result.FG.Data = FG.Data;
+            return Result;
+        }
     }
 }
