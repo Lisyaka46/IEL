@@ -1,5 +1,4 @@
-﻿using IEL.CORE.Enums;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Windows.Media;
 
 namespace IEL.CORE.Classes

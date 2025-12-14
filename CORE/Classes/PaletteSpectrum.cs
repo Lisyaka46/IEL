@@ -1,11 +1,6 @@
-﻿using IEL.CORE.BaseUserControls;
-using System;
-using System.Collections.Generic;
+﻿using IEL.UserElementsControl.Base;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace IEL.CORE.Classes
 {

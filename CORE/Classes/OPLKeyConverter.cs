@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Key = System.Windows.Input.Key;
+﻿using Key = System.Windows.Input.Key;
 
 namespace IEL.CORE.Classes
 {

@@ -182,16 +182,22 @@ namespace IEL.CORE.Classes
         #endregion
 
         /// <summary>
+        /// Обновить отображение текущего спектра
+        /// </summary>
+        /// <param name="spectrum">Спектр который обновляется</param>
+        private void UpdateActiveSpectrum(EnumDataSpectrum spectrum)
+        {
+            if ((int)spectrum == (int)ActiveSpectrum - 1)
+                AnimateConectedBrush(true);
+        }
+
+        /// <summary>
         /// Инициализация объекта цветовых настроек по умолчанию
         /// </summary>
         public BrushSettingQ()
         {
             _Source = new();
-            Source.ChangedData += (spectrum) =>
-            {
-                if ((int)spectrum == (int)ActiveSpectrum - 1)
-                    AnimateConectedBrush(false);
-            };
+            Source.ChangedData += UpdateActiveSpectrum;
             ActiveSpectrum = StateSpectrum.Default;
             SourceBrush = new(ActiveSpectrumColor);
         }
@@ -214,11 +220,7 @@ namespace IEL.CORE.Classes
         public BrushSettingQ(byte[][] ByteColorData)
         {
             _Source = new();
-            Source.ChangedData += (spectrum) =>
-            {
-                if ((int)spectrum == (int)ActiveSpectrum - 1)
-                    AnimateConectedBrush(false);
-            };
+            Source.ChangedData += UpdateActiveSpectrum;
             ActiveSpectrum = StateSpectrum.Default;
             SourceBrush = new(ActiveSpectrumColor);
         }
@@ -238,11 +240,7 @@ namespace IEL.CORE.Classes
         public BrushSettingQ(byte[] ByteColorData)
         {
             _Source = new();
-            Source.ChangedData += (spectrum) =>
-            {
-                if ((int)spectrum == (int)ActiveSpectrum - 1)
-                    AnimateConectedBrush(false);
-            };
+            Source.ChangedData += UpdateActiveSpectrum;
             ActiveSpectrum = StateSpectrum.Default;
             SourceBrush = new(ActiveSpectrumColor);
         }

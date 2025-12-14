@@ -1,6 +1,4 @@
-﻿using static IEL.CORE.Classes.QData;
-
-namespace IEL.CORE.Enums
+﻿namespace IEL.CORE.Enums
 {
     /// <summary>
     /// Перечисление спектров цвета
