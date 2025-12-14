@@ -1,0 +1,49 @@
+﻿<UserControl
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:Base="clr-namespace:IEL.UserElementsControl.Base"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+    xmlns:local="clr-namespace:IEL.UserElementsControl"
+    xmlns:GUI="clr-namespace:IEL.UserElementsControl"
+    x:Class="IEL.UserElementsControl.IELBrowserPage"
+    mc:Ignorable="d" 
+    d:DesignHeight="380.454" d:DesignWidth="487.727">
+    <Control.Resources>
+        <ResourceDictionary Source="/IEL;component/CORE/Resources/VisualDictionary.xaml"/>
+    </Control.Resources>
+    <Border x:Name="BorderMain" BorderBrush="Black" BorderThickness="2,2,2,2">
+        <Grid x:Name="GridMain">
+            <Grid.RowDefinitions>
+                <RowDefinition x:Name="RowDefinitionMainInlays" Height="65"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <TextBlock x:Name="TextBlockNullPage" Text="Нет доступных вкладок" Opacity="0.4" VerticalAlignment="Center" TextAlignment="Center" Grid.Row="1"/>
+            <Grid Grid.Row="1">
+                <local:IELPageController x:Name="MainPageController" LeftAnimateSwitch="5,5,5,5" RightAnimateSwitch="-5,-5,-5,-5"/>
+            </Grid>
+            <Grid>
+                <Border x:Name="BorderMainPage" Grid.Column="1" BorderThickness="0,0,0,2" BorderBrush="Black">
+                    <Grid x:Name="GridMainButtons">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition x:Name="ColumnDefinitionMainInlays" Width="50"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+                            <Rectangle x:Name="RectangleScrollbar" x:FieldModifier="private" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,2,0,2" Height="8" Fill="White" Width="20" RadiusY="4" RadiusX="4"/>
+                            <ScrollViewer x:Name="ScrollViewerInlays" VerticalScrollBarVisibility="Disabled" Grid.RowSpan="1" Grid.Row="1">
+                                <Grid x:Name="GridMainInlays">
+                                </Grid>
+                            </ScrollViewer>
+                        </Grid>
+                        <local:IELButtonImage x:Name="IELButtonAddInlay" x:FieldModifier="private" Grid.Column="1" Height="40" Width="40" CornerRadius="5,5,5,5"/>
+                    </Grid>
+                </Border>
+            </Grid>
+        </Grid>
+    </Border>
+</UserControl>

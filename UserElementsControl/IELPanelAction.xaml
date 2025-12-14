@@ -1,0 +1,23 @@
+﻿<Base:IELContainerBase
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:Base="clr-namespace:IEL.UserElementsControl.Base"
+    
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    x:Class="IEL.UserElementsControl.IELPanelAction"
+    
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:GUI="clr-namespace:IEL.UserElementsControl"
+    Focusable="True">
+    <!--<.FocusVisualStyle>
+        <Style>
+            <Setter Property="Control.Template" Value="{x:Null}"/>
+        </Style>
+    </B.FocusVisualStyle>-->
+    <Grid x:Name="GridActionPanel" Focusable="True">
+        <Viewbox VerticalAlignment="Top" HorizontalAlignment="Center">
+            <GUI:IELPageController x:Name="MainPageController"/>
+        </Viewbox>
+        <TextBlock x:Name="TextBlockRightButtonIndicatorKey" HorizontalAlignment="Right" Text="0" VerticalAlignment="Bottom" Panel.ZIndex="2" FontFamily="Bahnschrift SemiBold" FontSize="16" Foreground="White" TextTrimming="WordEllipsis" TextAlignment="Right"/>
+    </Grid>
+</Base:IELContainerBase>

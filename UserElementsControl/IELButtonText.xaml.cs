@@ -1,0 +1,51 @@
+﻿using IEL.UserElementsControl.Base;
+using System.Windows.Media;
+
+namespace IEL.UserElementsControl
+{
+    /// <summary>
+    /// Логика взаимодействия для IELButtonText.xaml
+    /// </summary>
+    public partial class IELButtonText : IELButtonBase
+    {
+        /// <summary>
+        /// Текст кнопки
+        /// </summary>
+        public string Text
+        {
+            get => TextBlockButton.Text;
+            set => TextBlockButton.Text = value;
+        }
+
+        /// <summary>
+        /// Шрифт текста в кнопке
+        /// </summary>
+        public new FontFamily FontFamily
+        {
+            get => base.FontFamily;
+            set
+            {
+                TextBlockButton.FontFamily = value;
+                base.FontFamily = value;
+            }
+        }
+
+        /// <summary>
+        /// Инициализировать объект интерфейса кнопки с текстом
+        /// </summary>
+        public IELButtonText()
+        {
+            InitializeComponent();
+            #region Background
+            #endregion
+
+            #region BorderBrush
+            #endregion
+
+            #region Foreground
+            TextBlockButton.Foreground = SourceForeground.SourceBrush;
+            #endregion
+            Text = "Text";
+        }
+    }
+}
