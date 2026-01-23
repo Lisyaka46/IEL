@@ -1,5 +1,4 @@
-﻿using IEL.CORE.Classes;
-using IEL.CORE.Enums;
+﻿using IEL.CORE.Enums;
 using IEL.UserElementsControl.Base;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Tracing;
@@ -9,7 +8,6 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
-using System.Xml.Linq;
 
 namespace IEL.UserElementsControl
 {

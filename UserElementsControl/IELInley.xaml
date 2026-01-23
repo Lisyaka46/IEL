@@ -5,14 +5,15 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-    xmlns:local="clr-namespace:IEL.UserElementsControl" MinWidth="130" CornerRadius="10,10,0,0" Cursor="">
+    xmlns:local="clr-namespace:IEL.UserElementsControl">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
             <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
-        <TextBlock x:Name="TextBlockHead" Text="Text" VerticalAlignment="Center" FontSize="16" Margin="5,0,5,0" Grid.ColumnSpan="1" TextTrimming="CharacterEllipsis"/>
+        <Viewbox MaxWidth="200" Height="30">
+            <TextBlock x:Name="TextBlockHead" Text="Text" VerticalAlignment="Center" FontSize="16" Grid.ColumnSpan="1" TextTrimming="CharacterEllipsis" Padding="5,5,5,5"/>
+        </Viewbox>
         <local:IELButtonImage x:Name="IELButtonCloseInlay" Grid.ColumnSpan="1" Grid.Column="1" CornerRadius="5,5,5,5" CornerRadiusGuides="7.6,7.6,7.6,7.6" Margin="2,2,2,2" Width="25" Height="25"/>
     </Grid>
 </Base:IELButtonBase>

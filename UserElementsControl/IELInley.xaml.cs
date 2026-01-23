@@ -2,6 +2,7 @@
 using IEL.CORE.Classes.Browser;
 using IEL.UserElementsControl.Base;
 using System.Windows.Media;
+using System.Windows;
 
 namespace IEL.UserElementsControl
 {
@@ -24,45 +25,6 @@ namespace IEL.UserElementsControl
         /// Объект страницы
         /// </summary>
         internal object? ContentPage { get; private set; }
-
-        /// <summary>
-        /// Объект настройки отображения фона
-        /// </summary>
-        public new QData Background
-        {
-            get => (QData)GetValue(BackgroundProperty);
-            set
-            {
-                IELButtonCloseInlay.Background = value;
-                SetValue(BackgroundProperty, value);
-            }
-        }
-
-        /// <summary>
-        /// Объект настройки отображения границ
-        /// </summary>
-        public new QData BorderBrush
-        {
-            get => (QData)GetValue(BorderBrushProperty);
-            set
-            {
-                IELButtonCloseInlay.BorderBrush = value;
-                SetValue(BorderBrushProperty, value);
-            }
-        }
-
-        /// <summary>
-        /// Объект настройки отображения текста
-        /// </summary>
-        public new QData Foreground
-        {
-            get => (QData)GetValue(ForegroundProperty);
-            set
-            {
-                IELButtonCloseInlay.Foreground = value;
-                SetValue(ForegroundProperty, value);
-            }
-        }
 
         /// <summary>
         /// Шрифт текста в кнопке
@@ -100,6 +62,9 @@ namespace IEL.UserElementsControl
             InitializeComponent();
             TextBlockHead.Foreground = SourceForeground.SourceBrush;
             ContentPage = null;
+            Base_ViewBoxButton.HorizontalAlignment = HorizontalAlignment.Stretch;
+            Base_ViewBoxButton.VerticalAlignment = VerticalAlignment.Stretch;
+            Base_ViewBoxButton.Stretch = Stretch.Uniform;
 
             IELButtonCloseInlay.OnActivateMouseLeft += (sender, e) =>
             {

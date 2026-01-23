@@ -18,29 +18,31 @@
                 <RowDefinition x:Name="RowDefinitionMainInlays" Height="65"/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
-            <TextBlock x:Name="TextBlockNullPage" Text="Нет доступных вкладок" Opacity="0.4" VerticalAlignment="Center" TextAlignment="Center" Grid.Row="1"/>
+            <TextBlock x:Name="TextBlockNullPage" Text="Нет доступных вкладок" VerticalAlignment="Center" TextAlignment="Center" Grid.Row="1"/>
             <Grid Grid.Row="1">
                 <local:IELPageController x:Name="MainPageController" LeftAnimateSwitch="5,5,5,5" RightAnimateSwitch="-5,-5,-5,-5"/>
             </Grid>
             <Grid>
                 <Border x:Name="BorderMainPage" Grid.Column="1" BorderThickness="0,0,0,2" BorderBrush="Black">
-                    <Grid x:Name="GridMainButtons">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition/>
-                            <ColumnDefinition x:Name="ColumnDefinitionMainInlays" Width="50"/>
-                        </Grid.ColumnDefinitions>
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition/>
-                            </Grid.RowDefinitions>
-                            <Rectangle x:Name="RectangleScrollbar" x:FieldModifier="private" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,2,0,2" Height="8" Fill="White" Width="20" RadiusY="4" RadiusX="4"/>
-                            <ScrollViewer x:Name="ScrollViewerInlays" VerticalScrollBarVisibility="Disabled" Grid.RowSpan="1" Grid.Row="1">
-                                <Grid x:Name="GridMainInlays">
-                                </Grid>
-                            </ScrollViewer>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <Rectangle x:Name="RectangleScrollbar" x:FieldModifier="private" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="2,2,0,2" Height="0" Fill="White" Width="20" RadiusY="4" RadiusX="4"/>
+                        <Grid x:Name="GridMainButtons" Grid.RowSpan="1" Grid.Row="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition x:Name="ColumnDefinitionMainInlays" Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid>
+                                <ScrollViewer x:Name="ScrollViewerInlays" VerticalScrollBarVisibility="Disabled" Grid.RowSpan="1" Grid.Row="1">
+                                    <Grid x:Name="GridMainInlays" HorizontalAlignment="Left">
+                                    </Grid>
+                                </ScrollViewer>
+                            </Grid>
+                            <local:IELButtonImage x:Name="IELButtonAddInlay" x:FieldModifier="private" Grid.Column="1" Height="40" Width="40" CornerRadius="5,5,5,5" HorizontalAlignment="Right" Margin="5,0,5,0"/>
                         </Grid>
-                        <local:IELButtonImage x:Name="IELButtonAddInlay" x:FieldModifier="private" Grid.Column="1" Height="40" Width="40" CornerRadius="5,5,5,5"/>
                     </Grid>
                 </Border>
             </Grid>

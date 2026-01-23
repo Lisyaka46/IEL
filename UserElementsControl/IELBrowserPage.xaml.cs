@@ -33,21 +33,6 @@ namespace IEL.UserElementsControl
         };
 
         /// <summary>
-        /// Данные об стиле цветов фона вкладок в браузере
-        /// </summary>
-        public QData QDataDefaultInlayBackground { get; set; }
-
-        /// <summary>
-        /// Данные об стиле цветов границ вкладок в браузере
-        /// </summary>
-        public QData QDataDefaultInlayBorderBrush { get; set; }
-
-        /// <summary>
-        /// Данные об стиле цветов текста вкладок в браузере
-        /// </summary>
-        public QData QDataDefaultInlayForeground { get; set; }
-
-        /// <summary>
         /// Массив объектов страниц
         /// </summary>
         private readonly List<IELInlay> IELInlays;
@@ -122,11 +107,6 @@ namespace IEL.UserElementsControl
         /// </summary>
         public IELInlay? ActualInlay => ActivateIndex > -1 ? IELInlays[ActivateIndex] : null;
 
-        /// <summary>
-        /// Значение длинны новой вкладки по умолчанию
-        /// </summary>
-        public double DefaultWidthNewInlay { get; set; }
-
         #region BorderBrush
         /// <summary>
         /// Данные конкретного свойства
@@ -182,11 +162,10 @@ namespace IEL.UserElementsControl
         public IELBrowserPage()
         {
             InitializeComponent();
-            QDataDefaultInlayBackground = new();
-            QDataDefaultInlayBorderBrush = new();
-            QDataDefaultInlayForeground = new();
+            TextBlockNullPage.Opacity = 0.4d;
+            RectangleScrollbar.Opacity = 0d;
+            RectangleScrollbar.Height = 0d;
             IELInlays = [];
-            DefaultWidthNewInlay = 180d;
 
             GridMainInlays.MouseWheel += (sender, e) =>
             {
@@ -221,8 +200,9 @@ namespace IEL.UserElementsControl
             if (Content == null) return null;
             IELInlay inlay = CreateInlay(Content);
             inlay.OnActivateMouseRight += (sender, e) => EventActiveActionInInlay?.Invoke(inlay);
-            inlay.Width = DefaultWidthNewInlay;
-            inlay.Margin = new(IELInlays.Count * DefaultWidthNewInlay - 10, RowDefinitionMainInlays.Height.Value, 0, 0);
+            inlay.Margin = new(
+                (InlaysCount > 0 ? IELInlays[^1].Margin.Left + IELInlays[^1].ActualWidth : 0),
+                RowDefinitionMainInlays.Height.Value, 0, 0);
             if (InlaysCount == 0)
             {
                 SourceDoubleAnimation.Duration = TimeSpan.FromMilliseconds(800d);
@@ -249,18 +229,15 @@ namespace IEL.UserElementsControl
             {
                 Text = Content.Title,
                 HorizontalAlignment = HorizontalAlignment.Left,
-                VerticalAlignment = VerticalAlignment.Stretch,
-                //Margin = MarginDiactivateRightInlay,
+                VerticalAlignment = VerticalAlignment.Bottom,
                 BorderThickness = new(2),
                 CornerRadius = new(8, 8, 0, 0),
                 Padding = new(1, 4, 1, 0),
                 Opacity = 0d,
-                //Background = QDataDefaultInlayBackground,
-                //BorderBrush = QDataDefaultInlayBorderBrush,
-                //Foreground = QDataDefaultInlayForeground
             };
             Inlay.OnActivateCloseInlay += (sender, e) =>
             {
+                Inlay.IsEnabled = false;
                 DeleteInlayPage(Inlay, ActivateIndex == IELInlays.IndexOf(Inlay));
                 EventCloseInlay?.Invoke();
             };
@@ -344,7 +321,7 @@ namespace IEL.UserElementsControl
             Inlay.BeginAnimation(OpacityProperty, SourceDoubleAnimation, HandoffBehavior.SnapshotAndReplace);
 
             SourceThicknessAnimation.Duration = TimeSpan.FromMilliseconds(400d);
-            SourceThicknessAnimation.To = new(Inlay.Margin.Left + 10, 0, 0, 0);
+            SourceThicknessAnimation.To = new(Inlay.Margin.Left, 8, 0, 0);
             Inlay.BeginAnimation(MarginProperty, SourceThicknessAnimation, HandoffBehavior.SnapshotAndReplace);
         }
 
@@ -353,10 +330,12 @@ namespace IEL.UserElementsControl
         /// </summary>
         /// <param name="Inlay">Вкладка которая анимируется</param>
         /// <param name="Activate">Состояние стремления вкладки</param>
-        private static void UsingInlayAnimationActivate(IELInlay Inlay, bool Activate = true)
+        private void UsingInlayAnimationActivate(IELInlay Inlay, bool Activate = true)
         {
             if (!Activate) Inlay.PageElement?.EventUnfocusPage?.Invoke(Inlay.PageElement);
-            Inlay.Padding = Activate ? new(0) : new(4, 4, 4, 0);
+            SourceThicknessAnimation.To = new(Activate ? 0 : 4);
+            Inlay.BeginAnimation(PaddingProperty, SourceThicknessAnimation, HandoffBehavior.Compose);
+            //Inlay.Padding = Activate ? new(0) : new(4, 4, 4, 0);
         }
         #endregion
 
@@ -398,9 +377,8 @@ namespace IEL.UserElementsControl
         /// <param name="ActivateNextInlay">Активировать ли следующую после удалённой вкладки вкладку</param>
         public void DeleteInlayPage(IELInlay inlay, bool ActivateNextInlay = true)
         {
-            int Index = IELInlays.IndexOf(inlay);
-            if (Index == -1) return;
-            int IndexNext = NextIndex(Index, InlaysCount - 1), IndexColumn = Grid.GetColumn(inlay);
+            if (IELInlays.IndexOf(inlay) is int Index && Index == -1) return;
+            int IndexNext = NextIndex(Index, InlaysCount - 1);
             IELInlay ActualInlay = IELInlays[Index];
             ActualInlay.PageElement?.Dispose();
             Canvas.SetZIndex(ActualInlay, 0);
@@ -414,13 +392,10 @@ namespace IEL.UserElementsControl
             };
             IELInlays.RemoveAt(Index);
             SourceThicknessAnimation.Duration = TimeSpan.FromMilliseconds(400d);
-            if (IndexNext > -1)
+            for (int i = Index; i < IELInlays.Count; i++)
             {
-                for (int i = IndexNext; i < IELInlays.Count; i++)
-                {
-                    SourceThicknessAnimation.To = new(i * DefaultWidthNewInlay, 0, 0, 0);
-                    IELInlays[i].BeginAnimation(MarginProperty, SourceThicknessAnimation, HandoffBehavior.SnapshotAndReplace);
-                }
+                SourceThicknessAnimation.To = new(IELInlays[i].Margin.Left - inlay.ActualWidth, 8, 0, 0);
+                IELInlays[i].BeginAnimation(MarginProperty, SourceThicknessAnimation, HandoffBehavior.SnapshotAndReplace);
             }
             SourceThicknessAnimation.To = new(ActualInlay.Margin.Left, RowDefinitionMainInlays.Height.Value, 0, 0);
             ActualInlay.BeginAnimation(MarginProperty, SourceThicknessAnimation, HandoffBehavior.SnapshotAndReplace);
@@ -443,7 +418,7 @@ namespace IEL.UserElementsControl
             if (InlaysCount == 0)
             {
                 SourceDoubleAnimation.Duration = TimeSpan.FromMilliseconds(800d);
-                SourceDoubleAnimation.To = 1d;
+                SourceDoubleAnimation.To = 0.4d;
                 TextBlockNullPage.BeginAnimation(OpacityProperty, SourceDoubleAnimation, HandoffBehavior.SnapshotAndReplace);
             }
         }
