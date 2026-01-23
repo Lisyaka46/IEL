@@ -19,8 +19,11 @@ namespace IEL.CORE.Classes
             get => _Source;
             set
             {
-                value.ChangedData += _Source.ChangedData;
+                value.ChangedData += UpdateActiveSpectrum;
+
+                _Source.ChangedData -= UpdateActiveSpectrum;
                 _Source = value;
+
                 if (ActiveSpectrum != StateSpectrum.Custom)
                     _Source.ChangedData?.Invoke((EnumDataSpectrum)ActiveSpectrum - 1);
             }

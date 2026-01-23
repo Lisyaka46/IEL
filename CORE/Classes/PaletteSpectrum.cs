@@ -17,27 +17,17 @@ namespace IEL.CORE.Classes
         /// <summary>
         /// Данные отображения фона
         /// </summary>
-        public QData BG { get; set; }
+        public QData BG { get; set; } = new();
 
         /// <summary>
         /// Данные отображения границ
         /// </summary>
-        public QData BB { get; set; }
+        public QData BB { get; set; } = new();
 
         /// <summary>
         /// Данные отображения текста
         /// </summary>
-        public QData FG { get; set; }
-
-        /// <summary>
-        /// Инициализировать
-        /// </summary>
-        public PaletteSpectrum()
-        {
-            BG = new();
-            BB = new();
-            FG = new();
-        }
+        public QData FG { get; set; } = new();
 
         /// <summary>
         /// Соеденить объект IEL с спектром палитры
