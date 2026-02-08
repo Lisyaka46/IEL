@@ -8,6 +8,7 @@
     <Platforms>AnyCPU</Platforms>
     <Configurations>Debug;Release;Testing</Configurations>
     <RepositoryUrl>https://github.com/Lisyaka46/IEL</RepositoryUrl>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>
