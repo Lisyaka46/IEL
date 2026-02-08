@@ -226,7 +226,7 @@ namespace IEL.UserElementsControl
             };
             KeyUp += (sender, e) =>
             {
-                if (!PanelActionActivate && !BlockWhileEvent) return;
+                if (!PanelActionActivate || !BlockWhileEvent) return;
                 else BlockWhileEvent = false;
                 if (e.Key == KeyActivateKeyboardMode)
                 {

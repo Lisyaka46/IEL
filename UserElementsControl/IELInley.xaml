@@ -1,4 +1,4 @@
-﻿<Base:IELButtonBase
+﻿<Base:IELObjectBase
     x:Class="IEL.UserElementsControl.IELInlay"
     xmlns:Base="clr-namespace:IEL.UserElementsControl.Base"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -6,14 +6,16 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
     xmlns:local="clr-namespace:IEL.UserElementsControl">
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition/>
-            <ColumnDefinition Width="Auto"/>
-        </Grid.ColumnDefinitions>
-        <Viewbox MaxWidth="200" Height="30">
-            <TextBlock x:Name="TextBlockHead" Text="Text" VerticalAlignment="Center" FontSize="16" Grid.ColumnSpan="1" TextTrimming="CharacterEllipsis" Padding="5,5,5,5"/>
-        </Viewbox>
-        <local:IELButtonImage x:Name="IELButtonCloseInlay" Grid.ColumnSpan="1" Grid.Column="1" CornerRadius="5,5,5,5" CornerRadiusGuides="7.6,7.6,7.6,7.6" Margin="2,2,2,2" Width="25" Height="25"/>
-    </Grid>
-</Base:IELButtonBase>
+    <Border x:Name="BorderMain" BorderThickness="2,2,2,2" CornerRadius="8,8,0,0" BorderBrush="Black">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Viewbox MaxWidth="200" Height="35" MinWidth="65" HorizontalAlignment="Left">
+                <TextBlock x:Name="TextBlockHead" Text="Text" VerticalAlignment="Center" FontSize="16" Grid.ColumnSpan="1" TextTrimming="CharacterEllipsis" Padding="5,5,5,5" TextWrapping="Wrap"/>
+            </Viewbox>
+            <local:IELButtonImage x:Name="IELButtonCloseInlay" Grid.ColumnSpan="1" Grid.Column="1" CornerRadius="5,5,5,5" CornerRadiusGuides="7.6,7.6,7.6,7.6" Margin="4,4,4,4" Width="27" Height="27"/>
+        </Grid>
+    </Border>
+</Base:IELObjectBase>

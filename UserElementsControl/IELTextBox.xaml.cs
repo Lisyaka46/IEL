@@ -1,6 +1,7 @@
 ﻿using IEL.UserElementsControl.Base;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace IEL.UserElementsControl
 {
@@ -103,6 +104,8 @@ namespace IEL.UserElementsControl
             InitializeComponent();
             #region Foreground
             TextBoxMain.Foreground = SourceForeground.SourceBrush;
+            TextBoxMain.SelectionTextBrush = new SolidColorBrush(SourceForeground.Source.Used);
+            TextBoxMain.SelectionBrush = new SolidColorBrush(SourceBackground.Source.Used);
             #endregion
 
             TextBoxMain.ContextMenu = null;
