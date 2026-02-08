@@ -59,9 +59,9 @@ namespace IEL.CORE.Classes
         public object Clone()
         {
             PaletteSpectrum Result = new();
-            Result.BG.Data = BG.Data;
-            Result.BB.Data = BB.Data;
-            Result.FG.Data = FG.Data;
+            Result.BG.Data = [.. BG.Data];
+            Result.BB.Data = [.. BB.Data];
+            Result.FG.Data = [.. FG.Data];
             return Result;
         }
     }

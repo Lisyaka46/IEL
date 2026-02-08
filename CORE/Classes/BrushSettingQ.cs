@@ -191,7 +191,7 @@ namespace IEL.CORE.Classes
         private void UpdateActiveSpectrum(EnumDataSpectrum spectrum)
         {
             if ((int)spectrum == (int)ActiveSpectrum - 1)
-                AnimateConectedBrush(true);
+                AnimateConectedBrush(false);
         }
 
         /// <summary>
