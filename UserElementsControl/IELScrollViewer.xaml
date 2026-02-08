@@ -1,0 +1,7 @@
+﻿<Base:IELScrollViewerBase
+    x:Class="IEL.UserElementsControl.IELScrollViewer"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:IEL.UserElementsControl"
+    xmlns:Base="clr-namespace:IEL.UserElementsControl.Base">
+</Base:IELScrollViewerBase>
