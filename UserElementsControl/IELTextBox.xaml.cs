@@ -74,6 +74,32 @@ namespace IEL.UserElementsControl
         }
         #endregion
 
+        #region MaxLength
+        /// <summary>
+        /// Данные конкретного свойства
+        /// </summary>
+        public static readonly DependencyProperty MaxLengthProperty =
+            DependencyProperty.Register("MaxLength", typeof(int), typeof(IELTextBox),
+                new(0,
+                    (sender, e) =>
+                    {
+                        ((IELTextBox)sender).TextBoxMain.MaxLength = (int)e.NewValue;
+                    }));
+
+        /// <summary>
+        /// Максимальное количество символов которое может помещаться в элемент текста
+        /// </summary>
+        public int MaxLength
+        {
+            get => (int)GetValue(MaxLengthProperty);
+            set
+            {
+                if (value < 0) return;
+                SetValue(MaxLengthProperty, value);
+            }
+        }
+        #endregion
+
         /// <summary>
         /// Сделать фокус на элементе
         /// </summary>

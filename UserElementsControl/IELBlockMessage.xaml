@@ -2,13 +2,14 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     x:Class="IEL.UserElementsControl.IELBlockMessage"
     xmlns:Base="clr-namespace:IEL.UserElementsControl.Base"
+    xmlns:IEL="clr-namespace:IEL.UserElementsControl"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
     mc:Ignorable="d">
-    <Border x:Name="BorderMessage" CornerRadius="3,13,13,13" BorderThickness="2,2,2,2" BorderBrush="Black" Padding="13,0,13,0" Background="#FFE4BDBD">
+    <Border x:Name="BorderMessage" CornerRadius="3,13,13,13" BorderThickness="2,2,2,2" BorderBrush="Black" Background="#FFE4BDBD" HorizontalAlignment="Left">
         <Grid x:Name="GridMessage" ClipToBounds="True">
-            <TextBlock x:Name="TextBlockMessage" TextWrapping="Wrap" Text="Hello" MaxWidth="200" TextAlignment="Center" VerticalAlignment="Top" Foreground="Black" Padding="0,1,0,1"/>
+            <IEL:IELScrollViewer x:Name="IELScrollMessage" AutoUpdateVisibleHorizontalScroll="False" AutoUpdateVisibleVerticalScroll="False" Margin="5,5,5,5"/>
         </Grid>
     </Border>
 </Base:IELObjectBase>

@@ -141,9 +141,16 @@ namespace IEL.UserElementsControl
         /// Код контейнера привязки
         /// </summary>
         public int CodeParentObject { get; private set; }
+
         #endregion
 
         #region Constructor
+        //
+        private FrameworkElement? SourceMagniteElement;
+
+        //
+        private TextBlock TextBlockMessage;
+
         /// <summary>
         /// Шрифт использующийся в панели сообщения
         /// </summary>
@@ -204,6 +211,17 @@ namespace IEL.UserElementsControl
         public IELBlockMessage()
         {
             InitializeComponent();
+            TextBlockMessage = new()
+            {
+                TextWrapping = TextWrapping.Wrap,
+                MaxWidth = 200d,
+                TextAlignment = TextAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Top,
+                Foreground = SourceForeground.SourceBrush,
+                Margin = new(0, 0, 0, 5),
+            };
+            IELScrollMessage.Content = TextBlockMessage;
+
             #region Background
             #endregion
 
@@ -249,26 +267,18 @@ namespace IEL.UserElementsControl
         /// <param name="Orientation">Привязка к позиционированию панели</param>
         public void UsingBorderInformation(FrameworkElement Element, string TextVisible, OrientationPositionCursor Orientation)
         {
+            SourceMagniteElement = Element;
             CodeParentObject = Element.GetHashCode();
             TextBlockMessage.Text = TextVisible;
             TextBlockMessage.UpdateLayout();
             GridMessage.UpdateLayout();
+            Element.MouseWheel += IELScrollContent;
             if (GridMessage.ActualHeight < TextBlockMessage.ActualHeight)
             {
-                int Offset = (int)TextBlockMessage.ActualHeight - (int)GridMessage.ActualHeight;
-                ThicknessAnimation animation = new()
-                {
-                    EasingFunction = new SineEase() { EasingMode = EasingMode.EaseInOut, },
-                    BeginTime = TimeSpan.FromMilliseconds(160d),
-                    Duration = TimeSpan.FromMilliseconds(80d * Offset < 1200d ? 1200d : 80d * Offset),
-                    RepeatBehavior = RepeatBehavior.Forever,
-                    AutoReverse = true,
-                    From = TextBlockMessage.Margin,
-                    To = new(0, -Offset, 0, 0)
-                };
-                TextBlockMessage.BeginAnimation(MarginProperty, animation);
+                IELScrollMessage.ActivateVerticalScrollBar();
+                IELScrollMessage.UpdateHeightScrollBar();
             }
-            else TextBlockMessage.Margin = new(0);
+            IELScrollMessage.ScrollToVerticalOffset(0d);
             #region Auto
             if (Orientation == OrientationPositionCursor.Auto)
             {
@@ -294,6 +304,20 @@ namespace IEL.UserElementsControl
         }
 
         /// <summary>
+        /// Функция события прокрутки в объекте относительно контента в сообщении
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void IELScrollContent(object sender, MouseWheelEventArgs e)
+        {
+            if (IELScrollMessage.IsVisibleScrollBar(ScrollOrientation.Vertical))
+            {
+                if (e.Delta < 0) IELScrollMessage.ScrollToVerticalDown();
+                else IELScrollMessage.ScrollToVerticalUp();
+            }
+        }
+
+        /// <summary>
         /// Активировать панель сообщения по позиции
         /// </summary>
         /// <param name="TextVisible">Текст который выводится панелью сообщения</param>
@@ -312,8 +336,11 @@ namespace IEL.UserElementsControl
         /// </summary>
         public void CloseBorderInformation()
         {
-            if (!FlagMessage) return;
+            if (!FlagMessage || SourceMagniteElement == null) return;
             FlagMessage = false;
+            SourceMagniteElement.MouseWheel -= IELScrollContent;
+            if (IELScrollMessage.IsVisibleScrollBar(ScrollOrientation.Vertical))
+                IELScrollMessage.DiactivateVerticalScrollBar();
             DoubleAnimation animation = DoubleAnimateObj.Clone();
             TextBlockMessage.BeginAnimation(MarginProperty, null);
             void SetZOne(object? sender, EventArgs e)
@@ -397,7 +424,7 @@ namespace IEL.UserElementsControl
             animation.From = new(Position.X, Position.Y, 0, 0);
             animation.To = new(Position.X + Offset.X, Position.Y + Offset.Y, 0, 0);
             animation.Duration = TimeSpan.FromMilliseconds(400d);
-            BeginAnimation(MarginProperty, animation);
+            BeginAnimation(MarginProperty, animation, HandoffBehavior.SnapshotAndReplace);
         }
         #endregion
     }

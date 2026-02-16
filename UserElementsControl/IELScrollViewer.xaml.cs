@@ -32,10 +32,5 @@ namespace IEL.UserElementsControl
         {
             InitializeComponent();
         }
-
-        /// <summary>
-        /// Объект реализующий прокрутку
-        /// </summary>
-        public ScrollViewer SourceViewer => MainScrollViewer;
     }
 }
