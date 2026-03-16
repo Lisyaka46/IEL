@@ -98,21 +98,21 @@ namespace IEL.UserElementsControl.Base
                 new(
                     (sender, e) =>
                     {
-                        ((IELScrollViewerBase)sender).MainBorderScrollViewer.Child = (FrameworkElement)e.NewValue;
+                        ((IELScrollViewerBase)sender).MainBorderScrollViewer.Child = (FrameworkElement?)e.NewValue;
                     }));
 
         /// <summary>
         /// Внутренний элемент объекта
         /// </summary>
-        public new FrameworkElement Content
+        public new FrameworkElement? Content
         {
-            get => (FrameworkElement)GetValue(ContentProperty);
+            get => (FrameworkElement?)GetValue(ContentProperty);
             set
             {
                 //if (value is not FrameworkElement) throw new ArgumentException($"Аргумент не является реализуемым типом от {typeof(FrameworkElement)}");
                 if (MainBorderScrollViewer.Child != null)
                     ((FrameworkElement)MainBorderScrollViewer.Child).SizeChanged -= Value_SizeChanged;
-                value.SizeChanged += Value_SizeChanged;
+                value?.SizeChanged += Value_SizeChanged;
                 SetValue(ContentProperty, value);
             }
         }
@@ -299,12 +299,12 @@ namespace IEL.UserElementsControl.Base
         /// <summary>
         /// Количество прокрутки по вертикали
         /// </summary>
-        public double ScrollableWidth => Scrollable.Vertical;
+        public double ScrollableHeight => Scrollable.Vertical;
 
         /// <summary>
         /// Количество прокрутки по горизонтали
         /// </summary>
-        public double ScrollableHeight => Scrollable.Horizontal;
+        public double ScrollableWidth => Scrollable.Horizontal;
 
         /// <summary>
         /// Автоматическое обновление активности горизонтальной прокрутки
@@ -411,11 +411,7 @@ namespace IEL.UserElementsControl.Base
                     double ChangePos = CursorSelectOffsetBorderScroll.Horizontal.Value +
                         (SourcePointCursor.X - CursorSelectPositionBorderScroll.Horizontal.Value.X) * CoefficientScroll.Horizontal;
                     if (ChangePos >= 0d && ChangePos <= Scrollable.Horizontal)
-                    {
                         ScrollToHorizontalOffset(ChangePos);
-                        RectangleHorizontalScrollBorder.Margin =
-                            new(HorizontalOffset * OnePositionScroll.Horizontal, 0, 0, 0);
-                    }
                     SetCursorPos((int)SourcePointCursor.X, (int)CursorSelectPositionBorderScroll.Horizontal.Value.Y);
                 }
             };
@@ -473,11 +469,7 @@ namespace IEL.UserElementsControl.Base
                     double ChangePos = CursorSelectOffsetBorderScroll.Vertical.Value -
                         (CursorSelectPositionBorderScroll.Vertical.Value.Y - SourcePointCursor.Y) * CoefficientScroll.Vertical;
                     if (ChangePos >= 0d && ChangePos <= Scrollable.Vertical)
-                    {
                         ScrollToVerticalOffset(ChangePos);
-                        RectangleVerticalScrollBorder.Margin =
-                            new(0, VerticalOffset * OnePositionScroll.Vertical, 0, 0);
-                    }
                     SetCursorPos((int)CursorSelectPositionBorderScroll.Vertical.Value.X, (int)SourcePointCursor.Y);
                 }
             };
@@ -511,6 +503,7 @@ namespace IEL.UserElementsControl.Base
         /// </summary>
         public double UpdateWidthScrollBar()
         {
+            if (Content == null) return 0d;
             Scrollable.Horizontal = Math.Max(Content.ActualWidth - MainGrid.ActualWidth, 0d);
             if (_IsVisibleScrollBar.Horizontal && !IsCursorUseBorderScroll.Horizontal)
             {
@@ -583,27 +576,18 @@ namespace IEL.UserElementsControl.Base
             else if (Offset <= 0) Offset = 0;
             MainBorderScrollViewer.BeginAnimation(MarginProperty, null);
             MainBorderScrollViewer.Margin = new(-Offset, MainBorderScrollViewer.Margin.Top, 0, 0);
+            RectangleHorizontalScrollBorder.Margin = new(Offset * OnePositionScroll.Horizontal, 0, 0, 0);
         }
 
         /// <summary>
-        /// Осуществить прокрутку по поризонтали вправо относительно силы
+        /// Осуществить прокрутку по горизонтали вправо относительно силы
         /// </summary>
-        public void ScrollToHorizontalRight()
-        {
-            ScrollToHorizontalOffset(HorizontalOffset + ScrollForce);
-            RectangleHorizontalScrollBorder.Margin =
-                new(HorizontalOffset * OnePositionScroll.Horizontal, VerticalOffset, 0, 0);
-        }
+        public void ScrollToHorizontalRight() => ScrollToHorizontalOffset(HorizontalOffset + ScrollForce);
 
         /// <summary>
-        /// Осуществить прокрутку по поризонтали влево относительно силы
+        /// Осуществить прокрутку по горизонтали влево относительно силы
         /// </summary>
-        public void ScrollToHorizontalLeft()
-        {
-            ScrollToHorizontalOffset(HorizontalOffset - ScrollForce);
-            RectangleHorizontalScrollBorder.Margin =
-                new(HorizontalOffset * OnePositionScroll.Horizontal, VerticalOffset, 0, 0);
-        }
+        public void ScrollToHorizontalLeft() => ScrollToHorizontalOffset(HorizontalOffset - ScrollForce);
         #endregion
 
         #region VerticalScrollBar
@@ -612,6 +596,7 @@ namespace IEL.UserElementsControl.Base
         /// </summary>
         public double UpdateHeightScrollBar()
         {
+            if (Content == null) return 0d;
             Scrollable.Vertical = Math.Max(Content.ActualHeight - MainGrid.ActualHeight, 0d);
             if (_IsVisibleScrollBar.Vertical && !IsCursorUseBorderScroll.Vertical)
             {
@@ -685,27 +670,18 @@ namespace IEL.UserElementsControl.Base
             else if (Offset <= 0) Offset = 0;
             MainBorderScrollViewer.BeginAnimation(MarginProperty, null);
             MainBorderScrollViewer.Margin = new(MainBorderScrollViewer.Margin.Left, -Offset, 0, 0);
+            RectangleVerticalScrollBorder.Margin = new(0, Offset * OnePositionScroll.Vertical, 0, 0);
         }
 
         /// <summary>
         /// Осуществить прокрутку по вертикали вниз относительно силы
         /// </summary>
-        public void ScrollToVerticalDown()
-        {
-            ScrollToVerticalOffset(VerticalOffset + ScrollForce);
-            RectangleVerticalScrollBorder.Margin =
-                new(HorizontalOffset, VerticalOffset * OnePositionScroll.Vertical, 0, 0);
-        }
+        public void ScrollToVerticalDown() => ScrollToVerticalOffset(VerticalOffset + ScrollForce);
 
         /// <summary>
         /// Осуществить прокрутку по вертикали вверх относительно силы
         /// </summary>
-        public void ScrollToVerticalUp()
-        {
-            ScrollToVerticalOffset(VerticalOffset - ScrollForce);
-            RectangleVerticalScrollBorder.Margin =
-                new(HorizontalOffset, VerticalOffset * OnePositionScroll.Vertical, 0, 0);
-        }
+        public void ScrollToVerticalUp() => ScrollToVerticalOffset(VerticalOffset - ScrollForce);
         #endregion
     }
 }

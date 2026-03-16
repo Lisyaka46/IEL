@@ -100,6 +100,30 @@ namespace IEL.UserElementsControl
         }
         #endregion
 
+        #region DigitOnly
+        /// <summary>
+        /// Данные конкретного свойства
+        /// </summary>
+        public static readonly DependencyProperty DigitOnlyProperty =
+            DependencyProperty.Register("DigitOnly", typeof(bool), typeof(IELTextBox),
+                new(false,
+                    (sender, e) =>
+                    {
+                    }));
+
+        /// <summary>
+        /// Состояние активности обработки ввода исключительно цифр
+        /// </summary>
+        public bool DigitOnly
+        {
+            get => (bool)GetValue(DigitOnlyProperty);
+            set
+            {
+                SetValue(DigitOnlyProperty, value);
+            }
+        }
+        #endregion
+
         /// <summary>
         /// Сделать фокус на элементе
         /// </summary>
@@ -145,6 +169,11 @@ namespace IEL.UserElementsControl
             {
                 IsFocus = false;
                 SourceBackground.SetUsedState(false);
+            };
+            TextBoxMain.KeyDown += (sender, e) =>
+            {
+                if (DigitOnly)
+                    e.Handled = !((int)e.Key >= 34 && (int)e.Key <= 43);
             };
 
             MouseDown += (sender, e) =>
