@@ -113,6 +113,8 @@ namespace IEL.UserElementsControl.Base
                 if (MainBorderScrollViewer.Child != null)
                     ((FrameworkElement)MainBorderScrollViewer.Child).SizeChanged -= Value_SizeChanged;
                 value?.SizeChanged += Value_SizeChanged;
+                RectangleVerticalScrollBorder.VerticalAlignment = value == null ? VerticalAlignment.Top : value.VerticalAlignment;
+                RectangleVerticalScrollBorder.HorizontalAlignment = value == null ? HorizontalAlignment.Left : value.HorizontalAlignment;
                 SetValue(ContentProperty, value);
             }
         }
@@ -289,12 +291,12 @@ namespace IEL.UserElementsControl.Base
         /// <summary>
         /// Количество прокрутки по вертикали
         /// </summary>
-        public double VerticalOffset => -MainBorderScrollViewer.Margin.Top;
+        public double VerticalOffset => -(Content?.VerticalAlignment == VerticalAlignment.Top ? MainBorderScrollViewer.Margin.Top : MainBorderScrollViewer.Margin.Bottom);
 
         /// <summary>
         /// Количество прокрутки по горизонтали
         /// </summary>
-        public double HorizontalOffset => -MainBorderScrollViewer.Margin.Left;
+        public double HorizontalOffset => -(Content?.HorizontalAlignment == HorizontalAlignment.Left ? MainBorderScrollViewer.Margin.Left : MainBorderScrollViewer.Margin.Right);
 
         /// <summary>
         /// Количество прокрутки по вертикали
@@ -409,6 +411,7 @@ namespace IEL.UserElementsControl.Base
                 {
                     Point SourcePointCursor = PointToScreen(Mouse.GetPosition(this));
                     double ChangePos = CursorSelectOffsetBorderScroll.Horizontal.Value +
+                        (Content?.HorizontalAlignment == HorizontalAlignment.Left ? 1 : -1) * 
                         (SourcePointCursor.X - CursorSelectPositionBorderScroll.Horizontal.Value.X) * CoefficientScroll.Horizontal;
                     if (ChangePos >= 0d && ChangePos <= Scrollable.Horizontal)
                         ScrollToHorizontalOffset(ChangePos);
@@ -466,8 +469,9 @@ namespace IEL.UserElementsControl.Base
                     CursorSelectPositionBorderScroll.Vertical.HasValue && CursorSelectOffsetBorderScroll.Vertical.HasValue)
                 {
                     Point SourcePointCursor = PointToScreen(Mouse.GetPosition(this));
-                    double ChangePos = CursorSelectOffsetBorderScroll.Vertical.Value -
-                        (CursorSelectPositionBorderScroll.Vertical.Value.Y - SourcePointCursor.Y) * CoefficientScroll.Vertical;
+                    double ChangePos = CursorSelectOffsetBorderScroll.Vertical.Value + 
+                    (Content?.VerticalAlignment == VerticalAlignment.Top ? -1 : 1) *
+                    (CursorSelectPositionBorderScroll.Vertical.Value.Y - SourcePointCursor.Y) * CoefficientScroll.Vertical;
                     if (ChangePos >= 0d && ChangePos <= Scrollable.Vertical)
                         ScrollToVerticalOffset(ChangePos);
                     SetCursorPos((int)CursorSelectPositionBorderScroll.Vertical.Value.X, (int)SourcePointCursor.Y);
@@ -521,7 +525,11 @@ namespace IEL.UserElementsControl.Base
                 }
                 if (HorizontalOffset > Scrollable.Horizontal)
                 {
-                    MainBorderScrollViewer.Margin = new(-Scrollable.Horizontal, MainBorderScrollViewer.Margin.Top, 0, 0);
+                    MainBorderScrollViewer.Margin = new(
+                        RectangleHorizontalScrollBorder.HorizontalAlignment == HorizontalAlignment.Left ? -Scrollable.Horizontal : 0,
+                        MainBorderScrollViewer.Margin.Top,
+                        RectangleHorizontalScrollBorder.HorizontalAlignment == HorizontalAlignment.Right ? -Scrollable.Horizontal : 0,
+                        MainBorderScrollViewer.Margin.Bottom);
                     //ThicknessAnimationType.To = new(-Scrollable.Horizontal, MainBorderScrollViewer.Margin.Top, 0, 0);
                     //MainBorderScrollViewer.BeginAnimation(MarginProperty, ThicknessAnimationType);
                 }
@@ -529,7 +537,11 @@ namespace IEL.UserElementsControl.Base
                 {
                     WidthVisual = GridHorizontalScrollBorder.ActualWidth - RectangleHorizontalScrollBorder.Width;
                     OnePositionScroll.Horizontal = WidthVisual / Scrollable.Horizontal;
-                    RectangleHorizontalScrollBorder.Margin = new(HorizontalOffset * OnePositionScroll.Horizontal, 0, 0, 0);
+                    RectangleHorizontalScrollBorder.Margin = new(
+                        RectangleHorizontalScrollBorder.HorizontalAlignment == HorizontalAlignment.Left ? HorizontalOffset * OnePositionScroll.Horizontal : 0,
+                        0,
+                        RectangleHorizontalScrollBorder.HorizontalAlignment == HorizontalAlignment.Right ? HorizontalOffset * OnePositionScroll.Horizontal : 0,
+                        0);
                 }
                 return RectangleHorizontalScrollBorder.Width;
             }
@@ -575,8 +587,16 @@ namespace IEL.UserElementsControl.Base
                 Offset = Scrollable.Horizontal;
             else if (Offset <= 0) Offset = 0;
             MainBorderScrollViewer.BeginAnimation(MarginProperty, null);
-            MainBorderScrollViewer.Margin = new(-Offset, MainBorderScrollViewer.Margin.Top, 0, 0);
-            RectangleHorizontalScrollBorder.Margin = new(Offset * OnePositionScroll.Horizontal, 0, 0, 0);
+            MainBorderScrollViewer.Margin = new(
+                RectangleHorizontalScrollBorder.HorizontalAlignment == HorizontalAlignment.Left ? -Offset : 0,
+                MainBorderScrollViewer.Margin.Top,
+                RectangleHorizontalScrollBorder.HorizontalAlignment == HorizontalAlignment.Right ? -Offset : 0,
+                MainBorderScrollViewer.Margin.Bottom);
+            RectangleHorizontalScrollBorder.Margin = new(
+                RectangleHorizontalScrollBorder.HorizontalAlignment == HorizontalAlignment.Left ? Offset * OnePositionScroll.Horizontal : 0,
+                0,
+                RectangleHorizontalScrollBorder.HorizontalAlignment == HorizontalAlignment.Right ? Offset * OnePositionScroll.Horizontal : 0,
+                0);
         }
 
         /// <summary>
@@ -614,7 +634,11 @@ namespace IEL.UserElementsControl.Base
                 }
                 if (VerticalOffset > Scrollable.Vertical)
                 {
-                    MainBorderScrollViewer.Margin = new(MainBorderScrollViewer.Margin.Left, -Scrollable.Vertical, 0, 0);
+                    MainBorderScrollViewer.Margin = new(
+                        MainBorderScrollViewer.Margin.Left,
+                        RectangleHorizontalScrollBorder.VerticalAlignment == VerticalAlignment.Top ? -Scrollable.Vertical : 0,
+                        MainBorderScrollViewer.Margin.Right,
+                        RectangleHorizontalScrollBorder.VerticalAlignment == VerticalAlignment.Bottom ? -Scrollable.Vertical : 0);
                     //ThicknessAnimationType.To = new(MainBorderScrollViewer.Margin.Left, -Scrollable.Vertical, 0, 0);
                     //MainBorderScrollViewer.BeginAnimation(MarginProperty, ThicknessAnimationType);
                 }
@@ -622,7 +646,11 @@ namespace IEL.UserElementsControl.Base
                 {
                     HeightVisual = GridVerticalScrollBorder.ActualHeight - RectangleVerticalScrollBorder.Height;
                     OnePositionScroll.Vertical = HeightVisual / Scrollable.Vertical;
-                    RectangleVerticalScrollBorder.Margin = new(0, VerticalOffset * OnePositionScroll.Vertical, 0, 0);
+                    RectangleVerticalScrollBorder.Margin = new(
+                        0,
+                        RectangleVerticalScrollBorder.VerticalAlignment == VerticalAlignment.Top ? VerticalOffset * OnePositionScroll.Vertical : 0,
+                        0,
+                        RectangleVerticalScrollBorder.VerticalAlignment == VerticalAlignment.Bottom ? VerticalOffset * OnePositionScroll.Vertical : 0);
                 }
                 return RectangleVerticalScrollBorder.Height;
             }
@@ -669,19 +697,28 @@ namespace IEL.UserElementsControl.Base
                 Offset = Scrollable.Vertical;
             else if (Offset <= 0) Offset = 0;
             MainBorderScrollViewer.BeginAnimation(MarginProperty, null);
-            MainBorderScrollViewer.Margin = new(MainBorderScrollViewer.Margin.Left, -Offset, 0, 0);
-            RectangleVerticalScrollBorder.Margin = new(0, Offset * OnePositionScroll.Vertical, 0, 0);
+            MainBorderScrollViewer.Margin = new(MainBorderScrollViewer.Margin.Left,
+                RectangleVerticalScrollBorder.VerticalAlignment == VerticalAlignment.Top ? -Offset : 0,
+                MainBorderScrollViewer.Margin.Right,
+                RectangleVerticalScrollBorder.VerticalAlignment == VerticalAlignment.Bottom ? -Offset : 0);
+            RectangleVerticalScrollBorder.Margin = new(
+                0,
+                RectangleVerticalScrollBorder.VerticalAlignment == VerticalAlignment.Top ? Offset * OnePositionScroll.Vertical : 0,
+                0,
+                RectangleVerticalScrollBorder.VerticalAlignment == VerticalAlignment.Bottom ? Offset * OnePositionScroll.Vertical : 0);
         }
 
         /// <summary>
         /// Осуществить прокрутку по вертикали вниз относительно силы
         /// </summary>
-        public void ScrollToVerticalDown() => ScrollToVerticalOffset(VerticalOffset + ScrollForce);
+        public void ScrollToVerticalDown() => ScrollToVerticalOffset(Content?.VerticalAlignment == VerticalAlignment.Top ?
+            VerticalOffset + ScrollForce : VerticalOffset - ScrollForce);
 
         /// <summary>
         /// Осуществить прокрутку по вертикали вверх относительно силы
         /// </summary>
-        public void ScrollToVerticalUp() => ScrollToVerticalOffset(VerticalOffset - ScrollForce);
+        public void ScrollToVerticalUp() => ScrollToVerticalOffset(Content?.VerticalAlignment == VerticalAlignment.Top ?
+            VerticalOffset - ScrollForce : VerticalOffset + ScrollForce);
         #endregion
     }
 }
