@@ -14,7 +14,7 @@ namespace IEL.UserElementsControl
         /// Данные конкретного свойства
         /// </summary>
         public static readonly DependencyProperty SourceProperty =
-            DependencyProperty.Register("BorderThicknessGuides", typeof(ImageSource), typeof(IELButtonImage),
+            DependencyProperty.Register("Source", typeof(ImageSource), typeof(IELButtonImage),
                 new(null,
                     (sender, e) =>
                     {
