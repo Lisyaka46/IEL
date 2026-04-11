@@ -130,6 +130,28 @@ namespace IEL.UserElementsControl.Base
         }
         #endregion
 
+        #region IsAnimatedSettingQ
+        /// <summary>
+        /// Значение активности анимирования объекта
+        /// </summary>
+        private bool _IsAnimatedSettingQ = true;
+
+        /// <summary>
+        /// Состояние анимирования настройки Q-логики
+        /// </summary>
+        public bool IsAnimatedSettingQ
+        {
+            get => _IsAnimatedSettingQ;
+            set
+            {
+                SourceBackground.SetActiveSpecrum(StateSpectrum.Default, true);
+                SourceBorderBrush.SetActiveSpecrum(StateSpectrum.Default, true);
+                SourceForeground.SetActiveSpecrum(StateSpectrum.Default, true);
+                _IsAnimatedSettingQ = value;
+            }
+        }
+        #endregion
+
         #endregion
 
         /// <summary>
@@ -139,6 +161,7 @@ namespace IEL.UserElementsControl.Base
         /// <param name="Animated">Состояние анимирования изменения</param>
         public void SetActiveSpecrum(StateSpectrum Spectrum, bool Animated)
         {
+            if (!_IsAnimatedSettingQ) return;
             SourceBackground.SetActiveSpecrum(Spectrum, Animated);
             SourceBorderBrush.SetActiveSpecrum(Spectrum, Animated);
             SourceForeground.SetActiveSpecrum(Spectrum, Animated);

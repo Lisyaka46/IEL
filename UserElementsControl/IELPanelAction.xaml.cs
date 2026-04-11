@@ -373,7 +373,7 @@ namespace IEL.UserElementsControl
         /// <param name="PositionAnimate">Вид расчёта позиционирования панели при её перемещении</param>
         /// <param name="Orientation">Ориентация привязки к объекту</param>
         /// <param name="DependencePointOnSize">Ограничивать позиционирование только внутри объекта</param>
-        public void UsingPanelAction(FrameworkElement ElementVisual, Page PageVisual,
+        public void UsingPanelAction(in FrameworkElement ElementVisual, in Page PageVisual,
             PositionAnimActionPanel PositionAnimate = PositionAnimActionPanel.Cursor,
             OrientationPositionCursor Orientation = OrientationPositionCursor.Empty,
             bool DependencePointOnSize = true)
@@ -397,7 +397,7 @@ namespace IEL.UserElementsControl
         /// <param name="PositionAnimate">Вид расчёта позиционирования панели при её перемещении</param>
         /// <param name="DependencePointOnSize">Ограничивать позиционирование только внутри объекта</param>
         [MethodImpl(MethodImplOptions.AggressiveOptimization)]
-        public void OpenPanelAction(FrameworkElement ElementVisual, Page PageVisual,
+        public void OpenPanelAction(in FrameworkElement ElementVisual, in Page PageVisual,
             PositionAnimActionPanel PositionAnimate = PositionAnimActionPanel.Cursor,
             OrientationPositionCursor Orientation = OrientationPositionCursor.Empty,
             bool DependencePointOnSize = true)
@@ -459,7 +459,7 @@ namespace IEL.UserElementsControl
         /// <param name="PositionAnimate">Вид расчёта позиционирования панели при её перемещении</param>
         /// <param name="DependencePointOnSize">Ограничивать позиционирование только внутри объекта</param>
         /// <param name="RightAlgin">Справой стороны открывать страницу. При нулевом значении задействует позицию курсора</param>
-        public void MoveNextObjectPage(FrameworkElement ElementVisual, Page PageVisual,
+        public void MoveNextObjectPage(in FrameworkElement ElementVisual, in Page PageVisual,
             PositionAnimActionPanel PositionAnimate = PositionAnimActionPanel.Cursor,
             OrientationPositionCursor Orientation = OrientationPositionCursor.Empty,
             bool DependencePointOnSize = true,
@@ -482,7 +482,7 @@ namespace IEL.UserElementsControl
         /// <param name="DependencePointOnSize">Ограничивать позиционирование только внутри объекта</param>
         /// <param name="RightAlgin">Справой стороны открывать страницу или нет</param>
         [NonEvent]
-        public void NextPageInObject([NotNull] Page PageAction,
+        public void NextPageInObject([NotNull] in Page PageAction,
             OrientationPositionCursor PositionAnimate = OrientationPositionCursor.Empty,
             bool DependencePointOnSize = true,
             bool RightAlgin = true)
@@ -561,7 +561,7 @@ namespace IEL.UserElementsControl
         /// <param name="PositionAnimate">Вид расчёта позиционирования панели при её перемещении</param>
         /// <param name="PositionTo">Позиция перемещения</param>
         /// <param name="DependencePointOnSize">Состояние зависимости позиции объекта от размера элемента "<paramref name="Element"/>"</param>
-        private void AnimationMovePanelAction(FrameworkElement Element, sbyte PositionAnimate, Point PositionTo,
+        private void AnimationMovePanelAction(in FrameworkElement Element, sbyte PositionAnimate, Point PositionTo,
             bool DependencePointOnSize = true)
         {
             ThicknessAnimation animation = ThicknessAnimate.Clone();
