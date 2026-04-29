@@ -239,6 +239,33 @@ namespace IEL.UserElementsControl.Base
         }
         #endregion
 
+        #region ClipToBoundsContainer
+        /// <summary>
+        /// Данные конкретного свойства
+        /// </summary>
+        public static readonly DependencyProperty ClipToBoundsContainerProperty =
+            DependencyProperty.Register("ClipToBoundsContainer", typeof(bool), typeof(IELScrollViewerBase),
+                new(true,
+                    (sender, e) =>
+                    {
+
+                    }));
+
+        /// <summary>
+        /// Отображение элементов за границами контейнера
+        /// </summary>
+        public bool ClipToBoundsContainer
+        {
+            get => (bool)GetValue(ClipToBoundsContainerProperty);
+            set
+            {
+                MainGrid.ClipToBounds = value;
+                MainBorderScrollViewer.ClipToBounds = value;
+                SetValue(ClipToBoundsContainerProperty, value);
+            }
+        }
+        #endregion
+
         #endregion
 
         /// <summary>

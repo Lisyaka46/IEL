@@ -1,6 +1,8 @@
 ﻿using IEL.UserElementsControl.Base;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 
 namespace IEL.UserElementsControl
 {
@@ -45,6 +47,29 @@ namespace IEL.UserElementsControl
 
             #region Foreground
             #endregion
+        }
+
+        /// <summary>
+        /// Изменить отображение изображения
+        /// </summary>
+        /// <param name="Source">Устанавливаемая картинка</param>
+        /// <param name="animation">Анимация которая управляет изменением</param>
+        public void ChangeImageIcon(in ImageSource Source, in DoubleAnimation? animation)
+        {
+            if (animation == null)
+            {
+                ImageButton.Source = Source;
+                return;
+            }
+            ImageButton.Opacity = 0d;
+            ImageButton.Source = Source;
+            animation.Duration = TimeSpan.FromMilliseconds(1000d);
+            animation.To = 1d;
+            animation.EasingFunction = new CircleEase()
+            {
+                EasingMode = EasingMode.EaseOut,
+            };
+            ImageButton.BeginAnimation(OpacityProperty, animation);
         }
     }
 }
