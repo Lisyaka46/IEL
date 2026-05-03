@@ -182,6 +182,7 @@ namespace IEL.UserElementsControl.Base
                 BorderBrush = SourceBorderBrush.SourceBrush,
                 HorizontalAlignment = HorizontalAlignment.Stretch,
                 VerticalAlignment = VerticalAlignment.Stretch,
+                Focusable = false
             };
             SourceTimer = new()
             {

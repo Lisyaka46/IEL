@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Animation;
+using System.Windows.Navigation;
 
 namespace IEL.UserElementsControl
 {
@@ -37,22 +38,17 @@ namespace IEL.UserElementsControl
         /// <summary>
         /// Объект актуального окна страницы
         /// </summary>
-        internal Frame ActualFrame => PanelVerschachtelung % 2 == 0 ? ref FrameActionPanelLeft : ref FrameActionPanelRight;
+        internal Frame ActualFrame => PanelVerschachtelung % 2 == 0 ? FrameActionPanelLeft : FrameActionPanelRight;
 
         /// <summary>
         /// Объект предыдущего окна страницы
         /// </summary>
-        internal Frame BackFrame => !(PanelVerschachtelung % 2 == 0) ? ref FrameActionPanelLeft : ref FrameActionPanelRight;
+        internal Frame BackFrame => !(PanelVerschachtelung % 2 == 0) ? FrameActionPanelLeft : FrameActionPanelRight;
 
         /// <summary>
         /// Объект актуальной страницы
         /// </summary>
-        internal Page? ActualPage => ActualFrame.Content as Page;
-
-        /// <summary>
-        /// Объект предыдущей страницы
-        /// </summary>
-        internal Page? BackPage => BackFrame.Content as Page;
+        public Page? ActualPage => ActualFrame.Content as Page;
 
         /// <summary>
         /// Левая анимация переключателя
@@ -137,6 +133,20 @@ namespace IEL.UserElementsControl
                 if (ActualFrame.Equals(FrameActionPanelRight))
                     SizeChanged?.Invoke(new(FrameActionPanelRight.ActualWidth, FrameActionPanelRight.ActualHeight));
             };
+            FrameActionPanelLeft.NavigationService.Navigating += (sender, e) =>
+            {
+                if (e.NavigationMode == NavigationMode.Back)
+                {
+                    e.Cancel = true;
+                }
+            };
+            FrameActionPanelRight.NavigationService.Navigating += (sender, e) =>
+            {
+                if (e.NavigationMode == NavigationMode.Back)
+                {
+                    e.Cancel = true;
+                }
+            };
         }
 
         /// <summary>
@@ -153,14 +163,15 @@ namespace IEL.UserElementsControl
             ActualFrame.Opacity = 0d;
             Canvas.SetZIndex(BackFrame, 0);
             Canvas.SetZIndex(ActualFrame, 1);
-            BackFrame.NavigationService.Navigate(null);
+            BackFrame.Content = null;
             BackFrame.IsEnabled = false;
+            BackFrame.NavigationService.RemoveBackEntry();
             ActualFrame.IsEnabled = true;
             ActualFrame.BeginAnimation(MarginProperty, null);
             ActualFrame.Margin = !RightAlign ? LeftAnimateSwitch : RightAnimateSwitch;
             Content.HorizontalAlignment = HorizontalAlignment;
             Content.VerticalAlignment = VerticalAlignment;
-            ActualFrame.Navigate(Content);
+            ActualFrame.Content = Content;
             ActualFrame.UpdateLayout();
 
             animation_thickness.To = !RightAlign ? RightAnimateSwitch : LeftAnimateSwitch;
@@ -192,10 +203,9 @@ namespace IEL.UserElementsControl
         /// </summary>
         public void ClosePage()
         {
-            BackFrame.Navigate(null);
-            BackFrame.Source = null;
-            ActualFrame.Navigate(null);
-            ActualFrame.Source = null;
+            BackFrame.NavigationService.RemoveBackEntry();
+            BackFrame.Content = null;
+            ActualFrame.Content = null;
         }
     }
 }

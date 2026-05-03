@@ -445,8 +445,7 @@ namespace IEL.UserElementsControl
             ActualVisualPage = null;
             PanelActionActivate = false;
 
-            MainPageController.BackFrame.Navigate(null);
-            MainPageController.ActualFrame.Navigate(null);
+            MainPageController.ClosePage();
         }
 
         #region NextPage
