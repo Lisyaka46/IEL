@@ -53,7 +53,7 @@ namespace IEL.UserElementsControl.Base
         /// <summary>
         /// Объект события активации правым щелчком мыши
         /// </summary>
-        public ActivateHandler? OnActivateMouseRight { get; set; }
+        public event ActivateHandler OnActivateMouseRight;
         #endregion
 
         #region Properties
@@ -226,6 +226,34 @@ namespace IEL.UserElementsControl.Base
         protected event IELSettingValueChangedHandler<StateVisualGuide>? VisualGuideChanged;
         #endregion
 
+        #region ContextMenu
+        /// <summary>
+        /// Данные конкретного свойства
+        /// </summary>
+        public static readonly new DependencyProperty ContextMenuProperty =
+            DependencyProperty.Register("ContextMenu", typeof(StackPanel), typeof(IELButtonBase),
+                new());
+
+        /// <summary>
+        /// Отображаемый объект контекстного меню
+        /// </summary>
+        public new StackPanel? ContextMenu
+        {
+            get => (StackPanel?)GetValue(ContextMenuProperty);
+            set => SetValue(ContextMenuProperty, value);
+        }
+
+        /// <summary>
+        /// Объект события активации контекстного меню
+        /// </summary>
+        public new event EventHandler<StackPanel>? ContextMenuOpening;
+
+        /// <summary>
+        /// Объект события активации закрытия контекстного меню
+        /// </summary>
+        public new event EventHandler<StackPanel>? ContextMenuClosing;
+        #endregion
+
         #endregion
 
         /// <summary>
@@ -233,6 +261,11 @@ namespace IEL.UserElementsControl.Base
         /// </summary>
         protected IELButtonBase()
         {
+            OnActivateMouseRight += (sender, e) =>
+            {
+                if (ContextMenu != null)
+                    ContextMenuOpening?.Invoke(this, ContextMenu);
+            };
             Base_HeadGridButton = new()
             {
                 HorizontalAlignment = HorizontalAlignment.Stretch,
