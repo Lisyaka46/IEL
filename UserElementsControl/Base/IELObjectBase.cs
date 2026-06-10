@@ -130,6 +130,28 @@ namespace IEL.UserElementsControl.Base
         }
         #endregion
 
+        #region IsEnabledSettingQ
+        /// <summary>
+        /// Данные конкретного свойства
+        /// </summary>
+        public static readonly DependencyProperty IsEnabledSettingQProperty =
+            DependencyProperty.Register("IsEnabledSettingQ", typeof(bool), typeof(IELObjectBase),
+                new(true,
+                    (sender, e) =>
+                    {
+                        ((IELObjectBase)sender).SetActiveSpecrum(StateSpectrum.Default, false);
+                    }));
+
+        /// <summary>
+        /// Состояние использования настроек Q
+        /// </summary>
+        public bool IsEnabledSettingQ
+        {
+            get => (bool)GetValue(IsEnabledSettingQProperty);
+            set => SetValue(IsEnabledSettingQProperty, value);
+        }
+        #endregion
+
         #region IsAnimatedSettingQ
         /// <summary>
         /// Значение активности анимирования объекта
@@ -161,10 +183,16 @@ namespace IEL.UserElementsControl.Base
         /// <param name="Animated">Состояние анимирования изменения</param>
         public void SetActiveSpecrum(StateSpectrum Spectrum, bool Animated)
         {
-            if (!_IsAnimatedSettingQ) return;
+            if (!IsEnabledSettingQ) return;
             SourceBackground.SetActiveSpecrum(Spectrum, Animated);
             SourceBorderBrush.SetActiveSpecrum(Spectrum, Animated);
             SourceForeground.SetActiveSpecrum(Spectrum, Animated);
         }
+
+        /// <summary>
+        /// Активировать визуализацию спектра для всех Q сегментов в зависимости от настройки анимирования объекта
+        /// </summary>
+        /// <param name="Spectrum">Устанавливаемый спектр</param>
+        public void SetActiveSpecrum(StateSpectrum Spectrum) => SetActiveSpecrum(Spectrum, _IsAnimatedSettingQ);
     }
 }

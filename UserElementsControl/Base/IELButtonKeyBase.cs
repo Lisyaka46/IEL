@@ -237,7 +237,7 @@ namespace IEL.UserElementsControl.Base
             {
                 if (IsEnabled && OnActivateMouseLeft != null)
                 {
-                    SetActiveSpecrum(StateSpectrum.Select, true);
+                    SetActiveSpecrum(StateSpectrum.Select);
                     OnActivateMouseLeft.Invoke(this, e);
                 }
             };
@@ -246,7 +246,7 @@ namespace IEL.UserElementsControl.Base
             {
                 if (IsEnabled && OnActivateMouseRight != null)
                 {
-                    SetActiveSpecrum(StateSpectrum.Select, true);
+                    SetActiveSpecrum(StateSpectrum.Select);
                     OnActivateMouseRight.Invoke(this, e);
                 }
             };
@@ -260,9 +260,10 @@ namespace IEL.UserElementsControl.Base
         [MTAThread()]
         public void BlinkAnimation()
         {
-            SourceBackground.SetActiveSpecrum(StateSpectrum.Used, false);
+            if (IsAnimatedSettingQ)
+                SourceBackground.SetActiveSpecrum(StateSpectrum.Used, false);
 
-            SetActiveSpecrum(StateSpectrum.Select, true);
+            SetActiveSpecrum(StateSpectrum.Select);
         }
 
         /// <summary>
@@ -271,7 +272,7 @@ namespace IEL.UserElementsControl.Base
         [MTAThread()]
         public void UnfocusAnimation()
         {
-            SetActiveSpecrum(StateSpectrum.Default, true);
+            SetActiveSpecrum(StateSpectrum.Default);
         }
     }
 }

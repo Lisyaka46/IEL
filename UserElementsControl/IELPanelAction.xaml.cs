@@ -251,9 +251,9 @@ namespace IEL.UserElementsControl
                         SelectButtonKeyboardMode = false;
                         if (ButtonKeySelect != null)
                         {
-                            ((ActivateRightClickKeyboardMode ? ButtonKeySelect.OnActivateMouseRight : ButtonKeySelect.OnActivateMouseLeft) ??
-                                throw new Exception("Недопустимое значение объекта")).Invoke(
-                                    ButtonKeySelect, new(Mouse.PrimaryDevice, 0, ActivateRightClickKeyboardMode ? MouseButton.Right : MouseButton.Left), true);
+                            IELButtonKeyBase.ActivateHandler? Handler = ActivateRightClickKeyboardMode ? ButtonKeySelect.OnActivateMouseRight : ButtonKeySelect.OnActivateMouseLeft;
+                            Handler?.Invoke(ButtonKeySelect,
+                                new(Mouse.PrimaryDevice, 0, ActivateRightClickKeyboardMode ? MouseButton.Right : MouseButton.Left), true);
                             ButtonKeySelect.UnfocusAnimation();
                         }
                     }

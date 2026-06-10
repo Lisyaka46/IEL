@@ -359,7 +359,7 @@ namespace IEL.UserElementsControl.Base
             {
                 if (IsEnabled && OnActivateMouseLeft != null)
                 {
-                    SetActiveSpecrum(StateSpectrum.Select, true);
+                    SetActiveSpecrum(StateSpectrum.Select);
                     OnActivateMouseLeft.Invoke(this, e);
                 }
             };
@@ -368,7 +368,7 @@ namespace IEL.UserElementsControl.Base
             {
                 if (IsEnabled && OnActivateMouseRight != null)
                 {
-                    SetActiveSpecrum(StateSpectrum.Select, true);
+                    SetActiveSpecrum(StateSpectrum.Select);
                     OnActivateMouseRight.Invoke(this, e);
                 }
             };

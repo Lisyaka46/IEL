@@ -198,7 +198,7 @@ namespace IEL.UserElementsControl.Base
             {
                 if (IsEnabled)
                 {
-                    SetActiveSpecrum(StateSpectrum.Select, true);
+                    SetActiveSpecrum(StateSpectrum.Select);
                     SourceTimer.Start();
                 }
             };
@@ -207,7 +207,7 @@ namespace IEL.UserElementsControl.Base
             {
                 if (IsEnabled)
                 {
-                    SetActiveSpecrum(StateSpectrum.Default, true);
+                    SetActiveSpecrum(StateSpectrum.Default);
                     SourceTimer.Stop();
                 }
             };
@@ -217,7 +217,7 @@ namespace IEL.UserElementsControl.Base
                 SourceTimer.Stop();
                 Cursor = (bool)e.NewValue ? Cursors.Hand : Cursors.No;
                 StateSpectrum Value = (bool)e.NewValue ? StateSpectrum.Default : StateSpectrum.NotEnabled;
-                SetActiveSpecrum(Value, true);
+                SetActiveSpecrum(Value);
             };
             SetValue(ContentControl.ContentProperty, Base_BorderContainer);
         }
