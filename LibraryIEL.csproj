@@ -10,7 +10,7 @@
     <RepositoryUrl>https://github.com/Lisyaka46/IEL</RepositoryUrl>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	<PackageId>IEL</PackageId>
-	<Title>OperPageLesAPI</Title>
+	<Title>InterfaceELement</Title>
 	<Version>1.0.0</Version>
 	<Description>Библиотека InterfaceELement предоставляет доступ к переопределённым объектам интерфейса WPF</Description>
   </PropertyGroup>
