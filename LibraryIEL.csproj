@@ -11,8 +11,19 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	<PackageId>IEL</PackageId>
 	<Title>InterfaceELement</Title>
-	<Version>1.0.0</Version>
-	<Description>Библиотека InterfaceELement предоставляет доступ к переопределённым объектам интерфейса WPF</Description>
+	<Version>1.0.2</Version>
+	<Description>InterfaceELement - Библиотека переопределённых объектов интерфейса WPF</Description>
+	<!--<PackageIcon>Icon.png</PackageIcon>-->
+	<PackageTags>WPF;Library</PackageTags>
+
+	<!-- Атрибуты автора и компании -->
+	<Authors>Lisyaka46</Authors>
+	<!--<Company>Lisyaka46</Company>-->
+	<Copyright>Copyright (c) 2026 Lisyaka46</Copyright>
+
+	<!-- Ссылка на репозиторий (чтобы GitHub связался с пакетом) -->
+	<RepositoryUrl>https://github.com/Lisyaka46/IEL</RepositoryUrl>
+	<RepositoryType>git</RepositoryType>
   </PropertyGroup>
 
   <ItemGroup>
