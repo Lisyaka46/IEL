@@ -275,8 +275,8 @@ namespace IEL.UserElementsControl
             Element.MouseWheel += IELScrollContent;
             if (GridMessage.ActualHeight < TextBlockMessage.ActualHeight)
             {
-                IELScrollMessage.ActivateVerticalScrollBar();
-                IELScrollMessage.UpdateHeightScrollBar();
+                //IELScrollMessage.ActivateVerticalScrollBar();
+                //IELScrollMessage.UpdateHeightScrollBar();
             }
             IELScrollMessage.ScrollToVerticalOffset(0d);
             #region Auto
@@ -310,11 +310,11 @@ namespace IEL.UserElementsControl
         /// <param name="e"></param>
         private void IELScrollContent(object sender, MouseWheelEventArgs e)
         {
-            if (IELScrollMessage.IsVisibleScrollBar(ScrollOrientation.Vertical))
-            {
-                if (e.Delta < 0) IELScrollMessage.ScrollToVerticalDown();
-                else IELScrollMessage.ScrollToVerticalUp();
-            }
+            //if (IELScrollMessage.IsVisibleScrollBar(ScrollOrientation.Vertical))
+            //{
+            //    //if (e.Delta < 0) IELScrollMessage.ScrollToVerticalDown();
+            //    //else IELScrollMessage.ScrollToVerticalUp();
+            //}
         }
 
         /// <summary>
@@ -339,8 +339,8 @@ namespace IEL.UserElementsControl
             if (!FlagMessage || SourceMagniteElement == null) return;
             FlagMessage = false;
             SourceMagniteElement.MouseWheel -= IELScrollContent;
-            if (IELScrollMessage.IsVisibleScrollBar(ScrollOrientation.Vertical))
-                IELScrollMessage.DiactivateVerticalScrollBar();
+            //if (IELScrollMessage.IsVisibleScrollBar(ScrollOrientation.Vertical))
+            //    IELScrollMessage.DiactivateVerticalScrollBar();
             DoubleAnimation animation = DoubleAnimateObj.Clone();
             TextBlockMessage.BeginAnimation(MarginProperty, null);
             void SetZOne(object? sender, EventArgs e)

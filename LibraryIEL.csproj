@@ -7,13 +7,12 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Platforms>x64</Platforms>
     <Configurations>Debug;Release</Configurations>
-    <RepositoryUrl>https://github.com/Lisyaka46/IEL</RepositoryUrl>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	<PackageId>IEL</PackageId>
 	<Title>InterfaceELement</Title>
-	<Version>1.0.2</Version>
+	<Version>1.0.3</Version>
 	<Description>InterfaceELement - Библиотека переопределённых объектов интерфейса WPF</Description>
-	<!--<PackageIcon>Icon.png</PackageIcon>-->
+	<PackageIcon>IEL.png</PackageIcon>
 	<PackageTags>WPF;Library</PackageTags>
 
 	<!-- Атрибуты автора и компании -->
@@ -25,6 +24,16 @@
 	<RepositoryUrl>https://github.com/Lisyaka46/IEL</RepositoryUrl>
 	<RepositoryType>git</RepositoryType>
   </PropertyGroup>
+  <ItemGroup>
+    <None Remove="IEL.png"/>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="IEL.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <Pack>true</Pack>
+      <PackagePath>\</PackagePath>		        
+    </Resource>
+  </ItemGroup>
 
   <ItemGroup>
     <Compile Update="GUI\BlockInfoImage.xaml.cs">

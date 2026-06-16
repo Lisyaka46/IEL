@@ -9,7 +9,7 @@
     mc:Ignorable="d">
     <Border x:Name="BorderMessage" CornerRadius="3,13,13,13" BorderThickness="2,2,2,2" BorderBrush="Black" Background="#FFE4BDBD" HorizontalAlignment="Left">
         <Grid x:Name="GridMessage" ClipToBounds="True">
-            <IEL:IELScrollViewer x:Name="IELScrollMessage" AutoUpdateVisibleHorizontalScroll="False" AutoUpdateVisibleVerticalScroll="False" Margin="5,5,5,5"/>
+            <IEL:IELScrollViewer x:Name="IELScrollMessage" Margin="5,5,5,5"/>
         </Grid>
     </Border>
 </Base:IELObjectBase>
