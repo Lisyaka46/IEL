@@ -9,7 +9,7 @@ namespace IEL.UserElementsControl
     /// <summary>
     /// Логика взаимодействия для IELPageController.xaml
     /// </summary>
-    public partial class IELPageController : UserControl
+    public partial class IELContentController : UserControl
     {
 
         /// <summary>
@@ -114,7 +114,7 @@ namespace IEL.UserElementsControl
         /// <summary>
         /// Инициализировать объект интерфейса. Контроллер страничных объектов
         /// </summary>
-        public IELPageController()
+        public IELContentController()
         {
             InitializeComponent();
             LeftAnimateSwitch = new(0);
@@ -154,7 +154,7 @@ namespace IEL.UserElementsControl
         /// </summary>
         /// <param name="Content">Новая страница</param>
         /// <param name="RightAlign">Правая ориентация движения</param>
-        public void NextPage([NotNull()] Page Content, bool RightAlign = true)
+        public void NextElement([NotNull()] Page Content, bool RightAlign = true)
         {
             DoubleAnimation animation_double = DoubleAnimate.Clone();
             ThicknessAnimation animation_thickness = ThicknessAnimate.Clone();
@@ -201,7 +201,7 @@ namespace IEL.UserElementsControl
         /// <summary>
         /// Закрыть элемент фрейма
         /// </summary>
-        public void ClosePage()
+        public void CloseElement()
         {
             BackFrame.NavigationService.RemoveBackEntry();
             BackFrame.Content = null;

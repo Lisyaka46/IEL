@@ -58,6 +58,7 @@ namespace IEL.UserElementsControl
                             Element.RectangleHorizontalScroll.HorizontalAlignment =
                                 Value.HorizontalAlignment is HorizontalAlignment.Left or HorizontalAlignment.Right ?
                                 Value.HorizontalAlignment : HorizontalAlignment.Left;
+                            Element.MainGrid.ClipToBounds = Value.ClipToBounds;
                         }
                     }));
 
@@ -400,7 +401,7 @@ namespace IEL.UserElementsControl
         /// <param name="Offset">Смещение прокрутки по горизонтали</param>
         public void ScrollToHorizontalOffset(double Offset)
         {
-            if (double.IsNaN(MaxHorizontalOffset) || ActualHorizontalOffset == Offset || Content == null) return;
+            if (double.IsNaN(MaxHorizontalOffset) || ActualHorizontalOffset == Offset || Content == null || MaxHorizontalOffset < 0d) return;
             Offset = Math.Clamp(Offset, 0d, MaxHorizontalOffset);
             RectangleHorizontalScroll.Margin = new(
                 Content.HorizontalAlignment == HorizontalAlignment.Left ? Offset : 0d,
@@ -424,7 +425,7 @@ namespace IEL.UserElementsControl
         /// <param name="Offset">Смещение прокрутки по вертикали</param>
         public void ScrollToVerticalOffset(double Offset)
         {
-            if (double.IsNaN(MaxVerticalOffset) || ActualVerticalOffset == Offset || Content == null) return;
+            if (double.IsNaN(MaxVerticalOffset) || ActualVerticalOffset == Offset || Content == null || MaxVerticalOffset < 0d) return;
             Offset = Math.Clamp(Offset, 0d, MaxVerticalOffset);
             RectangleVerticalScroll.Margin = new(
                 RectangleVerticalScroll.Margin.Left,

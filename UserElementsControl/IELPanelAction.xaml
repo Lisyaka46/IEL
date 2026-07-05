@@ -16,7 +16,7 @@
     </B.FocusVisualStyle>-->
     <Grid x:Name="GridActionPanel" Focusable="True">
         <Viewbox VerticalAlignment="Top" HorizontalAlignment="Center">
-            <GUI:IELPageController x:Name="MainPageController"/>
+            <GUI:IELContentController x:Name="MainPageController"/>
         </Viewbox>
         <TextBlock x:Name="TextBlockRightButtonIndicatorKey" HorizontalAlignment="Right" Text="0" VerticalAlignment="Bottom" Panel.ZIndex="2" FontFamily="Bahnschrift SemiBold" FontSize="16" Foreground="White" TextTrimming="WordEllipsis" TextAlignment="Right"/>
     </Grid>

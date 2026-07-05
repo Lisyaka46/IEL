@@ -15,8 +15,6 @@
         <Rectangle x:FieldModifier="private" x:Name="RectangleHorizontalScroll" Fill="White" RadiusX="5" RadiusY="5" HorizontalAlignment="Left" Height="{Binding Height, ElementName=ContainerHorizontalScroll}" Canvas.Left="0" Canvas.Top="0"/>
         <Rectangle x:FieldModifier="private" x:Name="RectangleVerticalScroll" Fill="White" VerticalAlignment="Top" RadiusX="5" RadiusY="5" Width="{Binding Width, ElementName=ContainerVerticalScroll}" Canvas.Left="0" Canvas.Top="0" Grid.Row="1" Grid.Column="1"/>
         <Rectangle x:FieldModifier="private" x:Name="Plug" Grid.Row="0" Fill="Black" Grid.Column="1" StrokeThickness="0" Margin="1,1,1,1"/>
-        <Grid Grid.Row="1" ClipToBounds="True">
-            <Border x:FieldModifier="private" x:Name="UserControlContent" ClipToBounds="True"/>
-        </Grid>
+        <Border x:FieldModifier="private" x:Name="UserControlContent" Grid.Row="1"/>
     </Grid>
 </UserControl>

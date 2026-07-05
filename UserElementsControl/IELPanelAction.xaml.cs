@@ -445,7 +445,7 @@ namespace IEL.UserElementsControl
             ActualVisualPage = null;
             PanelActionActivate = false;
 
-            MainPageController.ClosePage();
+            MainPageController.CloseElement();
         }
 
         #region NextPage
@@ -487,7 +487,7 @@ namespace IEL.UserElementsControl
             bool RightAlgin = true)
         {
             ActualVisualPage = PageAction;
-            MainPageController.NextPage(PageAction, RightAlgin);
+            MainPageController.NextElement(PageAction, RightAlgin);
             UpdateVisualKeyboardMode(PageAction, ActiveKeyboardMode);
 
             UpdateSizeFromAnimate(new(PageAction.Width, PageAction.Height));
