@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows.Media;
+using WnColor = System.Windows.Media.Color;
 
 namespace IEL.CORE.Classes
 {
@@ -204,6 +205,29 @@ namespace IEL.CORE.Classes
             if (ByteColorData == null || ByteColorData.Length != CountSpectrumColor || ByteColorData.Any(i => i == null || i.Length != CountBytesFromColor))
                 throw new Exception($"Не хватает данных, массив не имеет размеры {CountSpectrumColor}/{CountBytesFromColor}");
             Data = ByteColorData;
+        }
+
+        /// <summary>
+        /// Инициализировать управляемый объект данных цветовой палитры отображения объекта<br/>
+        /// с константным значением цвета
+        /// </summary>
+        /// <remarks>
+        /// Используется 4 байта для цвета
+        /// <b> | A  R  G  B | </b>
+        /// </remarks>
+        /// <param name="ColorDefault">Цвет состояния покоя</param>
+        /// <param name="ColorSelect">Цвет выделения элемента</param>
+        /// <param name="ColorUsed">Цвет нажатого элемента</param>
+        /// <param name="ColorNotEnabled">Цвет отключённого элемента</param>
+        public QData(WnColor ColorDefault, WnColor ColorSelect, WnColor ColorUsed, WnColor ColorNotEnabled)
+        {
+            Data =
+            [
+                [ColorDefault.A, ColorDefault.R, ColorDefault.G, ColorDefault.B],
+                [ColorSelect.A, ColorSelect.R, ColorSelect.G, ColorSelect.B],
+                [ColorUsed.A, ColorUsed.R, ColorUsed.G, ColorUsed.B],
+                [ColorNotEnabled.A, ColorNotEnabled.R, ColorNotEnabled.G, ColorNotEnabled.B],
+            ];
         }
 
         /// <summary>

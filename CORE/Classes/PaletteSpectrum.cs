@@ -5,7 +5,7 @@ using System.IO;
 namespace IEL.CORE.Classes
 {
     /// <summary>
-    /// Объект элемента палитры
+    /// Объект спектра палитры
     /// </summary>
     public class PaletteSpectrum : ICloneable
     {
