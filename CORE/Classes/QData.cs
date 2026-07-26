@@ -239,12 +239,14 @@ namespace IEL.CORE.Classes
         /// | A  R  G  B |<br/>
         /// <br/>
         /// | 0  0  0  0 | - Default / Select / Used / NotEnabled<br/>
+        /// или<br/>
+        /// | 0  0  0  0 | x4 - Default(1) / Select(2) / Used(3) / NotEnabled(4) (byte[16])<br/>
         /// </b>
         /// </remarks>
         /// <param name="ByteColorData">Массив байтовых значений цвета</param>
         public QData(byte[] ByteColorData)
         {
-            if (ByteColorData.Length == 4)
+            if (ByteColorData.Length == CountBytesFromColor)
             {
                 Data =
                     [
@@ -254,7 +256,17 @@ namespace IEL.CORE.Classes
                     ByteColorData,
                     ];
             }
-            else throw new Exception("Не хватает данных, массив не имеет размера 4");
+            else if (ByteColorData.Length == CountBytesFromColor * CountSpectrumColor)
+            {
+                Data =
+                    [
+                    ByteColorData[0..4],
+                    ByteColorData[4..8],
+                    ByteColorData[8..12],
+                    ByteColorData[12..16],
+                    ];
+            }
+            else throw new Exception("Несоответствие размеру данных");
         }
     }
 }
