@@ -18,7 +18,7 @@ namespace IEL.UserElementsControl.Base
         /// </summary>
         public static readonly DependencyProperty PaletteElementProperty =
             DependencyProperty.Register("PaletteElement", typeof(PaletteSpectrum), typeof(IELObjectBase),
-                new(new PaletteSpectrum(),
+                new(PaletteSpectrum.UnknownPaletteSpectrum,
                     (sender, e) =>
                     {
                         PaletteSpectrum palette = (PaletteSpectrum)e.NewValue;
@@ -44,14 +44,14 @@ namespace IEL.UserElementsControl.Base
         /// <summary>
         /// Объект настройки анимации отображения фона в объекте
         /// </summary>
-        public BrushSettingQ SourceBackground { get; } = new();
+        public BrushSettingQ SourceBackground { get; } = new(PaletteSpectrum.DefaultBG);
 
         /// <summary>
         /// Данные конкретного свойства
         /// </summary>
         public static readonly new DependencyProperty BackgroundProperty =
             DependencyProperty.Register("Background", typeof(QData), typeof(IELObjectBase),
-                new(new QData(),
+                new(PaletteSpectrum.DefaultBG,
                     (sender, e) =>
                     {
                         ((IELObjectBase)sender).SourceBackground.ChangeSourceQData((QData)e.NewValue);
@@ -74,14 +74,14 @@ namespace IEL.UserElementsControl.Base
         /// <summary>
         /// Объект настройки анимирования отображения границ в объекте
         /// </summary>
-        public BrushSettingQ SourceBorderBrush { get; } = new();
+        public BrushSettingQ SourceBorderBrush { get; } = new(PaletteSpectrum.DefaultBB);
 
         /// <summary>
         /// Данные конкретного свойства
         /// </summary>
         public static readonly new DependencyProperty BorderBrushProperty =
             DependencyProperty.Register("BorderBrush", typeof(QData), typeof(IELObjectBase),
-                new(new QData(),
+                new(PaletteSpectrum.DefaultBB,
                     (sender, e) =>
                     {
                         ((IELObjectBase)sender).SourceBorderBrush.ChangeSourceQData((QData)e.NewValue);
@@ -104,14 +104,14 @@ namespace IEL.UserElementsControl.Base
         /// <summary>
         /// Объект настройки анимирования отображения текста в объекте
         /// </summary>
-        public BrushSettingQ SourceForeground { get; } = new();
+        public BrushSettingQ SourceForeground { get; } = new(PaletteSpectrum.DefaultFG);
 
         /// <summary>
         /// Данные конкретного свойства
         /// </summary>
         public static readonly new DependencyProperty ForegroundProperty =
             DependencyProperty.Register("Foreground", typeof(QData), typeof(IELObjectBase),
-                new(new QData(),
+                new(PaletteSpectrum.DefaultFG,
                     (sender, e) =>
                     {
                         ((IELObjectBase)sender).SourceForeground.ChangeSourceQData((QData)e.NewValue);

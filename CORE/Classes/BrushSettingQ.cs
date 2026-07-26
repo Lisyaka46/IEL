@@ -1,4 +1,5 @@
 ﻿using IEL.CORE.Enums;
+using System.ComponentModel;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using static IEL.CORE.Classes.QData;
@@ -37,9 +38,10 @@ namespace IEL.CORE.Classes
         /// <br/>Определяется <b>CountSpectrumColor</b> количество спектров по <b>CountBytesFromColor</b> значениям цвета
         /// </remarks>
         /// <param name="NewObj">Опорный экземпляр значений</param>
-        public void ChangeSourceQData(QData NewObj)
+        public void ChangeSourceQData(in QData NewObj)
         {
-            Source.Data = NewObj.Data;
+            NewObj.Default = Colors.PeachPuff;
+            Source.Data = NewObj.Data[..];
             if (ActiveSpectrum != StateSpectrum.Custom)
                 Source.ChangedData?.Invoke((EnumDataSpectrum)ActiveSpectrum - 1);
         }
@@ -197,52 +199,9 @@ namespace IEL.CORE.Classes
         /// <summary>
         /// Инициализация объекта цветовых настроек по умолчанию
         /// </summary>
-        public BrushSettingQ()
+        internal BrushSettingQ(QData Data)
         {
-            _Source = new();
-            Source.ChangedData += UpdateActiveSpectrum;
-            ActiveSpectrum = StateSpectrum.Default;
-            SourceBrush = new(ActiveSpectrumColor);
-        }
-
-        /// <summary>
-        /// Инициализировать используемый объект цветовой палитры<br/>
-        /// с константным значением цвета
-        /// </summary>
-        /// <remarks>
-        /// <b>
-        /// | A  R  G  B |<br/>
-        /// <br/>
-        /// | 0  0  0  0 | - Default<br/>
-        /// | 0  0  0  0 | - Select<br/>
-        /// | 0  0  0  0 | - Used<br/>
-        /// | 0  0  0  0 | - NotEnabled<br/>
-        /// </b>
-        /// </remarks>
-        /// <param name="ByteColorData">Массив байтовых значений цвета</param>
-        public BrushSettingQ(byte[][] ByteColorData)
-        {
-            _Source = new();
-            Source.ChangedData += UpdateActiveSpectrum;
-            ActiveSpectrum = StateSpectrum.Default;
-            SourceBrush = new(ActiveSpectrumColor);
-        }
-
-        /// <summary>
-        /// Инициализировать используемый объект цветовой палитры<br/>
-        /// с одним константным значением цвета
-        /// </summary>
-        /// <remarks>
-        /// <b>
-        /// | A  R  G  B |<br/>
-        /// <br/>
-        /// | 0  0  0  0 | - Default / Select / Used / NotEnabled<br/>
-        /// </b>
-        /// </remarks>
-        /// <param name="ByteColorData">Массив байтовых значений цвета</param>
-        public BrushSettingQ(byte[] ByteColorData)
-        {
-            _Source = new();
+            _Source = Data;
             Source.ChangedData += UpdateActiveSpectrum;
             ActiveSpectrum = StateSpectrum.Default;
             SourceBrush = new(ActiveSpectrumColor);

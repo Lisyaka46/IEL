@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Runtime.CompilerServices;
+using System.Windows.Media;
 
 namespace IEL.CORE.Classes
 {
@@ -13,31 +14,51 @@ namespace IEL.CORE.Classes
         /// <summary>
         /// Константа количества объектов данных для 1 элемента палитры
         /// </summary>
-        public static int CountQDataSpectrum => 3;
+        public static readonly int CountQDataSpectrum = 3;
+
+        /// <summary>
+        /// Значение неизвестного спектра палитры
+        /// </summary>
+        public static readonly PaletteSpectrum UnknownPaletteSpectrum = new();
+
+        /// <summary>
+        /// Значение по умолчанию данных отображения фона объекта
+        /// </summary>
+        internal static QData DefaultBG = new(Colors.White, Colors.Gray, Colors.LightGray, Colors.DarkRed);
+
+        /// <summary>
+        /// Значение по умолчанию данных отображения границ объекта
+        /// </summary>
+        internal static QData DefaultBB = new(Colors.Black, Colors.DarkGray, Colors.Gray, Colors.Black);
+
+        /// <summary>
+        /// Значение по умолчанию данных отображения текста
+        /// </summary>
+        internal static QData DefaultFG = new(Colors.Black, Colors.Black, Colors.DarkCyan, Colors.Black);
 
         /// <summary>
         /// Данные отображения фона
         /// </summary>
-        public QData BG { get; set; }
+        public QData BG { get; private set; }
 
         /// <summary>
         /// Данные отображения границ
         /// </summary>
-        public QData BB { get; set; }
+        public QData BB { get; private set; }
 
         /// <summary>
         /// Данные отображения текста
         /// </summary>
-        public QData FG { get; set; }
+        public QData FG { get; private set; }
 
         /// <summary>
         /// Инициализировать пустой объект спектра темы
         /// </summary>
-        public PaletteSpectrum()
+        private PaletteSpectrum()
         {
-            BG = new();
-            BB = new();
-            FG = new();
+            BG = DefaultBG;
+            BB = DefaultBB;
+            FG = DefaultFG;
         }
 
         /// <summary>
@@ -74,20 +95,17 @@ namespace IEL.CORE.Classes
         public void ConnectPalleteFromIELElement([DisallowNull] IELObjectBase IelObj) => IelObj.PaletteElement = this;
 
         /// <summary>
-        /// Записать в поток данных файла данные QData
+        /// Клонировать объект спектра палитры
         /// </summary>
-        /// <param name="Stream">Поток файла</param>
-        /// <param name="Spectrum">"Элемент палитры, который записывается в файл</param>
-        /// <returns></returns>
-        /// <exception cref="Exception">Исключение несоответствия режима открытия файла</exception>
-        public static void WritePalettespectrum(ref FileStream Stream, ref PaletteSpectrum Spectrum)
+        public PaletteSpectrum Clone()
         {
-            if (!Stream.CanWrite) throw new Exception("Поток работы с файлом не открыт для записи!");
-            List<byte> BytesFromPaletteSpectrum = [];
-            BytesFromPaletteSpectrum.AddRange(Spectrum.BG.GetSourceBytes());
-            BytesFromPaletteSpectrum.AddRange(Spectrum.BB.GetSourceBytes());
-            BytesFromPaletteSpectrum.AddRange(Spectrum.FG.GetSourceBytes());
-            Stream.Write([.. BytesFromPaletteSpectrum], 0, BytesFromPaletteSpectrum.Count);
+            PaletteSpectrum Result = new()
+            {
+                BG = BG,
+                BB = BB,
+                FG = FG,
+            };
+            return Result;
         }
     }
 }

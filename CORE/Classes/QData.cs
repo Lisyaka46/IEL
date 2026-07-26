@@ -6,7 +6,7 @@ namespace IEL.CORE.Classes
 {
     internal static class QDataView
     {
-        public static Color ToColor(this byte[] rgb) => Color.FromArgb(rgb[0], rgb[1], rgb[2], rgb[3]);
+        public static WnColor ToColor(this byte[] rgb) => WnColor.FromArgb(rgb[0], rgb[1], rgb[2], rgb[3]);
     }
 
     /// <summary>
@@ -37,7 +37,12 @@ namespace IEL.CORE.Classes
             /// <summary>
             /// Спектр отключённого состояния
             /// </summary>
-            NotEnabled = 3
+            NotEnabled = 3,
+
+            /// <summary>
+            /// Все спектры состояний
+            /// </summary>
+            All = 4,
         }
 
         /// <summary>
@@ -62,17 +67,6 @@ namespace IEL.CORE.Classes
             new($"Массив не имеет размер {CountSpectrumColor * CountBytesFromColor} байт");
 
         /// <summary>
-        /// Фиксированные значения по умолчанию объекта QData
-        /// </summary>
-        public static readonly ReadOnlyCollection<byte> DefaultBytesValues = new byte[]
-            {
-                255, 0, 0, 0,
-                255, 128, 128, 128,
-                255, 200, 200, 200,
-                255, 255, 70, 70,
-            }.AsReadOnly();
-
-        /// <summary>
         /// Делегат события изменения данных спектра
         /// </summary>
         /// <param name="Spectrum">Изменяемый спектр</param>
@@ -87,7 +81,7 @@ namespace IEL.CORE.Classes
         /// <summary>
         /// Спектр обычного сотояния цвета
         /// </summary>
-        public Color Default
+        public WnColor Default
         {
             get => GetFromSpectrumColor(EnumDataSpectrum.Default);
             set => SetFromSpectrumColor(EnumDataSpectrum.Default, value);
@@ -96,7 +90,7 @@ namespace IEL.CORE.Classes
         /// <summary>
         /// Спектр выделенного состояния цвета
         /// </summary>
-        public Color Select
+        public WnColor Select
         {
             get => GetFromSpectrumColor(EnumDataSpectrum.Select);
             set => SetFromSpectrumColor(EnumDataSpectrum.Select, value);
@@ -105,7 +99,7 @@ namespace IEL.CORE.Classes
         /// <summary>
         /// Спектр используемого цвета
         /// </summary>
-        public Color Used
+        public WnColor Used
         {
             get => GetFromSpectrumColor(EnumDataSpectrum.Used);
             set => SetFromSpectrumColor(EnumDataSpectrum.Used, value);
@@ -114,7 +108,7 @@ namespace IEL.CORE.Classes
         /// <summary>
         /// Спектр отключённого цвета
         /// </summary>
-        public Color NotEnabled
+        public WnColor NotEnabled
         {
             get => GetFromSpectrumColor(EnumDataSpectrum.NotEnabled);
             set => SetFromSpectrumColor(EnumDataSpectrum.NotEnabled, value);
@@ -122,11 +116,11 @@ namespace IEL.CORE.Classes
         #endregion
 
         /// <summary>
-        /// Получить объект байтов текущего объекта QData
-        /// <br/>Массив представляет собой размер <b>"CountSpectrumColor * CountBytesFromColor"</b>
+        /// Получить объект байтов текущего объекта <see cref="QData"/>
+        /// <br/>Массив представляет собой размер <see cref="CountSpectrumColor"/> * <see cref="CountBytesFromColor"/>
         /// <br/>Имеет определение всех спектров цвета текущего объекта в байтовом представлении
         /// </summary>
-        /// <returns>[<b>"CountSpectrumColor * CountBytesFromColor"</b> байт]</returns>
+        /// <returns>[<see cref="CountSpectrumColor"/> * <see cref="CountBytesFromColor"/> байт]</returns>
         public byte[] GetSourceBytes() => [
                 Data[0][0], Data[0][1], Data[0][2], Data[0][3],
                 Data[1][0], Data[1][1], Data[1][2], Data[1][3],
@@ -138,14 +132,14 @@ namespace IEL.CORE.Classes
         /// Получить цвет определённого спектра
         /// </summary>
         /// <param name="Spectrum">Спектр из которого берётся значение</param>
-        public Color GetFromSpectrumColor(EnumDataSpectrum Spectrum) => Data[(int)Spectrum].ToColor();
+        public WnColor GetFromSpectrumColor(EnumDataSpectrum Spectrum) => Data[(int)Spectrum].ToColor();
 
         /// <summary>
         /// Установить цвет по определённому спектру
         /// </summary>
         /// <param name="Spectrum">Спектр которому присваивается значение</param>
         /// <param name="Value">Значение цвета</param>
-        public void SetFromSpectrumColor(EnumDataSpectrum Spectrum, Color Value)
+        public void SetFromSpectrumColor(EnumDataSpectrum Spectrum, WnColor Value)
         {
             Data[(int)Spectrum] = [Value.A, Value.R, Value.G, Value.B];
             ChangedData?.Invoke(Spectrum);
@@ -162,27 +156,7 @@ namespace IEL.CORE.Classes
         public void ChangeSourceQData(QData NewObj)
         {
             Data = NewObj.Data;
-            if (ChangedData != null)
-            {
-                ChangedData.Invoke(EnumDataSpectrum.Default);
-                ChangedData.Invoke(EnumDataSpectrum.Select);
-                ChangedData.Invoke(EnumDataSpectrum.Used);
-                ChangedData.Invoke(EnumDataSpectrum.NotEnabled);
-            }
-        }
-
-        /// <summary>
-        /// Инициализировать управляемый объект данных спектра цвета со значениями по умолчанию
-        /// </summary>
-        public QData()
-        {
-            Data =
-            [
-                [255, 0, 0, 0],
-                [255, 128, 128, 128],
-                [255, 200, 200, 200],
-                [255, 255, 70, 70],
-            ];
+            ChangedData?.Invoke(EnumDataSpectrum.All);
         }
 
         /// <summary>
