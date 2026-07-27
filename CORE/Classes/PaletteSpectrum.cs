@@ -19,7 +19,7 @@ namespace IEL.CORE.Classes
         /// <summary>
         /// Значение неизвестного спектра палитры
         /// </summary>
-        public static readonly PaletteSpectrum UnknownPaletteSpectrum = new();
+        public static PaletteSpectrum UnknownPaletteSpectrum => new();
 
         /// <summary>
         /// Значение по умолчанию данных отображения фона объекта
