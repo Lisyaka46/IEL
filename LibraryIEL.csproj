@@ -25,7 +25,7 @@
 	<RepositoryType>git</RepositoryType>
   </PropertyGroup>
   <ItemGroup>
-    <None Remove="IEL.png"/>
+    <None Remove="IEL.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="IEL.png">
