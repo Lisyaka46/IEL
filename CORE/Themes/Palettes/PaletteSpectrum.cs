@@ -4,94 +4,142 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 
 namespace LibraryIEL.CORE.Themes.Palettes
 {
     /// <summary>
     /// Объект спектра палитры
     /// </summary>
-    public class PaletteSpectrum
+    public sealed class PaletteSpectrum
     {
-        //
+        /// <summary>
+        /// Данные для использования спектра
+        /// </summary>
         private byte[] Data;
 
         /// <summary>
-        /// Значение по умолчанию данных отображения фона объекта
+        /// Активный спектр состояния цвета
         /// </summary>
-        internal static QData DefaultBG = new(Colors.White, Colors.Gray, Colors.LightGray, Colors.DarkRed);
+        public SpectrumColor ActiveSpectrum { get; private set; }
 
         /// <summary>
-        /// Значение по умолчанию данных отображения границ объекта
+        /// Собственный цвет выделения свойств цвета
         /// </summary>
-        internal static QData DefaultBB = new(Colors.Black, Colors.DarkGray, Colors.Gray, Colors.Black);
+        private Color32 Custom = Colors.Black;
 
         /// <summary>
-        /// Значение по умолчанию данных отображения текста
+        /// Активный цвет по используемому спектру состояния цвета
         /// </summary>
-        internal static QData DefaultFG = new(Colors.Black, Colors.Black, Colors.DarkCyan, Colors.Black);
+        public Color32 GetActiveSpectrumColor()
+        {
+            if (ActiveSpectrum == SpectrumColor.Custom) return Custom;
+            return new Color32(Data[(Color32.CountBytes * (byte)(ActiveSpectrum - 1))..Color32.CountBytes]);
+        }
 
         /// <summary>
-        /// Данные отображения фона
+        /// Объект отображения состояния спектра цвета
         /// </summary>
-        public QData BG { get; private set; }
+        public readonly SolidColorBrush SourceBrush;
+
+        private bool _UsedState = false;
+        /// <summary>
+        /// Состояние навигации использования
+        /// </summary>
+        /// <remarks>
+        /// При включённом состоянии цвет обычного состояния становится использованным, а использованный обычным
+        /// <code></code>
+        /// <b>Default <![CDATA[<]]>=<![CDATA[>]]> Used</b>
+        /// </remarks>
+        public bool UsedState
+        {
+            get => _UsedState;
+            set
+            {
+                if (_UsedState == value) return;
+                _UsedState = value;
+                if (ActiveSpectrum == SpectrumColor.Default || ActiveSpectrum == SpectrumColor.Used)
+                {
+                    ActiveSpectrum = value ? (ActiveSpectrum == SpectrumColor.Default ? SpectrumColor.Used : SpectrumColor.Default) :
+                        SpectrumColor.Default;
+                    AnimateConectedBrush(true);
+                }
+            }
+        }
 
         /// <summary>
-        /// Данные отображения границ
+        /// Анимировать все подключённые свойства цвета к настройке Q-логики
         /// </summary>
-        public QData BB { get; private set; }
+        /// <param name="AnimatedEvent">Ожидается ли анирование</param>
+        private void AnimateConectedBrush(bool AnimatedEvent)
+        {
+            if (AnimatedEvent)
+            {
+                Palette.SourceAnimation.To = GetActiveSpectrumColor();
+                SourceBrush.BeginAnimation(SolidColorBrush.ColorProperty, Palette.SourceAnimation, HandoffBehavior.SnapshotAndReplace);
+            }
+            else SourceBrush.Color = GetActiveSpectrumColor();
+        }
 
         /// <summary>
-        /// Данные отображения текста
+        /// Установить значение активному спектру цвета
         /// </summary>
-        public QData FG { get; private set; }
+        /// <remarks>
+        /// Через эту функцию нельзя установить принудительно активным спектром, спектр <see cref="SpectrumColor.Custom"/>
+        /// </remarks>
+        /// <param name="Value">Устанавливаемое значение спектру</param>
+        /// <param name="AnimatedEvent">Анимировать ли изменение</param>
+        public void SetActiveSpecrum(SpectrumColor Value, bool AnimatedEvent)
+        {
+            if (ActiveSpectrum == Value || Value == SpectrumColor.Custom) return;
+            else if (Value == SpectrumColor.Default || Value == SpectrumColor.Used)
+                ActiveSpectrum = UsedState ? (Value == SpectrumColor.Default ? SpectrumColor.Used : SpectrumColor.Default) : Value;
+            else ActiveSpectrum = Value;
+            AnimateConectedBrush(AnimatedEvent);
+        }
+
+        /// <summary>
+        /// Установить значение активному спектру цвета
+        /// </summary>
+        /// <remarks>
+        /// После вызова этой функции будет установлено значение спекта <see cref="SpectrumColor.Custom"/>
+        /// </remarks>
+        /// <param name="Value">Устанавливаемое значение спектру</param>
+        /// <param name="AnimatedEvent">Анимировать ли изменение</param>
+        public void SetActiveSpecrum(Color Value, bool AnimatedEvent)
+        {
+            ActiveSpectrum = SpectrumColor.Custom;
+            Custom = Value;
+            AnimateConectedBrush(AnimatedEvent);
+        }
+
+        /// <summary>
+        /// Изменить данные спектра палитры
+        /// </summary>
+        /// <param name="SourceData">Данные на которые меняется спектр</param>
+        /// <param name="AnimatedEvent">Анимировать ли изменение</param>
+        public void ChangeData(QData SourceData, bool AnimatedEvent)
+        {
+            Data = SourceData.GetSourceBytes();
+            AnimateConectedBrush(AnimatedEvent);
+        }
 
         /// <summary>
         /// Инициализировать пустой объект спектра темы
         /// </summary>
-        private PaletteSpectrum()
+        private PaletteSpectrum(QData SourceData)
         {
-            BG = DefaultBG;
-            BB = DefaultBB;
-            FG = DefaultFG;
-        }
-
-        /// <summary>
-        /// Инициализировать объект спектра темы по дайтам данных спектра
-        /// </summary>
-        /// <remarks>
-        /// Ожидаются <see cref="QData.CountBytesFromColor"/> * <see cref="QData.CountSpectrumColor"/> * <see cref="CountQDataSpectrum"/> элементов,<br/>
-        /// которые будут отражать все <see cref="QData.CountSpectrumColor"/> спектра, для <see cref="CountQDataSpectrum"/> видов отображения
-        /// </remarks>
-        /// <param name="BytesData">Массив данных</param>
-        public PaletteSpectrum(byte[] BytesData) // 48
-        {
-            int CountBytesOneQData = QData.CountBytesFromColor * QData.CountSpectrumColor;
-            if (CountBytesOneQData * CountQDataSpectrum != BytesData.Length)
-                throw new ArgumentException("Недопустимый размер данных для создания спектра " +
-                    $"({BytesData.Length} => {CountBytesOneQData * CountQDataSpectrum})");
-            byte[][] ChunkDataTheme = new byte[CountQDataSpectrum][];
-            for (int i = 0; i < CountQDataSpectrum; i++)
+            SourceBrush = new()
             {
-                ChunkDataTheme[i] = new byte[CountBytesOneQData];
-                Array.Copy(BytesData, i * CountBytesOneQData, ChunkDataTheme[i], 0, CountBytesOneQData);
-            }
-            BG = new(ChunkDataTheme[0]);
-            BB = new(ChunkDataTheme[1]);
-            FG = new(ChunkDataTheme[2]);
-        }
-
-        /// <summary>
-        /// Клонировать объект спектра палитры
-        /// </summary>
-        public PaletteSpectrum Clone()
-        {
-            PaletteSpectrum Result = new()
-            {
-                BG = BG,
-                BB = BB,
-                FG = FG,
+                Color = SourceData.Default,
             };
-            return Result;
+            Data = SourceData.GetSourceBytes();
         }
+
+        /// <summary>
+        /// Инициализировать объект спектра темы по байтам данных спектра
+        /// </summary>
+        /// <param name="SourceData">Массив данных</param>
+        public PaletteSpectrum(byte[] SourceData) : this(new QData(SourceData)) { }
     }
 }

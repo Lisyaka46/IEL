@@ -1,4 +1,4 @@
-﻿using IEL.CORE.Enums;
+﻿using LibraryIEL.CORE.Themes.Palettes;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -198,7 +198,7 @@ namespace IEL.UserElementsControl.Base
             {
                 if (IsEnabled)
                 {
-                    SetActiveSpecrum(StateSpectrum.Select);
+                    SetActiveSpecrum(SpectrumColor.Select);
                     SourceTimer.Start();
                 }
             };
@@ -207,7 +207,7 @@ namespace IEL.UserElementsControl.Base
             {
                 if (IsEnabled)
                 {
-                    SetActiveSpecrum(StateSpectrum.Default);
+                    SetActiveSpecrum(SpectrumColor.Default);
                     SourceTimer.Stop();
                 }
             };
@@ -216,7 +216,7 @@ namespace IEL.UserElementsControl.Base
             {
                 SourceTimer.Stop();
                 Cursor = (bool)e.NewValue ? Cursors.Hand : Cursors.No;
-                StateSpectrum Value = (bool)e.NewValue ? StateSpectrum.Default : StateSpectrum.NotEnabled;
+                SpectrumColor Value = (bool)e.NewValue ? SpectrumColor.Default : SpectrumColor.NotEnabled;
                 SetActiveSpecrum(Value);
             };
             SetValue(ContentControl.ContentProperty, Base_BorderContainer);

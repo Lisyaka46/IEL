@@ -2,14 +2,15 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Windows.Controls.Primitives;
 
 namespace LibraryIEL.CORE.Themes.Palettes
 {
+    /// <summary>
+    /// Структура данных о спектре палитры
+    /// </summary>
     public readonly ref struct PaletteSpectrumData
     {
-        //
-        public const Color32 UnknownPalette = new PaletteSpectrumData();
-
         /// <summary>
         /// Данные отображения фона
         /// </summary>
@@ -67,6 +68,23 @@ namespace LibraryIEL.CORE.Themes.Palettes
             BackGroundData = SourceBGData;
             BorderGroundData = SourceBBData;
             ForeGroundData = SourceFGData;
+        }
+
+        /// <summary>
+        /// Получить объект байтов текущего объекта <see cref="PaletteSpectrumData"/>
+        /// <br/>Массив представляет собой данные всех состояний цвета
+        /// </summary>
+        /// <returns>[<see cref="CountBytes"/> байт]</returns>
+        public readonly byte[] GetSourceBytes()
+        {
+            byte[] result = new byte[CountBytes];
+            byte Offset = 0;
+            Buffer.BlockCopy(BackGroundData.GetSourceBytes(), 0, result, Offset, QData.CountBytes);
+            Offset += Color32.CountBytes;
+            Buffer.BlockCopy(BorderGroundData.GetSourceBytes(), 0, result, Offset, QData.CountBytes);
+            Offset += Color32.CountBytes;
+            Buffer.BlockCopy(ForeGroundData.GetSourceBytes(), 0, result, Offset, QData.CountBytes);
+            return result;
         }
     }
 }

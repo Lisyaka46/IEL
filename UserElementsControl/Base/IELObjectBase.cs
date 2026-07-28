@@ -1,7 +1,7 @@
-﻿using IEL.CORE.Enums;
-using LibraryIEL.CORE.Themes;
+﻿using LibraryIEL.CORE.Themes;
 using LibraryIEL.CORE.Themes.Data;
 using LibraryIEL.CORE.Themes.Palette;
+using LibraryIEL.CORE.Themes.Palettes;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -14,30 +14,24 @@ namespace IEL.UserElementsControl.Base
     {
         #region Properties
 
-        #region PaletteElement
+        #region Palette
         /// <summary>
-        /// Данные конкретного свойства
+        /// Данные палитры использования цветов
         /// </summary>
-        public static readonly DependencyProperty PaletteElementProperty =
-            DependencyProperty.Register("PaletteElement", typeof(PaletteSpectrum), typeof(IELObjectBase),
-                new(PaletteSpectrum.UnknownPaletteSpectrum,
-                    (sender, e) =>
-                    {
-                        PaletteSpectrum palette = (PaletteSpectrum)e.NewValue;
-                        ((IELObjectBase)sender).SourceBackground.Source = palette.BG;
-                        ((IELObjectBase)sender).SourceBorderBrush.Source = palette.BB;
-                        ((IELObjectBase)sender).SourceForeground.Source = palette.FG;
-                    }));
+        private byte[] PaletteData;
 
         /// <summary>
-        /// Объект палитры
+        /// Данные спектра использования цветов
         /// </summary>
-        public PaletteSpectrum PaletteElement
+        public PaletteSpectrumData Palette
         {
-            get => (PaletteSpectrum)GetValue(PaletteElementProperty);
+            get => new(PaletteData);
             set
             {
-                SetValue(PaletteElementProperty, value);
+                PaletteData = value.GetSourceBytes();
+                SourceBackground.ChangeData(value.BackGroundData, IsAnimatedSettingQ);
+                SourceBorderBrush.ChangeData(value.BorderGroundData, IsAnimatedSettingQ);
+                SourceForeground.ChangeData(value.ForeGroundData, IsAnimatedSettingQ);
             }
         }
         #endregion
@@ -46,7 +40,7 @@ namespace IEL.UserElementsControl.Base
         /// <summary>
         /// Объект настройки анимации отображения фона в объекте
         /// </summary>
-        public BrushSettingQ SourceBackground { get; } = new(PaletteSpectrum.DefaultBG);
+        public PaletteSpectrum SourceBackground { get; } = new(PaletteSpectrum.DefaultBG);
 
         /// <summary>
         /// Данные конкретного свойства
@@ -64,7 +58,7 @@ namespace IEL.UserElementsControl.Base
         /// </summary>
         public new QData Background
         {
-            get => PaletteElement.BG;
+            get => Palette.BG;
             set
             {
                 SetValue(BackgroundProperty, value);
@@ -76,7 +70,7 @@ namespace IEL.UserElementsControl.Base
         /// <summary>
         /// Объект настройки анимирования отображения границ в объекте
         /// </summary>
-        public BrushSettingQ SourceBorderBrush { get; } = new(PaletteSpectrum.DefaultBB);
+        public PaletteSpectrum SourceBorderBrush { get; } = new(PaletteSpectrum.DefaultBB);
 
         /// <summary>
         /// Данные конкретного свойства
@@ -94,7 +88,7 @@ namespace IEL.UserElementsControl.Base
         /// </summary>
         public new QData BorderBrush
         {
-            get => PaletteElement.BB;
+            get => Palette.BB;
             set
             {
                 SetValue(BorderBrushProperty, value);
@@ -106,7 +100,7 @@ namespace IEL.UserElementsControl.Base
         /// <summary>
         /// Объект настройки анимирования отображения текста в объекте
         /// </summary>
-        public BrushSettingQ SourceForeground { get; } = new(PaletteSpectrum.DefaultFG);
+        public PaletteSpectrum SourceForeground { get; } = new(PaletteSpectrum.DefaultFG);
 
         /// <summary>
         /// Данные конкретного свойства
@@ -124,7 +118,7 @@ namespace IEL.UserElementsControl.Base
         /// </summary>
         public new QData Foreground
         {
-            get => PaletteElement.FG;
+            get => Palette.FG;
             set
             {
                 SetValue(ForegroundProperty, value);
@@ -141,7 +135,7 @@ namespace IEL.UserElementsControl.Base
                 new(true,
                     (sender, e) =>
                     {
-                        ((IELObjectBase)sender).SetActiveSpecrum(StateSpectrum.Default, false);
+                        ((IELObjectBase)sender).SetActiveSpecrum(SpectrumColor.Default, false);
                     }));
 
         /// <summary>
@@ -168,9 +162,9 @@ namespace IEL.UserElementsControl.Base
             get => _IsAnimatedSettingQ;
             set
             {
-                SourceBackground.SetActiveSpecrum(StateSpectrum.Default, true);
-                SourceBorderBrush.SetActiveSpecrum(StateSpectrum.Default, true);
-                SourceForeground.SetActiveSpecrum(StateSpectrum.Default, true);
+                SourceBackground.SetActiveSpecrum(SpectrumColor.Default, true);
+                SourceBorderBrush.SetActiveSpecrum(SpectrumColor.Default, true);
+                SourceForeground.SetActiveSpecrum(SpectrumColor.Default, true);
                 _IsAnimatedSettingQ = value;
             }
         }
@@ -183,7 +177,7 @@ namespace IEL.UserElementsControl.Base
         /// </summary>
         /// <param name="Spectrum">Устанавливаемый спектр</param>
         /// <param name="Animated">Состояние анимирования изменения</param>
-        public void SetActiveSpecrum(StateSpectrum Spectrum, bool Animated)
+        public void SetActiveSpecrum(SpectrumColor Spectrum, bool Animated)
         {
             if (!IsEnabledSettingQ) return;
             SourceBackground.SetActiveSpecrum(Spectrum, Animated);
@@ -195,6 +189,6 @@ namespace IEL.UserElementsControl.Base
         /// Активировать визуализацию спектра для всех Q сегментов в зависимости от настройки анимирования объекта
         /// </summary>
         /// <param name="Spectrum">Устанавливаемый спектр</param>
-        public void SetActiveSpecrum(StateSpectrum Spectrum) => SetActiveSpecrum(Spectrum, _IsAnimatedSettingQ);
+        public void SetActiveSpecrum(SpectrumColor Spectrum) => SetActiveSpecrum(Spectrum, _IsAnimatedSettingQ);
     }
 }

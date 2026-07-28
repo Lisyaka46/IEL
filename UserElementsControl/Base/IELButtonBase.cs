@@ -1,4 +1,5 @@
 ﻿using IEL.CORE.Enums;
+using LibraryIEL.CORE.Themes.Palettes;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -349,7 +350,7 @@ namespace IEL.UserElementsControl.Base
                     (e.LeftButton == MouseButtonState.Pressed && OnActivateMouseLeft != null) ||
                     (e.RightButton == MouseButtonState.Pressed && OnActivateMouseRight != null))
                     {
-                        SetActiveSpecrum(StateSpectrum.Used, false);
+                        SetActiveSpecrum(SpectrumColor.Used, false);
                         SourceTimer.Stop();
                     }
                 }
@@ -359,7 +360,7 @@ namespace IEL.UserElementsControl.Base
             {
                 if (IsEnabled && OnActivateMouseLeft != null)
                 {
-                    SetActiveSpecrum(StateSpectrum.Select);
+                    SetActiveSpecrum(SpectrumColor.Select);
                     OnActivateMouseLeft.Invoke(this, e);
                 }
             };
@@ -368,7 +369,7 @@ namespace IEL.UserElementsControl.Base
             {
                 if (IsEnabled && OnActivateMouseRight != null)
                 {
-                    SetActiveSpecrum(StateSpectrum.Select);
+                    SetActiveSpecrum(SpectrumColor.Select);
                     OnActivateMouseRight.Invoke(this, e);
                 }
             };

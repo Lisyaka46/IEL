@@ -1,15 +1,17 @@
-﻿namespace IEL.CORE.Enums
+﻿using LibraryIEL.CORE.Themes.Data;
+namespace LibraryIEL.CORE.Themes.Palettes
 {
     /// <summary>
     /// Перечисление спектров цвета
     /// </summary>
-    public enum StateSpectrum : byte
+    public enum SpectrumColor : byte
     {
         /// <summary>
-        /// Спектр цвета который не контролируется типом QData
+        /// Спектр цвета который не контролируется типом <see cref="QData"/>
         /// </summary>
         /// <remarks>
-        /// <c>Такое состояние устанавливается в случае изменения цвета на собственный, даже если он совпадает с одним из спектров QData</c>
+        /// <c>Такое состояние устанавливается в случае изменения цвета на собственный, 
+        /// даже если он совпадает с одним из спектров <see cref="QData"/></c>
         /// </remarks>
         Custom = 0,
 

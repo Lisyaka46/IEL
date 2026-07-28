@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Windows.Media.Animation;
 
 namespace LibraryIEL.CORE.Themes.Palettes
 {
@@ -10,8 +11,20 @@ namespace LibraryIEL.CORE.Themes.Palettes
     /// </summary>
     public static class Palette
     {
+        //
+        public static PaletteSpectrum UnknownSpectrum = new PaletteSpectrum();
+
         /// <summary>
-        /// Получить исключение параметра из-за несоответствия размена массива
+        /// Объект анимации текущего свойства цвета объектов
+        /// </summary>
+        public static ColorAnimation SourceAnimation = new()
+        {
+            EasingFunction = new ExponentialEase() { EasingMode = EasingMode.EaseOut, Exponent = 1.4d },
+            Duration = TimeSpan.FromMilliseconds(200d),
+        };
+
+        /// <summary>
+        /// Получить исключение параметра из-за несоответствия размера массива
         /// </summary>
         /// <param name="ExpectedLength">Ожидаемый результат</param>
         /// <param name="ObtainedLength">Полученный результат</param>

@@ -1,5 +1,5 @@
 ﻿using IEL.CORE.Classes;
-using IEL.CORE.Enums;
+using LibraryIEL.CORE.Themes.Palettes;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -237,7 +237,7 @@ namespace IEL.UserElementsControl.Base
             {
                 if (IsEnabled && OnActivateMouseLeft != null)
                 {
-                    SetActiveSpecrum(StateSpectrum.Select);
+                    SetActiveSpecrum(SpectrumColor.Select);
                     OnActivateMouseLeft.Invoke(this, e);
                 }
             };
@@ -246,7 +246,7 @@ namespace IEL.UserElementsControl.Base
             {
                 if (IsEnabled && OnActivateMouseRight != null)
                 {
-                    SetActiveSpecrum(StateSpectrum.Select);
+                    SetActiveSpecrum(SpectrumColor.Select);
                     OnActivateMouseRight.Invoke(this, e);
                 }
             };
@@ -261,9 +261,9 @@ namespace IEL.UserElementsControl.Base
         public void BlinkAnimation()
         {
             if (IsAnimatedSettingQ)
-                SourceBackground.SetActiveSpecrum(StateSpectrum.Used, false);
+                SourceBackground.SetActiveSpecrum(SpectrumColor.Used, false);
 
-            SetActiveSpecrum(StateSpectrum.Select);
+            SetActiveSpecrum(SpectrumColor.Select);
         }
 
         /// <summary>
@@ -272,7 +272,7 @@ namespace IEL.UserElementsControl.Base
         [MTAThread()]
         public void UnfocusAnimation()
         {
-            SetActiveSpecrum(StateSpectrum.Default);
+            SetActiveSpecrum(SpectrumColor.Default);
         }
     }
 }
