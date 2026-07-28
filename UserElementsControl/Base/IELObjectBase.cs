@@ -1,5 +1,7 @@
-﻿using IEL.CORE.Classes;
-using IEL.CORE.Enums;
+﻿using IEL.CORE.Enums;
+using LibraryIEL.CORE.Themes;
+using LibraryIEL.CORE.Themes.Data;
+using LibraryIEL.CORE.Themes.Palette;
 using System.Windows;
 using System.Windows.Controls;
 

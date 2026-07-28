@@ -1,10 +1,11 @@
 ﻿using IEL.CORE.Enums;
+using LibraryIEL.CORE.Themes.Data;
 using System.ComponentModel;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
-using static IEL.CORE.Classes.QData;
+using static LibraryIEL.CORE.Themes.Data.QData;
 
-namespace IEL.CORE.Classes
+namespace LibraryIEL.CORE.Themes
 {
     /// <summary>
     /// Класс настройки поведения цвета при разных состояниях объекта

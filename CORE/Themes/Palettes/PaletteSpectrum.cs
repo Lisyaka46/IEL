@@ -1,25 +1,19 @@
 ﻿using IEL.UserElementsControl.Base;
+using LibraryIEL.CORE.Themes.Data;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows.Media;
 
-namespace IEL.CORE.Classes
+namespace LibraryIEL.CORE.Themes.Palettes
 {
     /// <summary>
     /// Объект спектра палитры
     /// </summary>
     public class PaletteSpectrum
     {
-        /// <summary>
-        /// Константа количества объектов данных для 1 элемента палитры
-        /// </summary>
-        public static readonly int CountQDataSpectrum = 3;
-
-        /// <summary>
-        /// Значение неизвестного спектра палитры
-        /// </summary>
-        public static PaletteSpectrum UnknownPaletteSpectrum => new();
+        //
+        private byte[] Data;
 
         /// <summary>
         /// Значение по умолчанию данных отображения фона объекта
@@ -85,14 +79,6 @@ namespace IEL.CORE.Classes
             BB = new(ChunkDataTheme[1]);
             FG = new(ChunkDataTheme[2]);
         }
-
-
-        /// <summary>
-        /// Соеденить объект IEL с спектром палитры
-        /// </summary>
-        /// <param name="IelObj">Объект который присоеденяется к палитре</param>
-        [Obsolete("Используйте в объекте интерфейса свойство \"PaletteElement\"")]
-        public void ConnectPalleteFromIELElement([DisallowNull] IELObjectBase IelObj) => IelObj.PaletteElement = this;
 
         /// <summary>
         /// Клонировать объект спектра палитры
