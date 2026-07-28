@@ -154,8 +154,8 @@ namespace IEL.UserElementsControl
             InitializeComponent();
             #region Foreground
             TextBoxMain.Foreground = SourceForeground.SourceBrush;
-            TextBoxMain.SelectionTextBrush = new SolidColorBrush(SourceForeground.Source.Used);
-            TextBoxMain.SelectionBrush = new SolidColorBrush(SourceBackground.Source.Used);
+            TextBoxMain.SelectionTextBrush = new SolidColorBrush(Foreground.Used);
+            TextBoxMain.SelectionBrush = new SolidColorBrush(Background.Used);
             #endregion
 
             TextBoxMain.ContextMenu = null;
@@ -163,12 +163,12 @@ namespace IEL.UserElementsControl
             GotKeyboardFocus += (sender, e) =>
             {
                 IsFocus = true;
-                SourceBackground.SetUsedState(true);
+                SourceBackground.UsedState = true;
             };
             TextBoxMain.LostKeyboardFocus += (sender, e) =>
             {
                 IsFocus = false;
-                SourceBackground.SetUsedState(false);
+                SourceBackground.UsedState = false;
             };
             TextBoxMain.KeyDown += (sender, e) =>
             {

@@ -350,7 +350,7 @@ namespace IEL.UserElementsControl.Base
                     (e.LeftButton == MouseButtonState.Pressed && OnActivateMouseLeft != null) ||
                     (e.RightButton == MouseButtonState.Pressed && OnActivateMouseRight != null))
                     {
-                        SetActiveSpecrum(SpectrumColor.Used, false);
+                        SetActiveSpecrum(SpectrumColor.Used);
                         SourceTimer.Stop();
                     }
                 }

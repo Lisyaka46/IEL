@@ -5,6 +5,7 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using WnColor = System.Windows.Media.Color;
 
 namespace LibraryIEL.CORE.Themes.Palettes
 {
@@ -13,6 +14,24 @@ namespace LibraryIEL.CORE.Themes.Palettes
     /// </summary>
     public sealed class PaletteSpectrum
     {
+        /// <summary>
+        /// Неизвестный спектр палитры для отображения фона
+        /// </summary>
+        public static PaletteSpectrum UnknownSpectrumBackGround =>
+            new(new QData(Colors.White, Colors.LightGray, Colors.LightSkyBlue, Colors.OrangeRed));
+
+        /// <summary>
+        /// Неизвестный спектр палитры для отображения границ
+        /// </summary>
+        public static PaletteSpectrum UnknownSpectrumBorderGround =>
+            new(new QData(Colors.Black, Colors.DarkGray, Colors.Gray, Colors.DarkRed));
+
+        /// <summary>
+        /// Неизвестный спектр палитры для отображения текста
+        /// </summary>
+        public static PaletteSpectrum UnknownSpectrumForeGround =>
+            new(new QData(Colors.Black, Colors.Black, Colors.DarkGray, Colors.Black));
+
         /// <summary>
         /// Данные для использования спектра
         /// </summary>
@@ -125,6 +144,11 @@ namespace LibraryIEL.CORE.Themes.Palettes
         }
 
         /// <summary>
+        /// Получить структуру данных использования цветов
+        /// </summary>
+        public QData GetData() => new(Data);
+
+        /// <summary>
         /// Инициализировать пустой объект спектра темы
         /// </summary>
         private PaletteSpectrum(QData SourceData)
@@ -135,11 +159,5 @@ namespace LibraryIEL.CORE.Themes.Palettes
             };
             Data = SourceData.GetSourceBytes();
         }
-
-        /// <summary>
-        /// Инициализировать объект спектра темы по байтам данных спектра
-        /// </summary>
-        /// <param name="SourceData">Массив данных</param>
-        public PaletteSpectrum(byte[] SourceData) : this(new QData(SourceData)) { }
     }
 }

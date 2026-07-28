@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Windows.Media;
 using System.Windows.Media.Animation;
 
 namespace LibraryIEL.CORE.Themes.Palettes
@@ -11,9 +12,6 @@ namespace LibraryIEL.CORE.Themes.Palettes
     /// </summary>
     public static class Palette
     {
-        //
-        public static PaletteSpectrum UnknownSpectrum = new PaletteSpectrum();
-
         /// <summary>
         /// Объект анимации текущего свойства цвета объектов
         /// </summary>
