@@ -16,7 +16,7 @@ namespace IEL.UserElementsControl.Base
         /// <summary>
         /// Данные спектра использования цветов
         /// </summary>
-        public PaletteSpectrumData Palette
+        public PaletteData Palette
         {
             get => new(Background, BorderBrush, Foreground);
             set

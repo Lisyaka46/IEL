@@ -7,9 +7,9 @@ using System.Windows.Controls.Primitives;
 namespace LibraryIEL.CORE.Themes.Palettes
 {
     /// <summary>
-    /// Структура данных о спектре палитры
+    /// Структура данных о спектрах палитры
     /// </summary>
-    public readonly ref struct PaletteSpectrumData
+    public readonly ref struct PaletteData
     {
         /// <summary>
         /// Данные отображения фона
@@ -40,13 +40,13 @@ namespace LibraryIEL.CORE.Themes.Palettes
         /// Инициализировать данные спектра палитры по массиву
         /// </summary>
         /// <param name="SourceData">Массив данных спектра палитры</param>
-        public PaletteSpectrumData(byte[] SourceData) : this(SourceData.AsSpan()) { }
+        public PaletteData(byte[] SourceData) : this(SourceData.AsSpan()) { }
 
         /// <summary>
         /// Инициализировать данные спектра палитры по массиву
         /// </summary>
         /// <param name="SourceData">Массив данных спектра палитры</param>
-        public PaletteSpectrumData(Span<byte> SourceData)
+        public PaletteData(Span<byte> SourceData)
         {
             if (SourceData.Length != CountBytes) throw Palette.ExceptionArrayLength((byte)SourceData.Length, CountBytes, nameof(SourceData));
             byte Offset = 0;
@@ -63,7 +63,7 @@ namespace LibraryIEL.CORE.Themes.Palettes
         /// <param name="SourceBGData">Структура использования цвета фона</param>
         /// <param name="SourceBBData">Структура использования цвета границ</param>
         /// <param name="SourceFGData">Структура использования цвета текста</param>
-        public PaletteSpectrumData(QData SourceBGData, QData SourceBBData, QData SourceFGData)
+        public PaletteData(QData SourceBGData, QData SourceBBData, QData SourceFGData)
         {
             BackGroundData = SourceBGData;
             BorderGroundData = SourceBBData;
@@ -71,7 +71,7 @@ namespace LibraryIEL.CORE.Themes.Palettes
         }
 
         /// <summary>
-        /// Получить объект байтов текущего объекта <see cref="PaletteSpectrumData"/>
+        /// Получить объект байтов текущего объекта <see cref="PaletteData"/>
         /// <br/>Массив представляет собой данные всех состояний цвета
         /// </summary>
         /// <returns>[<see cref="CountBytes"/> байт]</returns>

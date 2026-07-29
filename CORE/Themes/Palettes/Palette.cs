@@ -37,9 +37,9 @@ namespace LibraryIEL.CORE.Themes.Palettes
         /// <param name="BG">Данные для отображения фона</param>
         /// <param name="BB">Данные для отображения границ</param>
         /// <param name="FG">Данные для отображения текста</param>
-        public static PaletteSpectrumData GetPaletteData(QData BG, QData BB, QData FG)
+        public static PaletteData GetPaletteData(QData BG, QData BB, QData FG)
         {
-            byte[] Data = new byte[PaletteSpectrumData.CountBytes];
+            byte[] Data = new byte[PaletteData.CountBytes];
             byte Offset = 0;
             Buffer.BlockCopy(BG.GetSourceBytes(), 0, Data, Offset, QData.CountBytes);
             Offset += QData.CountBytes;
