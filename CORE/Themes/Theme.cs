@@ -17,7 +17,7 @@ namespace IEL.CORE.Themes
         public static readonly string ExtensionThemeFile = ".qd";
 
         /// <summary>
-        /// Числовой тип, который используется для перечисления спектров палитры
+        /// Числовой тип, который используется для перечисления спектров палитры <code>UINT</code>
         /// </summary>
         public static readonly Type EnumUnderlyingTypePalette = typeof(uint);
 
@@ -31,7 +31,7 @@ namespace IEL.CORE.Themes
             Type[] AllTypesCallAssembly = SourceAssembly.GetTypes();
             Type? SourceType = AllTypesCallAssembly.FirstOrDefault((i) => i.Name.Equals(NameType));
             if (SourceType == null) return null;
-            else if (SourceType.GetType().IsEnum && Enum.GetUnderlyingType(SourceType) != EnumUnderlyingTypePalette)
+            else if (SourceType.IsEnum && Enum.GetUnderlyingType(SourceType) == EnumUnderlyingTypePalette)
                     return SourceType;
             else return null;
         }
