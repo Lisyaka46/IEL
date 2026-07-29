@@ -41,11 +41,11 @@ namespace LibraryIEL.CORE.Themes.Palettes
         {
             byte[] Data = new byte[PaletteData.CountBytes];
             byte Offset = 0;
-            Buffer.BlockCopy(BG.GetSourceBytes(), 0, Data, Offset, QData.CountBytes);
+            Buffer.BlockCopy(BG, 0, Data, Offset, QData.CountBytes);
             Offset += QData.CountBytes;
-            Buffer.BlockCopy(BB.GetSourceBytes(), 0, Data, Offset, QData.CountBytes);
+            Buffer.BlockCopy(BB, 0, Data, Offset, QData.CountBytes);
             Offset += QData.CountBytes;
-            Buffer.BlockCopy(FG.GetSourceBytes(), 0, Data, Offset, QData.CountBytes);
+            Buffer.BlockCopy(FG, 0, Data, Offset, QData.CountBytes);
             return new(Data);
         }
     }

@@ -80,8 +80,9 @@ namespace LibraryIEL.CORE.Themes.Data
             => WnColor.FromArgb(color.Alpha, color.Red, color.Green, color.Blue);
 
         /// <summary>
-        /// Преобразовать структуру в массив байт
+        /// Преобразование в массив байтовых данных
         /// </summary>
-        public readonly byte[] GetSourceBytes() => [..Data];
+        /// <param name="SourceData">Обёртка оригинальных данных</param>
+        public static implicit operator byte[](Color32 SourceData) => [.. SourceData.Data];
     }
 }

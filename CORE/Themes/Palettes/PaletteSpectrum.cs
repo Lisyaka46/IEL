@@ -15,24 +15,6 @@ namespace LibraryIEL.CORE.Themes.Palettes
     public sealed class PaletteSpectrum
     {
         /// <summary>
-        /// Неизвестный спектр палитры для отображения фона
-        /// </summary>
-        public static PaletteSpectrum UnknownSpectrumBackGround =>
-            new(new QData(Colors.White, Colors.LightGray, Colors.LightSkyBlue, Colors.OrangeRed));
-
-        /// <summary>
-        /// Неизвестный спектр палитры для отображения границ
-        /// </summary>
-        public static PaletteSpectrum UnknownSpectrumBorderGround =>
-            new(new QData(Colors.Black, Colors.DarkGray, Colors.Gray, Colors.DarkRed));
-
-        /// <summary>
-        /// Неизвестный спектр палитры для отображения текста
-        /// </summary>
-        public static PaletteSpectrum UnknownSpectrumForeGround =>
-            new(new QData(Colors.Black, Colors.Black, Colors.DarkGray, Colors.Black));
-
-        /// <summary>
         /// Данные для использования спектра
         /// </summary>
         private byte[] Data;
@@ -139,7 +121,7 @@ namespace LibraryIEL.CORE.Themes.Palettes
         /// <param name="AnimatedEvent">Анимировать ли изменение</param>
         public void ChangeData(QData SourceData, bool AnimatedEvent)
         {
-            Data = SourceData.GetSourceBytes();
+            Data = SourceData;
             AnimateConectedBrush(AnimatedEvent);
         }
 
@@ -151,13 +133,13 @@ namespace LibraryIEL.CORE.Themes.Palettes
         /// <summary>
         /// Инициализировать пустой объект спектра темы
         /// </summary>
-        private PaletteSpectrum(QData SourceData)
+        internal PaletteSpectrum(QData SourceData)
         {
             SourceBrush = new()
             {
                 Color = SourceData.Default,
             };
-            Data = SourceData.GetSourceBytes();
+            Data = SourceData;
         }
     }
 }

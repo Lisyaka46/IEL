@@ -16,7 +16,7 @@ namespace IEL.UserElementsControl.Base
         /// <summary>
         /// Данные спектра использования цветов
         /// </summary>
-        public PaletteData Palette
+        public virtual PaletteData Palette
         {
             get => new(Background, BorderBrush, Foreground);
             set
@@ -32,12 +32,12 @@ namespace IEL.UserElementsControl.Base
         /// <summary>
         /// Объект настройки анимации отображения фона в объекте
         /// </summary>
-        public PaletteSpectrum SourceBackground { get; } = PaletteSpectrum.UnknownSpectrumBackGround;
+        public PaletteSpectrum SourceBackground { get; } = new(QData.UnknownSpectrumBackGround);
 
         /// <summary>
         /// Объект настройки отображения фона 
         /// </summary>
-        public new QData Background
+        public virtual new QData Background
         {
             get => SourceBackground.GetData();
             set => SourceBackground.ChangeData(value, IsAnimatedSettingQ);
@@ -48,12 +48,12 @@ namespace IEL.UserElementsControl.Base
         /// <summary>
         /// Объект настройки анимирования отображения границ в объекте
         /// </summary>
-        public PaletteSpectrum SourceBorderBrush { get; } = PaletteSpectrum.UnknownSpectrumBorderGround;
+        public PaletteSpectrum SourceBorderBrush { get; } = new(QData.UnknownSpectrumBorderGround);
 
         /// <summary>
         /// Объект настройки отображения границ
         /// </summary>
-        public new QData BorderBrush
+        public virtual new QData BorderBrush
         {
             get => SourceBorderBrush.GetData();
             set => SourceBorderBrush.ChangeData(value, IsAnimatedSettingQ);
@@ -64,13 +64,13 @@ namespace IEL.UserElementsControl.Base
         /// <summary>
         /// Объект настройки анимирования отображения текста в объекте
         /// </summary>
-        public PaletteSpectrum SourceForeground { get; } = PaletteSpectrum.UnknownSpectrumForeGround;
+        public PaletteSpectrum SourceForeground { get; } = new(QData.UnknownSpectrumForeGround);
 
 
         /// <summary>
         /// Объект настройки отображения текста
         /// </summary>
-        public new QData Foreground
+        public virtual new QData Foreground
         {
             get => SourceForeground.GetData();
             set => SourceForeground.ChangeData(value, IsAnimatedSettingQ);

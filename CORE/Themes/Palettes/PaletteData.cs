@@ -12,6 +12,12 @@ namespace LibraryIEL.CORE.Themes.Palettes
     public readonly ref struct PaletteData
     {
         /// <summary>
+        /// Неизвестные данные палитры для значения по умолчанию
+        /// </summary>
+        public static PaletteData UnknownPaletteData =>
+            new(QData.UnknownSpectrumBackGround, QData.UnknownSpectrumBorderGround, QData.UnknownSpectrumForeGround);
+
+        /// <summary>
         /// Данные отображения фона
         /// </summary>
         public readonly QData BackGroundData;
@@ -75,16 +81,53 @@ namespace LibraryIEL.CORE.Themes.Palettes
         /// <br/>Массив представляет собой данные всех состояний цвета
         /// </summary>
         /// <returns>[<see cref="CountBytes"/> байт]</returns>
-        public readonly byte[] GetSourceBytes()
+        private readonly byte[] GetSourceBytes()
         {
             byte[] result = new byte[CountBytes];
             byte Offset = 0;
-            Buffer.BlockCopy(BackGroundData.GetSourceBytes(), 0, result, Offset, QData.CountBytes);
+            Buffer.BlockCopy(BackGroundData, 0, result, Offset, QData.CountBytes);
             Offset += Color32.CountBytes;
-            Buffer.BlockCopy(BorderGroundData.GetSourceBytes(), 0, result, Offset, QData.CountBytes);
+            Buffer.BlockCopy(BorderGroundData, 0, result, Offset, QData.CountBytes);
             Offset += Color32.CountBytes;
-            Buffer.BlockCopy(ForeGroundData.GetSourceBytes(), 0, result, Offset, QData.CountBytes);
+            Buffer.BlockCopy(ForeGroundData, 0, result, Offset, QData.CountBytes);
             return result;
+        }
+
+        /// <summary>
+        /// Стравнить данную обёртку данных
+        /// </summary>
+        /// <param name="Source">Сравниваемый объект</param>
+        public override readonly bool Equals(object? Source) => GetSourceBytes().Equals(Source);
+
+        /// <summary>
+        /// Получить ключ объекта данных
+        /// </summary>
+        public override readonly int GetHashCode() => GetSourceBytes().GetHashCode();
+
+        /// <summary>
+        /// Преобразование в массив байтовых данных
+        /// </summary>
+        /// <param name="SourceData">Обёртка оригинальных данных</param>
+        public static implicit operator byte[](PaletteData SourceData) => SourceData.GetSourceBytes();
+
+        /// <summary>
+        /// Сравнение две обёртки между собой
+        /// </summary>
+        /// <param name="A">Обёртка оригинальных данных</param>
+        /// <param name="B">Обёртка сравниваемых данных</param>
+        public static bool operator ==(PaletteData A, PaletteData B)
+        {
+            return A.GetSourceBytes().SequenceEqual(B);
+        }
+
+        /// <summary>
+        /// Сравнение две обёртки между собой
+        /// </summary>
+        /// <param name="A">Обёртка оригинальных данных</param>
+        /// <param name="B">Обёртка сравниваемых данных</param>
+        public static bool operator !=(PaletteData A, PaletteData B)
+        {
+            return !(A == B);
         }
     }
 }
