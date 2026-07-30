@@ -1,4 +1,5 @@
 ﻿using LibraryIEL.CORE.Themes.Palettes;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -150,7 +151,6 @@ namespace IEL.UserElementsControl.Base
                     (sender, e) =>
                     {
                         ((IELContainerBase)sender).Base_BorderContainer.IsEnabled = (bool)e.NewValue;
-                        ((IELContainerBase)sender).IsEnabledChanged.Invoke(sender, new(IsEnabledProperty, e.OldValue, e.NewValue));
                     }));
 
         /// <summary>
@@ -159,13 +159,17 @@ namespace IEL.UserElementsControl.Base
         public new bool IsEnabled
         {
             get => (bool)GetValue(IsEnabledProperty);
-            set => SetValue(IsEnabledProperty, value);
+            set
+            {
+                SetValue(IsEnabledProperty, value);
+                IsEnabledChanged.Invoke(this, value);
+            }
         }
 
         /// <summary>
         /// Событие изменения состояния активности элемента
         /// </summary>
-        public new event DependencyPropertyChangedEventHandler IsEnabledChanged;
+        public new event EventHandler<bool> IsEnabledChanged;
         #endregion
 
         #endregion
@@ -215,8 +219,8 @@ namespace IEL.UserElementsControl.Base
             IsEnabledChanged += (sender, e) =>
             {
                 SourceTimer.Stop();
-                Cursor = (bool)e.NewValue ? Cursors.Hand : Cursors.No;
-                SpectrumColor Value = (bool)e.NewValue ? SpectrumColor.Default : SpectrumColor.NotEnabled;
+                Cursor = e ? Cursors.Hand : Cursors.No;
+                SpectrumColor Value = e ? SpectrumColor.Default : SpectrumColor.NotEnabled;
                 SetActiveSpecrum(Value);
             };
             SetValue(ContentControl.ContentProperty, Base_BorderContainer);

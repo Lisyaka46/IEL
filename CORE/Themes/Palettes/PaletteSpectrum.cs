@@ -1,11 +1,6 @@
-﻿using IEL.UserElementsControl.Base;
-using LibraryIEL.CORE.Themes.Data;
-using System.Diagnostics.CodeAnalysis;
-using System.IO;
-using System.Runtime.CompilerServices;
+﻿using LibraryIEL.CORE.Themes.Data;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
-using WnColor = System.Windows.Media.Color;
 
 namespace LibraryIEL.CORE.Themes.Palettes
 {
@@ -35,7 +30,8 @@ namespace LibraryIEL.CORE.Themes.Palettes
         public Color32 GetActiveSpectrumColor()
         {
             if (ActiveSpectrum == SpectrumColor.Custom) return Custom;
-            return new Color32(Data[(Color32.CountBytes * (byte)(ActiveSpectrum - 1))..Color32.CountBytes]);
+            byte Offset = (byte)(Color32.CountBytes * (byte)(ActiveSpectrum - 1));
+            return new Color32(Data[Offset..(Offset + Color32.CountBytes)]);
         }
 
         /// <summary>
