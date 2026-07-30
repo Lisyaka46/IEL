@@ -284,8 +284,13 @@ namespace IEL.UserElementsControl
             {
                 FrameworkElement ParentElement = VisualTreeHelper.GetParent(this) as FrameworkElement ??
                     throw new Exception("У объекта нет родительского элемента");
-                Point LocationPointElement =
-                    Element.TransformToAncestor(ParentElement).TransformBounds(new Rect(ParentElement.RenderSize)).Location;
+                Point LocationPointElement;
+                try
+                {
+                    LocationPointElement =
+                        Element.TransformToAncestor(ParentElement).TransformBounds(new Rect(ParentElement.RenderSize)).Location;
+                }
+                catch (InvalidOperationException) { return; }
                 Size SizeParentElement = ParentElement.RenderSize;
                 Point LeftRightOrientationLogic =
                     new(Math.Abs(LocationPointElement.X - ActualWidth), SizeParentElement.Width - (LocationPointElement.X + ActualWidth));
