@@ -10,7 +10,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	<PackageId>IEL</PackageId>
 	<Title>InterfaceELement</Title>
-	<Version>1.0.3</Version>
+	<Version>1.1.1</Version>
 	<Description>InterfaceELement - Библиотека переопределённых объектов интерфейса WPF</Description>
 	<PackageIcon>IEL.png</PackageIcon>
 	<PackageTags>WPF;Library</PackageTags>
