@@ -1,4 +1,4 @@
-# Interface Element (IEL) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+# Interface Element (IEL) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) [![NuGet Version](https://img.shields.io/nuget/v/IEL.svg?style=flat&label=NuGet)](https://www.nuget.org/packages/IEL/)
 [![Подписаться на канал](https://img.shields.io/badge/Telegram-Oper_Page_les-2CA5E0?style=for-the-badge&logo=telegram)](https://t.me/OperPageLes)<br>
 Библиотека предоставляет переопределённые пользовательские объекты интерфейса со своей логикой и функциями<br>
 Является низкоуровневой библиотекой, предоставляя лишь данные и примитивное управление над реализованными функциями
