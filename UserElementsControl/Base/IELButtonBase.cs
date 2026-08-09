@@ -49,12 +49,12 @@ namespace IEL.UserElementsControl.Base
         /// <summary>
         /// Объект события активации левым щелчком мыши
         /// </summary>
-        public ActivateHandler? OnActivateMouseLeft { get; set; }
+        public event ActivateHandler? OnActivateMouseLeft;
 
         /// <summary>
         /// Объект события активации правым щелчком мыши
         /// </summary>
-        public event ActivateHandler OnActivateMouseRight;
+        public event ActivateHandler? OnActivateMouseRight;
         #endregion
 
         #region Properties
