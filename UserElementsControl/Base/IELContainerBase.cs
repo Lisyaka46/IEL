@@ -165,7 +165,7 @@ namespace IEL.UserElementsControl.Base
         /// Состояние активности элемента
         /// </summary>
         [Description("Состояние активности элемента.\n" +
-            $"Управляется Q-логикой ({nameof(Palle)})")]
+            $"Управляется Q-логикой ({nameof(Palette)})")]
         public new bool IsEnabled
         {
             get => (bool)GetValue(IsEnabledProperty);
