@@ -1,4 +1,5 @@
 ﻿using LibraryIEL.CORE.Themes.Palettes;
+using System.ComponentModel;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
@@ -42,6 +43,8 @@ namespace IEL.UserElementsControl.Base
         /// <summary>
         /// Время задержки перед срабатыванием события удержания мыши в кнопке
         /// </summary>
+        [Description("Временной промежуток, отвечающий за срабатывание события задержки курсора мыши на UI-объекте.\n" +
+            $"Событие задержки курсора: {nameof(MouseHover)}")]
         public TimeSpan IntervalHover
         {
             get => (TimeSpan)GetValue(IntervalHoverProperty);
@@ -69,6 +72,7 @@ namespace IEL.UserElementsControl.Base
         /// <summary>
         /// Внутренний элемент объекта
         /// </summary>
+        [Description("Контент элемента внутри границ барьера")]
         public new UIElement Content
         {
             get => (UIElement)GetValue(ContentProperty);
@@ -91,6 +95,7 @@ namespace IEL.UserElementsControl.Base
         /// <summary>
         /// Скругление границ объекта
         /// </summary>
+        [Description("Скругление границ барьера")]
         public CornerRadius CornerRadius
         {
             get => (CornerRadius)GetValue(CornerRadiusProperty);
@@ -113,6 +118,7 @@ namespace IEL.UserElementsControl.Base
         /// <summary>
         /// Толщина границ объекта
         /// </summary>
+        [Description("Толщина границ барьера")]
         public new Thickness BorderThickness
         {
             get => (Thickness)Base_BorderContainer.GetValue(BorderThicknessProperty);
@@ -135,6 +141,7 @@ namespace IEL.UserElementsControl.Base
         /// <summary>
         /// Внутреннее смещение в объекте
         /// </summary>
+        [Description("Смещение контента внутри границ барьера")]
         public new Thickness Padding
         {
             get => (Thickness)GetValue(PaddingProperty);
@@ -157,6 +164,8 @@ namespace IEL.UserElementsControl.Base
         /// <summary>
         /// Состояние активности элемента
         /// </summary>
+        [Description("Состояние активности элемента.\n" +
+            $"Управляется Q-логикой ({nameof(Palle)})")]
         public new bool IsEnabled
         {
             get => (bool)GetValue(IsEnabledProperty);

@@ -1,23 +1,20 @@
 ﻿using IEL.CORE.Enums;
 using LibraryIEL.CORE.Themes.Palettes;
+using System.ComponentModel;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace IEL.UserElementsControl.Base
 {
     /// <summary>
-    /// БАЗОВЫЙ КЛАСС для отображения кнопки IEL
+    /// <b>БАЗОВЫЙ КЛАСС</b><br/>
+    /// Кнопка IEL
     /// </summary>
     public class IELButtonBase : IELContainerBase
     {
-        /// <summary>
-        /// Делегат события изменения поля значения
-        /// </summary>
-        /// <typeparam name="T_Value">Входной тип изменяемого значения</typeparam>
-        /// <param name="NewValue">Новое значение</param>
-        public delegate void IELSettingValueChangedHandler<T_Value>(T_Value NewValue);
-
         #region UIElements
         /// <summary>
         /// Главный контейнер кнопки
@@ -40,40 +37,43 @@ namespace IEL.UserElementsControl.Base
         protected Viewbox Base_ViewBoxButton;
         #endregion
 
-        #region OnActivateMouse
-        /// <summary>
-        /// Делегат события активации
-        /// </summary>
-        public delegate void ActivateHandler(object Source, MouseButtonEventArgs eventArgs);
-
+        #region OnActivateMouseEvents
         /// <summary>
         /// Объект события активации левым щелчком мыши
         /// </summary>
-        public event ActivateHandler? OnActivateMouseLeft;
+        public event MouseButtonEventHandler? OnActivateMouseLeft;
 
         /// <summary>
         /// Объект события активации правым щелчком мыши
         /// </summary>
-        public event ActivateHandler? OnActivateMouseRight;
+        public event MouseButtonEventHandler? OnActivateMouseRight;
         #endregion
 
         #region Properties
 
         #region Content
         /// <summary>
-        /// Данные конкретного свойства
+        /// Данные свойства <see cref="Content"/>
         /// </summary>
         public static readonly new DependencyProperty ContentProperty =
-            DependencyProperty.Register("Content", typeof(UIElement), typeof(IELButtonBase),
-                new(
-                    (sender, e) =>
-                    {
-                        ((IELButtonBase)sender).Base_ViewBoxButton.Child = (UIElement)e.NewValue;
-                    }));
+            DependencyProperty.Register(nameof(Content), typeof(UIElement), typeof(IELButtonBase),
+                new(ContentHandler));
+
+        /// <summary>
+        /// Обработчик события изменения свойства <see cref="Content"/>
+        /// </summary>
+        private static void ContentHandler(DependencyObject Element, DependencyPropertyChangedEventArgs e)
+        {
+            if (Element is IELButtonBase Source && e.NewValue is UIElement SourceNewValue)
+            {
+                Source.Base_ViewBoxButton.Child = SourceNewValue;
+            }
+        }
 
         /// <summary>
         /// Внутренний элемент объекта
         /// </summary>
+        [Description("Контент элемента кнопки")]
         public new UIElement Content
         {
             get => (UIElement)GetValue(ContentProperty);
@@ -81,88 +81,62 @@ namespace IEL.UserElementsControl.Base
         }
         #endregion
 
-        #region WidthViewBox
+        #region PaddingButtonContent
         /// <summary>
-        /// Данные конкретного свойства
+        /// Данные свойства <see cref="PaddingButtonContent"/>
         /// </summary>
-        public static readonly DependencyProperty WidthViewBoxProperty =
-            DependencyProperty.Register("WidthViewBox", typeof(double), typeof(IELButtonBase),
-                new(
-                    (sender, e) =>
-                    {
-                        ((IELButtonBase)sender).Base_ViewBoxButton.Width = (double)e.NewValue;
-                    }));
+        public static readonly DependencyProperty PaddingButtonContentProperty =
+            DependencyProperty.Register(nameof(PaddingButtonContent), typeof(Thickness), typeof(IELButtonBase),
+                new(new Thickness(5), PaddingButtonContentHandler));
 
         /// <summary>
-        /// Размер объекта отображения содержимого по горизонтали
+        /// Обработчик события изменения свойства <see cref="PaddingButtonContent"/>
         /// </summary>
-        public double WidthViewBox
+        private static void PaddingButtonContentHandler(DependencyObject Element, DependencyPropertyChangedEventArgs e)
         {
-            get => (double)GetValue(WidthViewBoxProperty);
-            set => SetValue(WidthViewBoxProperty, value);
+            if (Element is IELButtonBase Source && e.NewValue is Thickness SourceNewValue)
+            {
+                Source.Base_ViewBoxButton.Margin = SourceNewValue;
+            }
         }
-        #endregion
-
-        #region HeightViewBox
-        /// <summary>
-        /// Данные конкретного свойства
-        /// </summary>
-        public static readonly DependencyProperty HeightViewBoxProperty =
-            DependencyProperty.Register("HeightViewBox", typeof(double), typeof(IELButtonBase),
-                new(
-                    (sender, e) =>
-                    {
-                        ((IELButtonBase)sender).Base_ViewBoxButton.Height = (double)e.NewValue;
-                    }));
 
         /// <summary>
-        /// Размер объекта отображения содержимого по вертикали
+        /// Внутреннее смещение контента в кнопке
         /// </summary>
-        public double HeightViewBox
+        [Description("Внутреннее смещение контента кнопки.")]
+        public Thickness PaddingButtonContent
         {
-            get => (double)GetValue(HeightViewBoxProperty);
-            set => SetValue(HeightViewBoxProperty, value);
-        }
-        #endregion
-
-        #region MarginViewBox
-        /// <summary>
-        /// Данные конкретного свойства
-        /// </summary>
-        public static readonly DependencyProperty MarginViewBoxProperty =
-            DependencyProperty.Register("MarginViewBox", typeof(Thickness), typeof(IELButtonBase),
-                new(new Thickness(5),
-                    (sender, e) =>
-                    {
-                        ((IELButtonBase)sender).Base_ViewBoxButton.Margin = (Thickness)e.NewValue;
-                    }));
-
-        /// <summary>
-        /// Внутреннее смещение в объекте
-        /// </summary>
-        public Thickness MarginViewBox
-        {
-            get => (Thickness)GetValue(MarginViewBoxProperty);
-            set => SetValue(MarginViewBoxProperty, value);
+            get => (Thickness)GetValue(PaddingButtonContentProperty);
+            set => SetValue(PaddingButtonContentProperty, value);
         }
         #endregion
 
         #region CornerRadiusGuides
         /// <summary>
-        /// Данные конкретного свойства
+        /// Данные свойства <see cref="CornerRadiusGuides"/>
         /// </summary>
         public static readonly DependencyProperty CornerRadiusGuidesProperty =
-            DependencyProperty.Register("CornerRadiusGuides", typeof(CornerRadius), typeof(IELButtonBase),
-                new(new CornerRadius(0),
-                    (sender, e) =>
-                    {
-                        ((IELButtonBase)sender).Base_LeftBorderGuideButton.CornerRadius = (CornerRadius)e.NewValue;
-                        ((IELButtonBase)sender).Base_RightBorderGuideButton.CornerRadius = (CornerRadius)e.NewValue;
-                    }));
+            DependencyProperty.Register(nameof(CornerRadiusGuides), typeof(CornerRadius), typeof(IELButtonBase),
+                new(new CornerRadius(0), CornerRadiusGuidesHandler));
+
+        /// <summary>
+        /// Обработчик события изменения свойства <see cref="CornerRadiusGuides"/>
+        /// </summary>
+        private static void CornerRadiusGuidesHandler(DependencyObject Element, DependencyPropertyChangedEventArgs e)
+        {
+            if (Element is IELButtonBase Source && e.NewValue is CornerRadius SourceNewValue)
+            {
+                Source.Base_LeftBorderGuideButton.CornerRadius = SourceNewValue;
+                Source.Base_RightBorderGuideButton.CornerRadius = SourceNewValue;
+            }
+        }
 
         /// <summary>
         /// Скругление границ объектов направляющих кнопки
         /// </summary>
+        [Description("Скругление границ направляющих для кнопки.\n" +
+            "Направляющие представляют собой индикаторы векторных стрелок, которые являются лишь визуальной состовляющей кнопки.\n" +
+            $"Направляющие НЕ являются частью свойства {nameof(Content)}")]
         public CornerRadius CornerRadiusGuides
         {
             get => (CornerRadius)GetValue(CornerRadiusGuidesProperty);
@@ -172,20 +146,30 @@ namespace IEL.UserElementsControl.Base
 
         #region BorderThicknessGuides
         /// <summary>
-        /// Данные конкретного свойства
+        /// Данные свойства <see cref="BorderThicknessGuides"/>
         /// </summary>
         public static readonly DependencyProperty BorderThicknessGuidesProperty =
-            DependencyProperty.Register("BorderThicknessGuides", typeof(Thickness), typeof(IELButtonBase),
-                new(new Thickness(2),
-                    (sender, e) =>
-                    {
-                        ((IELButtonBase)sender).Base_LeftBorderGuideButton.BorderThickness = (Thickness)e.NewValue;
-                        ((IELButtonBase)sender).Base_RightBorderGuideButton.BorderThickness = (Thickness)e.NewValue;
-                    }));
+            DependencyProperty.Register(nameof(BorderThicknessGuides), typeof(Thickness), typeof(IELButtonBase),
+                new(new Thickness(2), BorderThicknessGuidesHandler));
 
         /// <summary>
-        /// Толщина границ объектов направляющей кнопки
+        /// Обработчик события изменения свойства <see cref="BorderThicknessGuides"/>
         /// </summary>
+        private static void BorderThicknessGuidesHandler(DependencyObject Element, DependencyPropertyChangedEventArgs e)
+        {
+            if (Element is IELButtonBase Source && e.NewValue is Thickness SourceNewValue)
+            {
+                Source.Base_LeftBorderGuideButton.BorderThickness = SourceNewValue;
+                Source.Base_RightBorderGuideButton.BorderThickness = SourceNewValue;
+            }
+        }
+
+        /// <summary>
+        /// Толщина границ направляющих кнопки
+        /// </summary>
+        [Description("Толщина границ направляющих для кнопки.\n" +
+            "Направляющие представляют собой индикаторы векторных стрелок, которые являются лишь визуальной состовляющей кнопки.\n" +
+            $"Направляющие НЕ являются частью свойства {nameof(Content)}")]
         public Thickness BorderThicknessGuides
         {
             get => (Thickness)GetValue(BorderThicknessGuidesProperty);
@@ -195,26 +179,35 @@ namespace IEL.UserElementsControl.Base
 
         #region VisualGuide
         /// <summary>
-        /// Данные конкретного свойства
+        /// Данные свойства <see cref="VisualGuide"/>
         /// </summary>
         public static readonly DependencyProperty VisualGuideProperty =
-            DependencyProperty.Register("VisualGuide", typeof(StateVisualGuide), typeof(IELButtonBase),
-                new(StateVisualGuide.Default,
-                    (sender, e) =>
-                    {
-                        var NV = (StateVisualGuide)e.NewValue;
-                        ((IELButtonBase)sender).Base_HeadGridButton.ColumnDefinitions[0].Width = new(0d,
-                            NV == StateVisualGuide.LeftArrow || NV == StateVisualGuide.DuoArrow ? GridUnitType.Auto :
-                            (GridUnitType.Pixel));
-                        ((IELButtonBase)sender).Base_HeadGridButton.ColumnDefinitions[2].Width = new(0d,
-                            NV == StateVisualGuide.RightArrow || NV == StateVisualGuide.DuoArrow ? GridUnitType.Auto : GridUnitType.Pixel);
+            DependencyProperty.Register(nameof(VisualGuide), typeof(StateVisualGuide), typeof(IELButtonBase),
+                new(StateVisualGuide.Default, VisualGuideHandler));
 
-                        ((IELButtonBase)sender).VisualGuideChanged?.Invoke(NV);
-                    }));
+        /// <summary>
+        /// Обработчик события изменения свойства <see cref="VisualGuide"/>
+        /// </summary>
+        private static void VisualGuideHandler(DependencyObject Element, DependencyPropertyChangedEventArgs e)
+        {
+            if (Element is IELButtonBase Source && e.NewValue is StateVisualGuide SourceNewValue)
+            {
+                Source.Base_HeadGridButton.ColumnDefinitions[0].Width = new(0d,
+                    SourceNewValue == StateVisualGuide.LeftArrow || SourceNewValue == StateVisualGuide.DuoArrow ?
+                    GridUnitType.Auto : GridUnitType.Pixel);
+                Source.Base_HeadGridButton.ColumnDefinitions[2].Width = new(0d,
+                    SourceNewValue == StateVisualGuide.RightArrow || SourceNewValue == StateVisualGuide.DuoArrow ?
+                    GridUnitType.Auto : GridUnitType.Pixel);
+                Source.VisualGuideChanged?.Invoke(Source, SourceNewValue);
+            }
+        }
 
         /// <summary>
         /// Состояние отображения направляющих кнопки
         /// </summary>
+        [Description("Состояние отображения направляющих в элементе кнопки.\n" +
+            "Направляющие представляют собой индикаторы векторных стрелок, которые являются лишь визуальной состовляющей кнопки.\n" +
+            $"Направляющие НЕ являются частью свойства {nameof(Content)}")]
         public StateVisualGuide VisualGuide
         {
             get => (StateVisualGuide)GetValue(VisualGuideProperty);
@@ -224,10 +217,11 @@ namespace IEL.UserElementsControl.Base
         /// <summary>
         /// Событие изменения состояния отображения направляющих кнопки
         /// </summary>
-        protected event IELSettingValueChangedHandler<StateVisualGuide>? VisualGuideChanged;
+        [Description("Событие изменение визуализации направляющих")]
+        protected event EventHandler<StateVisualGuide>? VisualGuideChanged;
         #endregion
 
-        //#region ContextMenu
+        #region ContextMenu TODO: (контектное меню для IELPanelAction)
         ///// <summary>
         ///// Данные конкретного свойства
         ///// </summary>
@@ -253,7 +247,7 @@ namespace IEL.UserElementsControl.Base
         ///// Объект события активации закрытия контекстного меню
         ///// </summary>
         //public new event EventHandler<StackPanel>? ContextMenuClosing;
-        //#endregion
+        #endregion
 
         #endregion
 

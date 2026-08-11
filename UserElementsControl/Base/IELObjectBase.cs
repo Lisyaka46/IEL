@@ -20,6 +20,10 @@ namespace IEL.UserElementsControl.Base
         /// <summary>
         /// Данные спектра использования цветов
         /// </summary>
+        [Description("Объект цветовой настройки всех видов отображения для Q-логики.\n" +
+            "Реализует 3 состояния спектров цвета " +
+            $"({nameof(Background)}, {nameof(BorderBrush)}, {nameof(Foreground)})\n" +
+            "Спектры отвечают за наведение, нажатие и другие цветовые анимации.")]
         public virtual PaletteData Palette
         {
             get => new(Background, BorderBrush, Foreground);
@@ -41,6 +45,8 @@ namespace IEL.UserElementsControl.Base
         /// <summary>
         /// Объект настройки отображения фона 
         /// </summary>
+        [Description("Объект цветовой настройки отображения фона объекта для Q-логики.\n" +
+            "Реализует 4 спектра цветов, которые отвечают за наведение, нажатие и другие цветовые анимации.")]
         public virtual new QData Background
         {
             get => SourceBackground.GetData();
@@ -57,6 +63,8 @@ namespace IEL.UserElementsControl.Base
         /// <summary>
         /// Объект настройки отображения границ
         /// </summary>
+        [Description("Объект цветовой настройки отображения границ объекта для Q-логики.\n" +
+            "Реализует 4 спектра цветов, которые отвечают за наведение, нажатие и другие цветовые анимации.")]
         public virtual new QData BorderBrush
         {
             get => SourceBorderBrush.GetData();
@@ -74,6 +82,8 @@ namespace IEL.UserElementsControl.Base
         /// <summary>
         /// Объект настройки отображения текста
         /// </summary>
+        [Description("Объект цветовой настройки отображения текста для Q-логики.\n" +
+            "Реализует 4 спектра цветов, которые отвечают за наведение, нажатие и другие цветовые анимации.")]
         public virtual new QData Foreground
         {
             get => SourceForeground.GetData();
@@ -96,6 +106,9 @@ namespace IEL.UserElementsControl.Base
         /// <summary>
         /// Состояние использования настроек Q
         /// </summary>
+        [Description("Состояние активности Q-логики.\n" +
+            "Отвечает за использование данной цветовой логики наведения, нажатия и других анимаций.\n" +
+            "При отключённом состоянии объект продолжит функционировать, лишь будет отсутствовать визуальная цветовая анимация Q-логики.")]
         public bool IsEnabledSettingQ
         {
             get => (bool)GetValue(IsEnabledSettingQProperty);
@@ -117,6 +130,9 @@ namespace IEL.UserElementsControl.Base
         /// <remarks>
         /// Данное свойство зависит от <see cref="IsEnabledSettingQ"/>, так как оно включает использование цветов
         /// </remarks>
+        [Description("Состояние анимирования Q-логики.\n" +
+            "Отвечает за плавтоне изменение цвета при наведении, нажатия и других визуальных цветовых анимаций.\n" +
+            $"Этот параметр зависит от {nameof(IsEnabledSettingQ)}, который отвечает за активность данной настройки.")]
         public bool IsAnimatedSettingQ
         {
             get => (bool)GetValue(IsAnimatedSettingQProperty) && IsEnabledSettingQ;
@@ -136,9 +152,9 @@ namespace IEL.UserElementsControl.Base
         /// Объект менеджера анимаций настроек
         /// </summary>
         [Description("Менеджер анимаций используемый элементом.\n" +
-            "С его помощью в объекте реализуются анимации и плавные переходы\n" +
-            "Если менеджер анимаций отсутствует, то анимирование не будет происходить, лишь резкое изменение\n" +
-            "Желательно использовать один общий менеджер анимаций для всех UI-объектов")]
+            "С его помощью в объекте реализуются анимации и плавные переходы.\n" +
+            "Если менеджер анимаций отсутствует, то анимирование не будет происходить, лишь резкое изменение.\n" +
+            "Желательно использовать один общий менеджер анимаций для всех UI-объектов.")]
         public virtual AnimationManager? ManagerAnimation { get; set; }
 
         /// <summary>

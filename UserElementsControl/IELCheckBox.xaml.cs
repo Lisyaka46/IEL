@@ -18,7 +18,7 @@ namespace IEL.UserElementsControl
         /// Данные конкретного свойства
         /// </summary>
         public static readonly DependencyProperty CheckBoxBorderThicknessProperty =
-            DependencyProperty.Register("CheckBoxBorderThickness", typeof(Thickness), typeof(IELCheckBox),
+            DependencyProperty.Register(nameof(CheckBoxBorderThickness), typeof(Thickness), typeof(IELCheckBox),
                 new(new Thickness(2),
                     (sender, e) =>
                     {
@@ -40,7 +40,7 @@ namespace IEL.UserElementsControl
         /// Данные конкретного свойства
         /// </summary>
         public static readonly DependencyProperty CheckBoxCornerRadiusProperty =
-            DependencyProperty.Register("CheckBoxCornerRadius", typeof(double), typeof(IELCheckBox),
+            DependencyProperty.Register(nameof(CheckBoxCornerRadius), typeof(double), typeof(IELCheckBox),
                 new(0d, CheckBoxCornerRadiusHandler));
 
         /// <summary>
@@ -76,13 +76,13 @@ namespace IEL.UserElementsControl
         /// Данные конкретного свойства
         /// </summary>
         public static readonly DependencyProperty TextProperty =
-            DependencyProperty.Register("Text", typeof(string), typeof(IELCheckBox),
-                new(string.Empty, SetProperty_Text));
+            DependencyProperty.Register(nameof(Text), typeof(string), typeof(IELCheckBox),
+                new(string.Empty, TextHandler));
 
         /// <summary>
-        /// Установить элементу свойство
+        /// Обработчик события изменения свойства <see cref="Text"/>
         /// </summary>
-        private static void SetProperty_Text(DependencyObject Element, DependencyPropertyChangedEventArgs e)
+        private static void TextHandler(DependencyObject Element, DependencyPropertyChangedEventArgs e)
         {
             IELCheckBox Source = (IELCheckBox)Element;
             string SourceNewValue = (string)e.NewValue;
@@ -99,20 +99,18 @@ namespace IEL.UserElementsControl
         }
         #endregion
 
-        #region ImageOpacityTexture
+        #region CheckedTexture
         /// <summary>
         /// Данные конкретного свойства
         /// </summary>
-        public static readonly DependencyProperty ImageOpacityTextureProperty =
-            DependencyProperty.Register("ImageOpacityTexture", typeof(ImageSource), typeof(IELCheckBox),
-                new(null, SetProperty_ImageOpacityTexture));
+        public static readonly DependencyProperty CheckedTextureProperty =
+            DependencyProperty.Register(nameof(CheckedTexture), typeof(ImageSource), typeof(IELCheckBox),
+                new(null, CheckedTextureHandler));
 
         /// <summary>
-        /// Установить элементу свойство
+        /// Обработчик события изменения свойства <see cref="CheckedTexture"/>
         /// </summary>
-        /// <param name="Element">Объект которому устанавливается свойство</param>
-        /// <param name="e">Данные о устанавливаемом свойстве</param>
-        private static void SetProperty_ImageOpacityTexture(DependencyObject Element, DependencyPropertyChangedEventArgs e)
+        private static void CheckedTextureHandler(DependencyObject Element, DependencyPropertyChangedEventArgs e)
         {
             IELCheckBox Source = (IELCheckBox)Element;
             ImageSource? SourceNewValue = (ImageSource?)e.NewValue;
@@ -126,10 +124,10 @@ namespace IEL.UserElementsControl
         /// <summary>
         /// Текстура изображения используемая для индикатора выделения
         /// </summary>
-        public ImageSource ImageOpacityTexture
+        public ImageSource CheckedTexture
         {
-            get => (ImageSource)GetValue(ImageOpacityTextureProperty);
-            set => SetValue(ImageOpacityTextureProperty, value);
+            get => (ImageSource)GetValue(CheckedTextureProperty);
+            set => SetValue(CheckedTextureProperty, value);
         }
         #endregion
 
@@ -138,7 +136,7 @@ namespace IEL.UserElementsControl
         /// Данные конкретного свойства
         /// </summary>
         public static readonly DependencyProperty IsCheckedProperty =
-            DependencyProperty.Register("IsChecked", typeof(bool), typeof(IELCheckBox),
+            DependencyProperty.Register(nameof(IsChecked), typeof(bool), typeof(IELCheckBox),
                 new(false, IsCheckedHandler));
 
         /// <summary>
