@@ -37,4 +37,20 @@ namespace IEL.CORE.Enums
         /// </summary>
         Right = 1,
     }
+
+    /// <summary>
+    /// Перечисление состояний реализаций прокрутки контекста
+    /// </summary>
+    public enum ScrollOrientation
+    {
+        /// <summary>
+        /// Горизонтальная ориентация прокрутки контента
+        /// </summary>
+        Horizontal = 0,
+
+        /// <summary>
+        /// Вертикальная ориентация прокрутки контента
+        /// </summary>
+        Vertical = 1,
+    }
 }

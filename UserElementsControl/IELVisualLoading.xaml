@@ -1,0 +1,10 @@
+﻿<Base:IELContainerBase
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    x:Class="IEL.UserElementsControl.IELVisualLoading"
+    xmlns:Base="clr-namespace:IEL.UserElementsControl.Base"
+    xmlns:IEL="clr-namespace:IEL.UserElementsControl">
+    <Viewbox>
+        <Ellipse x:FieldModifier="private" x:Name="ElementLoading" StrokeThickness="7" StrokeDashArray="3.72" StrokeDashOffset="-7.44" StrokeDashCap="Round" Stroke="Black" Width="40" Height="40" Margin="1,1,1,1"/>
+    </Viewbox>
+</Base:IELContainerBase>

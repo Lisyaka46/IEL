@@ -126,7 +126,7 @@ namespace IEL.UserElementsControl.Base
                 new(null,
                     (sender, e) =>
                     {
-                        ((IELButtonKeyBase)sender).Base_TextCharKey.Text = e.NewValue == null ? "?" : IELKeyConverter.ConvertKeyToString((Key)e.NewValue);
+                        ((IELButtonKeyBase)sender).Base_TextCharKey.Text = e.NewValue == null ? "?" : CORE.Classes.KeyConverter.ConvertKeyToString((Key)e.NewValue);
                     }));
 
         /// <summary>
@@ -196,7 +196,7 @@ namespace IEL.UserElementsControl.Base
         /// <summary>
         /// Инициализировать <b>БАЗОВОЕ ПРЕДСТАВЛЕНИЕ</b> кнопки IEL с позможностью управления клавиатурой
         /// </summary>
-        public IELButtonKeyBase()
+        public IELButtonKeyBase() : base()
         {
             //Base_GridButton.HorizontalAlignment = HorizontalAlignment.Stretch;
             Base_HeadGridButtonKey = new()

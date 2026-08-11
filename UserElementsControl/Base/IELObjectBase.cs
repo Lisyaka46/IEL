@@ -1,4 +1,6 @@
-﻿using LibraryIEL.CORE.Themes.Data;
+﻿using IEL.CORE.Animation;
+using IEL.Interfaces;
+using LibraryIEL.CORE.Themes.Data;
 using LibraryIEL.CORE.Themes.Palettes;
 using System.Windows;
 using System.Windows.Controls;
@@ -8,7 +10,7 @@ namespace IEL.UserElementsControl.Base
     /// <summary>
     /// БАЗОВЫЙ КЛАСС для отображения элемента IEL
     /// </summary>
-    public class IELObjectBase : ContentControl
+    public class IELObjectBase : ContentControl, IIELAnimate
     {
         #region Properties
 
@@ -127,6 +129,11 @@ namespace IEL.UserElementsControl.Base
         #endregion
 
         #endregion
+
+        /// <summary>
+        /// Объект менеджера анимаций настроек OPL
+        /// </summary>
+        public virtual AnimationManager? ManagerAnimation { get; set; }
 
         /// <summary>
         /// Активировать визуализацию спектра для всех Q сегментов

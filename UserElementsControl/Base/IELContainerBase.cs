@@ -8,7 +8,8 @@ using System.Windows.Threading;
 namespace IEL.UserElementsControl.Base
 {
     /// <summary>
-    /// БАЗОВЫЙ КЛАСС для отображения контейнера IEL
+    /// <b>БАЗОВЫЙ КЛАСС</b><br/>
+    /// Контейнер IEL
     /// </summary>
     public class IELContainerBase : IELObjectBase
     {
@@ -177,7 +178,7 @@ namespace IEL.UserElementsControl.Base
         /// <summary>
         /// Инициализировать базовый класс визуализации контейнера
         /// </summary>
-        protected IELContainerBase()
+        protected IELContainerBase() : base()
         {
             Base_BorderContainer = new()
             {
