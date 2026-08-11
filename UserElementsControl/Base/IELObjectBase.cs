@@ -2,13 +2,15 @@
 using IEL.Interfaces;
 using LibraryIEL.CORE.Themes.Data;
 using LibraryIEL.CORE.Themes.Palettes;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 
 namespace IEL.UserElementsControl.Base
 {
     /// <summary>
-    /// БАЗОВЫЙ КЛАСС для отображения элемента IEL
+    /// <b>БАЗОВЫЙ КЛАСС</b><br/>
+    /// UI-объект IEL
     /// </summary>
     public class IELObjectBase : ContentControl, IIELAnimate
     {
@@ -131,8 +133,12 @@ namespace IEL.UserElementsControl.Base
         #endregion
 
         /// <summary>
-        /// Объект менеджера анимаций настроек OPL
+        /// Объект менеджера анимаций настроек
         /// </summary>
+        [Description("Менеджер анимаций используемый элементом.\n" +
+            "С его помощью в объекте реализуются анимации и плавные переходы\n" +
+            "Если менеджер анимаций отсутствует, то анимирование не будет происходить, лишь резкое изменение\n" +
+            "Желательно использовать один общий менеджер анимаций для всех UI-объектов")]
         public virtual AnimationManager? ManagerAnimation { get; set; }
 
         /// <summary>

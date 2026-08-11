@@ -41,23 +41,14 @@ namespace IEL.UserElementsControl
         /// </summary>
         public static readonly DependencyProperty CheckBoxCornerRadiusProperty =
             DependencyProperty.Register("CheckBoxCornerRadius", typeof(double), typeof(IELCheckBox),
-                new(0d, SetProperty_CheckBoxCornerRadius));
-
-        /// <summary>
-        /// Скругление границ контейнера индикатора объекта
-        /// </summary>
-        public double CheckBoxCornerRadius
-        {
-            get => (double)GetValue(CheckBoxCornerRadiusProperty);
-            set => SetValue(CheckBoxCornerRadiusProperty, value);
-        }
+                new(0d, CheckBoxCornerRadiusHandler));
 
         /// <summary>
         /// Установить элементу свойство
         /// </summary>
         /// <param name="Element">Объект которому устанавливается свойство</param>
         /// <param name="e">Данные о устанавливаемом свойстве</param>
-        private static void SetProperty_CheckBoxCornerRadius(DependencyObject Element, DependencyPropertyChangedEventArgs e)
+        private static void CheckBoxCornerRadiusHandler(DependencyObject Element, DependencyPropertyChangedEventArgs e)
         {
             IELCheckBox Source = (IELCheckBox)Element;
             double SourceNewValue = (double)e.NewValue;
@@ -68,6 +59,15 @@ namespace IEL.UserElementsControl
             }
             CornerRadius NewValue = new(SourceNewValue);
             Source.BorderCheck.CornerRadius = NewValue;
+        }
+
+        /// <summary>
+        /// Скругление границ контейнера индикатора объекта
+        /// </summary>
+        public double CheckBoxCornerRadius
+        {
+            get => (double)GetValue(CheckBoxCornerRadiusProperty);
+            set => SetValue(CheckBoxCornerRadiusProperty, value);
         }
         #endregion
 
@@ -80,24 +80,22 @@ namespace IEL.UserElementsControl
                 new(string.Empty, SetProperty_Text));
 
         /// <summary>
+        /// Установить элементу свойство
+        /// </summary>
+        private static void SetProperty_Text(DependencyObject Element, DependencyPropertyChangedEventArgs e)
+        {
+            IELCheckBox Source = (IELCheckBox)Element;
+            string SourceNewValue = (string)e.NewValue;
+            Source.TextBlockElement.Text = SourceNewValue;
+        }
+
+        /// <summary>
         /// Отображаемый текст в поле
         /// </summary>
         public string Text
         {
             get => (string)GetValue(TextProperty);
             set => SetValue(TextProperty, value);
-        }
-
-        /// <summary>
-        /// Установить элементу свойство
-        /// </summary>
-        /// <param name="Element">Объект которому устанавливается свойство</param>
-        /// <param name="e">Данные о устанавливаемом свойстве</param>
-        private static void SetProperty_Text(DependencyObject Element, DependencyPropertyChangedEventArgs e)
-        {
-            IELCheckBox Source = (IELCheckBox)Element;
-            string SourceNewValue = (string)e.NewValue;
-            Source.TextBlockElement.Text = SourceNewValue;
         }
         #endregion
 
@@ -108,15 +106,6 @@ namespace IEL.UserElementsControl
         public static readonly DependencyProperty ImageOpacityTextureProperty =
             DependencyProperty.Register("ImageOpacityTexture", typeof(ImageSource), typeof(IELCheckBox),
                 new(null, SetProperty_ImageOpacityTexture));
-
-        /// <summary>
-        /// Текстура изображения используемая для индикатора выделения
-        /// </summary>
-        public ImageSource ImageOpacityTexture
-        {
-            get => (ImageSource)GetValue(ImageOpacityTextureProperty);
-            set => SetValue(ImageOpacityTextureProperty, value);
-        }
 
         /// <summary>
         /// Установить элементу свойство
@@ -133,6 +122,15 @@ namespace IEL.UserElementsControl
             else
                 ((ImageBrush)Source.RectangleCheck.OpacityMask).ImageSource = SourceNewValue;
         }
+
+        /// <summary>
+        /// Текстура изображения используемая для индикатора выделения
+        /// </summary>
+        public ImageSource ImageOpacityTexture
+        {
+            get => (ImageSource)GetValue(ImageOpacityTextureProperty);
+            set => SetValue(ImageOpacityTextureProperty, value);
+        }
         #endregion
 
         #region IsChecked
@@ -141,7 +139,19 @@ namespace IEL.UserElementsControl
         /// </summary>
         public static readonly DependencyProperty IsCheckedProperty =
             DependencyProperty.Register("IsChecked", typeof(bool), typeof(IELCheckBox),
-                new(false, SetProperty_IsChecked));
+                new(false, IsCheckedHandler));
+
+        /// <summary>
+        /// Установить элементу свойство
+        /// </summary>
+        /// <param name="Element">Объект которому устанавливается свойство</param>
+        /// <param name="e">Данные о устанавливаемом свойстве</param>
+        private static void IsCheckedHandler(DependencyObject Element, DependencyPropertyChangedEventArgs e)
+        {
+            IELCheckBox Source = (IELCheckBox)Element;
+            bool SourceNewValue = (bool)e.NewValue;
+            Source.IsCheckedChanged.Invoke(Source, SourceNewValue);
+        }
 
         /// <summary>
         /// Состояние выделения
@@ -153,21 +163,22 @@ namespace IEL.UserElementsControl
         }
 
         /// <summary>
-        /// Установить элементу свойство
-        /// </summary>
-        /// <param name="Element">Объект которому устанавливается свойство</param>
-        /// <param name="e">Данные о устанавливаемом свойстве</param>
-        private static void SetProperty_IsChecked(DependencyObject Element, DependencyPropertyChangedEventArgs e)
-        {
-            IELCheckBox Source = (IELCheckBox)Element;
-            bool SourceNewValue = (bool)e.NewValue;
-            Source.IsCheckedChanged.Invoke(Source, SourceNewValue);
-        }
-
-        /// <summary>
         /// Событие изменения состояния выделения
         /// </summary>
         public event EventHandler<bool> IsCheckedChanged;
+
+        /// <summary>
+        /// Активировать состояние активации
+        /// </summary>
+        /// <param name="sender">Объект вызвавший событие</param>
+        /// <param name="e">Устанавливаемое состояние активации</param>
+        private void IsCheckedChangedHandler(object? sender, bool e)
+        {
+            AnimationManager.AnimateTakingZeroTo(ManagerAnimation, RectangleCheck, OpacityProperty,
+                e ? 1d : 0d, TimeSpan.FromMilliseconds(400d));
+            AnimationManager.AnimateTakingZeroTo(ManagerAnimation, RectangleCheck, MarginProperty,
+                new Thickness(e ? 0d : 2d), TimeSpan.FromMilliseconds(400d));
+        }
         #endregion
 
         #endregion
@@ -182,6 +193,7 @@ namespace IEL.UserElementsControl
             RectangleCheck.Margin = new(2d);
             RectangleCheck.RadiusX = 0d;
             RectangleCheck.RadiusY = 0d;
+            BorderCheck.CornerRadius = new(0d);
             BorderCheck.BorderBrush = SourceBorderBrush.SourceBrush;
             RectangleCheck.Fill = SourceForeground.SourceBrush;
             TextBlockElement.Text = string.Empty;
@@ -199,20 +211,7 @@ namespace IEL.UserElementsControl
 
             MouseLeftButtonUp += (sender, e) => IsChecked = !IsChecked;
 
-            IsCheckedChanged += IELCheckBox_IsCheckedChanged;
-        }
-
-        /// <summary>
-        /// Активировать состояние активации
-        /// </summary>
-        /// <param name="sender">Объект вызвавший событие</param>
-        /// <param name="e">Устанавливаемое состояние активации</param>
-        private void IELCheckBox_IsCheckedChanged(object? sender, bool e)
-        {
-            AnimationManager.AnimateTakingZeroTo(ManagerAnimation, RectangleCheck, OpacityProperty,
-                e ? 1d : 0d, TimeSpan.FromMilliseconds(400d));
-            AnimationManager.AnimateTakingZeroTo(ManagerAnimation, RectangleCheck, MarginProperty,
-                new Thickness(e ? 0d : 2d), TimeSpan.FromMilliseconds(400d));
+            IsCheckedChanged += IsCheckedChangedHandler;
         }
     }
 }

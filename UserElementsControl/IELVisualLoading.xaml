@@ -4,7 +4,7 @@
     x:Class="IEL.UserElementsControl.IELVisualLoading"
     xmlns:Base="clr-namespace:IEL.UserElementsControl.Base"
     xmlns:IEL="clr-namespace:IEL.UserElementsControl">
-    <Viewbox>
-        <Ellipse x:FieldModifier="private" x:Name="ElementLoading" StrokeThickness="7" StrokeDashArray="3.72" StrokeDashOffset="-7.44" StrokeDashCap="Round" Stroke="Black" Width="40" Height="40" Margin="1,1,1,1"/>
+    <Viewbox Stretch="Uniform" StretchDirection="DownOnly">
+        <Ellipse x:FieldModifier="private" x:Name="ElementLoading" StrokeThickness="7" StrokeDashArray="3.72" StrokeDashCap="Round" Stroke="Black" Width="40" Height="40" Margin="1,1,1,1" StrokeDashOffset="-7.44"/>
     </Viewbox>
 </Base:IELContainerBase>

@@ -1,5 +1,6 @@
 ﻿using IEL.CORE.Animation;
 using IEL.UserElementsControl.Base;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
@@ -44,28 +45,6 @@ namespace IEL.UserElementsControl
 
         #region Properties
 
-        #region BorderBrush
-        /// <summary>
-        /// Данные конкретного свойства
-        /// </summary>
-        public static readonly new DependencyProperty BorderBrushProperty =
-            DependencyProperty.Register("BorderBrush", typeof(SolidColorBrush), typeof(IELVisualLoading),
-                new(new SolidColorBrush(Colors.Black),
-                    (sender, e) =>
-                    {
-                        ((IELVisualLoading)sender).ElementLoading.Stroke = (SolidColorBrush)e.NewValue;
-                    }));
-
-        /// <summary>
-        /// Цвет барьера отображения загрузки
-        /// </summary>
-        public new SolidColorBrush BorderBrush
-        {
-            get => (SolidColorBrush)GetValue(BorderBrushProperty);
-            set => SetValue(BorderBrushProperty, value);
-        }
-        #endregion
-
         #region Opacity
         /// <summary>
         /// Данные конкретного свойства
@@ -88,6 +67,41 @@ namespace IEL.UserElementsControl
         }
         #endregion
 
+        #region IsLoading
+        /// <summary>
+        /// Данные конкретного свойства
+        /// </summary>
+        public static readonly DependencyProperty IsLoadingProperty =
+            DependencyProperty.Register(nameof(IsLoading), typeof(bool), typeof(IELVisualLoading),
+                new(false, IsLoadingHandler));
+
+        /// <summary>
+        /// Установить элементу свойство
+        /// </summary>
+        private static void IsLoadingHandler(DependencyObject Element, DependencyPropertyChangedEventArgs e)
+        {
+            IELVisualLoading Source = (IELVisualLoading)Element;
+            bool SourceNewValue = (bool)e.NewValue;
+            if (SourceNewValue)
+                Source.OpenLoading();
+            else Source.CloseLoading();
+        }
+
+        /// <summary>
+        /// Состояние отображения загрузки
+        /// </summary>
+        [Description("Состояние отображения загрузки")]
+        public bool IsLoading
+        {
+            get => (bool)GetValue(IsLoadingProperty);
+            set
+            {
+                if (value == IsLoading) return;
+                SetValue(IsLoadingProperty, value);
+            }
+        }
+        #endregion
+
         #endregion
 
         /// <summary>
@@ -96,26 +110,27 @@ namespace IEL.UserElementsControl
         public IELVisualLoading()
         {
             InitializeComponent();
+            ElementLoading.Opacity = 0d;
+            ElementLoading.Stroke = SourceBorderBrush.SourceBrush;
         }
 
         /// <summary>
         /// Начать отображение загрузки
         /// </summary>
-        public void OpenLoading()
+        private void OpenLoading()
         {
-            AnimationManager.AnimateTakingZeroTo(ManagerAnimation, this, IELVisualLoading.OpacityProperty,
+            AnimationManager.AnimateTakingZeroTo(ManagerAnimation, ElementLoading, Ellipse.OpacityProperty,
                 1d, TimeSpan.FromMilliseconds(600d));
             if (ManagerAnimation != null)
                 ElementLoading.BeginAnimation(Ellipse.StrokeDashOffsetProperty, Animation);
-
         }
 
         /// <summary>
         /// Закончить отображение загрузки
         /// </summary>
-        public void CloseLoading()
+        private void CloseLoading()
         {
-            AnimationManager.AnimateTakingZeroTo(ManagerAnimation, this, IELVisualLoading.OpacityProperty,
+            AnimationManager.AnimateTakingZeroTo(ManagerAnimation, ElementLoading, Ellipse.OpacityProperty,
                 0d, TimeSpan.FromMilliseconds(600d));
             ElementLoading.BeginAnimation(Ellipse.StrokeDashOffsetProperty, null);
             AnimationManager.AnimateTakingZeroTo(ManagerAnimation, ElementLoading, Ellipse.StrokeDashOffsetProperty,
