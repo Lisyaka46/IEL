@@ -1,0 +1,218 @@
+﻿using IEL.CORE.Animation;
+using IEL.UserElementsControl.Base;
+using LibraryIEL.CORE.Themes.Palettes;
+using System.Windows;
+using System.Windows.Media;
+
+namespace IEL.UserElementsControl
+{
+    /// <summary>
+    /// Логика взаимодействия для IELCheckBox.xaml
+    /// </summary>
+    public partial class IELCheckBox : IELContainerBase
+    {
+        #region Properties
+
+        #region CheckBoxBorderThickness
+        /// <summary>
+        /// Данные конкретного свойства
+        /// </summary>
+        public static readonly DependencyProperty CheckBoxBorderThicknessProperty =
+            DependencyProperty.Register("CheckBoxBorderThickness", typeof(Thickness), typeof(IELCheckBox),
+                new(new Thickness(2),
+                    (sender, e) =>
+                    {
+                        ((IELCheckBox)sender).BorderCheck.BorderThickness = (Thickness)e.NewValue;
+                    }));
+
+        /// <summary>
+        /// Толщина границ контейнера индикатора объекта
+        /// </summary>
+        public Thickness CheckBoxBorderThickness
+        {
+            get => (Thickness)GetValue(CheckBoxBorderThicknessProperty);
+            set => SetValue(CheckBoxBorderThicknessProperty, value);
+        }
+        #endregion
+
+        #region CheckBoxCornerRadius
+        /// <summary>
+        /// Данные конкретного свойства
+        /// </summary>
+        public static readonly DependencyProperty CheckBoxCornerRadiusProperty =
+            DependencyProperty.Register("CheckBoxCornerRadius", typeof(double), typeof(IELCheckBox),
+                new(0d, SetProperty_CheckBoxCornerRadius));
+
+        /// <summary>
+        /// Скругление границ контейнера индикатора объекта
+        /// </summary>
+        public double CheckBoxCornerRadius
+        {
+            get => (double)GetValue(CheckBoxCornerRadiusProperty);
+            set => SetValue(CheckBoxCornerRadiusProperty, value);
+        }
+
+        /// <summary>
+        /// Установить элементу свойство
+        /// </summary>
+        /// <param name="Element">Объект которому устанавливается свойство</param>
+        /// <param name="e">Данные о устанавливаемом свойстве</param>
+        private static void SetProperty_CheckBoxCornerRadius(DependencyObject Element, DependencyPropertyChangedEventArgs e)
+        {
+            IELCheckBox Source = (IELCheckBox)Element;
+            double SourceNewValue = (double)e.NewValue;
+            if (SourceNewValue - 2 >= 0)
+            {
+                Source.RectangleCheck.RadiusX = SourceNewValue - 2;
+                Source.RectangleCheck.RadiusY = SourceNewValue - 2;
+            }
+            CornerRadius NewValue = new(SourceNewValue);
+            Source.BorderCheck.CornerRadius = NewValue;
+        }
+        #endregion
+
+        #region Text
+        /// <summary>
+        /// Данные конкретного свойства
+        /// </summary>
+        public static readonly DependencyProperty TextProperty =
+            DependencyProperty.Register("Text", typeof(string), typeof(IELCheckBox),
+                new(string.Empty, SetProperty_Text));
+
+        /// <summary>
+        /// Отображаемый текст в поле
+        /// </summary>
+        public string Text
+        {
+            get => (string)GetValue(TextProperty);
+            set => SetValue(TextProperty, value);
+        }
+
+        /// <summary>
+        /// Установить элементу свойство
+        /// </summary>
+        /// <param name="Element">Объект которому устанавливается свойство</param>
+        /// <param name="e">Данные о устанавливаемом свойстве</param>
+        private static void SetProperty_Text(DependencyObject Element, DependencyPropertyChangedEventArgs e)
+        {
+            IELCheckBox Source = (IELCheckBox)Element;
+            string SourceNewValue = (string)e.NewValue;
+            Source.TextBlockElement.Text = SourceNewValue;
+        }
+        #endregion
+
+        #region ImageOpacityTexture
+        /// <summary>
+        /// Данные конкретного свойства
+        /// </summary>
+        public static readonly DependencyProperty ImageOpacityTextureProperty =
+            DependencyProperty.Register("ImageOpacityTexture", typeof(ImageSource), typeof(IELCheckBox),
+                new(null, SetProperty_ImageOpacityTexture));
+
+        /// <summary>
+        /// Текстура изображения используемая для индикатора выделения
+        /// </summary>
+        public ImageSource ImageOpacityTexture
+        {
+            get => (ImageSource)GetValue(ImageOpacityTextureProperty);
+            set => SetValue(ImageOpacityTextureProperty, value);
+        }
+
+        /// <summary>
+        /// Установить элементу свойство
+        /// </summary>
+        /// <param name="Element">Объект которому устанавливается свойство</param>
+        /// <param name="e">Данные о устанавливаемом свойстве</param>
+        private static void SetProperty_ImageOpacityTexture(DependencyObject Element, DependencyPropertyChangedEventArgs e)
+        {
+            IELCheckBox Source = (IELCheckBox)Element;
+            ImageSource? SourceNewValue = (ImageSource?)e.NewValue;
+            if (SourceNewValue == null) Source.RectangleCheck.OpacityMask = null;
+            else if (Source.RectangleCheck.OpacityMask == null)
+                Source.RectangleCheck.OpacityMask = new ImageBrush(SourceNewValue);
+            else
+                ((ImageBrush)Source.RectangleCheck.OpacityMask).ImageSource = SourceNewValue;
+        }
+        #endregion
+
+        #region IsChecked
+        /// <summary>
+        /// Данные конкретного свойства
+        /// </summary>
+        public static readonly DependencyProperty IsCheckedProperty =
+            DependencyProperty.Register("IsChecked", typeof(bool), typeof(IELCheckBox),
+                new(false, SetProperty_IsChecked));
+
+        /// <summary>
+        /// Состояние выделения
+        /// </summary>
+        public bool IsChecked
+        {
+            get => (bool)GetValue(IsCheckedProperty);
+            set => SetValue(IsCheckedProperty, value);
+        }
+
+        /// <summary>
+        /// Установить элементу свойство
+        /// </summary>
+        /// <param name="Element">Объект которому устанавливается свойство</param>
+        /// <param name="e">Данные о устанавливаемом свойстве</param>
+        private static void SetProperty_IsChecked(DependencyObject Element, DependencyPropertyChangedEventArgs e)
+        {
+            IELCheckBox Source = (IELCheckBox)Element;
+            bool SourceNewValue = (bool)e.NewValue;
+            Source.IsCheckedChanged.Invoke(Source, SourceNewValue);
+        }
+
+        /// <summary>
+        /// Событие изменения состояния выделения
+        /// </summary>
+        public event EventHandler<bool> IsCheckedChanged;
+        #endregion
+
+        #endregion
+
+        /// <summary>
+        /// Инициализировать объект CheckBox
+        /// </summary>
+        public IELCheckBox()
+        {
+            InitializeComponent();
+            RectangleCheck.Opacity = 0d;
+            RectangleCheck.Margin = new(2d);
+            RectangleCheck.RadiusX = 0d;
+            RectangleCheck.RadiusY = 0d;
+            BorderCheck.BorderBrush = SourceBorderBrush.SourceBrush;
+            RectangleCheck.Fill = SourceForeground.SourceBrush;
+            TextBlockElement.Text = string.Empty;
+            TextBlockElement.Foreground = SourceForeground.SourceBrush;
+
+            MouseDown += (sender, e) =>
+            {
+                SetActiveSpecrum(SpectrumColor.Used);
+            };
+
+            MouseUp += (sender, e) =>
+            {
+                SetActiveSpecrum(SpectrumColor.Select);
+            };
+
+            MouseLeftButtonUp += (sender, e) => IsChecked = !IsChecked;
+
+            IsCheckedChanged += IELCheckBox_IsCheckedChanged;
+        }
+
+        /// <summary>
+        /// Активировать состояние активации
+        /// </summary>
+        /// <param name="sender">Объект вызвавший событие</param>
+        /// <param name="e">Устанавливаемое состояние активации</param>
+        private void IELCheckBox_IsCheckedChanged(object? sender, bool e)
+        {
+            AnimationManager.AnimateTakingZeroTo(ManagerAnimation, RectangleCheck, OpacityProperty,
+                e ? 1d : 0d, TimeSpan.FromMilliseconds(400d));
+            AnimationManager.AnimateTakingZeroTo(ManagerAnimation, RectangleCheck, MarginProperty,
+                new Thickness(e ? 0d : 2d), TimeSpan.FromMilliseconds(400d));
+        }
+    }
+}

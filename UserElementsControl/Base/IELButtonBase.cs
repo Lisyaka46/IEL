@@ -49,12 +49,12 @@ namespace IEL.UserElementsControl.Base
         /// <summary>
         /// Объект события активации левым щелчком мыши
         /// </summary>
-        public ActivateHandler? OnActivateMouseLeft { get; set; }
+        public event ActivateHandler? OnActivateMouseLeft;
 
         /// <summary>
         /// Объект события активации правым щелчком мыши
         /// </summary>
-        public event ActivateHandler OnActivateMouseRight;
+        public event ActivateHandler? OnActivateMouseRight;
         #endregion
 
         #region Properties
@@ -227,46 +227,41 @@ namespace IEL.UserElementsControl.Base
         protected event IELSettingValueChangedHandler<StateVisualGuide>? VisualGuideChanged;
         #endregion
 
-        #region ContextMenu
-        /// <summary>
-        /// Данные конкретного свойства
-        /// </summary>
-        public static readonly new DependencyProperty ContextMenuProperty =
-            DependencyProperty.Register("ContextMenu", typeof(StackPanel), typeof(IELButtonBase),
-                new());
+        //#region ContextMenu
+        ///// <summary>
+        ///// Данные конкретного свойства
+        ///// </summary>
+        //public static readonly new DependencyProperty ContextMenuProperty =
+        //    DependencyProperty.Register("ContextMenu", typeof(StackPanel), typeof(IELButtonBase),
+        //        new());
 
-        /// <summary>
-        /// Отображаемый объект контекстного меню
-        /// </summary>
-        public new StackPanel? ContextMenu
-        {
-            get => (StackPanel?)GetValue(ContextMenuProperty);
-            set => SetValue(ContextMenuProperty, value);
-        }
+        ///// <summary>
+        ///// Отображаемый объект контекстного меню
+        ///// </summary>
+        //public new StackPanel? ContextMenu
+        //{
+        //    get => (StackPanel?)GetValue(ContextMenuProperty);
+        //    set => SetValue(ContextMenuProperty, value);
+        //}
 
-        /// <summary>
-        /// Объект события активации контекстного меню
-        /// </summary>
-        public new event EventHandler<StackPanel>? ContextMenuOpening;
+        ///// <summary>
+        ///// Объект события активации контекстного меню
+        ///// </summary>
+        //public new event EventHandler<StackPanel>? ContextMenuOpening;
 
-        /// <summary>
-        /// Объект события активации закрытия контекстного меню
-        /// </summary>
-        public new event EventHandler<StackPanel>? ContextMenuClosing;
-        #endregion
+        ///// <summary>
+        ///// Объект события активации закрытия контекстного меню
+        ///// </summary>
+        //public new event EventHandler<StackPanel>? ContextMenuClosing;
+        //#endregion
 
         #endregion
 
         /// <summary>
         /// Инициализация базового класса визуализации кнопки IEL
         /// </summary>
-        protected IELButtonBase()
+        protected IELButtonBase() : base()
         {
-            OnActivateMouseRight += (sender, e) =>
-            {
-                if (ContextMenu != null)
-                    ContextMenuOpening?.Invoke(this, ContextMenu);
-            };
             Base_HeadGridButton = new()
             {
                 HorizontalAlignment = HorizontalAlignment.Stretch,
@@ -375,21 +370,6 @@ namespace IEL.UserElementsControl.Base
             };
 
             base.SetValue(IELContainerBase.ContentProperty, Base_HeadGridButton);
-        }
-
-        /// <summary>
-        /// Узнать тип доступных нажатий на элемент
-        /// </summary>
-        /// <returns>Объект пересичления возможных нажатий</returns>
-        private EventsMouse GetSourceEventMouse()
-        {
-            if (OnActivateMouseLeft != null)
-            {
-                if (OnActivateMouseRight != null) return EventsMouse.Full;
-                return EventsMouse.Left;
-            }
-            else if (OnActivateMouseRight != null) return EventsMouse.Right;
-            return EventsMouse.Not;
         }
     }
 }

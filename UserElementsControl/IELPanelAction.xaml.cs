@@ -193,8 +193,8 @@ namespace IEL.UserElementsControl
             ActiveKeyboardMode = false;
             keys = [Key.Z, Key.Oem3, Key.Escape];
             TextBlockRightButtonIndicatorKey.Opacity = 0d;
-            MainPageController.LeftAnimateSwitch = new(-20, -20, 40, -3);
-            MainPageController.RightAnimateSwitch = new(40, -10, -20, -3);
+            MainPageController.LeftSwitchMargin = new(-20, -20, 40, -3);
+            MainPageController.RightSwitchMargin = new(40, -10, -20, -3);
             TextBlockRightButtonIndicatorKey.Text = "RIGHT";
             KeyDown += (sender, e) =>
             {
@@ -215,11 +215,11 @@ namespace IEL.UserElementsControl
                 }
                 else
                 {
-                    if (MainPageController.ActualPage == null) return;
+                    if (MainPageController.ActualContent == null) return;
                     if (KeyboardModeInActualPage && !SelectButtonKeyboardMode)
                     {
                         SelectButtonKeyboardMode = true;
-                        ButtonKeySelect = SearchButton<IELButtonKeyBase>((Visual)MainPageController.ActualPage.Content, e.Key);
+                        ButtonKeySelect = SearchButton<IELButtonKeyBase>((Visual)MainPageController.ActualContent.Content, e.Key);
                         ButtonKeySelect?.BlinkAnimation();
                     }
                 }
@@ -245,7 +245,7 @@ namespace IEL.UserElementsControl
                 }
                 else
                 {
-                    if (MainPageController.ActualPage == null) return;
+                    if (MainPageController.ActualContent == null) return;
                     if (KeyboardModeInActualPage && SelectButtonKeyboardMode)
                     {
                         SelectButtonKeyboardMode = false;
@@ -361,12 +361,12 @@ namespace IEL.UserElementsControl
         /// Метод реализуемый условное использование панели действий
         /// </summary>
         /// <remarks>
-        /// Использование подразумевает собой открытие панели при её не активном состоянии<br/>
-        /// Далее при её активном состоянии и использовании в том же объекте <paramref name="ElementVisual"/>, реализуется перемещение<br/>
-        /// При её активном состоянии и фокусе на другой объект <paramref name="ElementVisual"/> 
-        /// реализовывает перемещение и изменение страницы <paramref name="PageVisual"/><br/>
+        /// Использование подразумевает собой открытие панели при её не активном состоянии, выделяя объект<br/>
+        /// Далее при её активном состоянии и использовании в том же объекте <see cref="FrameworkElement"/>, реализуется перемещение<br/>
+        /// При её активном состоянии и фокусе на другой объект <see cref="FrameworkElement"/> 
+        /// реализовывает перемещение и изменение страницы <see cref="FrameworkElement"/><br/>
         /// <br/>
-        /// <b>Не реализует переключение на другую страницу внутри того же объекта</b>
+        /// <b>Не реализует переключение на другой контекст того же выделенного объекта</b>
         /// </remarks>
         /// <param name="ElementVisual">Элемент в котором отображается панель действий</param>
         /// <param name="PageVisual">Страница которая будет визуализироваться в панели действий</param>
@@ -487,7 +487,7 @@ namespace IEL.UserElementsControl
             bool RightAlgin = true)
         {
             ActualVisualPage = PageAction;
-            MainPageController.NextElement(PageAction, RightAlgin);
+            MainPageController.NextElement((ContentControl)PageAction.Content, RightAlgin);
             UpdateVisualKeyboardMode(PageAction, ActiveKeyboardMode);
 
             UpdateSizeFromAnimate(new(PageAction.Width, PageAction.Height));
@@ -609,6 +609,7 @@ namespace IEL.UserElementsControl
 
             animation.To = new(PositionTo.X, PositionTo.Y, 0, 0);
             BeginAnimation(MarginProperty, animation, HandoffBehavior.SnapshotAndReplace);
+            EventMovePanelAction?.Invoke(this, EventArgs.Empty);
         }
     }
 }

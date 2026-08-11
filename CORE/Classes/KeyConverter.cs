@@ -5,13 +5,11 @@ namespace IEL.CORE.Classes
     /// <summary>
     /// Класс конвертации клавиши
     /// </summary>
-    public static class IELKeyConverter
+    public static class KeyConverter
     {
         /// <summary>
         /// Конвертировать значение клавиши в строку имени
         /// </summary>
-        /// <param name="key"></param>
-        /// <returns></returns>
         public static string ConvertKeyToString(Key key) => key switch
         {
             Key.Escape => "ESC",
