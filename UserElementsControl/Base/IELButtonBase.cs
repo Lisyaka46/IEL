@@ -21,8 +21,14 @@ namespace IEL.UserElementsControl.Base
         /// Комментарий к описанию направляющих
         /// </summary>
         private const string DescriptionCommentGuide =
-            "Направляющие представляют собой индикаторы векторных стрелок, которые являются лишь визуальной состовляющей кнопки.\n" +
+            "Направляющие представляют собой индикаторы векторных линий, которые являются лишь визуальной состовляющей кнопки.\n" +
             $"Направляющие НЕ являются частью свойства {nameof(Content)}";
+
+        /// <summary>
+        /// Комментарий к описанию направляющих о изменении на обоих объектах
+        /// </summary>
+        private const string DescriptionCommentGuideChangeDouble =
+            "Отражается сразу на обоих направляющих!\n" + DescriptionCommentGuide;
         #endregion
 
         #region UIElements
@@ -136,7 +142,7 @@ namespace IEL.UserElementsControl.Base
         /// </summary>
         public static readonly DependencyProperty PaddingButtonContentProperty =
             DependencyProperty.Register(nameof(PaddingButtonContent), typeof(Thickness), typeof(IELButtonBase),
-                new(new Thickness(5), PaddingButtonContentHandler));
+                new(new Thickness(5d), PaddingButtonContentHandler));
 
         /// <summary>
         /// Обработчик события изменения свойства <see cref="PaddingButtonContent"/>
@@ -166,7 +172,7 @@ namespace IEL.UserElementsControl.Base
         /// </summary>
         public static readonly DependencyProperty GuidesCornerRadiusProperty =
             DependencyProperty.Register(nameof(GuidesCornerRadius), typeof(CornerRadius), typeof(IELButtonBase),
-                new(new CornerRadius(0), GuidesCornerRadiusHandler));
+                new(new CornerRadius(0d), GuidesCornerRadiusHandler));
 
         /// <summary>
         /// Обработчик события изменения свойства <see cref="GuidesCornerRadius"/>
@@ -197,7 +203,7 @@ namespace IEL.UserElementsControl.Base
         /// </summary>
         public static readonly DependencyProperty GuidesBorderThicknessProperty =
             DependencyProperty.Register(nameof(GuidesBorderThickness), typeof(Thickness), typeof(IELButtonBase),
-                new(new Thickness(2), GuidesBorderThicknessHandler));
+                new(new Thickness(2d), GuidesBorderThicknessHandler));
 
         /// <summary>
         /// Обработчик события изменения свойства <see cref="GuidesBorderThickness"/>
@@ -228,7 +234,7 @@ namespace IEL.UserElementsControl.Base
         /// </summary>
         public static readonly DependencyProperty GuidesMarginProperty =
             DependencyProperty.Register(nameof(GuidesMargin), typeof(Thickness), typeof(IELButtonBase),
-                new(new Thickness(2), GuidesMarginHandler));
+                new(new Thickness(2d), GuidesMarginHandler));
 
         /// <summary>
         /// Обработчик события изменения свойства <see cref="GuidesMargin"/>
@@ -262,7 +268,7 @@ namespace IEL.UserElementsControl.Base
         /// </summary>
         public static readonly DependencyProperty GuidesPaddingProperty =
             DependencyProperty.Register(nameof(GuidesPadding), typeof(Thickness), typeof(IELButtonBase),
-                new(new Thickness(1), GuidesPaddingHandler));
+                new(new Thickness(2d), GuidesPaddingHandler));
 
         /// <summary>
         /// Обработчик события изменения свойства <see cref="GuidesPadding"/>
@@ -324,18 +330,111 @@ namespace IEL.UserElementsControl.Base
         }
         #endregion
 
+        #region GuidesLengthMainLine
+        /// <summary>
+        /// Данные свойства <see cref="GuidesLengthMainLine"/>
+        /// </summary>
+        public static readonly DependencyProperty GuidesLengthMainLineProperty =
+            DependencyProperty.Register(nameof(GuidesLengthMainLine), typeof(double), typeof(IELButtonBase),
+                new(10d, GuidesLengthMainLineHandler));
+
+        /// <summary>
+        /// Обработчик события изменения свойства <see cref="GuidesLengthMainLine"/>
+        /// </summary>
+        private static void GuidesLengthMainLineHandler(DependencyObject Element, DependencyPropertyChangedEventArgs e)
+        {
+            if (Element is IELButtonBase Source && e.NewValue is double SourceNewValue)
+            {
+                Source.UpdateGuideVisual(SourceNewValue, Source.GuidesLengthPetalLines, Source.GuidesDistanceBetweenPetalLines);
+            }
+        }
+
+        /// <summary>
+        /// Длинна горизонтальной линии направляющих
+        /// </summary>
+        [Description("Длинна горизонтальной линии направляющих внутри собственного контейнера.\n" +
+            DescriptionCommentGuideChangeDouble)]
+        public double GuidesLengthMainLine
+        {
+            get => (double)GetValue(GuidesLengthMainLineProperty);
+            set => SetValue(GuidesLengthMainLineProperty, value);
+        }
+        #endregion
+
+        #region GuidesLengthPetalLines
+        /// <summary>
+        /// Данные свойства <see cref="GuidesLengthPetalLines"/>
+        /// </summary>
+        public static readonly DependencyProperty GuidesLengthPetalLinesProperty =
+            DependencyProperty.Register(nameof(GuidesLengthPetalLines), typeof(double), typeof(IELButtonBase),
+                new(8d, GuidesLengthPetalLinesHandler));
+
+        /// <summary>
+        /// Обработчик события изменения свойства <see cref="GuidesLengthPetalLines"/>
+        /// </summary>
+        private static void GuidesLengthPetalLinesHandler(DependencyObject Element, DependencyPropertyChangedEventArgs e)
+        {
+            if (Element is IELButtonBase Source && e.NewValue is double SourceNewValue)
+            {
+                Source.UpdateGuideVisual(Source.GuidesLengthMainLine, SourceNewValue, Source.GuidesDistanceBetweenPetalLines);
+            }
+        }
+
+        /// <summary>
+        /// Длинна лепестков линий направляющих
+        /// </summary>
+        [Description("Длинна лепестков линий направляющих внутри собственного контейнера.\n" +
+            DescriptionCommentGuideChangeDouble)]
+        public double GuidesLengthPetalLines
+        {
+            get => (double)GetValue(GuidesLengthPetalLinesProperty);
+            set => SetValue(GuidesLengthPetalLinesProperty, value);
+        }
+        #endregion
+
+        #region GuidesDistanceBetweenPetalLines
+        /// <summary>
+        /// Данные свойства <see cref="GuidesDistanceBetweenPetalLines"/>
+        /// </summary>
+        public static readonly DependencyProperty GuidesDistanceBetweenPetalLinesProperty =
+            DependencyProperty.Register(nameof(GuidesDistanceBetweenPetalLines), typeof(double), typeof(IELButtonBase),
+                new(10d, GuidesDistanceBetweenPetalLinesHandler));
+
+        /// <summary>
+        /// Обработчик события изменения свойства <see cref="GuidesDistanceBetweenPetalLines"/>
+        /// </summary>
+        private static void GuidesDistanceBetweenPetalLinesHandler(DependencyObject Element, DependencyPropertyChangedEventArgs e)
+        {
+            if (Element is IELButtonBase Source && e.NewValue is double SourceNewValue)
+            {
+                Source.UpdateGuideVisual(Source.GuidesLengthMainLine, Source.GuidesLengthPetalLines, SourceNewValue);
+            }
+        }
+
+        /// <summary>
+        /// Расстояние между леместками у направляющих
+        /// </summary>
+        [Description("Расстояние между леместками у направляющих, внутри собственного контейнера.\n" +
+            DescriptionCommentGuideChangeDouble)]
+        public double GuidesDistanceBetweenPetalLines
+        {
+            get => (double)GetValue(GuidesDistanceBetweenPetalLinesProperty);
+            set => SetValue(GuidesDistanceBetweenPetalLinesProperty, value);
+        }
+        #endregion
+
         #region GuideVisual
         /// <summary>
         /// Данные свойства <see cref="GuideVisual"/>
         /// </summary>
         public static readonly DependencyProperty GuideVisualProperty =
             DependencyProperty.Register(nameof(GuideVisual), typeof(StateVisualGuide), typeof(IELButtonBase),
-                new(StateVisualGuide.Default, VisualGuideHandler));
+                new(StateVisualGuide.Default, GuideVisualHandler));
 
         /// <summary>
         /// Обработчик события изменения свойства <see cref="GuideVisual"/>
         /// </summary>
-        private static void VisualGuideHandler(DependencyObject Element, DependencyPropertyChangedEventArgs e)
+        private static void GuideVisualHandler(DependencyObject Element, DependencyPropertyChangedEventArgs e)
         {
             if (Element is IELButtonBase Source && e.NewValue is StateVisualGuide SourceNewValue)
             {
@@ -419,18 +518,18 @@ namespace IEL.UserElementsControl.Base
             #region LeftGuide < |=|
             Base_LeftGuideContainer = new()
             {
-                Margin = new(2),
-                Padding = new(1),
-                CornerRadius = new(0),
-                BorderThickness = new(2),
+                Margin = new(2d),
+                Padding = new(2d),
+                CornerRadius = new(0d),
+                BorderThickness = new(2d),
                 HorizontalAlignment = HorizontalAlignment.Stretch,
-                VerticalAlignment = VerticalAlignment.Stretch,
+                VerticalAlignment = VerticalAlignment.Center,
                 BorderBrush = SourceBorderBrush.SourceBrush,
             };
             Base_LeftGuideGrid = new()
             {
-                Margin = new(0),
-                HorizontalAlignment = HorizontalAlignment.Stretch,
+                Margin = new(0d),
+                HorizontalAlignment = HorizontalAlignment.Right,
                 VerticalAlignment = VerticalAlignment.Stretch,
 
             };
@@ -440,8 +539,7 @@ namespace IEL.UserElementsControl.Base
             Base_LeftGuideLine = new()
             {
                 Margin = new(0d),
-                X1 = 0,
-                X2 = 10,
+                X1 = 10d,
                 StrokeThickness = 2d,
                 HorizontalAlignment = HorizontalAlignment.Right,
                 VerticalAlignment = VerticalAlignment.Center,
@@ -471,18 +569,18 @@ namespace IEL.UserElementsControl.Base
             #region RightGuide |=| >
             Base_RightGuideContainer = new()
             {
-                Margin = new(2),
-                Padding = new(1),
-                CornerRadius = new(0),
-                BorderThickness = new(2),
+                Margin = new(2d),
+                Padding = new(2d),
+                CornerRadius = new(0d),
+                BorderThickness = new(2d),
                 HorizontalAlignment = HorizontalAlignment.Stretch,
-                VerticalAlignment = VerticalAlignment.Stretch,
+                VerticalAlignment = VerticalAlignment.Center,
                 BorderBrush = SourceBorderBrush.SourceBrush,
             };
             Base_RightGuideGrid = new()
             {
-                Margin = new(0),
-                HorizontalAlignment = HorizontalAlignment.Stretch,
+                Margin = new(0d),
+                HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment = VerticalAlignment.Stretch,
 
             };
@@ -492,8 +590,7 @@ namespace IEL.UserElementsControl.Base
             Base_RightGuideLine = new()
             {
                 Margin = new(0d),
-                X1 = 0,
-                X2 = 10,
+                X2 = 10d,
                 StrokeThickness = 2d,
                 HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment = VerticalAlignment.Center,
@@ -510,9 +607,9 @@ namespace IEL.UserElementsControl.Base
                 Stretch = Stretch.None,
                 Stroke = SourceBorderBrush.SourceBrush,
             };
-            Base_RightGuidePolyLine.Points.Add(new(2d, 0d));
-            Base_RightGuidePolyLine.Points.Add(new(10d, 5d));
-            Base_RightGuidePolyLine.Points.Add(new(2d, 10d));
+            Base_RightGuidePolyLine.Points.Add(new(0d, 0d));
+            Base_RightGuidePolyLine.Points.Add(new(8d, 5d));
+            Base_RightGuidePolyLine.Points.Add(new(0d, 10d));
             Base_RightGuideGrid.Children.Add(Base_RightGuidePolyLine);
             #endregion
 
@@ -562,7 +659,25 @@ namespace IEL.UserElementsControl.Base
                 }
             };
 
+            Base_BorderContainer.ClipToBounds = true;
             base.SetValue(IELContainerBase.ContentProperty, Base_ViewBoxButton);
+        }
+
+        /// <summary>
+        /// Обновить отображение позиционирования обоих направляющих
+        /// </summary>
+        private void UpdateGuideVisual(double LengthMainLine, double LengthPetalLines, double DistanceBetweenPetalLines)
+        {
+            double DifferenceLength = LengthMainLine - LengthPetalLines;
+            Base_LeftGuideLine.X1 = LengthMainLine;
+            Base_LeftGuidePolyLine.Points[0] = new(0d, 0d);
+            Base_LeftGuidePolyLine.Points[1] = new(DifferenceLength, DistanceBetweenPetalLines / 2d);
+            Base_LeftGuidePolyLine.Points[2] = new(0d, DistanceBetweenPetalLines);
+
+            Base_RightGuideLine.X2 = LengthMainLine;
+            Base_RightGuidePolyLine.Points[0] = new(DifferenceLength, 0d);
+            Base_RightGuidePolyLine.Points[1] = new(0d, DistanceBetweenPetalLines / 2d);
+            Base_RightGuidePolyLine.Points[2] = new(DifferenceLength, DistanceBetweenPetalLines);
         }
     }
 }
