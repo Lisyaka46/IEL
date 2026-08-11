@@ -193,8 +193,8 @@ namespace IEL.UserElementsControl
             ActiveKeyboardMode = false;
             keys = [Key.Z, Key.Oem3, Key.Escape];
             TextBlockRightButtonIndicatorKey.Opacity = 0d;
-            MainPageController.LeftAnimateSwitch = new(-20, -20, 40, -3);
-            MainPageController.RightAnimateSwitch = new(40, -10, -20, -3);
+            MainPageController.LeftSwitchMargin = new(-20, -20, 40, -3);
+            MainPageController.RightSwitchMargin = new(40, -10, -20, -3);
             TextBlockRightButtonIndicatorKey.Text = "RIGHT";
             KeyDown += (sender, e) =>
             {
@@ -215,11 +215,11 @@ namespace IEL.UserElementsControl
                 }
                 else
                 {
-                    if (MainPageController.ActualPage == null) return;
+                    if (MainPageController.ActualContent == null) return;
                     if (KeyboardModeInActualPage && !SelectButtonKeyboardMode)
                     {
                         SelectButtonKeyboardMode = true;
-                        ButtonKeySelect = SearchButton<IELButtonKeyBase>((Visual)MainPageController.ActualPage.Content, e.Key);
+                        ButtonKeySelect = SearchButton<IELButtonKeyBase>((Visual)MainPageController.ActualContent.Content, e.Key);
                         ButtonKeySelect?.BlinkAnimation();
                     }
                 }
@@ -245,7 +245,7 @@ namespace IEL.UserElementsControl
                 }
                 else
                 {
-                    if (MainPageController.ActualPage == null) return;
+                    if (MainPageController.ActualContent == null) return;
                     if (KeyboardModeInActualPage && SelectButtonKeyboardMode)
                     {
                         SelectButtonKeyboardMode = false;
@@ -487,7 +487,7 @@ namespace IEL.UserElementsControl
             bool RightAlgin = true)
         {
             ActualVisualPage = PageAction;
-            MainPageController.NextElement(PageAction, RightAlgin);
+            MainPageController.NextElement((ContentControl)PageAction.Content, RightAlgin);
             UpdateVisualKeyboardMode(PageAction, ActiveKeyboardMode);
 
             UpdateSizeFromAnimate(new(PageAction.Width, PageAction.Height));
