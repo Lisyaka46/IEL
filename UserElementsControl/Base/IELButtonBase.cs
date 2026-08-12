@@ -409,6 +409,7 @@ namespace IEL.UserElementsControl.Base
         {
             if (Element is IELButtonBase Source && e.NewValue is double SourceNewValue)
             {
+                if (SourceNewValue < 0d) throw new InvalidOperationException("Невозможно присвоить значение ниже нуля.");
                 Source.UpdateGuideVisual();
             }
         }
