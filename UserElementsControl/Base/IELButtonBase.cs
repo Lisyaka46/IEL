@@ -330,65 +330,35 @@ namespace IEL.UserElementsControl.Base
         }
         #endregion
 
-        #region GuidesLengthMainLine
+        #region GuidesOffsetPetalLines
         /// <summary>
-        /// Данные свойства <see cref="GuidesLengthMainLine"/>
+        /// Данные свойства <see cref="GuidesOffsetPetalLines"/>
         /// </summary>
-        public static readonly DependencyProperty GuidesLengthMainLineProperty =
-            DependencyProperty.Register(nameof(GuidesLengthMainLine), typeof(double), typeof(IELButtonBase),
-                new(10d, GuidesLengthMainLineHandler));
+        public static readonly DependencyProperty GuidesOffsetPetalLinesProperty =
+            DependencyProperty.Register(nameof(GuidesOffsetPetalLines), typeof(double), typeof(IELButtonBase),
+                new(4d, GuidesOffsetPetalLinesHandler));
 
         /// <summary>
-        /// Обработчик события изменения свойства <see cref="GuidesLengthMainLine"/>
+        /// Обработчик события изменения свойства <see cref="GuidesOffsetPetalLines"/>
         /// </summary>
-        private static void GuidesLengthMainLineHandler(DependencyObject Element, DependencyPropertyChangedEventArgs e)
+        private static void GuidesOffsetPetalLinesHandler(DependencyObject Element, DependencyPropertyChangedEventArgs e)
         {
             if (Element is IELButtonBase Source && e.NewValue is double SourceNewValue)
             {
-                Source.UpdateGuideVisual(SourceNewValue, Source.GuidesLengthPetalLines, Source.GuidesDistanceBetweenPetalLines);
+                if (SourceNewValue < 0d) throw new InvalidOperationException("Невозможно присвоить значение ниже нуля.");
+                Source.UpdateGuideVisual();
             }
         }
 
         /// <summary>
-        /// Длинна горизонтальной линии направляющих
+        /// Смещение пересечения лепестков линий направляющих
         /// </summary>
-        [Description("Длинна горизонтальной линии направляющих внутри собственного контейнера.\n" +
+        [Description("Смещение пересечения лепестков линий направляющих внутри собственного контейнера.\n" +
             DescriptionCommentGuideChangeDouble)]
-        public double GuidesLengthMainLine
+        public double GuidesOffsetPetalLines
         {
-            get => (double)GetValue(GuidesLengthMainLineProperty);
-            set => SetValue(GuidesLengthMainLineProperty, value);
-        }
-        #endregion
-
-        #region GuidesLengthPetalLines
-        /// <summary>
-        /// Данные свойства <see cref="GuidesLengthPetalLines"/>
-        /// </summary>
-        public static readonly DependencyProperty GuidesLengthPetalLinesProperty =
-            DependencyProperty.Register(nameof(GuidesLengthPetalLines), typeof(double), typeof(IELButtonBase),
-                new(8d, GuidesLengthPetalLinesHandler));
-
-        /// <summary>
-        /// Обработчик события изменения свойства <see cref="GuidesLengthPetalLines"/>
-        /// </summary>
-        private static void GuidesLengthPetalLinesHandler(DependencyObject Element, DependencyPropertyChangedEventArgs e)
-        {
-            if (Element is IELButtonBase Source && e.NewValue is double SourceNewValue)
-            {
-                Source.UpdateGuideVisual(Source.GuidesLengthMainLine, SourceNewValue, Source.GuidesDistanceBetweenPetalLines);
-            }
-        }
-
-        /// <summary>
-        /// Длинна лепестков линий направляющих
-        /// </summary>
-        [Description("Длинна лепестков линий направляющих внутри собственного контейнера.\n" +
-            DescriptionCommentGuideChangeDouble)]
-        public double GuidesLengthPetalLines
-        {
-            get => (double)GetValue(GuidesLengthPetalLinesProperty);
-            set => SetValue(GuidesLengthPetalLinesProperty, value);
+            get => (double)GetValue(GuidesOffsetPetalLinesProperty);
+            set => SetValue(GuidesOffsetPetalLinesProperty, value);
         }
         #endregion
 
@@ -398,7 +368,7 @@ namespace IEL.UserElementsControl.Base
         /// </summary>
         public static readonly DependencyProperty GuidesDistanceBetweenPetalLinesProperty =
             DependencyProperty.Register(nameof(GuidesDistanceBetweenPetalLines), typeof(double), typeof(IELButtonBase),
-                new(10d, GuidesDistanceBetweenPetalLinesHandler));
+                new(8d, GuidesDistanceBetweenPetalLinesHandler));
 
         /// <summary>
         /// Обработчик события изменения свойства <see cref="GuidesDistanceBetweenPetalLines"/>
@@ -407,7 +377,7 @@ namespace IEL.UserElementsControl.Base
         {
             if (Element is IELButtonBase Source && e.NewValue is double SourceNewValue)
             {
-                Source.UpdateGuideVisual(Source.GuidesLengthMainLine, Source.GuidesLengthPetalLines, SourceNewValue);
+                Source.UpdateGuideVisual();
             }
         }
 
@@ -529,7 +499,7 @@ namespace IEL.UserElementsControl.Base
             Base_LeftGuideGrid = new()
             {
                 Margin = new(0d),
-                HorizontalAlignment = HorizontalAlignment.Right,
+                HorizontalAlignment = HorizontalAlignment.Stretch,
                 VerticalAlignment = VerticalAlignment.Stretch,
 
             };
@@ -539,7 +509,8 @@ namespace IEL.UserElementsControl.Base
             Base_LeftGuideLine = new()
             {
                 Margin = new(0d),
-                X1 = 10d,
+                X1 = 8d,
+                X2 = 0d,
                 StrokeThickness = 2d,
                 HorizontalAlignment = HorizontalAlignment.Right,
                 VerticalAlignment = VerticalAlignment.Center,
@@ -576,11 +547,12 @@ namespace IEL.UserElementsControl.Base
                 HorizontalAlignment = HorizontalAlignment.Stretch,
                 VerticalAlignment = VerticalAlignment.Center,
                 BorderBrush = SourceBorderBrush.SourceBrush,
+                ClipToBounds = true,
             };
             Base_RightGuideGrid = new()
             {
                 Margin = new(0d),
-                HorizontalAlignment = HorizontalAlignment.Left,
+                HorizontalAlignment = HorizontalAlignment.Stretch,
                 VerticalAlignment = VerticalAlignment.Stretch,
 
             };
@@ -590,7 +562,8 @@ namespace IEL.UserElementsControl.Base
             Base_RightGuideLine = new()
             {
                 Margin = new(0d),
-                X2 = 10d,
+                X1 = 0d,
+                X2 = 8d,
                 StrokeThickness = 2d,
                 HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment = VerticalAlignment.Center,
@@ -600,7 +573,7 @@ namespace IEL.UserElementsControl.Base
             Base_RightGuideGrid.Children.Add(Base_RightGuideLine);
             Base_RightGuidePolyLine = new()
             {
-                Margin = new(0d),
+                Margin = new(3.5d, 0d, 0d, 0d),
                 StrokeThickness = 2d,
                 HorizontalAlignment = HorizontalAlignment.Right,
                 VerticalAlignment = VerticalAlignment.Center,
@@ -661,23 +634,25 @@ namespace IEL.UserElementsControl.Base
 
             Base_BorderContainer.ClipToBounds = true;
             base.SetValue(IELContainerBase.ContentProperty, Base_ViewBoxButton);
+            UpdateGuideVisual();
         }
 
         /// <summary>
         /// Обновить отображение позиционирования обоих направляющих
         /// </summary>
-        private void UpdateGuideVisual(double LengthMainLine, double LengthPetalLines, double DistanceBetweenPetalLines)
+        private void UpdateGuideVisual()
         {
-            double DifferenceLength = LengthMainLine - LengthPetalLines;
-            Base_LeftGuideLine.X1 = LengthMainLine;
-            Base_LeftGuidePolyLine.Points[0] = new(0d, 0d);
-            Base_LeftGuidePolyLine.Points[1] = new(DifferenceLength, DistanceBetweenPetalLines / 2d);
-            Base_LeftGuidePolyLine.Points[2] = new(0d, DistanceBetweenPetalLines);
+            double CenterY = GuidesDistanceBetweenPetalLines / 2d;
 
-            Base_RightGuideLine.X2 = LengthMainLine;
-            Base_RightGuidePolyLine.Points[0] = new(DifferenceLength, 0d);
-            Base_RightGuidePolyLine.Points[1] = new(0d, DistanceBetweenPetalLines / 2d);
-            Base_RightGuidePolyLine.Points[2] = new(DifferenceLength, DistanceBetweenPetalLines);
+            Base_LeftGuideLine.X1 = GuidesOffsetPetalLines + Math.PI;
+            Base_LeftGuidePolyLine.Points[0] = new(GuidesOffsetPetalLines, 0d);
+            Base_LeftGuidePolyLine.Points[1] = new(0, CenterY);
+            Base_LeftGuidePolyLine.Points[2] = new(GuidesOffsetPetalLines, GuidesDistanceBetweenPetalLines);
+
+            Base_RightGuideLine.X2 = GuidesOffsetPetalLines + Math.PI;
+            Base_RightGuidePolyLine.Points[0] = new(0d, 0d);
+            Base_RightGuidePolyLine.Points[1] = new(GuidesOffsetPetalLines, CenterY);
+            Base_RightGuidePolyLine.Points[2] = new(0d, GuidesDistanceBetweenPetalLines);
         }
     }
 }
