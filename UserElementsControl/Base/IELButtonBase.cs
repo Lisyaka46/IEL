@@ -330,6 +330,38 @@ namespace IEL.UserElementsControl.Base
         }
         #endregion
 
+        #region GuidesOffsetMainLine
+        /// <summary>
+        /// Данные свойства <see cref="GuidesOffsetMainLine"/>
+        /// </summary>
+        public static readonly DependencyProperty GuidesOffsetMainLineProperty =
+            DependencyProperty.Register(nameof(GuidesOffsetMainLine), typeof(double), typeof(IELButtonBase),
+                new(3d, GuidesOffsetMainLineHandler));
+
+        /// <summary>
+        /// Обработчик события изменения свойства <see cref="GuidesOffsetMainLine"/>
+        /// </summary>
+        private static void GuidesOffsetMainLineHandler(DependencyObject Element, DependencyPropertyChangedEventArgs e)
+        {
+            if (Element is IELButtonBase Source && e.NewValue is double SourceNewValue)
+            {
+                if (SourceNewValue < 0d) throw new InvalidOperationException("Невозможно присвоить значение ниже нуля.");
+                Source.UpdateGuideVisual();
+            }
+        }
+
+        /// <summary>
+        /// Смещение размера главной линии относительно пересечения лепестков у направляющих
+        /// </summary>
+        [Description("Смещение размера главной линии относительно пересечения лепестков у направляющих внутри собственного контейнера.\n" +
+            DescriptionCommentGuideChangeDouble)]
+        public double GuidesOffsetMainLine
+        {
+            get => (double)GetValue(GuidesOffsetMainLineProperty);
+            set => SetValue(GuidesOffsetMainLineProperty, value);
+        }
+        #endregion
+
         #region GuidesOffsetPetalLines
         /// <summary>
         /// Данные свойства <see cref="GuidesOffsetPetalLines"/>
@@ -644,12 +676,12 @@ namespace IEL.UserElementsControl.Base
         {
             double CenterY = GuidesDistanceBetweenPetalLines / 2d;
 
-            Base_LeftGuideLine.X1 = GuidesOffsetPetalLines + Math.PI;
+            Base_LeftGuideLine.X1 = GuidesOffsetPetalLines + GuidesOffsetMainLine;
             Base_LeftGuidePolyLine.Points[0] = new(GuidesOffsetPetalLines, 0d);
             Base_LeftGuidePolyLine.Points[1] = new(0, CenterY);
             Base_LeftGuidePolyLine.Points[2] = new(GuidesOffsetPetalLines, GuidesDistanceBetweenPetalLines);
 
-            Base_RightGuideLine.X2 = GuidesOffsetPetalLines + Math.PI;
+            Base_RightGuideLine.X2 = GuidesOffsetPetalLines + GuidesOffsetMainLine;
             Base_RightGuidePolyLine.Points[0] = new(0d, 0d);
             Base_RightGuidePolyLine.Points[1] = new(GuidesOffsetPetalLines, CenterY);
             Base_RightGuidePolyLine.Points[2] = new(0d, GuidesDistanceBetweenPetalLines);
