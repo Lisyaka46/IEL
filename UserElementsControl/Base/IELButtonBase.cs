@@ -549,6 +549,8 @@ namespace IEL.UserElementsControl.Base
                 VerticalAlignment = VerticalAlignment.Center,
                 Stretch = Stretch.None,
                 Stroke = SourceBorderBrush.SourceBrush,
+                StrokeStartLineCap = PenLineCap.Round,
+                StrokeEndLineCap = PenLineCap.Round,
             };
             Base_LeftGuideGrid.Children.Add(Base_LeftGuideLine);
             Base_LeftGuidePolyLine = new()
@@ -559,6 +561,8 @@ namespace IEL.UserElementsControl.Base
                 VerticalAlignment = VerticalAlignment.Center,
                 Stretch = Stretch.None,
                 Stroke = SourceBorderBrush.SourceBrush,
+                StrokeStartLineCap = PenLineCap.Round,
+                StrokeEndLineCap = PenLineCap.Round,
             };
             Base_LeftGuidePolyLine.Points.Add(new(8d, 0d));
             Base_LeftGuidePolyLine.Points.Add(new(0d, 5d));
@@ -602,6 +606,8 @@ namespace IEL.UserElementsControl.Base
                 VerticalAlignment = VerticalAlignment.Center,
                 Stretch = Stretch.None,
                 Stroke = SourceBorderBrush.SourceBrush,
+                StrokeStartLineCap = PenLineCap.Round,
+                StrokeEndLineCap = PenLineCap.Round,
             };
             Base_RightGuideGrid.Children.Add(Base_RightGuideLine);
             Base_RightGuidePolyLine = new()
@@ -612,6 +618,8 @@ namespace IEL.UserElementsControl.Base
                 VerticalAlignment = VerticalAlignment.Center,
                 Stretch = Stretch.None,
                 Stroke = SourceBorderBrush.SourceBrush,
+                StrokeStartLineCap = PenLineCap.Round,
+                StrokeEndLineCap = PenLineCap.Round,
             };
             Base_RightGuidePolyLine.Points.Add(new(0d, 0d));
             Base_RightGuidePolyLine.Points.Add(new(8d, 5d));
