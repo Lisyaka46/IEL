@@ -1,5 +1,5 @@
-﻿using LibraryIEL.CORE.Themes.Data;
-namespace LibraryIEL.CORE.Themes.Palettes
+﻿using IEL.CORE.Themes.Data;
+namespace IEL.CORE.Themes.Palettes
 {
     /// <summary>
     /// Перечисление спектров цвета

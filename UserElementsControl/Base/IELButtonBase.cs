@@ -1,5 +1,5 @@
 ﻿using IEL.CORE.Enums;
-using LibraryIEL.CORE.Themes.Palettes;
+using IEL.CORE.Themes.Palettes;
 using System.ComponentModel;
 using System.Reflection;
 using System.Windows;
@@ -617,14 +617,6 @@ namespace IEL.UserElementsControl.Base
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center,
             };
-        }
-
-        /// <summary>
-        /// Установить визуальный стиль <see cref="IELButtonBase"/>
-        /// </summary>
-        public override void OnApplyTemplate()
-        {
-            base.OnApplyTemplate();
 
             Base_HeadGridButton.ColumnDefinitions.Add(new() { Width = new(0d, GridUnitType.Pixel) });
             Base_HeadGridButton.ColumnDefinitions.Add(new() { Width = new(1d, GridUnitType.Star) });

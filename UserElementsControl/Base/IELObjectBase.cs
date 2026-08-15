@@ -1,7 +1,7 @@
 ﻿using IEL.CORE.Animation;
 using IEL.Interfaces;
-using LibraryIEL.CORE.Themes.Data;
-using LibraryIEL.CORE.Themes.Palettes;
+using IEL.CORE.Themes.Data;
+using IEL.CORE.Themes.Palettes;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;

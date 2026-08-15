@@ -1,4 +1,4 @@
-﻿using LibraryIEL.CORE.Themes.Palettes;
+﻿using IEL.CORE.Themes.Palettes;
 using System.ComponentModel;
 using System.Reflection;
 using System.Windows;
@@ -200,7 +200,7 @@ namespace IEL.UserElementsControl.Base
             };
             SourceTimer = new()
             {
-                Interval = TimeSpan.FromMilliseconds(1300d),
+                Interval = IntervalHover,
             };
             SourceTimer.Tick += (sender, e) =>
             {

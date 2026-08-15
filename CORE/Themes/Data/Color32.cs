@@ -1,7 +1,7 @@
-﻿using LibraryIEL.CORE.Themes.Palettes;
+﻿using IEL.CORE.Themes.Palettes;
 using WnColor = System.Windows.Media.Color;
 
-namespace LibraryIEL.CORE.Themes.Data
+namespace IEL.CORE.Themes.Data
 {
     /// <summary>
     /// Структура данных цвета

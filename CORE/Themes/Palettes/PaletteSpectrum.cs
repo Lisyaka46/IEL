@@ -1,8 +1,8 @@
-﻿using LibraryIEL.CORE.Themes.Data;
+﻿using IEL.CORE.Themes.Data;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 
-namespace LibraryIEL.CORE.Themes.Palettes
+namespace IEL.CORE.Themes.Palettes
 {
     /// <summary>
     /// Объект спектра палитры

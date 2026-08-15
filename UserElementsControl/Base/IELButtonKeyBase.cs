@@ -1,5 +1,5 @@
 ﻿using IEL.CORE.Classes;
-using LibraryIEL.CORE.Themes.Palettes;
+using IEL.CORE.Themes.Palettes;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;

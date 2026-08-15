@@ -1,6 +1,6 @@
 ﻿using IEL.CORE.Animation;
 using IEL.UserElementsControl.Base;
-using LibraryIEL.CORE.Themes.Palettes;
+using IEL.CORE.Themes.Palettes;
 using System.Windows;
 using System.Windows.Media;
 
