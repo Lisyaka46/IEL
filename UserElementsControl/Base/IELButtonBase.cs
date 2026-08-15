@@ -513,18 +513,14 @@ namespace IEL.UserElementsControl.Base
                 HorizontalAlignment = HorizontalAlignment.Stretch,
                 VerticalAlignment = VerticalAlignment.Stretch,
             };
-            Base_HeadGridButton.ColumnDefinitions.Add(new() { Width = new(0d, GridUnitType.Pixel) });
-            Base_HeadGridButton.ColumnDefinitions.Add(new() { Width = new(1d, GridUnitType.Star) });
-            Base_HeadGridButton.ColumnDefinitions.Add(new() { Width = new(0d, GridUnitType.Pixel) });
-            Base_ViewBoxButton.Child = Base_HeadGridButton;
 
             #region LeftGuide < |=|
             Base_LeftGuideContainer = new()
             {
-                Margin = new(2d),
-                Padding = new(2d),
-                CornerRadius = new(0d),
-                BorderThickness = new(2d),
+                Margin = GuidesMargin,
+                Padding = GuidesPadding,
+                CornerRadius = GuidesCornerRadius,
+                BorderThickness = GuidesBorderThickness,
                 HorizontalAlignment = HorizontalAlignment.Stretch,
                 VerticalAlignment = VerticalAlignment.Center,
                 BorderBrush = SourceBorderBrush.SourceBrush,
@@ -536,15 +532,14 @@ namespace IEL.UserElementsControl.Base
                 VerticalAlignment = VerticalAlignment.Stretch,
 
             };
-            Base_LeftGuideContainer.Child = Base_LeftGuideGrid;
 
             #region <-
             Base_LeftGuideLine = new()
             {
                 Margin = new(0d),
-                X1 = 8d,
+                X1 = 0d,
                 X2 = 0d,
-                StrokeThickness = 2d,
+                StrokeThickness = GuidesStrokeThickness,
                 HorizontalAlignment = HorizontalAlignment.Right,
                 VerticalAlignment = VerticalAlignment.Center,
                 Stretch = Stretch.None,
@@ -552,11 +547,10 @@ namespace IEL.UserElementsControl.Base
                 StrokeStartLineCap = PenLineCap.Round,
                 StrokeEndLineCap = PenLineCap.Round,
             };
-            Base_LeftGuideGrid.Children.Add(Base_LeftGuideLine);
             Base_LeftGuidePolyLine = new()
             {
                 Margin = new(0d),
-                StrokeThickness = 2d,
+                StrokeThickness = GuidesStrokeThickness,
                 HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment = VerticalAlignment.Center,
                 Stretch = Stretch.None,
@@ -564,23 +558,17 @@ namespace IEL.UserElementsControl.Base
                 StrokeStartLineCap = PenLineCap.Round,
                 StrokeEndLineCap = PenLineCap.Round,
             };
-            Base_LeftGuidePolyLine.Points.Add(new(8d, 0d));
-            Base_LeftGuidePolyLine.Points.Add(new(0d, 5d));
-            Base_LeftGuidePolyLine.Points.Add(new(8d, 10d));
-            Base_LeftGuideGrid.Children.Add(Base_LeftGuidePolyLine);
             #endregion
 
-            Grid.SetColumn(Base_LeftGuideContainer, 0);
-            Base_HeadGridButton.Children.Add(Base_LeftGuideContainer);
             #endregion
 
             #region RightGuide |=| >
             Base_RightGuideContainer = new()
             {
-                Margin = new(2d),
-                Padding = new(2d),
-                CornerRadius = new(0d),
-                BorderThickness = new(2d),
+                Margin = new(GuidesMargin.Right, GuidesMargin.Top, GuidesMargin.Left, GuidesMargin.Bottom),
+                Padding = new(GuidesPadding.Right, GuidesPadding.Top, GuidesPadding.Left, GuidesPadding.Bottom),
+                CornerRadius = GuidesCornerRadius,
+                BorderThickness = GuidesBorderThickness,
                 HorizontalAlignment = HorizontalAlignment.Stretch,
                 VerticalAlignment = VerticalAlignment.Center,
                 BorderBrush = SourceBorderBrush.SourceBrush,
@@ -593,15 +581,14 @@ namespace IEL.UserElementsControl.Base
                 VerticalAlignment = VerticalAlignment.Stretch,
 
             };
-            Base_RightGuideContainer.Child = Base_RightGuideGrid;
 
             #region ->
             Base_RightGuideLine = new()
             {
                 Margin = new(0d),
                 X1 = 0d,
-                X2 = 8d,
-                StrokeThickness = 2d,
+                X2 = 0d,
+                StrokeThickness = GuidesStrokeThickness,
                 HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment = VerticalAlignment.Center,
                 Stretch = Stretch.None,
@@ -609,11 +596,10 @@ namespace IEL.UserElementsControl.Base
                 StrokeStartLineCap = PenLineCap.Round,
                 StrokeEndLineCap = PenLineCap.Round,
             };
-            Base_RightGuideGrid.Children.Add(Base_RightGuideLine);
             Base_RightGuidePolyLine = new()
             {
                 Margin = new(3.5d, 0d, 0d, 0d),
-                StrokeThickness = 2d,
+                StrokeThickness = GuidesStrokeThickness,
                 HorizontalAlignment = HorizontalAlignment.Right,
                 VerticalAlignment = VerticalAlignment.Center,
                 Stretch = Stretch.None,
@@ -621,9 +607,55 @@ namespace IEL.UserElementsControl.Base
                 StrokeStartLineCap = PenLineCap.Round,
                 StrokeEndLineCap = PenLineCap.Round,
             };
+            #endregion
+
+            #endregion
+
+            Base_ButtonContentContainer = new()
+            {
+                Margin = PaddingButtonContent,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center,
+            };
+        }
+
+        /// <summary>
+        /// Установить визуальный стиль <see cref="IELButtonBase"/>
+        /// </summary>
+        public override void OnApplyTemplate()
+        {
+            base.OnApplyTemplate();
+
+            Base_HeadGridButton.ColumnDefinitions.Add(new() { Width = new(0d, GridUnitType.Pixel) });
+            Base_HeadGridButton.ColumnDefinitions.Add(new() { Width = new(1d, GridUnitType.Star) });
+            Base_HeadGridButton.ColumnDefinitions.Add(new() { Width = new(0d, GridUnitType.Pixel) });
+            Base_ViewBoxButton.Child = Base_HeadGridButton;
+
+            #region LeftGuide < |=|
+            Base_LeftGuideContainer.Child = Base_LeftGuideGrid;
+
+            #region <-
+            Base_LeftGuideGrid.Children.Add(Base_LeftGuideLine);
+
+            Base_LeftGuidePolyLine.Points.Add(new(0d, 0d));
+            Base_LeftGuidePolyLine.Points.Add(new(0d, 0d));
+            Base_LeftGuidePolyLine.Points.Add(new(0d, 0d));
+            Base_LeftGuideGrid.Children.Add(Base_LeftGuidePolyLine);
+            #endregion
+
+            Grid.SetColumn(Base_LeftGuideContainer, 0);
+            Base_HeadGridButton.Children.Add(Base_LeftGuideContainer);
+            #endregion
+
+            #region RightGuide |=| >
+            Base_RightGuideContainer.Child = Base_RightGuideGrid;
+
+            #region ->
+            Base_RightGuideGrid.Children.Add(Base_RightGuideLine);
+
             Base_RightGuidePolyLine.Points.Add(new(0d, 0d));
-            Base_RightGuidePolyLine.Points.Add(new(8d, 5d));
-            Base_RightGuidePolyLine.Points.Add(new(0d, 10d));
+            Base_RightGuidePolyLine.Points.Add(new(0d, 0d));
+            Base_RightGuidePolyLine.Points.Add(new(0d, 0d));
             Base_RightGuideGrid.Children.Add(Base_RightGuidePolyLine);
             #endregion
 
@@ -631,12 +663,6 @@ namespace IEL.UserElementsControl.Base
             Base_HeadGridButton.Children.Add(Base_RightGuideContainer);
             #endregion
 
-            Base_ButtonContentContainer = new()
-            {
-                Margin = new(5),
-                HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center,
-            };
             Grid.SetColumn(Base_ButtonContentContainer, 1);
             Base_HeadGridButton.Children.Add(Base_ButtonContentContainer);
 
