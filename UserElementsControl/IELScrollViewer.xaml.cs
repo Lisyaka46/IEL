@@ -12,28 +12,6 @@ namespace IEL.UserElementsControl
     /// </summary>
     public partial class IELScrollViewer : UserControl
     {
-        /// <summary>
-        /// Объект анимации Double
-        /// </summary>
-        private static DoubleAnimation DoubleAnimationType =
-            new(0, TimeSpan.FromMilliseconds(400d))
-            {
-                DecelerationRatio = 0.2d,
-                EasingFunction = new QuinticEase() { EasingMode = EasingMode.EaseOut },
-                From = null
-            };
-
-        /// <summary>
-        /// Объект анимации Thickness
-        /// </summary>
-        private static ThicknessAnimation ThicknessAnimationType =
-            new(new(0), TimeSpan.FromMilliseconds(400d))
-            {
-                DecelerationRatio = 0.2d,
-                EasingFunction = new QuinticEase() { EasingMode = EasingMode.EaseOut },
-                From = null
-            };
-
         #region Properties
 
         #region Content

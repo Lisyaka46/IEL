@@ -1,4 +1,6 @@
 ﻿using IEL.UserElementsControl.Base;
+using System.ComponentModel;
+using System.Windows;
 using System.Windows.Media;
 
 namespace IEL.UserElementsControl
@@ -8,27 +10,69 @@ namespace IEL.UserElementsControl
     /// </summary>
     public partial class IELButtonText : IELButtonBase
     {
+        #region Properties
+
+        #region Text
         /// <summary>
-        /// Текст кнопки
+        /// Данные свойства <see cref="Text"/>
         /// </summary>
-        public string Text
+        public static readonly DependencyProperty TextProperty =
+            DependencyProperty.Register(nameof(Text), typeof(string), typeof(IELButtonText),
+                new("Text", TextHandler));
+
+        /// <summary>
+        /// Обработчик события изменения свойства <see cref="Text"/>
+        /// </summary>
+        private static void TextHandler(DependencyObject Element, DependencyPropertyChangedEventArgs e)
         {
-            get => TextBlockButton.Text;
-            set => TextBlockButton.Text = value;
+            if (Element is IELButtonText Source && e.NewValue is string SourceNewValue)
+            {
+                Source.TextBlockButton.Text = SourceNewValue;
+            }
         }
 
         /// <summary>
-        /// Шрифт текста в кнопке
+        /// Отображаемый текст в кнопке
         /// </summary>
-        public new FontFamily FontFamily
+        [Description("Текст, который отображается внутри контейнера кнопки")]
+        public string Text
         {
-            get => base.FontFamily;
-            set
+            get => (string)GetValue(TextProperty);
+            set => SetValue(TextProperty, value);
+        }
+        #endregion
+
+        #region FontFamily
+        /// <summary>
+        /// Данные свойства <see cref="FontFamily"/>
+        /// </summary>
+        public static readonly new DependencyProperty FontFamilyProperty =
+            DependencyProperty.Register(nameof(FontFamily), typeof(FontFamily), typeof(IELButtonText),
+                new(new FontFamily(), FontFamilyHandler));
+
+        /// <summary>
+        /// Обработчик события изменения свойства <see cref="FontFamily"/>
+        /// </summary>
+        private static void FontFamilyHandler(DependencyObject Element, DependencyPropertyChangedEventArgs e)
+        {
+            if (Element is IELButtonText Source && e.NewValue is FontFamily SourceNewValue)
             {
-                TextBlockButton.FontFamily = value;
-                base.FontFamily = value;
+                Source.TextBlockButton.FontFamily = SourceNewValue;
             }
         }
+
+        /// <summary>
+        /// Шрифт отображаемого текста в кнопке
+        /// </summary>
+        [Description("Использующийся шрифт для отображения текста в контейнере кнопки")]
+        public new FontFamily FontFamily
+        {
+            get => (FontFamily)GetValue(FontFamilyProperty);
+            set => SetValue(FontFamilyProperty, value);
+        }
+        #endregion
+
+        #endregion
 
         /// <summary>
         /// Инициализировать объект интерфейса кнопки с текстом
@@ -36,16 +80,9 @@ namespace IEL.UserElementsControl
         public IELButtonText()
         {
             InitializeComponent();
-            #region Background
-            #endregion
-
-            #region BorderBrush
-            #endregion
-
-            #region Foreground
             TextBlockButton.Foreground = SourceForeground.SourceBrush;
-            #endregion
-            Text = "Text";
+            TextBlockButton.FontFamily = FontFamily;
+            TextBlockButton.Text = Text;
         }
     }
 }
