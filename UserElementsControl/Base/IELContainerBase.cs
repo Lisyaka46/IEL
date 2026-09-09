@@ -212,7 +212,7 @@ namespace IEL.UserElementsControl.Base
             {
                 if (IsEnabled)
                 {
-                    SetActiveSpecrum(SpectrumColor.Select);
+                    if (!Base_BorderContainer.IsFocused) SetActiveSpecrum(SpectrumColor.Select);
                     SourceTimer.Start();
                 }
             };
@@ -221,7 +221,7 @@ namespace IEL.UserElementsControl.Base
             {
                 if (IsEnabled)
                 {
-                    SetActiveSpecrum(SpectrumColor.Default);
+                    if (!Base_BorderContainer.IsFocused) SetActiveSpecrum(SpectrumColor.Default);
                     SourceTimer.Stop();
                 }
             };

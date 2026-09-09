@@ -1,9 +1,11 @@
 ﻿using IEL.CORE.Enums;
 using IEL.CORE.Themes.Palettes;
 using System.ComponentModel;
+using System.Diagnostics.Eventing.Reader;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
@@ -18,6 +20,14 @@ namespace IEL.UserElementsControl.Base
     {
         #region ConstDescriptions
         /// <summary>
+        /// Комментарий к описанию активации кнопки с помощью клавиатуры, при фокусе на элементе
+        /// </summary>
+        private const string DescriptionCommentActivateElementFocusKeyboard =
+            "При получении фокуса на элемент кнопки, подразумевается что её можно активировать с помощью:\n" +
+            $"- {nameof(Key.Enter)}, основное событие кнопки {nameof(BasicActivate)} (Левая кнопка мыши)\n" +
+            $"- {nameof(ActivateKey)}, дополнительное событие кнопки {nameof(AdditionalActivate)} (Правая кнопка мыши)";
+
+        /// <summary>
         /// Комментарий к описанию направляющих
         /// </summary>
         private const string DescriptionCommentGuide =
@@ -31,6 +41,16 @@ namespace IEL.UserElementsControl.Base
             "Отражается сразу на обоих направляющих!\n" + DescriptionCommentGuide;
         #endregion
 
+        /// <summary>
+        /// Состояние исполнения расширения переопределяемых параметров
+        /// </summary>
+        private static bool IsPropertiesOverriden = false;
+
+        /// <summary>
+        /// Состояние принудительной установки отображения клавиши
+        /// </summary>
+        private static bool IsVisibleSetConst = false;
+
         #region UIElements
         /// <summary>
         /// Главный объект отображения содержимого кнопки
@@ -41,6 +61,26 @@ namespace IEL.UserElementsControl.Base
         /// Главный контейнер кнопки
         /// </summary>
         private Grid Base_HeadGridButton;
+
+        /// <summary>
+        /// Главный контейнер контента кнопки
+        /// </summary>
+        private Grid Base_HeadGridContentButton;
+
+        /// <summary>
+        /// Контейнер отображения клавиши
+        /// </summary>
+        private Border Base_BorderKeyVisible;
+
+        /// <summary>
+        /// Объект текста отображения названия клавиши
+        /// </summary>
+        private TextBlock Base_TextBlockKeyVisible;
+
+        /// <summary>
+        /// Объект контекста названия клавиши
+        /// </summary>
+        private Run Base_RunTextKey;
 
         #region LeftGuide < |=|
         /// <summary>
@@ -92,19 +132,199 @@ namespace IEL.UserElementsControl.Base
         protected readonly ContentControl Base_ButtonContentContainer;
         #endregion
 
-        #region OnActivateMouseEvents
+        #region Events
         /// <summary>
-        /// Объект события активации левым щелчком мыши
+        /// Объект события базовой активации (левая кнопка мыши)
         /// </summary>
-        public event MouseButtonEventHandler? OnActivateMouseLeft;
+        [Description("Событие управляемая активацией основного события кнопки.\n" +
+            "Активация кнопки зависит от состояний параметров:\n" +
+            $"- С помощью клавиатуры {nameof(IsEnabledActivateKeyboard)} и {nameof(IsActivateKeyBasicEvent)}\n" +
+            $"- С помощью мыши {nameof(IsEnabledActivateMouse)}")]
+        public event MouseButtonEventHandler? BasicActivate;
 
         /// <summary>
-        /// Объект события активации правым щелчком мыши
+        /// Объект события дополнительной активации (правая кнопка мыши)
         /// </summary>
-        public event MouseButtonEventHandler? OnActivateMouseRight;
+        [Description("Событие управляемая активацией дополнительного события кнопки.\n" +
+            "Активация кнопки зависит от состояний параметров:\n" +
+            $"- С помощью клавиатуры {nameof(IsEnabledActivateKeyboard)} и {nameof(IsActivateKeyBasicEvent)}\n" +
+            $"- С помощью мыши {nameof(IsEnabledActivateMouse)}")]
+        public event MouseButtonEventHandler? AdditionalActivate;
+
+        #region ObsoleteEvents
+        private new event MouseButtonEventHandler? MouseDown;
+        private new event MouseButtonEventHandler? MouseUp;
+        private new event MouseButtonEventHandler? MouseLeftButtonDown;
+        private new event MouseButtonEventHandler? MouseLeftButtonUp;
+        private new event MouseButtonEventHandler? MouseRightButtonDown;
+        private new event MouseButtonEventHandler? MouseRightButtonUp;
+        private new event MouseButtonEventHandler? MouseDoubleClick;
+        private new event MouseButtonEventHandler? PreviewMouseDown;
+        private new event MouseButtonEventHandler? PreviewMouseUp;
+        private new event MouseButtonEventHandler? PreviewMouseLeftButtonDown;
+        private new event MouseButtonEventHandler? PreviewMouseLeftButtonUp;
+        private new event MouseButtonEventHandler? PreviewMouseRightButtonDown;
+        private new event MouseButtonEventHandler? PreviewMouseRightButtonUp;
+        private new event MouseButtonEventHandler? PreviewMouseDoubleClick;
+        private new event KeyEventHandler? KeyDown;
+        private new event KeyEventHandler? KeyUp;
+        private new event KeyEventHandler? PreviewKeyDown;
+        private new event KeyEventHandler? PreviewKeyUp;
+        #endregion
         #endregion
 
         #region Properties
+
+        #region IsEnabledActivateMouse
+        /// <summary>
+        /// Данные свойства <see cref="IsEnabledActivateMouse"/>
+        /// </summary>
+        public static readonly DependencyProperty IsEnabledActivateMouseProperty =
+            DependencyProperty.Register(nameof(IsEnabledActivateMouse), typeof(bool), typeof(IELButtonBase),
+                new(true));
+
+        /// <summary>
+        /// Состояние отвечающее за возможность активации кнопки с помощью мыши
+        /// </summary>
+        [Description("Состояние возможности активации кнопки с помощью мыши")]
+        public bool IsEnabledActivateMouse
+        {
+            get => (bool)GetValue(IsEnabledActivateMouseProperty);
+            set => SetValue(IsEnabledActivateMouseProperty, value);
+        }
+        #endregion
+
+        #region IsEnabledActivateKeyboard
+        /// <summary>
+        /// Данные свойства <see cref="IsEnabledActivateKeyboard"/>
+        /// </summary>
+        public static readonly DependencyProperty IsEnabledActivateKeyboardProperty =
+            DependencyProperty.Register(nameof(IsEnabledActivateKeyboard), typeof(bool), typeof(IELButtonBase),
+                new(false));
+
+        /// <summary>
+        /// Состояние отвечающее за возможность активации кнопки с помощью клавиатуры
+        /// </summary>
+        [Description("Состояние возможности активации кнопки с помощью клавиатуры.\n" +
+            DescriptionCommentActivateElementFocusKeyboard)]
+        public bool IsEnabledActivateKeyboard
+        {
+            get => (bool)GetValue(IsEnabledActivateKeyboardProperty);
+            set => SetValue(IsEnabledActivateKeyboardProperty, value);
+        }
+        #endregion
+
+        #region IsActivateKeyBasicEvent
+        /// <summary>
+        /// Данные свойства <see cref="IsActivateKeyBasicEvent"/>
+        /// </summary>
+        public static readonly DependencyProperty IsActivateKeyBasicEventProperty =
+            DependencyProperty.Register(nameof(IsActivateKeyBasicEvent), typeof(bool), typeof(IELButtonBase),
+                new(true));
+
+        /// <summary>
+        /// Состояние отвечающее за тип активируемого события исполнения активации кнопки с помощью клавиатуры
+        /// </summary>
+        [Description("Состояние активации события исполнения активации кнопки с помощью клавиатуры.\n" +
+            $"Если TRUE, то будет активирован {nameof(BasicActivate)}, иначе {nameof(AdditionalActivate)}.\n" +
+            DescriptionCommentActivateElementFocusKeyboard)]
+        public bool IsActivateKeyBasicEvent
+        {
+            get => (bool)GetValue(IsActivateKeyBasicEventProperty);
+            set => SetValue(IsActivateKeyBasicEventProperty, value);
+        }
+        #endregion
+
+        #region IsVisibleActivateKey
+        /// <summary>
+        /// Данные свойства <see cref="IsVisibleActivateKey"/>
+        /// </summary>
+        public static readonly DependencyProperty IsVisibleActivateKeyProperty =
+            DependencyProperty.Register(nameof(IsVisibleActivateKey), typeof(bool), typeof(IELButtonBase),
+                new(false, IsVisibleActivateKeyHandler));
+
+        /// <summary>
+        /// Обработчик события изменения свойства <see cref="IsVisibleActivateKey"/>
+        /// </summary>
+        private static void IsVisibleActivateKeyHandler(DependencyObject Element, DependencyPropertyChangedEventArgs e)
+        {
+            if (Element is IELButtonBase Source && e.NewValue is bool SourceNewValue)
+            {
+                Source.Base_BorderKeyVisible.Visibility = SourceNewValue ? Visibility.Visible : Visibility.Hidden;
+            }
+        }
+
+        /// <summary>
+        /// Состояние отображения клавиши активации кнопки
+        /// </summary>
+        [Description("Состояние отображения названия клавиши для клавиши активации кнопки")]
+        public bool IsVisibleActivateKey
+        {
+            get => (bool)GetValue(IsVisibleActivateKeyProperty);
+            set => SetValue(IsVisibleActivateKeyProperty, value);
+        }
+        #endregion
+
+        #region ActivateKeyFontSize
+        /// <summary>
+        /// Данные свойства <see cref="ActivateKeyFontSize"/>
+        /// </summary>
+        public static readonly DependencyProperty ActivateKeyFontSizeProperty =
+            DependencyProperty.Register(nameof(ActivateKeyFontSize), typeof(double), typeof(IELButtonBase),
+                new(8d, ActivateKeyFontSizeHandler));
+
+        /// <summary>
+        /// Обработчик события изменения свойства <see cref="ActivateKeyFontSize"/>
+        /// </summary>
+        private static void ActivateKeyFontSizeHandler(DependencyObject Element, DependencyPropertyChangedEventArgs e)
+        {
+            if (Element is IELButtonBase Source && e.NewValue is double SourceNewValue)
+            {
+                Source.Base_TextBlockKeyVisible.FontSize = SourceNewValue;
+            }
+        }
+
+        /// <summary>
+        /// Размер текста названия кнопки отображения прикреплённой клавиши активации
+        /// </summary>
+        [Description("Размер названия клавиши прикреплённой для активации кнопки с помощью клавиатуры")]
+        public double ActivateKeyFontSize
+        {
+            get => (double)GetValue(ActivateKeyFontSizeProperty);
+            set => SetValue(ActivateKeyFontSizeProperty, value);
+        }
+        #endregion
+
+        #region ActivateKey
+        /// <summary>
+        /// Данные свойства <see cref="ActivateKey"/>
+        /// </summary>
+        public static readonly DependencyProperty ActivateKeyProperty =
+            DependencyProperty.Register(nameof(ActivateKey), typeof(Key), typeof(IELButtonBase),
+                new(ActivateKeyHandler));
+
+        /// <summary>
+        /// Обработчик события изменения свойства <see cref="ActivateKey"/>
+        /// </summary>
+        private static void ActivateKeyHandler(DependencyObject Element, DependencyPropertyChangedEventArgs e)
+        {
+            if (Element is IELButtonBase Source && e.NewValue is Key SourceNewValue)
+            {
+                Source.Base_RunTextKey.Text = SourceNewValue.ToString();
+            }
+        }
+
+        /// <summary>
+        /// Прикреплённая клавиша для активации кнопки с помощью клавиатуры
+        /// </summary>
+        [Description("Прикреплённая клавиша для активации кнопки с помощью клавиатуры.\n" +
+            $"Активация кнопки с помощью клавиатуры зависит от состояний параметров {nameof(IsEnabledActivateKeyboard)} и {nameof(IsActivateKeyBasicEvent)}")]
+        public Key ActivateKey
+        {
+            get => (Key)GetValue(ActivateKeyProperty);
+            set => SetValue(ActivateKeyProperty, value);
+        }
+        #endregion
 
         #region Content
         /// <summary>
@@ -441,10 +661,10 @@ namespace IEL.UserElementsControl.Base
         {
             if (Element is IELButtonBase Source && e.NewValue is StateVisualGuide SourceNewValue)
             {
-                Source.Base_HeadGridButton.ColumnDefinitions[0].Width = new(0d,
+                Source.Base_HeadGridContentButton.ColumnDefinitions[0].Width = new(0d,
                     SourceNewValue == StateVisualGuide.LeftArrow || SourceNewValue == StateVisualGuide.DuoArrow ?
                     GridUnitType.Auto : GridUnitType.Pixel);
-                Source.Base_HeadGridButton.ColumnDefinitions[2].Width = new(0d,
+                Source.Base_HeadGridContentButton.ColumnDefinitions[2].Width = new(0d,
                     SourceNewValue == StateVisualGuide.RightArrow || SourceNewValue == StateVisualGuide.DuoArrow ?
                     GridUnitType.Auto : GridUnitType.Pixel);
                 Source.VisualGuideChanged?.Invoke(Source, SourceNewValue);
@@ -466,6 +686,32 @@ namespace IEL.UserElementsControl.Base
         /// </summary>
         [Description("Событие изменение визуализации направляющих.\n" + DescriptionCommentGuide)]
         protected event EventHandler<StateVisualGuide>? VisualGuideChanged;
+        #endregion
+
+        #region OverrideBorderThickness
+        /// <summary>
+        /// Расширенный обработчик события изменения свойства <see cref="IELContainerBase.BorderThickness"/>
+        /// </summary>
+        private static void OverrideBorderThicknessHandler(DependencyObject Element, DependencyPropertyChangedEventArgs e)
+        {
+            if (Element is IELButtonBase Source && e.NewValue is Thickness SourceNewValue)
+            {
+                Source.Base_BorderKeyVisible.BorderThickness = new(0d, SourceNewValue.Top, SourceNewValue.Right, 0d);
+            }
+        }
+        #endregion
+
+        #region OverrideCornerRadius
+        /// <summary>
+        /// Расширенный обработчик события изменения свойства <see cref="IELContainerBase.CornerRadius"/>
+        /// </summary>
+        private static void OverrideCornerRadiusHandler(DependencyObject Element, DependencyPropertyChangedEventArgs e)
+        {
+            if (Element is IELButtonBase Source && e.NewValue is CornerRadius SourceNewValue)
+            {
+                Source.Base_BorderKeyVisible.CornerRadius = new(0d, SourceNewValue.TopRight, 0d, SourceNewValue.BottomRight);
+            }
+        }
         #endregion
 
         #region ContextMenu TODO: (контектное меню для IELPanelAction)
@@ -503,16 +749,65 @@ namespace IEL.UserElementsControl.Base
         /// </summary>
         protected IELButtonBase() : base()
         {
+            if (!IsPropertiesOverriden)
+            {
+                IsPropertiesOverriden = true;
+                BorderThicknessProperty.OverrideMetadata(typeof(IELButtonBase), new(OverrideBorderThicknessHandler));
+                CornerRadiusProperty.OverrideMetadata(typeof(IELButtonBase), new(OverrideCornerRadiusHandler));
+            }
+
             Base_ViewBoxButton = new()
             {
                 Stretch = Stretch.Uniform,
                 StretchDirection = StretchDirection.DownOnly,
+                Focusable = false,
             };
+
             Base_HeadGridButton = new()
             {
                 HorizontalAlignment = HorizontalAlignment.Stretch,
                 VerticalAlignment = VerticalAlignment.Stretch,
+                Focusable = false,
             };
+
+            #region KeyBorderIndicator
+            Base_RunTextKey = new(string.Empty);
+
+            Base_TextBlockKeyVisible = new()
+            {
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center,
+                Foreground = SourceForeground.SourceBrush,
+                Padding = new(2d),
+                FontSize = ActivateKeyFontSize,
+                Focusable = false,
+            };
+            Base_TextBlockKeyVisible.Inlines.Add(Base_RunTextKey);
+
+            Base_BorderKeyVisible = new()
+            {
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Bottom,
+                BorderBrush = SourceBorderBrush.SourceBrush,
+                Background = SourceBackground.SourceBrush,
+                BorderThickness = new(0d, BorderThickness.Top, BorderThickness.Right, 0d),
+                CornerRadius = new(0d, CornerRadius.TopRight, 0d, CornerRadius.BottomRight),
+                Child = Base_TextBlockKeyVisible,
+                Visibility = Visibility.Hidden,
+                Focusable = false,
+            };
+            Canvas.SetZIndex(Base_BorderKeyVisible, 1);
+            Base_HeadGridButton.Children.Add(Base_BorderKeyVisible);
+            #endregion
+
+            Base_HeadGridContentButton = new()
+            {
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                VerticalAlignment = VerticalAlignment.Stretch,
+                Focusable = false,
+            };
+            Base_ViewBoxButton.Child = Base_HeadGridButton;
+            Base_HeadGridButton.Children.Add(Base_HeadGridContentButton);
 
             #region LeftGuide < |=|
             Base_LeftGuideContainer = new()
@@ -524,12 +819,14 @@ namespace IEL.UserElementsControl.Base
                 HorizontalAlignment = HorizontalAlignment.Stretch,
                 VerticalAlignment = VerticalAlignment.Center,
                 BorderBrush = SourceBorderBrush.SourceBrush,
+                Focusable = false,
             };
             Base_LeftGuideGrid = new()
             {
                 Margin = new(0d),
                 HorizontalAlignment = HorizontalAlignment.Stretch,
                 VerticalAlignment = VerticalAlignment.Stretch,
+                Focusable = false,
 
             };
 
@@ -546,6 +843,7 @@ namespace IEL.UserElementsControl.Base
                 Stroke = SourceBorderBrush.SourceBrush,
                 StrokeStartLineCap = PenLineCap.Round,
                 StrokeEndLineCap = PenLineCap.Round,
+                Focusable = false,
             };
             Base_LeftGuidePolyLine = new()
             {
@@ -557,6 +855,7 @@ namespace IEL.UserElementsControl.Base
                 Stroke = SourceBorderBrush.SourceBrush,
                 StrokeStartLineCap = PenLineCap.Round,
                 StrokeEndLineCap = PenLineCap.Round,
+                Focusable = false,
             };
             #endregion
 
@@ -573,13 +872,14 @@ namespace IEL.UserElementsControl.Base
                 VerticalAlignment = VerticalAlignment.Center,
                 BorderBrush = SourceBorderBrush.SourceBrush,
                 ClipToBounds = true,
+                Focusable = false,
             };
             Base_RightGuideGrid = new()
             {
                 Margin = new(0d),
                 HorizontalAlignment = HorizontalAlignment.Stretch,
                 VerticalAlignment = VerticalAlignment.Stretch,
-
+                Focusable = false,
             };
 
             #region ->
@@ -595,6 +895,7 @@ namespace IEL.UserElementsControl.Base
                 Stroke = SourceBorderBrush.SourceBrush,
                 StrokeStartLineCap = PenLineCap.Round,
                 StrokeEndLineCap = PenLineCap.Round,
+                Focusable = false,
             };
             Base_RightGuidePolyLine = new()
             {
@@ -606,6 +907,7 @@ namespace IEL.UserElementsControl.Base
                 Stroke = SourceBorderBrush.SourceBrush,
                 StrokeStartLineCap = PenLineCap.Round,
                 StrokeEndLineCap = PenLineCap.Round,
+                Focusable = false,
             };
             #endregion
 
@@ -618,10 +920,9 @@ namespace IEL.UserElementsControl.Base
                 VerticalAlignment = VerticalAlignment.Center,
             };
 
-            Base_HeadGridButton.ColumnDefinitions.Add(new() { Width = new(0d, GridUnitType.Pixel) });
-            Base_HeadGridButton.ColumnDefinitions.Add(new() { Width = new(1d, GridUnitType.Star) });
-            Base_HeadGridButton.ColumnDefinitions.Add(new() { Width = new(0d, GridUnitType.Pixel) });
-            Base_ViewBoxButton.Child = Base_HeadGridButton;
+            Base_HeadGridContentButton.ColumnDefinitions.Add(new() { Width = new(0d, GridUnitType.Pixel) });
+            Base_HeadGridContentButton.ColumnDefinitions.Add(new() { Width = new(1d, GridUnitType.Star) });
+            Base_HeadGridContentButton.ColumnDefinitions.Add(new() { Width = new(0d, GridUnitType.Pixel) });
 
             #region LeftGuide < |=|
             Base_LeftGuideContainer.Child = Base_LeftGuideGrid;
@@ -636,7 +937,7 @@ namespace IEL.UserElementsControl.Base
             #endregion
 
             Grid.SetColumn(Base_LeftGuideContainer, 0);
-            Base_HeadGridButton.Children.Add(Base_LeftGuideContainer);
+            Base_HeadGridContentButton.Children.Add(Base_LeftGuideContainer);
             #endregion
 
             #region RightGuide |=| >
@@ -652,43 +953,101 @@ namespace IEL.UserElementsControl.Base
             #endregion
 
             Grid.SetColumn(Base_RightGuideContainer, 2);
-            Base_HeadGridButton.Children.Add(Base_RightGuideContainer);
+            Base_HeadGridContentButton.Children.Add(Base_RightGuideContainer);
             #endregion
 
             Grid.SetColumn(Base_ButtonContentContainer, 1);
-            Base_HeadGridButton.Children.Add(Base_ButtonContentContainer);
+            Base_HeadGridContentButton.Children.Add(Base_ButtonContentContainer);
 
-
+            #region MouseActivate
             Base_BorderContainer.MouseDown += (sender, e) =>
             {
-                if (IsEnabled)
+                if (IsEnabled && IsEnabledActivateMouse &&
+                (BasicActivate != null || AdditionalActivate != null) &&
+                (e.LeftButton == MouseButtonState.Pressed || e.RightButton == MouseButtonState.Pressed))
                 {
-                    if (
-                    (e.LeftButton == MouseButtonState.Pressed && OnActivateMouseLeft != null) ||
-                    (e.RightButton == MouseButtonState.Pressed && OnActivateMouseRight != null))
-                    {
-                        SetActiveSpecrum(SpectrumColor.Used);
-                        SourceTimer.Stop();
-                    }
+                    SetActiveSpecrum(SpectrumColor.Used);
+                    SourceTimer.Stop();
                 }
             };
 
             Base_BorderContainer.MouseLeftButtonUp += (sender, e) =>
             {
-                if (IsEnabled && OnActivateMouseLeft != null)
+                if (IsEnabled && BasicActivate != null && IsEnabledActivateMouse)
                 {
                     SetActiveSpecrum(SpectrumColor.Select);
-                    OnActivateMouseLeft.Invoke(this, e);
+                    BasicActivate.Invoke(this, e);
                 }
             };
 
             Base_BorderContainer.MouseRightButtonUp += (sender, e) =>
             {
-                if (IsEnabled && OnActivateMouseRight != null)
+                if (IsEnabled && AdditionalActivate != null && IsEnabledActivateMouse)
                 {
                     SetActiveSpecrum(SpectrumColor.Select);
-                    OnActivateMouseRight.Invoke(this, e);
+                    AdditionalActivate.Invoke(this, e);
                 }
+            };
+            #endregion
+
+            #region KeyActivate
+            KeyDown += (sender, e) =>
+            {
+                if (e.IsRepeat || (e.Key != Key.Enter && e.Key != ActivateKey)) return;
+                else if (IsEnabled && IsEnabledActivateKeyboard && 
+                (
+                    (BasicActivate != null && IsActivateKeyBasicEvent) || (AdditionalActivate != null && !IsActivateKeyBasicEvent) ||
+                    (BasicActivate != null && IsFocused && e.Key == Key.Enter) || (AdditionalActivate != null && IsFocused && e.Key == ActivateKey)
+                ))
+                {
+                    SetActiveSpecrum(SpectrumColor.Used);
+                    SourceTimer.Stop();
+                }
+            };
+
+            KeyUp += (sender, e) =>
+            {
+                if (IsEnabled && IsEnabledActivateKeyboard && (e.Key == ActivateKey || e.Key == Key.Enter))
+                {
+                    SetActiveSpecrum(SpectrumColor.Select);
+                    if (IsFocused)
+                    {
+                        if (BasicActivate != null && e.Key == Key.Enter)
+                            BasicActivate.Invoke(this, new(Mouse.PrimaryDevice, 0, MouseButton.Left));
+                        else if (AdditionalActivate != null && e.Key == ActivateKey)
+                            AdditionalActivate.Invoke(this, new(Mouse.PrimaryDevice, 0, MouseButton.Right));
+                    }
+                    else
+                    {
+                        if (BasicActivate != null && IsActivateKeyBasicEvent)
+                            BasicActivate.Invoke(this, new(Mouse.PrimaryDevice, 0, MouseButton.Left));
+                        else if (AdditionalActivate != null && !IsActivateKeyBasicEvent)
+                            AdditionalActivate.Invoke(this, new(Mouse.PrimaryDevice, 0, MouseButton.Right));
+                    }
+                }
+            };
+            #endregion
+
+            GotFocus += (sender, e) =>
+            {
+                if (IsVisibleActivateKey)
+                    IsVisibleSetConst = true;
+                else
+                {
+                    IsVisibleSetConst = false;
+                    IsVisibleActivateKey = true;
+                }
+                SetActiveSpecrum(SpectrumColor.Select);
+                //Base_BorderContainer.Focus();
+            };
+
+            LostFocus += (sender, e) =>
+            {
+                if (!IsVisibleSetConst)
+                {
+                    IsVisibleActivateKey = false;
+                }
+                SetActiveSpecrum(SpectrumColor.Default);
             };
 
             Base_BorderContainer.ClipToBounds = true;
