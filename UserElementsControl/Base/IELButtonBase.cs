@@ -20,6 +20,12 @@ namespace IEL.UserElementsControl.Base
     {
         #region ConstDescriptions
         /// <summary>
+        /// Коментарий к описанию устаревших событий
+        /// </summary>
+        private const string DescriptionCommentObsoleteEvent = "Событие является недопустимым для объекта.\n" +
+            $"Используйте события {nameof(BasicActivate)} и {nameof(AdditionalActivate)}, а также свойства управления к ним";
+
+        /// <summary>
         /// Комментарий к описанию активации кнопки с помощью клавиатуры, при фокусе на элементе
         /// </summary>
         private const string DescriptionCommentActivateElementFocusKeyboard =
@@ -42,14 +48,9 @@ namespace IEL.UserElementsControl.Base
         #endregion
 
         /// <summary>
-        /// Состояние исполнения расширения переопределяемых параметров
-        /// </summary>
-        private static bool IsPropertiesOverriden = false;
-
-        /// <summary>
         /// Состояние принудительной установки отображения клавиши
         /// </summary>
-        private static bool IsVisibleSetConst = false;
+        private bool IsVisibleSetConst = false;
 
         #region UIElements
         /// <summary>
@@ -152,23 +153,56 @@ namespace IEL.UserElementsControl.Base
         public event MouseButtonEventHandler? AdditionalActivate;
 
         #region ObsoleteEvents
+        [Obsolete(DescriptionCommentObsoleteEvent, true)]
         private new event MouseButtonEventHandler? MouseDown;
+
+        [Obsolete(DescriptionCommentObsoleteEvent, true)]
         private new event MouseButtonEventHandler? MouseUp;
+
+        [Obsolete(DescriptionCommentObsoleteEvent, true)]
         private new event MouseButtonEventHandler? MouseLeftButtonDown;
+
+        [Obsolete(DescriptionCommentObsoleteEvent, true)]
         private new event MouseButtonEventHandler? MouseLeftButtonUp;
+
+        [Obsolete(DescriptionCommentObsoleteEvent, true)]
         private new event MouseButtonEventHandler? MouseRightButtonDown;
+
+        [Obsolete(DescriptionCommentObsoleteEvent, true)]
         private new event MouseButtonEventHandler? MouseRightButtonUp;
+
+        [Obsolete(DescriptionCommentObsoleteEvent, true)]
         private new event MouseButtonEventHandler? MouseDoubleClick;
+
+        [Obsolete(DescriptionCommentObsoleteEvent, true)]
         private new event MouseButtonEventHandler? PreviewMouseDown;
+
+        [Obsolete(DescriptionCommentObsoleteEvent, true)]
         private new event MouseButtonEventHandler? PreviewMouseUp;
+
+        [Obsolete(DescriptionCommentObsoleteEvent, true)]
         private new event MouseButtonEventHandler? PreviewMouseLeftButtonDown;
+
+        [Obsolete(DescriptionCommentObsoleteEvent, true)]
         private new event MouseButtonEventHandler? PreviewMouseLeftButtonUp;
+
+        [Obsolete(DescriptionCommentObsoleteEvent, true)]
         private new event MouseButtonEventHandler? PreviewMouseRightButtonDown;
+
+        [Obsolete(DescriptionCommentObsoleteEvent, true)]
         private new event MouseButtonEventHandler? PreviewMouseRightButtonUp;
+
+        [Obsolete(DescriptionCommentObsoleteEvent, true)]
         private new event MouseButtonEventHandler? PreviewMouseDoubleClick;
+
         private new event KeyEventHandler? KeyDown;
+
         private new event KeyEventHandler? KeyUp;
+
+        [Obsolete(DescriptionCommentObsoleteEvent, true)]
         private new event KeyEventHandler? PreviewKeyDown;
+
+        [Obsolete(DescriptionCommentObsoleteEvent, true)]
         private new event KeyEventHandler? PreviewKeyUp;
         #endregion
         #endregion
@@ -250,7 +284,7 @@ namespace IEL.UserElementsControl.Base
         {
             if (Element is IELButtonBase Source && e.NewValue is bool SourceNewValue)
             {
-                Source.Base_BorderKeyVisible.Visibility = SourceNewValue ? Visibility.Visible : Visibility.Hidden;
+                Source.Base_BorderKeyVisible.Visibility = SourceNewValue ? Visibility.Visible : Visibility.Collapsed;
             }
         }
 
@@ -745,17 +779,19 @@ namespace IEL.UserElementsControl.Base
         #endregion
 
         /// <summary>
+        /// Статический конструктор для динамического связывания параметров
+        /// </summary>
+        static IELButtonBase()
+        {
+            BorderThicknessProperty.OverrideMetadata(typeof(IELButtonBase), new(OverrideBorderThicknessHandler));
+            CornerRadiusProperty.OverrideMetadata(typeof(IELButtonBase), new(OverrideCornerRadiusHandler));
+        }
+
+        /// <summary>
         /// Инициализация базового класса визуализации кнопки IEL
         /// </summary>
         protected IELButtonBase() : base()
         {
-            if (!IsPropertiesOverriden)
-            {
-                IsPropertiesOverriden = true;
-                BorderThicknessProperty.OverrideMetadata(typeof(IELButtonBase), new(OverrideBorderThicknessHandler));
-                CornerRadiusProperty.OverrideMetadata(typeof(IELButtonBase), new(OverrideCornerRadiusHandler));
-            }
-
             Base_ViewBoxButton = new()
             {
                 Stretch = Stretch.Uniform,
@@ -995,13 +1031,12 @@ namespace IEL.UserElementsControl.Base
             {
                 if (e.IsRepeat || (e.Key != Key.Enter && e.Key != ActivateKey)) return;
                 else if (IsEnabled && IsEnabledActivateKeyboard && 
-                (
-                    (BasicActivate != null && IsActivateKeyBasicEvent) || (AdditionalActivate != null && !IsActivateKeyBasicEvent) ||
-                    (BasicActivate != null && IsFocused && e.Key == Key.Enter) || (AdditionalActivate != null && IsFocused && e.Key == ActivateKey)
-                ))
+                ((BasicActivate != null && e.Key == Key.Enter) ||
+                (AdditionalActivate != null && e.Key == ActivateKey)))
                 {
                     SetActiveSpecrum(SpectrumColor.Used);
                     SourceTimer.Stop();
+                    // (BasicActivate != null && IsActivateKeyBasicEvent) || (AdditionalActivate != null && !IsActivateKeyBasicEvent)
                 }
             };
 
@@ -1010,20 +1045,17 @@ namespace IEL.UserElementsControl.Base
                 if (IsEnabled && IsEnabledActivateKeyboard && (e.Key == ActivateKey || e.Key == Key.Enter))
                 {
                     SetActiveSpecrum(SpectrumColor.Select);
-                    if (IsFocused)
-                    {
-                        if (BasicActivate != null && e.Key == Key.Enter)
-                            BasicActivate.Invoke(this, new(Mouse.PrimaryDevice, 0, MouseButton.Left));
-                        else if (AdditionalActivate != null && e.Key == ActivateKey)
-                            AdditionalActivate.Invoke(this, new(Mouse.PrimaryDevice, 0, MouseButton.Right));
-                    }
-                    else
-                    {
-                        if (BasicActivate != null && IsActivateKeyBasicEvent)
-                            BasicActivate.Invoke(this, new(Mouse.PrimaryDevice, 0, MouseButton.Left));
-                        else if (AdditionalActivate != null && !IsActivateKeyBasicEvent)
-                            AdditionalActivate.Invoke(this, new(Mouse.PrimaryDevice, 0, MouseButton.Right));
-                    }
+                    if (BasicActivate != null && e.Key == Key.Enter)
+                        BasicActivate.Invoke(this, new(Mouse.PrimaryDevice, 0, MouseButton.Left));
+                    else if (AdditionalActivate != null && e.Key == ActivateKey)
+                        AdditionalActivate.Invoke(this, new(Mouse.PrimaryDevice, 0, MouseButton.Right));
+                    //else
+                    //{
+                    //    if (BasicActivate != null && IsActivateKeyBasicEvent)
+                    //        BasicActivate.Invoke(this, new(Mouse.PrimaryDevice, 0, MouseButton.Left));
+                    //    else if (AdditionalActivate != null && !IsActivateKeyBasicEvent)
+                    //        AdditionalActivate.Invoke(this, new(Mouse.PrimaryDevice, 0, MouseButton.Right));
+                    //}
                 }
             };
             #endregion
