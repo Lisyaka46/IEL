@@ -195,8 +195,10 @@ namespace IEL.UserElementsControl.Base
         [Obsolete(DescriptionCommentObsoleteEvent, true)]
         private new event MouseButtonEventHandler? PreviewMouseDoubleClick;
 
+        [Obsolete(DescriptionCommentObsoleteEvent, true)]
         private new event KeyEventHandler? KeyDown;
 
+        [Obsolete(DescriptionCommentObsoleteEvent, true)]
         private new event KeyEventHandler? KeyUp;
 
         [Obsolete(DescriptionCommentObsoleteEvent, true)]
@@ -954,6 +956,7 @@ namespace IEL.UserElementsControl.Base
                 Margin = PaddingButtonContent,
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center,
+                Focusable = false,
             };
 
             Base_HeadGridContentButton.ColumnDefinitions.Add(new() { Width = new(0d, GridUnitType.Pixel) });
@@ -1027,7 +1030,7 @@ namespace IEL.UserElementsControl.Base
             #endregion
 
             #region KeyActivate
-            KeyDown += (sender, e) =>
+            base.PreviewKeyDown += (sender, e) =>
             {
                 if (e.IsRepeat || (e.Key != Key.Enter && e.Key != ActivateKey)) return;
                 else if (IsEnabled && IsEnabledActivateKeyboard && 
@@ -1040,7 +1043,7 @@ namespace IEL.UserElementsControl.Base
                 }
             };
 
-            KeyUp += (sender, e) =>
+            base.PreviewKeyUp += (sender, e) =>
             {
                 if (IsEnabled && IsEnabledActivateKeyboard && (e.Key == ActivateKey || e.Key == Key.Enter))
                 {
@@ -1062,13 +1065,9 @@ namespace IEL.UserElementsControl.Base
 
             GotFocus += (sender, e) =>
             {
-                if (IsVisibleActivateKey)
-                    IsVisibleSetConst = true;
-                else
-                {
-                    IsVisibleSetConst = false;
+                IsVisibleSetConst = IsVisibleActivateKey;
+                if (!IsVisibleSetConst)
                     IsVisibleActivateKey = true;
-                }
                 SetActiveSpecrum(SpectrumColor.Select);
                 //Base_BorderContainer.Focus();
             };
@@ -1076,9 +1075,7 @@ namespace IEL.UserElementsControl.Base
             LostFocus += (sender, e) =>
             {
                 if (!IsVisibleSetConst)
-                {
                     IsVisibleActivateKey = false;
-                }
                 SetActiveSpecrum(SpectrumColor.Default);
             };
 
