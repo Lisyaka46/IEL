@@ -1,4 +1,5 @@
-﻿using IEL.CORE.Enums;
+﻿using IEL.CORE.Animation;
+using IEL.CORE.Enums;
 using IEL.CORE.Themes.Palettes;
 using System.ComponentModel;
 using System.Diagnostics.Eventing.Reader;
@@ -294,7 +295,7 @@ namespace IEL.UserElementsControl.Base
         /// </summary>
         private void SourceTimerMultiActivateHandler(object? sender, EventArgs e)
         {
-            if (!IsMultiActivateKeyboard || !ActivateBasicEvent.HasValue) return;
+            if (!IsEnabled || !IsMultiActivateKeyboard || !ActivateBasicEvent.HasValue) return;
             if (IsEnabledSettingQ)
                 SourceBorderBrush.SetActiveSpecrum(SpectrumColor.Select, false);
             ActivateButton(ActivateBasicEvent.Value ? Key.Enter : ActivateKey);
@@ -370,7 +371,10 @@ namespace IEL.UserElementsControl.Base
         {
             if (Element is IELButtonBase Source && e.NewValue is bool SourceNewValue)
             {
-                Source.Base_BorderKeyVisible.Visibility = SourceNewValue ? Visibility.Visible : Visibility.Collapsed;
+                AnimationManager.AnimateTakingZeroTo(Source.ManagerAnimation, Source.Base_BorderKeyVisible, MarginProperty,
+                    SourceNewValue ? new Thickness(0d) : new Thickness(-8d, 0d, 0d, 0d), TimeSpan.FromMilliseconds(300d));
+                AnimationManager.AnimateTakingZeroTo(Source.ManagerAnimation, Source.Base_BorderKeyVisible, OpacityProperty,
+                    SourceNewValue ? 1d : 0d, TimeSpan.FromMilliseconds(300d));
             }
         }
 
@@ -893,6 +897,7 @@ namespace IEL.UserElementsControl.Base
         protected IELButtonBase() : base()
         {
             FocusVisualStyle = null;
+            Focusable = true;
             SourceTimerMultiActivate = new()
             {
                 IsEnabled = false,
@@ -905,7 +910,7 @@ namespace IEL.UserElementsControl.Base
             };
             SourceTimerMultiActivateHover.Elapsed += (sender, e) =>
             {
-                SourceTimerMultiActivate.Start();
+                Dispatcher.Invoke(SourceTimerMultiActivate.Start);
             };
 
             SourceTimerMultiActivate.Tick += SourceTimerMultiActivateHandler;
@@ -944,10 +949,11 @@ namespace IEL.UserElementsControl.Base
                 VerticalAlignment = VerticalAlignment.Bottom,
                 BorderBrush = SourceBorderBrush.SourceBrush,
                 Background = SourceBackground.SourceBrush,
+                Margin = new(-8d, 0d, 0d, 0d),
                 BorderThickness = new(0d, BorderThickness.Top, BorderThickness.Right, 0d),
                 CornerRadius = new(0d, CornerRadius.TopRight, 0d, CornerRadius.BottomRight),
                 Child = Base_TextBlockKeyVisible,
-                Visibility = Visibility.Hidden,
+                Opacity = 0d,
                 Focusable = false,
             };
             Canvas.SetZIndex(Base_BorderKeyVisible, 1);
@@ -1115,18 +1121,24 @@ namespace IEL.UserElementsControl.Base
             Base_HeadGridContentButton.Children.Add(Base_ButtonContentContainer);
 
             #region MouseActivate
-            Base_BorderContainer.MouseDown += (sender, e) =>
+            base.MouseDown += (sender, e) =>
             {
+                if (IsMultiActivateKeyboard && (SourceTimerMultiActivateHover.Enabled || SourceTimerMultiActivate.IsEnabled))
+                {
+                    SourceTimerMultiActivateHover.Stop();
+                    SourceTimerMultiActivate.Stop();
+                }
                 if (IsEnabled && IsEnabledActivateMouse &&
                 (BasicActivate != null || AdditionalActivate != null) &&
                 (e.LeftButton == MouseButtonState.Pressed || e.RightButton == MouseButtonState.Pressed))
                 {
                     SetActiveSpecrum(SpectrumColor.Used);
                     SourceTimer.Stop();
+                    _ = IsFocused;
                 }
             };
 
-            Base_BorderContainer.MouseLeftButtonUp += (sender, e) =>
+            base.MouseLeftButtonUp += (sender, e) =>
             {
                 if (IsEnabled && BasicActivate != null && IsEnabledActivateMouse)
                 {
@@ -1135,7 +1147,7 @@ namespace IEL.UserElementsControl.Base
                 }
             };
 
-            Base_BorderContainer.MouseRightButtonUp += (sender, e) =>
+            base.MouseRightButtonUp += (sender, e) =>
             {
                 if (IsEnabled && AdditionalActivate != null && IsEnabledActivateMouse)
                 {

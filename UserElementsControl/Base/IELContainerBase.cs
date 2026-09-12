@@ -194,6 +194,7 @@ namespace IEL.UserElementsControl.Base
         /// </summary>
         protected IELContainerBase() : base()
         {
+            Focusable = true;
             Base_BorderContainer = new()
             {
                 BorderThickness = new(2),
@@ -213,7 +214,7 @@ namespace IEL.UserElementsControl.Base
                 SourceTimer.Stop();
             };
 
-            Base_BorderContainer.MouseEnter += (sender, e) =>
+            MouseEnter += (sender, e) =>
             {
                 if (IsEnabled)
                 {
@@ -223,7 +224,7 @@ namespace IEL.UserElementsControl.Base
                 }
             };
 
-            Base_BorderContainer.MouseLeave += (sender, e) =>
+            MouseLeave += (sender, e) =>
             {
                 if (IsEnabled)
                 {
