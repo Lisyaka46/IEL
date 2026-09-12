@@ -75,7 +75,12 @@ namespace IEL.CORE.Themes.Palettes
                 Palette.SourceAnimation.To = GetActiveSpectrumColor();
                 SourceBrush.BeginAnimation(SolidColorBrush.ColorProperty, Palette.SourceAnimation, HandoffBehavior.SnapshotAndReplace);
             }
-            else SourceBrush.Color = GetActiveSpectrumColor();
+            else
+            {
+                if (SourceBrush.HasAnimatedProperties)
+                    SourceBrush.BeginAnimation(SolidColorBrush.ColorProperty, null);
+                SourceBrush.Color = GetActiveSpectrumColor();
+            }
         }
 
         /// <summary>
