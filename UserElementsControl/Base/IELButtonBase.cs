@@ -9,6 +9,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace IEL.UserElementsControl.Base
 {
@@ -139,7 +140,7 @@ namespace IEL.UserElementsControl.Base
         /// </summary>
         [Description("Событие управляемая активацией основного события кнопки.\n" +
             "Активация кнопки зависит от состояний параметров:\n" +
-            $"- С помощью клавиатуры {nameof(IsEnabledActivateKeyboard)} и {nameof(IsActivateKeyBasicEvent)}\n" +
+            $"- С помощью клавиатуры {nameof(IsEnabledActivateKeyboard)}\n" +
             $"- С помощью мыши {nameof(IsEnabledActivateMouse)}")]
         public event MouseButtonEventHandler? BasicActivate;
 
@@ -148,7 +149,7 @@ namespace IEL.UserElementsControl.Base
         /// </summary>
         [Description("Событие управляемая активацией дополнительного события кнопки.\n" +
             "Активация кнопки зависит от состояний параметров:\n" +
-            $"- С помощью клавиатуры {nameof(IsEnabledActivateKeyboard)} и {nameof(IsActivateKeyBasicEvent)}\n" +
+            $"- С помощью клавиатуры {nameof(IsEnabledActivateKeyboard)}\n" +
             $"- С помощью мыши {nameof(IsEnabledActivateMouse)}")]
         public event MouseButtonEventHandler? AdditionalActivate;
 
@@ -250,26 +251,109 @@ namespace IEL.UserElementsControl.Base
         }
         #endregion
 
-        #region IsActivateKeyBasicEvent
+        #region IsMultiActivateKeyboard
         /// <summary>
-        /// Данные свойства <see cref="IsActivateKeyBasicEvent"/>
+        /// Данные свойства <see cref="IsMultiActivateKeyboard"/>
         /// </summary>
-        public static readonly DependencyProperty IsActivateKeyBasicEventProperty =
-            DependencyProperty.Register(nameof(IsActivateKeyBasicEvent), typeof(bool), typeof(IELButtonBase),
-                new(true));
+        public static readonly DependencyProperty IsMultiActivateKeyboardProperty =
+            DependencyProperty.Register(nameof(IsMultiActivateKeyboard), typeof(bool), typeof(IELButtonBase),
+                new(false));
 
         /// <summary>
-        /// Состояние отвечающее за тип активируемого события исполнения активации кнопки с помощью клавиатуры
+        /// Состояние отвечающее за возможность множественной активации кнопки с помощью клавиатуры
         /// </summary>
-        [Description("Состояние активации события исполнения активации кнопки с помощью клавиатуры.\n" +
-            $"Если TRUE, то будет активирован {nameof(BasicActivate)}, иначе {nameof(AdditionalActivate)}.\n" +
+        [Description("Состояние возможности множественной активации кнопки с помощью клавиатуры.\n" +
             DescriptionCommentActivateElementFocusKeyboard)]
-        public bool IsActivateKeyBasicEvent
+        public bool IsMultiActivateKeyboard
         {
-            get => (bool)GetValue(IsActivateKeyBasicEventProperty);
-            set => SetValue(IsActivateKeyBasicEventProperty, value);
+            get => (bool)GetValue(IsMultiActivateKeyboardProperty);
+            set => SetValue(IsMultiActivateKeyboardProperty, value);
         }
         #endregion
+
+        #region MultiActivateKeyboardInterval
+
+        #region SourceTimerMultiActivate
+        /// <summary>
+        /// Таймер срабатывания множественной активации кнопки с помощью клавиатуры
+        /// </summary>
+        protected DispatcherTimer SourceTimerMultiActivate { get; private set; }
+
+        /// <summary>
+        /// Таймер отсчёта начала множественной активации кнопки
+        /// </summary>
+        private readonly System.Timers.Timer SourceTimerMultiActivateHover;
+
+        /// <summary>
+        /// Состояние активации события клавиши
+        /// </summary>
+        private bool? ActivateBasicEvent;
+
+        /// <summary>
+        /// Обработчик события множественной активации кнопки с помощью клавиатуры
+        /// </summary>
+        private void SourceTimerMultiActivateHandler(object? sender, EventArgs e)
+        {
+            if (!IsMultiActivateKeyboard || !ActivateBasicEvent.HasValue) return;
+            if (IsEnabledSettingQ)
+                SourceBorderBrush.SetActiveSpecrum(SpectrumColor.Select, false);
+            ActivateButton(ActivateBasicEvent.Value ? Key.Enter : ActivateKey);
+            if (IsEnabledSettingQ)
+                SourceBorderBrush.SetActiveSpecrum(SpectrumColor.Used, true);
+        }
+        #endregion
+
+        /// <summary>
+        /// Данные свойства <see cref="MultiActivateKeyboardInterval"/>
+        /// </summary>
+        public static readonly DependencyProperty MultiActivateKeyboardIntervalProperty =
+            DependencyProperty.Register(nameof(MultiActivateKeyboardInterval), typeof(TimeSpan), typeof(IELButtonBase),
+                new(TimeSpan.FromMilliseconds(100d), MultiActivateKeyboardIntervalHandler));
+
+        /// <summary>
+        /// Обработчик события изменения свойства <see cref="MultiActivateKeyboardInterval"/>
+        /// </summary>
+        private static void MultiActivateKeyboardIntervalHandler(DependencyObject Element, DependencyPropertyChangedEventArgs e)
+        {
+            if (Element is IELButtonBase Source && e.NewValue is TimeSpan SourceNewValue)
+            {
+                Source.SourceTimerMultiActivate.Interval = SourceNewValue;
+            }
+        }
+
+        /// <summary>
+        /// Интервал множественной активации кнопки с помощью клавиатуры
+        /// </summary>
+        [Description("Интервал множественной активации кнопки с помощью клавиатуры.\n" +
+            $"Множественная активация кнопки будет включена после того как пройдёт интервал для события {nameof(MouseHover)}.\n" +
+            DescriptionCommentActivateElementFocusKeyboard)]
+        public TimeSpan MultiActivateKeyboardInterval
+        {
+            get => (TimeSpan)GetValue(MultiActivateKeyboardIntervalProperty);
+            set => SetValue(MultiActivateKeyboardIntervalProperty, value);
+        }
+        #endregion
+
+        //#region IsActivateKeyBasicEvent
+        ///// <summary>
+        ///// Данные свойства <see cref="IsActivateKeyBasicEvent"/>
+        ///// </summary>
+        //public static readonly DependencyProperty IsActivateKeyBasicEventProperty =
+        //    DependencyProperty.Register(nameof(IsActivateKeyBasicEvent), typeof(bool), typeof(IELButtonBase),
+        //        new(true));
+
+        ///// <summary>
+        ///// Состояние отвечающее за тип активируемого события исполнения активации кнопки с помощью клавиатуры
+        ///// </summary>
+        //[Description("Состояние активации события исполнения активации кнопки с помощью клавиатуры.\n" +
+        //    $"Если TRUE, то будет активирован {nameof(BasicActivate)}, иначе {nameof(AdditionalActivate)}.\n" +
+        //    DescriptionCommentActivateElementFocusKeyboard)]
+        //public bool IsActivateKeyBasicEvent
+        //{
+        //    get => (bool)GetValue(IsActivateKeyBasicEventProperty);
+        //    set => SetValue(IsActivateKeyBasicEventProperty, value);
+        //}
+        //#endregion
 
         #region IsVisibleActivateKey
         /// <summary>
@@ -354,7 +438,7 @@ namespace IEL.UserElementsControl.Base
         /// Прикреплённая клавиша для активации кнопки с помощью клавиатуры
         /// </summary>
         [Description("Прикреплённая клавиша для активации кнопки с помощью клавиатуры.\n" +
-            $"Активация кнопки с помощью клавиатуры зависит от состояний параметров {nameof(IsEnabledActivateKeyboard)} и {nameof(IsActivateKeyBasicEvent)}")]
+            $"Активация кнопки с помощью клавиатуры зависит от состояний параметров {nameof(IsEnabledActivateKeyboard)}")]
         public Key ActivateKey
         {
             get => (Key)GetValue(ActivateKeyProperty);
@@ -750,6 +834,19 @@ namespace IEL.UserElementsControl.Base
         }
         #endregion
 
+        #region OverrideIntervalHover
+        /// <summary>
+        /// Расширенный обработчик события изменения свойства <see cref="IELContainerBase.IntervalHover"/>
+        /// </summary>
+        private static void OverrideIntervalHoverHandler(DependencyObject Element, DependencyPropertyChangedEventArgs e)
+        {
+            if (Element is IELButtonBase Source && e.NewValue is TimeSpan SourceNewValue)
+            {
+                Source.SourceTimerMultiActivateHover.Interval = SourceNewValue.TotalMilliseconds;
+            }
+        }
+        #endregion
+
         #region ContextMenu TODO: (контектное меню для IELPanelAction)
         ///// <summary>
         ///// Данные конкретного свойства
@@ -787,6 +884,7 @@ namespace IEL.UserElementsControl.Base
         {
             BorderThicknessProperty.OverrideMetadata(typeof(IELButtonBase), new(OverrideBorderThicknessHandler));
             CornerRadiusProperty.OverrideMetadata(typeof(IELButtonBase), new(OverrideCornerRadiusHandler));
+            IntervalHoverProperty.OverrideMetadata(typeof(IELButtonBase), new(TimeSpan.FromMilliseconds(500d), OverrideIntervalHoverHandler));
         }
 
         /// <summary>
@@ -794,6 +892,24 @@ namespace IEL.UserElementsControl.Base
         /// </summary>
         protected IELButtonBase() : base()
         {
+            FocusVisualStyle = null;
+            SourceTimerMultiActivate = new()
+            {
+                IsEnabled = false,
+                Interval = MultiActivateKeyboardInterval,
+            };
+            SourceTimerMultiActivateHover = new()
+            {
+                Interval = IntervalHover.TotalMilliseconds,
+                AutoReset = false
+            };
+            SourceTimerMultiActivateHover.Elapsed += (sender, e) =>
+            {
+                SourceTimerMultiActivate.Start();
+            };
+
+            SourceTimerMultiActivate.Tick += SourceTimerMultiActivateHandler;
+
             Base_ViewBoxButton = new()
             {
                 Stretch = Stretch.Uniform,
@@ -1037,9 +1153,14 @@ namespace IEL.UserElementsControl.Base
                 ((BasicActivate != null && e.Key == Key.Enter) ||
                 (AdditionalActivate != null && e.Key == ActivateKey)))
                 {
+                    ActivateBasicEvent = e.Key == Key.Enter;
                     SetActiveSpecrum(SpectrumColor.Used);
                     SourceTimer.Stop();
-                    // (BasicActivate != null && IsActivateKeyBasicEvent) || (AdditionalActivate != null && !IsActivateKeyBasicEvent)
+                    if (IsMultiActivateKeyboard)
+                    {
+                        ActivateButton(e.Key);
+                        SourceTimerMultiActivateHover.Start();
+                    }
                 }
             };
 
@@ -1047,18 +1168,14 @@ namespace IEL.UserElementsControl.Base
             {
                 if (IsEnabled && IsEnabledActivateKeyboard && (e.Key == ActivateKey || e.Key == Key.Enter))
                 {
+                    ActivateBasicEvent = null;
                     SetActiveSpecrum(SpectrumColor.Select);
-                    if (BasicActivate != null && e.Key == Key.Enter)
-                        BasicActivate.Invoke(this, new(Mouse.PrimaryDevice, 0, MouseButton.Left));
-                    else if (AdditionalActivate != null && e.Key == ActivateKey)
-                        AdditionalActivate.Invoke(this, new(Mouse.PrimaryDevice, 0, MouseButton.Right));
-                    //else
-                    //{
-                    //    if (BasicActivate != null && IsActivateKeyBasicEvent)
-                    //        BasicActivate.Invoke(this, new(Mouse.PrimaryDevice, 0, MouseButton.Left));
-                    //    else if (AdditionalActivate != null && !IsActivateKeyBasicEvent)
-                    //        AdditionalActivate.Invoke(this, new(Mouse.PrimaryDevice, 0, MouseButton.Right));
-                    //}
+                    if (IsMultiActivateKeyboard)
+                    {
+                        SourceTimerMultiActivateHover.Stop();
+                        SourceTimerMultiActivate.Stop();
+                    }
+                    else ActivateButton(e.Key);
                 }
             };
             #endregion
@@ -1068,20 +1185,35 @@ namespace IEL.UserElementsControl.Base
                 IsVisibleSetConst = IsVisibleActivateKey;
                 if (!IsVisibleSetConst)
                     IsVisibleActivateKey = true;
-                SetActiveSpecrum(SpectrumColor.Select);
-                //Base_BorderContainer.Focus();
+                if (!IsEnter) SetActiveSpecrum(SpectrumColor.Select);
             };
 
             LostFocus += (sender, e) =>
             {
                 if (!IsVisibleSetConst)
                     IsVisibleActivateKey = false;
-                SetActiveSpecrum(SpectrumColor.Default);
+                if (!IsEnter) SetActiveSpecrum(SpectrumColor.Default);
             };
 
             Base_BorderContainer.ClipToBounds = true;
             base.SetValue(IELContainerBase.ContentProperty, Base_ViewBoxButton);
             UpdateGuideVisual();
+        }
+
+        /// <summary>
+        /// Активировать кнопку с помощью клавиши клавиатуры
+        /// </summary>
+        /// <param name="key">Нажатая клавиша для управления видом активации</param>
+        /// <remarks>
+        /// <see cref="Key.Enter"/> для базовой активации<br/>
+        /// <see cref="ActivateKey"/> для дополнительной активации
+        /// </remarks>
+        private void ActivateButton(Key key)
+        {
+            if (BasicActivate != null && key == Key.Enter)
+                BasicActivate.Invoke(this, new(Mouse.PrimaryDevice, 0, MouseButton.Left));
+            else if (AdditionalActivate != null && key == ActivateKey)
+                AdditionalActivate.Invoke(this, new(Mouse.PrimaryDevice, 0, MouseButton.Right));
         }
 
         /// <summary>

@@ -21,6 +21,11 @@ namespace IEL.UserElementsControl.Base
         protected Border Base_BorderContainer { get; private set; }
         #endregion
 
+        /// <summary>
+        /// Состояние указывающее на вход курсора в границы визуального объекта
+        /// </summary>
+        protected bool IsEnter { get; private set; }
+
         #region Properties
 
         #region IntervalHover
@@ -212,7 +217,8 @@ namespace IEL.UserElementsControl.Base
             {
                 if (IsEnabled)
                 {
-                    if (!Base_BorderContainer.IsFocused) SetActiveSpecrum(SpectrumColor.Select);
+                    if (!IsFocused) SetActiveSpecrum(SpectrumColor.Select);
+                    IsEnter = true;
                     SourceTimer.Start();
                 }
             };
@@ -221,7 +227,8 @@ namespace IEL.UserElementsControl.Base
             {
                 if (IsEnabled)
                 {
-                    if (!Base_BorderContainer.IsFocused) SetActiveSpecrum(SpectrumColor.Default);
+                    if (!IsFocused) SetActiveSpecrum(SpectrumColor.Default);
+                    IsEnter = false;
                     SourceTimer.Stop();
                 }
             };
