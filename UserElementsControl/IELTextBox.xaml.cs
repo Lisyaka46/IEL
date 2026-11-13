@@ -371,9 +371,11 @@ namespace LibraryIEL.UserElementsControl
             }
 
             UpdatePositionFromCaretIndex(e.Key);
+#if DEBUG
             DebugUpdateInfo();
+#endif
         }
-        #endregion
+#endregion
 
         /// <summary>
         /// Обновить отображение позиции каретки по её текущему индексу
