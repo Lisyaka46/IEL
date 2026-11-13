@@ -1,0 +1,46 @@
+name: Publish NuGet Package
+
+on:
+  push:
+    tags:
+      - 'v*' # Запускать только при создании тега версии (например, v1.0.0)
+  workflow_dispatch: # Позволяет запускать вручную из вкладки Actions
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest # Используем Linux, так как нам не нужен WPF-дизайнер
+    permissions:
+      id-token: write # ОБЯЗАТЕЛЬНО для Trusted Publishing
+      contents: read
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '10.0.x' # Укажите вашу версию .NET (8.0, 9.0 и т.д.)
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Build and Pack
+      run: dotnet pack --configuration Release --no-restore
+
+    # Получение временного ключа NuGet (Trusted Publishing)
+    - name: NuGet login (OIDC → temp API key)
+      uses: NuGet/login@v1
+      id: login
+      with:
+        # ВАЖНО: Это имя вашего профиля на nuget.org (НЕ email!)
+        # Создайте секрет NUGET_USER в настройках репозитория GitHub
+        user: ${{ secrets.NUGET_USER }}
+
+    # Публикация пакета
+    - name: Push NuGet package
+      run: |
+        # Ищем все файлы .nupkg в папке bin/Release и отправляем их
+        dotnet nuget push "**/bin/Release/*.nupkg" \
+          --api-key ${{ steps.login.outputs.NUGET_API_KEY }} \
+          --source https://api.nuget.org/v3/index.json
