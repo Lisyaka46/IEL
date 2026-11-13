@@ -1,9 +1,9 @@
-﻿using IEL.UserElementsControl.Base;
+﻿using LibraryIEL.UserElementsControl.Base;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Media;
 
-namespace IEL.UserElementsControl
+namespace LibraryIEL.UserElementsControl
 {
     /// <summary>
     /// Логика взаимодействия для IELButtonText.xaml

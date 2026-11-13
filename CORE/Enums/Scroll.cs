@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IEL.CORE.Enums
+namespace LibraryIEL.CORE.Enums
 {
     /// <summary>
     /// Перечисление вариаций позиционирования горизонтального скроллбара

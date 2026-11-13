@@ -1,9 +1,7 @@
-﻿using IEL.CORE.Animation;
-using IEL.CORE.Enums;
-using IEL.CORE.Themes.Palettes;
+﻿using LibraryIEL.CORE.Animation;
+using LibraryIEL.CORE.Enums;
+using LibraryIEL.CORE.Themes.Palettes;
 using System.ComponentModel;
-using System.Diagnostics.Eventing.Reader;
-using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -12,7 +10,7 @@ using System.Windows.Media;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 
-namespace IEL.UserElementsControl.Base
+namespace LibraryIEL.UserElementsControl.Base
 {
     /// <summary>
     /// <b>БАЗОВЫЙ КЛАСС</b><br/>
@@ -371,9 +369,9 @@ namespace IEL.UserElementsControl.Base
         {
             if (Element is IELButtonBase Source && e.NewValue is bool SourceNewValue)
             {
-                AnimationManager.AnimateTakingZeroTo(Source.ManagerAnimation, Source.Base_BorderKeyVisible, MarginProperty,
+                ManagerAnimation.AnimateTakingZeroTo(Source.Base_BorderKeyVisible, MarginProperty,
                     SourceNewValue ? new Thickness(0d) : new Thickness(-8d, 0d, 0d, 0d), TimeSpan.FromMilliseconds(300d));
-                AnimationManager.AnimateTakingZeroTo(Source.ManagerAnimation, Source.Base_BorderKeyVisible, OpacityProperty,
+                ManagerAnimation.AnimateTakingZeroTo(Source.Base_BorderKeyVisible, OpacityProperty,
                     SourceNewValue ? 1d : 0d, TimeSpan.FromMilliseconds(300d));
             }
         }
@@ -425,7 +423,7 @@ namespace IEL.UserElementsControl.Base
         /// </summary>
         public static readonly DependencyProperty ActivateKeyProperty =
             DependencyProperty.Register(nameof(ActivateKey), typeof(Key), typeof(IELButtonBase),
-                new(ActivateKeyHandler));
+                new(Key.None, ActivateKeyHandler));
 
         /// <summary>
         /// Обработчик события изменения свойства <see cref="ActivateKey"/>
@@ -812,11 +810,11 @@ namespace IEL.UserElementsControl.Base
         protected event EventHandler<StateVisualGuide>? VisualGuideChanged;
         #endregion
 
-        #region OverrideBorderThickness
+        #region BorderThickness
         /// <summary>
         /// Расширенный обработчик события изменения свойства <see cref="IELContainerBase.BorderThickness"/>
         /// </summary>
-        private static void OverrideBorderThicknessHandler(DependencyObject Element, DependencyPropertyChangedEventArgs e)
+        private static void BorderThicknessHandler(DependencyObject Element, DependencyPropertyChangedEventArgs e)
         {
             if (Element is IELButtonBase Source && e.NewValue is Thickness SourceNewValue)
             {
@@ -825,11 +823,11 @@ namespace IEL.UserElementsControl.Base
         }
         #endregion
 
-        #region OverrideCornerRadius
+        #region CornerRadius
         /// <summary>
         /// Расширенный обработчик события изменения свойства <see cref="IELContainerBase.CornerRadius"/>
         /// </summary>
-        private static void OverrideCornerRadiusHandler(DependencyObject Element, DependencyPropertyChangedEventArgs e)
+        private static void CornerRadiusHandler(DependencyObject Element, DependencyPropertyChangedEventArgs e)
         {
             if (Element is IELButtonBase Source && e.NewValue is CornerRadius SourceNewValue)
             {
@@ -838,11 +836,11 @@ namespace IEL.UserElementsControl.Base
         }
         #endregion
 
-        #region OverrideIntervalHover
+        #region IntervalHover
         /// <summary>
         /// Расширенный обработчик события изменения свойства <see cref="IELContainerBase.IntervalHover"/>
         /// </summary>
-        private static void OverrideIntervalHoverHandler(DependencyObject Element, DependencyPropertyChangedEventArgs e)
+        private static void IntervalHoverHandler(DependencyObject Element, DependencyPropertyChangedEventArgs e)
         {
             if (Element is IELButtonBase Source && e.NewValue is TimeSpan SourceNewValue)
             {
@@ -886,9 +884,9 @@ namespace IEL.UserElementsControl.Base
         /// </summary>
         static IELButtonBase()
         {
-            BorderThicknessProperty.OverrideMetadata(typeof(IELButtonBase), new(OverrideBorderThicknessHandler));
-            CornerRadiusProperty.OverrideMetadata(typeof(IELButtonBase), new(OverrideCornerRadiusHandler));
-            IntervalHoverProperty.OverrideMetadata(typeof(IELButtonBase), new(TimeSpan.FromMilliseconds(500d), OverrideIntervalHoverHandler));
+            BorderThicknessProperty.OverrideMetadata(typeof(IELButtonBase), new FrameworkPropertyMetadata(BorderThicknessHandler));
+            CornerRadiusProperty.OverrideMetadata(typeof(IELButtonBase), new FrameworkPropertyMetadata(CornerRadiusHandler));
+            IntervalHoverProperty.OverrideMetadata(typeof(IELButtonBase), new FrameworkPropertyMetadata(TimeSpan.FromMilliseconds(500d), IntervalHoverHandler));
         }
 
         /// <summary>
@@ -1194,7 +1192,7 @@ namespace IEL.UserElementsControl.Base
 
             GotFocus += (sender, e) =>
             {
-                IsVisibleSetConst = IsVisibleActivateKey;
+                IsVisibleSetConst = IsVisibleActivateKey || ActivateKey == Key.None;
                 if (!IsVisibleSetConst)
                     IsVisibleActivateKey = true;
                 if (!IsEnter) SetActiveSpecrum(SpectrumColor.Select);

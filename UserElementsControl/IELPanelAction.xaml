@@ -1,9 +1,9 @@
 ﻿<Base:IELContainerBase
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    x:Class="IEL.UserElementsControl.IELPanelAction"
-    xmlns:Base="clr-namespace:IEL.UserElementsControl.Base"
-    xmlns:IEL="clr-namespace:IEL.UserElementsControl"
+    x:Class="LibraryIEL.UserElementsControl.IELPanelAction"
+    xmlns:Base="clr-namespace:LibraryIEL.UserElementsControl.Base"
+    xmlns:IEL="clr-namespace:LibraryIEL.UserElementsControl"
     Focusable="True" IsAnimatedSettingQ="False">
     <!--<.FocusVisualStyle>
         <Style>

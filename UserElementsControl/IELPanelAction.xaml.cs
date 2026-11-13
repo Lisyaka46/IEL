@@ -1,5 +1,5 @@
-﻿using IEL.CORE.Enums;
-using IEL.UserElementsControl.Base;
+﻿using LibraryIEL.CORE.Enums;
+using LibraryIEL.UserElementsControl.Base;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Tracing;
 using System.Runtime.CompilerServices;
@@ -9,7 +9,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 
-namespace IEL.UserElementsControl
+namespace LibraryIEL.UserElementsControl
 {
     /// <summary>
     /// Логика взаимодействия для IELPanelAction.xaml
@@ -30,11 +30,6 @@ namespace IEL.UserElementsControl
         /// Состояние выделения кнопки через режим клавиатуры
         /// </summary>
         private bool SelectButtonKeyboardMode = false;
-
-        /// <summary>
-        /// Кнопка которая выделенна клавишей клавиатуры
-        /// </summary>
-        private IELButtonKeyBase? ButtonKeySelect;
 
         /// <summary>
         /// Состояние бокирующее повторное срабатывание зажатой клавиши
@@ -157,7 +152,7 @@ namespace IEL.UserElementsControl
         /// <summary>
         /// Предыдущая точка привязки курсора
         /// </summary>
-        private OrientationPositionCursor OldOrientationPositionCursor = OrientationPositionCursor.Empty;
+        //private EnumPositionMessage OldOrientationPositionCursor = EnumPositionMessage.Empty;
 
         /// <summary>
         /// Актуальный размер который отображается в объекте
@@ -216,12 +211,12 @@ namespace IEL.UserElementsControl
                 else
                 {
                     if (MainPageController.ActualContent == null) return;
-                    if (KeyboardModeInActualPage && !SelectButtonKeyboardMode)
-                    {
-                        SelectButtonKeyboardMode = true;
-                        ButtonKeySelect = SearchButton<IELButtonKeyBase>((Visual)MainPageController.ActualContent.Content, e.Key);
-                        ButtonKeySelect?.BlinkAnimation();
-                    }
+                    //if (KeyboardModeInActualPage && !SelectButtonKeyboardMode)
+                    //{
+                    //    SelectButtonKeyboardMode = true;
+                    //    ButtonKeySelect = SearchButton<IELButtonKeyBase>((Visual)MainPageController.ActualContent.Content, e.Key);
+                    //    ButtonKeySelect?.BlinkAnimation();
+                    //}
                 }
             };
             KeyUp += (sender, e) =>
@@ -245,18 +240,18 @@ namespace IEL.UserElementsControl
                 }
                 else
                 {
-                    if (MainPageController.ActualContent == null) return;
-                    if (KeyboardModeInActualPage && SelectButtonKeyboardMode)
-                    {
-                        SelectButtonKeyboardMode = false;
-                        if (ButtonKeySelect != null)
-                        {
-                            IELButtonKeyBase.ActivateHandler? Handler = ActivateRightClickKeyboardMode ? ButtonKeySelect.OnActivateMouseRight : ButtonKeySelect.OnActivateMouseLeft;
-                            Handler?.Invoke(ButtonKeySelect,
-                                new(Mouse.PrimaryDevice, 0, ActivateRightClickKeyboardMode ? MouseButton.Right : MouseButton.Left), true);
-                            ButtonKeySelect.UnfocusAnimation();
-                        }
-                    }
+                    //if (MainPageController.ActualContent == null) return;
+                    //if (KeyboardModeInActualPage && SelectButtonKeyboardMode)
+                    //{
+                    //    SelectButtonKeyboardMode = false;
+                    //    if (ButtonKeySelect != null)
+                    //    {
+                    //        IELButtonKeyBase.ActivateHandler? Handler = ActivateRightClickKeyboardMode ? ButtonKeySelect.OnActivateMouseRight : ButtonKeySelect.OnActivateMouseLeft;
+                    //        Handler?.Invoke(ButtonKeySelect,
+                    //            new(Mouse.PrimaryDevice, 0, ActivateRightClickKeyboardMode ? MouseButton.Right : MouseButton.Left), true);
+                    //        ButtonKeySelect.UnfocusAnimation();
+                    //    }
+                    //}
                 }
             };
             Base_BorderContainer.LostFocus += (sender, e) =>
@@ -278,14 +273,14 @@ namespace IEL.UserElementsControl
         /// <param name="Value">Значение на которое обновляется визуализация</param>
         private void UpdateVisualKeyboardMode(Page SourceUpdate, bool Value)
         {
-            IELButtonKeyBase[]? Buttons = SearchButton<IELButtonKeyBase>((Visual)SourceUpdate.Content);
-            if (Buttons != null)
-            {
-                foreach (IELButtonKeyBase Element in Buttons)
-                {
-                    Element.IsVisibleKeyActivate = Value;
-                }
-            }
+            //IELButtonKeyBase[]? Buttons = SearchButton<IELButtonKeyBase>((Visual)SourceUpdate.Content);
+            //if (Buttons != null)
+            //{
+            //    foreach (IELButtonKeyBase Element in Buttons)
+            //    {
+            //        Element.IsVisibleKeyActivate = Value;
+            //    }
+            //}
         }
 
         /// <summary>
@@ -324,24 +319,24 @@ namespace IEL.UserElementsControl
         /// <typeparam name="T">Тип элемента поддерживающего подключение по клавише</typeparam>
         /// <param name="VisualObject">Ссылка на объект поиска</param>
         /// <param name="key">Ключ клавиши</param>
-        private static T? SearchButton<T>(Visual VisualObject, Key key) where T : IELButtonKeyBase
+        private static T? SearchButton<T>(Visual VisualObject, Key key) //where T : IELButtonKeyBase
         {
             for (int i = 0; i < VisualTreeHelper.GetChildrenCount(VisualObject); i++)
             {
                 Visual ChildVisualElement = (Visual)VisualTreeHelper.GetChild(VisualObject, i);
                 try
                 {
-                    T ObjectButton = (T)ChildVisualElement;
-                    if (ObjectButton.KeyActivateButton == key && ObjectButton.IsEnabled) return ObjectButton;
+                    //T ObjectButton = (T)ChildVisualElement;
+                    //if (ObjectButton.KeyActivateButton == key && ObjectButton.IsEnabled) return ObjectButton;
                 }
                 catch
                 {
-                    if (ChildVisualElement.GetType() == typeof(Grid))
-                    {
-                        T? value = SearchButton<T>((Grid)ChildVisualElement, key);
-                        if (value == null) continue;
-                        else return value;
-                    }
+                    //if (ChildVisualElement.GetType() == typeof(Grid))
+                    //{
+                    //    T? value = SearchButton<T>((Grid)ChildVisualElement, key);
+                    //    if (value == null) continue;
+                    //    else return value;
+                    //}
                 }
             }
             return default;
@@ -375,17 +370,17 @@ namespace IEL.UserElementsControl
         /// <param name="DependencePointOnSize">Ограничивать позиционирование только внутри объекта</param>
         public void UsingPanelAction(in FrameworkElement ElementVisual, in Page PageVisual,
             PositionAnimActionPanel PositionAnimate = PositionAnimActionPanel.Cursor,
-            OrientationPositionCursor Orientation = OrientationPositionCursor.Empty,
+            //EnumPositionMessage Orientation = EnumPositionMessage.Empty,
             bool DependencePointOnSize = true)
         {
-            if (!PanelActionActivate) OpenPanelAction(ElementVisual, PageVisual, PositionAnimate, Orientation, DependencePointOnSize);
-            else
-            {
-                if (ActualVisualElement?.Equals(ElementVisual) ?? false)
-                    AnimationMovePanelAction(PositionAnimate, Orientation, DependencePointOnSize);
-                else
-                    MoveNextObjectPage(ElementVisual, PageVisual, PositionAnimate, Orientation, DependencePointOnSize);
-            }
+            //if (!PanelActionActivate) OpenPanelAction(ElementVisual, PageVisual, PositionAnimate, Orientation, DependencePointOnSize);
+            //else
+            //{
+            //    if (ActualVisualElement?.Equals(ElementVisual) ?? false)
+            //        AnimationMovePanelAction(PositionAnimate, Orientation, DependencePointOnSize);
+            //    else
+            //        MoveNextObjectPage(ElementVisual, PageVisual, PositionAnimate, Orientation, DependencePointOnSize);
+            //}
         }
 
         /// <summary>
@@ -399,21 +394,21 @@ namespace IEL.UserElementsControl
         [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         public void OpenPanelAction(in FrameworkElement ElementVisual, in Page PageVisual,
             PositionAnimActionPanel PositionAnimate = PositionAnimActionPanel.Cursor,
-            OrientationPositionCursor Orientation = OrientationPositionCursor.Empty,
+            //EnumPositionMessage Orientation = EnumPositionMessage.Empty,
             bool DependencePointOnSize = true)
         {
-            if (PanelActionActivate)
-                throw new Exception("Невозможно открыть панель действий если она уже открыта!");
+            //if (PanelActionActivate)
+            //    throw new Exception("Невозможно открыть панель действий если она уже открыта!");
 
-            EventOpenPanelAction?.Invoke(this, EventArgs.Empty);
-            Focus();
-            KeyboardModeInActualPage = !IsKeyboardModeExit && ActiveKeyboardMode;
-            DoubleAnimateObj.To = 1d;
-            BeginAnimation(OpacityProperty, DoubleAnimateObj, HandoffBehavior.SnapshotAndReplace);
-            PanelActionActivate = true;
+            //EventOpenPanelAction?.Invoke(this, EventArgs.Empty);
+            //Focus();
+            //KeyboardModeInActualPage = !IsKeyboardModeExit && ActiveKeyboardMode;
+            //DoubleAnimateObj.To = 1d;
+            //BeginAnimation(OpacityProperty, DoubleAnimateObj, HandoffBehavior.SnapshotAndReplace);
+            //PanelActionActivate = true;
 
-            MoveNextObjectPage(ElementVisual, PageVisual, PositionAnimate, Orientation, DependencePointOnSize);
-            Canvas.SetZIndex(this, 2);
+            //MoveNextObjectPage(ElementVisual, PageVisual, PositionAnimate, Orientation, DependencePointOnSize);
+            //Canvas.SetZIndex(this, 2);
         }
 
         /// <summary>
@@ -423,8 +418,8 @@ namespace IEL.UserElementsControl
         /// <param name="PositionAnim">Состояние анимирования позиции</param>
         [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         public void ClosePanelAction(
-            PositionAnimActionPanel PositionAnim = PositionAnimActionPanel.Cursor,
-            OrientationPositionCursor PositionAnimate = OrientationPositionCursor.Empty)
+            PositionAnimActionPanel PositionAnim = PositionAnimActionPanel.Cursor
+            )//EnumPositionMessage PositionAnimate = EnumPositionMessage.Empty)
         {
             if (!PanelActionActivate || ActualVisualElement == null)
                 throw new Exception("Невозможно закрыть панель действий если она уже закрыта!");
@@ -438,7 +433,7 @@ namespace IEL.UserElementsControl
             }
             BeginAnimation(OpacityProperty, DoubleAnimateObj, HandoffBehavior.SnapshotAndReplace);
             UpdateSizeFromAnimate(new Size(0, 0));
-            AnimationMovePanelAction(PositionAnim, PositionAnimate, false);
+            //AnimationMovePanelAction(PositionAnim, PositionAnimate, false);
 
             EventClosingPanelAction?.Invoke(ActualVisualElement.Name);
             ActualVisualElement = null;
@@ -460,7 +455,7 @@ namespace IEL.UserElementsControl
         /// <param name="RightAlgin">Справой стороны открывать страницу. При нулевом значении задействует позицию курсора</param>
         public void MoveNextObjectPage(in FrameworkElement ElementVisual, in Page PageVisual,
             PositionAnimActionPanel PositionAnimate = PositionAnimActionPanel.Cursor,
-            OrientationPositionCursor Orientation = OrientationPositionCursor.Empty,
+            //EnumPositionMessage Orientation = EnumPositionMessage.Empty,
             bool DependencePointOnSize = true,
             bool? RightAlgin = null)
         {
@@ -468,9 +463,9 @@ namespace IEL.UserElementsControl
 
             //PositionChangeSizeAnimation = PositionAnimActionPanel.ActualPosition.
             EventMoveNewObjectInActivePanelAction?.Invoke(this, EventArgs.Empty);
-            NextPageInObject(PageVisual, Orientation, DependencePointOnSize, RightAlgin ?? Mouse.GetPosition((IInputElement)VisualParent).X >= Margin.Left);
+            //NextPageInObject(PageVisual, Orientation, DependencePointOnSize, RightAlgin ?? Mouse.GetPosition((IInputElement)VisualParent).X >= Margin.Left);
 
-            AnimationMovePanelAction(PositionAnimate, Orientation, DependencePointOnSize);
+            //AnimationMovePanelAction(PositionAnimate, Orientation, DependencePointOnSize);
         }
 
         /// <summary>
@@ -482,7 +477,7 @@ namespace IEL.UserElementsControl
         /// <param name="RightAlgin">Справой стороны открывать страницу или нет</param>
         [NonEvent]
         public void NextPageInObject([NotNull] in Page PageAction,
-            OrientationPositionCursor PositionAnimate = OrientationPositionCursor.Empty,
+            //EnumPositionMessage PositionAnimate = EnumPositionMessage.Empty,
             bool DependencePointOnSize = true,
             bool RightAlgin = true)
         {
@@ -491,8 +486,8 @@ namespace IEL.UserElementsControl
             UpdateVisualKeyboardMode(PageAction, ActiveKeyboardMode);
 
             UpdateSizeFromAnimate(new(PageAction.Width, PageAction.Height));
-            if (ActualVisualElement != null)
-                AnimationMovePanelAction(ActualVisualElement, (sbyte)PositionAnimate, new(Margin.Left, Margin.Top), DependencePointOnSize);
+            //if (ActualVisualElement != null)
+                //AnimationMovePanelAction(ActualVisualElement, (sbyte)PositionAnimate, new(Margin.Left, Margin.Top), DependencePointOnSize);
         }
         #endregion
 
@@ -528,7 +523,7 @@ namespace IEL.UserElementsControl
         /// <param name="StylePositionToAnimate">Вид вычисления позиции анимации</param>
         /// <param name="PositionAnimate">Вид расчёта позиционирования панели при её перемещении</param>
         /// <param name="DependencePointOnSize">Ограничивать позиционирование только внутри объекта</param>
-        public void AnimationMovePanelAction(PositionAnimActionPanel StylePositionToAnimate, OrientationPositionCursor PositionAnimate,
+        public void AnimationMovePanelAction(PositionAnimActionPanel StylePositionToAnimate, EnumPositionMessage PositionAnimate,
             bool DependencePointOnSize = true)
         {
             if (!PanelActionActivate || ActualVisualElement == null)
@@ -541,15 +536,15 @@ namespace IEL.UserElementsControl
                 _ => throw new Exception("Недопустимое состояние расчёта позиции перемещения панели действий!")
             };
 
-            if (PositionAnimate == OrientationPositionCursor.Auto && PanelActionActivate)
-            {
-                bool Up = PointAnimation.Y <= ActualVisualSize.Height / 2;
-                PositionAnimate = PointAnimation.X <= ActualVisualSize.Width / 2 ?
-                    (Up ? OrientationPositionCursor.LeftUp : OrientationPositionCursor.LeftDown) :
-                    (Up ? OrientationPositionCursor.RightUp : OrientationPositionCursor.RightDown);
-            }
+            //if (PositionAnimate == EnumPositionMessage.Auto && PanelActionActivate)
+            //{
+            //    bool Up = PointAnimation.Y <= ActualVisualSize.Height / 2;
+            //    PositionAnimate = PointAnimation.X <= ActualVisualSize.Width / 2 ?
+            //        (Up ? EnumPositionMessage.LeftUp : EnumPositionMessage.LeftDown) :
+            //        (Up ? EnumPositionMessage.RightUp : EnumPositionMessage.RightDown);
+            //}
 
-            OldOrientationPositionCursor = PositionAnimate;
+            //OldOrientationPositionCursor = PositionAnimate;
             AnimationMovePanelAction(ActualVisualElement, (sbyte)PositionAnimate, PointAnimation, DependencePointOnSize);
         }
 
@@ -568,44 +563,44 @@ namespace IEL.UserElementsControl
             // Смещение позиции области относительно внешнего элемента
             Point OffsetPosElement = Element.TransformToAncestor((Visual)VisualParent).Transform(new Point(0, 0));
 
-            if (PositionAnimate == -01 && OldOrientationPositionCursor != OrientationPositionCursor.Empty)
-                PositionAnimate = (sbyte)OldOrientationPositionCursor;
-            if (PositionAnimate != -01)
-            {
-                #region (Left/Right)Position
-                if (PositionAnimate is 10 or 11 or 12)
-                {
-                    if (PositionTo.X + ActualVisualSize.Width > Element.ActualWidth + OffsetPosElement.X && DependencePointOnSize)
-                        PositionTo.X = Element.ActualWidth + OffsetPosElement.X - ActualVisualSize.Width - 1;
-                }
-                else if (PositionAnimate is 00 or 01 or 02)
-                {
-                    if (PositionTo.X - ActualVisualSize.Width < OffsetPosElement.X && DependencePointOnSize)
-                        PositionTo.X = OffsetPosElement.X + 1;
-                    else PositionTo.X -= ActualVisualSize.Width;
-                }
-                #endregion
+            //if (PositionAnimate == -01 && OldOrientationPositionCursor != EnumPositionMessage.Empty)
+            //    PositionAnimate = (sbyte)OldOrientationPositionCursor;
+            //if (PositionAnimate != -01)
+            //{
+            //    #region (Left/Right)Position
+            //    if (PositionAnimate is 10 or 11 or 12)
+            //    {
+            //        if (PositionTo.X + ActualVisualSize.Width > Element.ActualWidth + OffsetPosElement.X && DependencePointOnSize)
+            //            PositionTo.X = Element.ActualWidth + OffsetPosElement.X - ActualVisualSize.Width - 1;
+            //    }
+            //    else if (PositionAnimate is 00 or 01 or 02)
+            //    {
+            //        if (PositionTo.X - ActualVisualSize.Width < OffsetPosElement.X && DependencePointOnSize)
+            //            PositionTo.X = OffsetPosElement.X + 1;
+            //        else PositionTo.X -= ActualVisualSize.Width;
+            //    }
+            //    #endregion
 
-                #region (Up/Center/Down)Position
-                if (PositionAnimate is 02 or 12)
-                {
-                    if (PositionTo.Y + ActualVisualSize.Height > Element.ActualHeight + OffsetPosElement.Y && DependencePointOnSize)
-                        PositionTo.Y = Element.ActualHeight + OffsetPosElement.Y - ActualVisualSize.Height - 1;
-                }
-                else if (PositionAnimate is 01 or 11)
-                {
-                    if (PositionTo.Y - ActualVisualSize.Height / 2 < OffsetPosElement.Y && DependencePointOnSize)
-                        PositionTo.Y = OffsetPosElement.Y + 1;
-                    else PositionTo.Y -= ActualVisualSize.Height / 2;
-                }
-                else if (PositionAnimate is 00 or 10)
-                {
-                    if (PositionTo.Y - ActualVisualSize.Height < OffsetPosElement.Y && DependencePointOnSize)
-                        PositionTo.Y = OffsetPosElement.Y + 1;
-                    else PositionTo.Y -= ActualVisualSize.Height;
-                }
-                #endregion
-            }
+            //    #region (Up/Center/Down)Position
+            //    if (PositionAnimate is 02 or 12)
+            //    {
+            //        if (PositionTo.Y + ActualVisualSize.Height > Element.ActualHeight + OffsetPosElement.Y && DependencePointOnSize)
+            //            PositionTo.Y = Element.ActualHeight + OffsetPosElement.Y - ActualVisualSize.Height - 1;
+            //    }
+            //    else if (PositionAnimate is 01 or 11)
+            //    {
+            //        if (PositionTo.Y - ActualVisualSize.Height / 2 < OffsetPosElement.Y && DependencePointOnSize)
+            //            PositionTo.Y = OffsetPosElement.Y + 1;
+            //        else PositionTo.Y -= ActualVisualSize.Height / 2;
+            //    }
+            //    else if (PositionAnimate is 00 or 10)
+            //    {
+            //        if (PositionTo.Y - ActualVisualSize.Height < OffsetPosElement.Y && DependencePointOnSize)
+            //            PositionTo.Y = OffsetPosElement.Y + 1;
+            //        else PositionTo.Y -= ActualVisualSize.Height;
+            //    }
+            //    #endregion
+            //}
 
             animation.To = new(PositionTo.X, PositionTo.Y, 0, 0);
             BeginAnimation(MarginProperty, animation, HandoffBehavior.SnapshotAndReplace);

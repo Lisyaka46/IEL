@@ -1,11 +1,13 @@
-﻿using IEL.CORE.Themes.Palettes;
+﻿using LibraryIEL.CORE.Themes.Palettes;
+using System.ComponentModel;
 using WnColor = System.Windows.Media.Color;
 
-namespace IEL.CORE.Themes.Data
+namespace LibraryIEL.CORE.Themes.Data
 {
     /// <summary>
     /// Структура данных цвета
     /// </summary>
+    [TypeConverter(typeof(Color32Converter))]
     public readonly struct Color32
     {
         /// <summary>

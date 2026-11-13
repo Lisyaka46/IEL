@@ -1,12 +1,54 @@
-﻿using Key = System.Windows.Input.Key;
+﻿using System.Runtime.InteropServices;
+using System.Text;
+using System.Windows.Input;
+using Key = System.Windows.Input.Key;
 
-namespace IEL.CORE.Classes
+namespace LibraryIEL.CORE.Classes
 {
     /// <summary>
     /// Класс конвертации клавиши
     /// </summary>
-    public static class KeyConverter
+    public static class IELKeyConverter
     {
+        /// <summary>
+        /// Контейнер для опредения сиволов клавиши
+        /// </summary>
+        private static StringBuilder SourceStringContainer = new();
+
+        [DllImport("user32.dll")]
+        private static extern IntPtr GetKeyboardLayout(uint idThread);
+
+        [DllImport("user32.dll")]
+        private static extern uint MapVirtualKey(uint uCode, uint uMapType);
+
+        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
+        private static extern int ToUnicodeEx(
+            uint wVirtKey,
+            uint wScanCode,
+            byte[] lpKeyState,
+            [Out, MarshalAs(UnmanagedType.LPWStr)] StringBuilder pwszBuff,
+            int cchBuff,
+            uint wFlags,
+            IntPtr dwhkl);
+
+        [DllImport("user32.dll")]
+        private static extern bool GetKeyboardState(byte[] lpKeyState);
+
+        /// <summary>
+        /// Вернуть строку распознанную по клавише клавиатуры с учётом выбранного языка
+        /// </summary>
+        /// <param name="key">Клавиша клавиатуры</param>
+        public static string GetStringFromKey(Key key)
+        {
+            SourceStringContainer.Clear();
+            uint VirtualCode = (uint)KeyInterop.VirtualKeyFromKey(key);
+            uint ScanCode = MapVirtualKey(VirtualCode, 0);
+            byte[] State = new byte[256];
+            GetKeyboardState(State);
+            int result = ToUnicodeEx(VirtualCode, ScanCode, State, SourceStringContainer, SourceStringContainer.Capacity, 0, GetKeyboardLayout(0));
+            return result > 0 ? SourceStringContainer.ToString() : string.Empty;
+        }
+
         /// <summary>
         /// Конвертировать значение клавиши в строку имени
         /// </summary>

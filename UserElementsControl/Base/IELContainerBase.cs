@@ -1,18 +1,20 @@
-﻿using IEL.CORE.Themes.Palettes;
+﻿using LibraryIEL.CORE.Themes.Palettes;
+using LibraryIEL.Interfaces;
 using System.ComponentModel;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Threading;
 
-namespace IEL.UserElementsControl.Base
+namespace LibraryIEL.UserElementsControl.Base
 {
     /// <summary>
     /// <b>БАЗОВЫЙ КЛАСС</b><br/>
     /// Контейнер IEL
     /// </summary>
-    public class IELContainerBase : IELObjectBase
+    public class IELContainerBase : IELObjectBase, IIELObjectUsingMessage
     {
         #region UIElements
         /// <summary>
@@ -35,18 +37,26 @@ namespace IEL.UserElementsControl.Base
         protected DispatcherTimer SourceTimer { get; private set; }
 
         /// <summary>
-        /// Данные конкретного свойства
+        /// Данные свойства <see cref="IntervalHover"/>
         /// </summary>
         public static readonly DependencyProperty IntervalHoverProperty =
-            DependencyProperty.Register("IntervalHover", typeof(TimeSpan), typeof(IELContainerBase),
-                new(TimeSpan.FromMilliseconds(1000d),
-                    (sender, e) =>
-                    {
-                        ((IELContainerBase)sender).SourceTimer.Interval = (TimeSpan)e.NewValue;
-                    }));
+            DependencyProperty.Register(nameof(IntervalHover), typeof(TimeSpan), typeof(IELContainerBase),
+                new(TimeSpan.FromMilliseconds(1000d), IntervalHoverHandler));
+
+        /// <summary>
+        /// Обработчик события изменения свойства <see cref="IntervalHover"/>
+        /// </summary>
+        private static void IntervalHoverHandler(DependencyObject Element, DependencyPropertyChangedEventArgs e)
+        {
+            if (Element is IELContainerBase Source && e.NewValue is TimeSpan SourceNewValue)
+            {
+                Source.SourceTimer.Interval = SourceNewValue;
+            }
+        }
 
         /// <summary>
         /// Время задержки перед срабатыванием события удержания мыши в кнопке
+        /// <see cref="MouseHover"/>
         /// </summary>
         [Description("Временной промежуток, отвечающий за срабатывание события задержки курсора мыши на UI-объекте.\n" +
             $"Событие задержки курсора: {nameof(MouseHover)}")]
@@ -64,15 +74,22 @@ namespace IEL.UserElementsControl.Base
 
         #region Content
         /// <summary>
-        /// Данные конкретного свойства
+        /// Данные свойства <see cref="Content"/>
         /// </summary>
         public static readonly new DependencyProperty ContentProperty =
             DependencyProperty.Register("Content", typeof(UIElement), typeof(IELContainerBase),
-                new(
-                    (sender, e) =>
-                    {
-                        ((IELContainerBase)sender).Base_BorderContainer.Child = (UIElement)e.NewValue;
-                    }));
+                new(ContentHandler));
+
+        /// <summary>
+        /// Обработчик события изменения свойства <see cref="Content"/>
+        /// </summary>
+        private static void ContentHandler(DependencyObject Element, DependencyPropertyChangedEventArgs e)
+        {
+            if (Element is IELContainerBase Source && e.NewValue is UIElement SourceNewValue)
+            {
+                Source.Base_BorderContainer.Child = SourceNewValue;
+            }
+        }
 
         /// <summary>
         /// Внутренний элемент объекта
@@ -87,20 +104,27 @@ namespace IEL.UserElementsControl.Base
 
         #region CornerRadius
         /// <summary>
-        /// Данные конкретного свойства
+        /// Данные свойства <see cref="CornerRadius"/>
         /// </summary>
         public static readonly DependencyProperty CornerRadiusProperty =
-            DependencyProperty.Register("CornerRadius", typeof(CornerRadius), typeof(IELContainerBase),
-                new(new CornerRadius(0),
-                    (sender, e) =>
-                    {
-                        ((IELContainerBase)sender).Base_BorderContainer.CornerRadius = (CornerRadius)e.NewValue;
-                    }));
+            DependencyProperty.Register(nameof(CornerRadius), typeof(CornerRadius), typeof(IELContainerBase),
+                new(new CornerRadius(0), CornerRadiusHandler));
+
+        /// <summary>
+        /// Обработчик события изменения свойства <see cref="CornerRadius"/>
+        /// </summary>
+        private static void CornerRadiusHandler(DependencyObject Element, DependencyPropertyChangedEventArgs e)
+        {
+            if (Element is IELContainerBase Source && e.NewValue is CornerRadius SourceNewValue)
+            {
+                Source.Base_BorderContainer.CornerRadius = SourceNewValue;
+            }
+        }
 
         /// <summary>
         /// Скругление границ объекта
         /// </summary>
-        [Description("Скругление границ барьера")]
+        [Description("Скругление границ главного контейнера элемента")]
         public CornerRadius CornerRadius
         {
             get => (CornerRadius)GetValue(CornerRadiusProperty);
@@ -110,20 +134,20 @@ namespace IEL.UserElementsControl.Base
 
         #region BorderThickness
         /// <summary>
-        /// Данные конкретного свойства
+        /// Обработчик события изменения свойства <see cref="BorderThickness"/>
         /// </summary>
-        public static readonly new DependencyProperty BorderThicknessProperty =
-            DependencyProperty.Register("BorderThickness", typeof(Thickness), typeof(IELContainerBase),
-                new(new Thickness(2),
-                    (sender, e) =>
-                    {
-                        ((IELContainerBase)sender).Base_BorderContainer.BorderThickness = (Thickness)e.NewValue;
-                    }));
+        private static void BorderThicknessHandler(DependencyObject Element, DependencyPropertyChangedEventArgs e)
+        {
+            if (Element is IELContainerBase Source && e.NewValue is Thickness SourceNewValue)
+            {
+                Source.Base_BorderContainer.BorderThickness = SourceNewValue;
+            }
+        }
 
         /// <summary>
         /// Толщина границ объекта
         /// </summary>
-        [Description("Толщина границ барьера")]
+        [Description("Толщина границ главного контейнера элемента")]
         public new Thickness BorderThickness
         {
             get => (Thickness)Base_BorderContainer.GetValue(BorderThicknessProperty);
@@ -133,20 +157,20 @@ namespace IEL.UserElementsControl.Base
 
         #region Padding
         /// <summary>
-        /// Данные конкретного свойства
+        /// Обработчик события изменения свойства <see cref="Padding"/>
         /// </summary>
-        public static readonly new DependencyProperty PaddingProperty =
-            DependencyProperty.Register("Padding", typeof(Thickness), typeof(IELContainerBase),
-                new(new Thickness(0),
-                    (sender, e) =>
-                    {
-                        ((IELContainerBase)sender).Base_BorderContainer.Padding = (Thickness)e.NewValue;
-                    }));
+        private static void PaddingHandler(DependencyObject Element, DependencyPropertyChangedEventArgs e)
+        {
+            if (Element is IELContainerBase Source && e.NewValue is Thickness SourceNewValue)
+            {
+                Source.Base_BorderContainer.Padding = SourceNewValue;
+            }
+        }
 
         /// <summary>
         /// Внутреннее смещение в объекте
         /// </summary>
-        [Description("Смещение контента внутри границ барьера")]
+        [Description("Смещение контента внутри границ элемента")]
         public new Thickness Padding
         {
             get => (Thickness)GetValue(PaddingProperty);
@@ -154,17 +178,36 @@ namespace IEL.UserElementsControl.Base
         }
         #endregion
 
+        #region Message
+        /// <summary>
+        /// Данные свойства <see cref="Message"/>
+        /// </summary>
+        public static readonly DependencyProperty MessageProperty =
+            DependencyProperty.Register(nameof(Message), typeof(string), typeof(IELContainerBase),
+                new(string.Empty));
+
+        /// <summary>
+        /// Сообщение для отображения сводки об объекте через объект <see cref="IELBlockMessage"/>
+        /// </summary>
+        [Description($"Сообщение, отображаемое с помощью \"{nameof(IELBlockMessage)}\"")]
+        public string Message
+        {
+            get => (string)GetValue(MessageProperty);
+            set => SetValue(MessageProperty, value);
+        }
+        #endregion
+
         #region IsEnabled
         /// <summary>
-        /// Данные конкретного свойства
+        /// Обработчик события изменения свойства <see cref="IsEnabled"/>
         /// </summary>
-        public static readonly new DependencyProperty IsEnabledProperty =
-            DependencyProperty.Register("IsEnabled", typeof(bool), typeof(IELContainerBase),
-                new(true,
-                    (sender, e) =>
-                    {
-                        ((IELContainerBase)sender).Base_BorderContainer.IsEnabled = (bool)e.NewValue;
-                    }));
+        private static void IsEnabledHandler(DependencyObject Element, DependencyPropertyChangedEventArgs e)
+            {
+                if (Element is IELContainerBase Source && e.NewValue is bool SourceNewValue)
+                {
+                    Source.Base_BorderContainer.IsEnabled = SourceNewValue;
+                }
+            }
 
         /// <summary>
         /// Состояние активности элемента
@@ -174,20 +217,21 @@ namespace IEL.UserElementsControl.Base
         public new bool IsEnabled
         {
             get => (bool)GetValue(IsEnabledProperty);
-            set
-            {
-                SetValue(IsEnabledProperty, value);
-                IsEnabledChanged.Invoke(this, value);
-            }
+            set => SetValue(IsEnabledProperty, value);
         }
+        #endregion
 
+        #endregion
+        
         /// <summary>
-        /// Событие изменения состояния активности элемента
+        /// Статический конструктор для переопределения свойств
         /// </summary>
-        public new event EventHandler<bool> IsEnabledChanged;
-        #endregion
-
-        #endregion
+        static IELContainerBase()
+        {
+            BorderThicknessProperty.OverrideMetadata(typeof(IELContainerBase), new FrameworkPropertyMetadata(new Thickness(2), BorderThicknessHandler));
+            PaddingProperty.OverrideMetadata(typeof(IELContainerBase), new FrameworkPropertyMetadata(new Thickness(0), PaddingHandler));
+            IsEnabledProperty.OverrideMetadata(typeof(IELContainerBase), new FrameworkPropertyMetadata(true, IsEnabledHandler));
+        }
 
         /// <summary>
         /// Инициализировать базовый класс визуализации контейнера
@@ -236,12 +280,19 @@ namespace IEL.UserElementsControl.Base
 
             IsEnabledChanged += (sender, e) =>
             {
+                bool Value = (bool)e.NewValue;
                 SourceTimer.Stop();
-                Cursor = e ? Cursors.Hand : Cursors.No;
-                SpectrumColor Value = e ? SpectrumColor.Default : SpectrumColor.NotEnabled;
-                SetActiveSpecrum(Value);
+                Cursor = Value ? Cursors.Hand : Cursors.No;
+                SetActiveSpecrum(Value ? SpectrumColor.Default : SpectrumColor.NotEnabled);
             };
             SetValue(ContentControl.ContentProperty, Base_BorderContainer);
         }
+
+        /// <summary>
+        /// Узнать позицию и размер объекта
+        /// </summary>
+        /// <param name="RelativeTo">Относительно какого элемента расчитывается позиция</param>
+        public Rect GetRectFrom(UIElement RelativeTo) =>
+            new(TranslatePoint(TransformToVisual(this).Transform(default), RelativeTo), new Size(ActualWidth, ActualHeight));
     }
 }

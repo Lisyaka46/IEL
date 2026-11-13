@@ -1,11 +1,14 @@
 ﻿<Base:IELContainerBase
-    x:Class="IEL.UserElementsControl.IELTextBox"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:Base="clr-namespace:IEL.UserElementsControl.Base" Focusable="True" Cursor="IBeam" ClipToBounds="True" Width="22">
-    <Grid Margin="0,1,1,1">
-        <TextBlock x:FieldModifier="private" x:Name="TextBlockVisualText" FontSize="14" HorizontalAlignment="Left"/>
-        <Rectangle StrokeThickness="1" Stroke="Black" StrokeEndLineCap="Round" StrokeStartLineCap="Round" Panel.ZIndex="1" RadiusX="1" RadiusY="1" StrokeDashArray="1" Grid.Column="1" Width="13" HorizontalAlignment="Left" Opacity="0"/>
-        <Line x:FieldModifier="private" x:Name="CaretLine" Y1="0" Y2="1" Stroke="Black" StrokeThickness="1.2" Stretch="Uniform" Panel.ZIndex="1" StrokeEndLineCap="Triangle" StrokeStartLineCap="Triangle" HorizontalAlignment="Left" StrokeDashCap="Triangle" StrokeDashOffset="-0.5" Margin="1,0,0,0"/>
+    xmlns:Base="clr-namespace:LibraryIEL.UserElementsControl.Base" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d"
+    x:Class="LibraryIEL.UserElementsControl.IELTextBox"
+    Focusable="True" Cursor="IBeam" ClipToBounds="True" MinHeight="{Binding ActualHeight, ElementName=TextBlockVisualText, Mode=OneWay}">
+    <Grid x:FieldModifier="private" x:Name="GridMain">
+        <TextBlock x:FieldModifier="private" x:Name="TextBlockVisualText" FontSize="14" HorizontalAlignment="Left" Padding="2,1,2,2" VerticalAlignment="Center" Margin="0,3,0,3">
+            <Run x:FieldModifier="private" x:Name="RunElementText" Text="1"/>
+        </TextBlock>
+        <Rectangle x:Name="RectangleSelect" StrokeThickness="1.7" Stroke="Black" StrokeEndLineCap="Round" StrokeStartLineCap="Round" Panel.ZIndex="1" RadiusX="3" RadiusY="3" StrokeDashArray="1" Grid.Column="1" HorizontalAlignment="Left" Width="7" Margin="0,2,0,2"/>
+        <Line x:FieldModifier="private" x:Name="CaretLine" Y1="0" Y2="1" Stroke="Black" StrokeThickness="1.5" Stretch="Uniform" Panel.ZIndex="1" StrokeEndLineCap="Triangle" StrokeStartLineCap="Triangle" HorizontalAlignment="Left" StrokeDashCap="Triangle" StrokeDashOffset="-0.5" Margin="1,0,0,0" VerticalAlignment="Center" Height="{Binding ActualHeight, ElementName=TextBlockVisualText, Mode=OneWay}"/>
     </Grid>
 </Base:IELContainerBase>

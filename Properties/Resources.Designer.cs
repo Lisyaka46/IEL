@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace IEL.Properties {
+namespace LibraryIEL.Properties {
     using System;
     
     

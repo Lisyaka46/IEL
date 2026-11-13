@@ -1,4 +1,4 @@
-﻿namespace IEL.CORE.Enums
+﻿namespace LibraryIEL.CORE.Enums
 {
     /// <summary>
     /// Перечисление состояний отображения

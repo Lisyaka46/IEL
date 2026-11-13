@@ -1,22 +1,41 @@
-﻿using IEL.CORE.Animation;
-using IEL.Interfaces;
-using IEL.CORE.Themes.Data;
-using IEL.CORE.Themes.Palettes;
+﻿using LibraryIEL.CORE.Animation;
+using LibraryIEL.CORE.Themes.Data;
+using LibraryIEL.CORE.Themes.Palettes;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace IEL.UserElementsControl.Base
+namespace LibraryIEL.UserElementsControl.Base
 {
     /// <summary>
     /// <b>БАЗОВЫЙ КЛАСС</b><br/>
     /// UI-объект IEL
     /// </summary>
-    public class IELObjectBase : ContentControl, IIELAnimate
+    public class IELObjectBase : ContentControl
     {
         #region Properties
 
         #region Palette
+        /// <summary>
+        /// Данные свойства <see cref="Palette"/>
+        /// </summary>
+        public static readonly DependencyProperty PaletteProperty =
+            DependencyProperty.Register(nameof(Palette), typeof(PaletteData), typeof(IELObjectBase),
+                new(PaletteHandler));
+
+        /// <summary>
+        /// Обработчик события изменения свойства <see cref="Palette"/>
+        /// </summary>
+        private static void PaletteHandler(DependencyObject Element, DependencyPropertyChangedEventArgs e)
+        {
+            if (Element is IELObjectBase Source && e.NewValue is PaletteData SourceNewValue)
+            {
+                Source.Background = SourceNewValue.BackGroundData;
+                Source.BorderBrush = SourceNewValue.BorderGroundData;
+                Source.Foreground = SourceNewValue.ForeGroundData;
+            }
+        }
+
         /// <summary>
         /// Данные спектра использования цветов
         /// </summary>
@@ -24,15 +43,10 @@ namespace IEL.UserElementsControl.Base
             "Реализует 3 состояния спектров цвета " +
             $"({nameof(Background)}, {nameof(BorderBrush)}, {nameof(Foreground)})\n" +
             "Спектры отвечают за наведение, нажатие и другие цветовые анимации.")]
-        public virtual PaletteData Palette
+        public PaletteData Palette
         {
-            get => new(Background, BorderBrush, Foreground);
-            set
-            {
-                SourceBackground.ChangeData(value.BackGroundData, IsAnimatedSettingQ);
-                SourceBorderBrush.ChangeData(value.BorderGroundData, IsAnimatedSettingQ);
-                SourceForeground.ChangeData(value.ForeGroundData, IsAnimatedSettingQ);
-            }
+            get => (PaletteData)GetValue(PaletteProperty);
+            set => SetValue(PaletteProperty, value);
         }
         #endregion
 
@@ -93,10 +107,10 @@ namespace IEL.UserElementsControl.Base
 
         #region IsEnabledSettingQ
         /// <summary>
-        /// Данные конкретного свойства
+        /// Данные свойства <see cref="IsEnabledSettingQ"/>
         /// </summary>
         public static readonly DependencyProperty IsEnabledSettingQProperty =
-            DependencyProperty.Register("IsEnabledSettingQ", typeof(bool), typeof(IELObjectBase),
+            DependencyProperty.Register(nameof(IsEnabledSettingQ), typeof(bool), typeof(IELObjectBase),
                 new(true,
                     (sender, e) =>
                     {
@@ -118,10 +132,10 @@ namespace IEL.UserElementsControl.Base
 
         #region IsAnimatedSettingQ
         /// <summary>
-        /// Данные конкретного свойства
+        /// Данные свойства <see cref="IsAnimatedSettingQ"/>
         /// </summary>
         public static readonly DependencyProperty IsAnimatedSettingQProperty =
-            DependencyProperty.Register("IsAnimatedSettingQ", typeof(bool), typeof(IELObjectBase),
+            DependencyProperty.Register(nameof(IsAnimatedSettingQ), typeof(bool), typeof(IELObjectBase),
                 new(true));
 
         /// <summary>
@@ -147,15 +161,6 @@ namespace IEL.UserElementsControl.Base
         #endregion
 
         #endregion
-
-        /// <summary>
-        /// Объект менеджера анимаций настроек
-        /// </summary>
-        [Description("Менеджер анимаций используемый элементом.\n" +
-            "С его помощью в объекте реализуются анимации и плавные переходы.\n" +
-            "Если менеджер анимаций отсутствует, то анимирование не будет происходить, лишь резкое изменение.\n" +
-            "Желательно использовать один общий менеджер анимаций для всех UI-объектов.")]
-        public virtual AnimationManager? ManagerAnimation { get; set; }
 
         /// <summary>
         /// Активировать визуализацию спектра для всех Q сегментов

@@ -1,10 +1,11 @@
-﻿using IEL.CORE.Animation;
-using IEL.UserElementsControl.Base;
-using IEL.CORE.Themes.Palettes;
+﻿using LibraryIEL.CORE.Animation;
+using LibraryIEL.UserElementsControl.Base;
+using LibraryIEL.CORE.Themes.Palettes;
 using System.Windows;
 using System.Windows.Media;
+using System.ComponentModel;
 
-namespace IEL.UserElementsControl
+namespace LibraryIEL.UserElementsControl
 {
     /// <summary>
     /// Логика взаимодействия для IELCheckBox.xaml
@@ -15,7 +16,7 @@ namespace IEL.UserElementsControl
 
         #region CheckBoxBorderThickness
         /// <summary>
-        /// Данные конкретного свойства
+        /// Данные свойства <see cref="CheckBoxBorderThickness"/>
         /// </summary>
         public static readonly DependencyProperty CheckBoxBorderThicknessProperty =
             DependencyProperty.Register(nameof(CheckBoxBorderThickness), typeof(Thickness), typeof(IELCheckBox),
@@ -28,6 +29,7 @@ namespace IEL.UserElementsControl
         /// <summary>
         /// Толщина границ контейнера индикатора объекта
         /// </summary>
+        [Description("Толщина границ индикатора")]
         public Thickness CheckBoxBorderThickness
         {
             get => (Thickness)GetValue(CheckBoxBorderThicknessProperty);
@@ -37,33 +39,30 @@ namespace IEL.UserElementsControl
 
         #region CheckBoxCornerRadius
         /// <summary>
-        /// Данные конкретного свойства
+        /// Данные свойства <see cref="CheckBoxCornerRadius"/>
         /// </summary>
         public static readonly DependencyProperty CheckBoxCornerRadiusProperty =
             DependencyProperty.Register(nameof(CheckBoxCornerRadius), typeof(double), typeof(IELCheckBox),
                 new(0d, CheckBoxCornerRadiusHandler));
 
         /// <summary>
-        /// Установить элементу свойство
+        /// Обработчик события изменения свойства <see cref="CheckBoxCornerRadius"/>
         /// </summary>
-        /// <param name="Element">Объект которому устанавливается свойство</param>
-        /// <param name="e">Данные о устанавливаемом свойстве</param>
         private static void CheckBoxCornerRadiusHandler(DependencyObject Element, DependencyPropertyChangedEventArgs e)
         {
-            IELCheckBox Source = (IELCheckBox)Element;
-            double SourceNewValue = (double)e.NewValue;
-            if (SourceNewValue - 2 >= 0)
+            if (Element is IELCheckBox Source && e.NewValue is double SourceNewValue)
             {
-                Source.RectangleCheck.RadiusX = SourceNewValue - 2;
-                Source.RectangleCheck.RadiusY = SourceNewValue - 2;
+                double min = Math.Max(0, SourceNewValue - 2);
+                Source.RectangleCheck.RadiusX = min;
+                Source.RectangleCheck.RadiusY = min;
+                Source.BorderCheck.CornerRadius = new(SourceNewValue);
             }
-            CornerRadius NewValue = new(SourceNewValue);
-            Source.BorderCheck.CornerRadius = NewValue;
         }
 
         /// <summary>
         /// Скругление границ контейнера индикатора объекта
         /// </summary>
+        [Description("Скругление границ индикатора, вместе с внутренним элементом")]
         public double CheckBoxCornerRadius
         {
             get => (double)GetValue(CheckBoxCornerRadiusProperty);
@@ -172,9 +171,9 @@ namespace IEL.UserElementsControl
         /// <param name="e">Устанавливаемое состояние активации</param>
         private void IsCheckedChangedHandler(object? sender, bool e)
         {
-            AnimationManager.AnimateTakingZeroTo(ManagerAnimation, RectangleCheck, OpacityProperty,
+            ManagerAnimation.AnimateTakingZeroTo(RectangleCheck, OpacityProperty,
                 e ? 1d : 0d, TimeSpan.FromMilliseconds(400d));
-            AnimationManager.AnimateTakingZeroTo(ManagerAnimation, RectangleCheck, MarginProperty,
+            ManagerAnimation.AnimateTakingZeroTo(RectangleCheck, MarginProperty,
                 new Thickness(e ? 0d : 2d), TimeSpan.FromMilliseconds(400d));
         }
         #endregion
@@ -187,6 +186,7 @@ namespace IEL.UserElementsControl
         public IELCheckBox()
         {
             InitializeComponent();
+            FocusVisualStyle = null;
             RectangleCheck.Opacity = 0d;
             RectangleCheck.Margin = new(2d);
             RectangleCheck.RadiusX = 0d;
@@ -204,12 +204,37 @@ namespace IEL.UserElementsControl
 
             MouseUp += (sender, e) =>
             {
+                IsChecked = !IsChecked;
                 SetActiveSpecrum(SpectrumColor.Select);
             };
 
-            MouseLeftButtonUp += (sender, e) => IsChecked = !IsChecked;
-
             IsCheckedChanged += IsCheckedChangedHandler;
+
+            GotFocus += (sender, e) =>
+            {
+                if (!IsEnter) SetActiveSpecrum(SpectrumColor.Select);
+            };
+
+            LostFocus += (sender, e) =>
+            {
+                if (!IsEnter) SetActiveSpecrum(SpectrumColor.Default);
+            };
+
+            KeyDown += (sender, e) =>
+            {
+                if (e.IsRepeat) return;
+                else if (e.Key == System.Windows.Input.Key.Enter)
+                    SetActiveSpecrum(SpectrumColor.Used);
+            };
+
+            KeyUp += (sender, e) =>
+            {
+                if (e.Key == System.Windows.Input.Key.Enter)
+                {
+                    IsChecked = !IsChecked;
+                    SetActiveSpecrum(SpectrumColor.Select);
+                }
+            };
         }
     }
 }

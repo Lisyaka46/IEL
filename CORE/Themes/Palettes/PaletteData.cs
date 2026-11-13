@@ -1,15 +1,15 @@
-﻿using IEL.CORE.Themes.Data;
+﻿using LibraryIEL.CORE.Themes.Data;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Controls.Primitives;
 
-namespace IEL.CORE.Themes.Palettes
+namespace LibraryIEL.CORE.Themes.Palettes
 {
     /// <summary>
     /// Структура данных о спектрах палитры
     /// </summary>
-    public readonly ref struct PaletteData
+    public struct PaletteData
     {
         /// <summary>
         /// Неизвестные данные палитры для значения по умолчанию
@@ -20,17 +20,17 @@ namespace IEL.CORE.Themes.Palettes
         /// <summary>
         /// Данные отображения фона
         /// </summary>
-        public readonly QData BackGroundData;
+        public QData BackGroundData { get; set; }
 
         /// <summary>
         /// Данные отображения границ
         /// </summary>
-        public readonly QData BorderGroundData;
+        public QData BorderGroundData { get; set; }
 
         /// <summary>
         /// Данные отображения текста
         /// </summary>
-        public readonly QData ForeGroundData;
+        public QData ForeGroundData { get; set; }
 
         /// <summary>
         /// Количество видов данных
@@ -61,6 +61,16 @@ namespace IEL.CORE.Themes.Palettes
             BorderGroundData = new(SourceData[Offset..QData.CountBytes]);
             Offset += QData.CountBytes;
             ForeGroundData = new(SourceData[Offset..QData.CountBytes]);
+        }
+
+        /// <summary>
+        /// Инициализировать данные спектра палитры по умолчанию
+        /// </summary>
+        public PaletteData()
+        {
+            BackGroundData = QData.UnknownSpectrumBackGround;
+            BorderGroundData = QData.UnknownSpectrumBorderGround;
+            ForeGroundData = QData.UnknownSpectrumForeGround;
         }
 
         /// <summary>

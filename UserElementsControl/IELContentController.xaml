@@ -1,9 +1,9 @@
-﻿<UserControl x:Class="IEL.UserElementsControl.IELContentController"
+﻿<UserControl x:Class="LibraryIEL.UserElementsControl.IELContentController"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:IEL.UserElementsControl" ClipToBounds="False">
+             xmlns:local="clr-namespace:LibraryIEL.UserElementsControl" ClipToBounds="False">
     <Grid>
         <ContentControl x:FieldModifier="private" x:Name="ContainerLeft"/>
         <ContentControl x:FieldModifier="private" x:Name="ContainerRight"/>

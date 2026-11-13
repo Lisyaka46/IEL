@@ -1,12 +1,11 @@
-﻿using IEL.CORE.Animation;
-using IEL.Interfaces;
+﻿using LibraryIEL.CORE.Animation;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Animation;
 using System.Windows.Navigation;
 
-namespace IEL.UserElementsControl
+namespace LibraryIEL.UserElementsControl
 {
     /// <summary>
     /// Контроллер управления отображения контента
@@ -15,7 +14,7 @@ namespace IEL.UserElementsControl
     /// Отображает контент подключая его из <see cref="UserControl"/><br/>
     /// Поддерживает управление анимированием переключения контента<br/>
     /// </remarks>
-    public partial class IELContentController : UserControl, IIELAnimate
+    public partial class IELContentController : UserControl
     {
         #region Properties
 
@@ -170,11 +169,6 @@ namespace IEL.UserElementsControl
         #endregion
 
         /// <summary>
-        /// Объект менеджера анимаций настроек OPL
-        /// </summary>
-        public virtual AnimationManager? ManagerAnimation { get; set; }
-
-        /// <summary>
         /// Индекс смены контента
         /// </summary>
         private int VerschachteIndex = 0;
@@ -254,14 +248,14 @@ namespace IEL.UserElementsControl
 
             ActualContainer.Content = Content;
 
-            AnimationManager.AnimateTakingZeroTo(ManagerAnimation, BackContainer, MarginProperty,
+            ManagerAnimation.AnimateTakingZeroTo(BackContainer, MarginProperty,
                 !RightAlign ? RightSwitchMargin : LeftSwitchMargin, SwichTime);
-            AnimationManager.AnimateTakingZeroFromTo(ManagerAnimation, ActualContainer, MarginProperty,
+            ManagerAnimation.AnimateTakingZeroFromTo(ActualContainer, MarginProperty,
                 RightAlign ? RightSwitchMargin : LeftSwitchMargin, new Thickness(0d), SwichTime);
 
-            AnimationManager.AnimateTakingZeroTo(ManagerAnimation, BackContainer, OpacityProperty,
+            ManagerAnimation.AnimateTakingZeroTo(BackContainer, OpacityProperty,
                 0d, SwichTime);
-            AnimationManager.AnimateTakingZeroTo(ManagerAnimation, ActualContainer, OpacityProperty,
+            ManagerAnimation.AnimateTakingZeroTo(ActualContainer, OpacityProperty,
                 1d, SwichTime);
         }
 
@@ -272,7 +266,7 @@ namespace IEL.UserElementsControl
         {
             IsActiveVisualContent = false;
             ActualContainer.IsEnabled = false;
-            AnimationManager.AnimateTakingZeroTo(ManagerAnimation, ActualContainer, OpacityProperty,
+            ManagerAnimation.AnimateTakingZeroTo(ActualContainer, OpacityProperty,
                 0d, SwichTime);
         }
     }

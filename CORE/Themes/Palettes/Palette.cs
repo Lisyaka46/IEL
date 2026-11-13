@@ -1,11 +1,11 @@
-﻿using IEL.CORE.Themes.Data;
+﻿using LibraryIEL.CORE.Themes.Data;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 
-namespace IEL.CORE.Themes.Palettes
+namespace LibraryIEL.CORE.Themes.Palettes
 {
     /// <summary>
     /// Главный класс управления данными обработки состояний цвета

@@ -1,12 +1,12 @@
-﻿using IEL.CORE.Animation;
-using IEL.UserElementsControl.Base;
+﻿using LibraryIEL.CORE.Animation;
+using LibraryIEL.UserElementsControl.Base;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 
-namespace IEL.UserElementsControl
+namespace LibraryIEL.UserElementsControl
 {
     /// <summary>
     /// Логика взаимодействия для OPLVisualLoading.xaml
@@ -14,34 +14,17 @@ namespace IEL.UserElementsControl
     public partial class IELVisualLoading : IELContainerBase
     {
         /// <summary>
-        /// Объект менеджера анимаций настроек OPL
-        /// </summary>
-        public override AnimationManager? ManagerAnimation
-        {
-            get => base.ManagerAnimation;
-            set
-            {
-                if (value == null) Animation = null;
-                else
-                {
-                    Animation = new()
-                    {
-                        From = 0d,
-                        To = -7.44d,
-                        EasingFunction = null,
-                        Duration = TimeSpan.FromMilliseconds(800d),
-                        FillBehavior = FillBehavior.HoldEnd,
-                        RepeatBehavior = RepeatBehavior.Forever,
-                    };
-                }
-                base.ManagerAnimation = value;
-            }
-        }
-
-        /// <summary>
         /// Объект анимации управляемый отображением циклом загрузки
         /// </summary>
-        private DoubleAnimation? Animation;
+        private readonly DoubleAnimation Animation = new()
+        {
+            From = 0d,
+            To = -7.44d,
+            EasingFunction = null,
+            Duration = TimeSpan.FromMilliseconds(800d),
+            FillBehavior = FillBehavior.HoldEnd,
+            RepeatBehavior = RepeatBehavior.Forever,
+        };
 
         #region Properties
 
@@ -119,9 +102,9 @@ namespace IEL.UserElementsControl
         /// </summary>
         private void OpenLoading()
         {
-            AnimationManager.AnimateTakingZeroTo(ManagerAnimation, ElementLoading, Ellipse.OpacityProperty,
+            ManagerAnimation.AnimateTakingZeroTo(ElementLoading, Ellipse.OpacityProperty,
                 1d, TimeSpan.FromMilliseconds(600d));
-            if (ManagerAnimation != null)
+            if (ManagerAnimation.IsEnabled)
                 ElementLoading.BeginAnimation(Ellipse.StrokeDashOffsetProperty, Animation);
         }
 
@@ -130,10 +113,10 @@ namespace IEL.UserElementsControl
         /// </summary>
         private void CloseLoading()
         {
-            AnimationManager.AnimateTakingZeroTo(ManagerAnimation, ElementLoading, Ellipse.OpacityProperty,
+            ManagerAnimation.AnimateTakingZeroTo(ElementLoading, Ellipse.OpacityProperty,
                 0d, TimeSpan.FromMilliseconds(600d));
             ElementLoading.BeginAnimation(Ellipse.StrokeDashOffsetProperty, null);
-            AnimationManager.AnimateTakingZeroTo(ManagerAnimation, ElementLoading, Ellipse.StrokeDashOffsetProperty,
+            ManagerAnimation.AnimateTakingZeroTo(ElementLoading, Ellipse.StrokeDashOffsetProperty,
                 0d, TimeSpan.FromMilliseconds(570d));
         }
     }

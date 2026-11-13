@@ -1,8 +1,8 @@
-﻿using IEL.CORE.Themes.Data;
+﻿using LibraryIEL.CORE.Themes.Data;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 
-namespace IEL.CORE.Themes.Palettes
+namespace LibraryIEL.CORE.Themes.Palettes
 {
     /// <summary>
     /// Объект спектра палитры
@@ -136,6 +136,7 @@ namespace IEL.CORE.Themes.Palettes
         /// </summary>
         internal PaletteSpectrum(QData SourceData)
         {
+            ActiveSpectrum = SpectrumColor.Default;
             SourceBrush = new()
             {
                 Color = SourceData.Default,

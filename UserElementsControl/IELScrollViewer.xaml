@@ -1,8 +1,8 @@
 ﻿<UserControl
-    x:Class="IEL.UserElementsControl.IELScrollViewer"
+    x:Class="LibraryIEL.UserElementsControl.IELScrollViewer"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="clr-namespace:IEL.UserElementsControl">
+    xmlns:local="clr-namespace:LibraryIEL.UserElementsControl">
     <Grid x:FieldModifier="private" x:Name="MainGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>

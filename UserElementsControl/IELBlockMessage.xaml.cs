@@ -1,356 +1,295 @@
-﻿using IEL.CORE.Enums;
-using IEL.UserElementsControl.Base;
+﻿using LibraryIEL.CORE.Animation;
+using LibraryIEL.CORE.Enums;
+using LibraryIEL.Interfaces;
+using LibraryIEL.UserElementsControl.Base;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 
-namespace IEL.UserElementsControl
+namespace LibraryIEL.UserElementsControl
 {
     /// <summary>
     /// Логика взаимодействия для IELBlockMessage.xaml
     /// </summary>
     public partial class IELBlockMessage : IELObjectBase
     {
-        #region Flags
-        /// <summary>
-        /// Флаг состояния активности панели сообщения
-        /// </summary>
-        public bool FlagMessage { get; private set; } = false;
-        #endregion
+        #region Properties
 
-        #region Color Objects
-        #region Default Color
-        private Color? _DefaultBorderBrush;
+        #region RadiusMagnite
         /// <summary>
-        /// Обычный цвет границы кнопки
+        /// Данные свойства <see cref="RadiusMagnite"/>
         /// </summary>
-        public Color DefaultBorderBrush
+        public static readonly DependencyProperty RadiusMagniteProperty =
+            DependencyProperty.Register(nameof(RadiusMagnite), typeof(uint), typeof(IELBlockMessage),
+                new(2u, RadiusMagniteHandler));
+
+        /// <summary>
+        /// Обработчик события изменения свойства <see cref="RadiusMagnite"/>
+        /// </summary>
+        private static void RadiusMagniteHandler(DependencyObject Element, DependencyPropertyChangedEventArgs e)
         {
-            get => _DefaultBorderBrush ?? Colors.Gold;
-            set
+            if (Element is IELBlockMessage Source && e.NewValue is uint SourceNewValue)
             {
-                SolidColorBrush color = new(value);
-                BorderMessage.BorderBrush = color;
-                _DefaultBorderBrush = value;
+                Source.BorderMessage.CornerRadius = UpdateVisualFromPositionMagnite(Source);
             }
         }
 
-        private Color? _DefaultBackground;
         /// <summary>
-        /// Обычный цвет фона кнопки
+        /// Значение скруглённости примагниченной стороны панели сообщения к объекту
         /// </summary>
-        public Color DefaultBackground
+        [Description("Значение скруглённости объекта с примагниченной стороны к объекту")]
+        public uint RadiusMagnite
         {
-            get => _DefaultBackground ?? Colors.Gold;
-            set
-            {
-                SolidColorBrush color = new(value);
-                BorderMessage.Background = color;
-                _DefaultBackground = value;
-            }
-        }
-
-        private Color? _DefaultForeground;
-        /// <summary>
-        /// Обычный цвет текста
-        /// </summary>
-        public Color DefaultForeground
-        {
-            get => _DefaultForeground ?? Colors.Gold;
-            set
-            {
-                SolidColorBrush color = new(value);
-                TextBlockMessage.Foreground = color;
-                _DefaultForeground = value;
-            }
+            get => (uint)GetValue(RadiusMagniteProperty);
+            set => SetValue(RadiusMagniteProperty, value);
         }
         #endregion
 
-        #region Select Color
+        #region RadiusOrdinary
         /// <summary>
-        /// Выделенный цвет границы
+        /// Данные свойства <see cref="RadiusOrdinary"/>
         /// </summary>
-        public Color SelectBorderBrush { get; set; }
+        public static readonly DependencyProperty RadiusOrdinaryProperty =
+            DependencyProperty.Register(nameof(RadiusOrdinary), typeof(uint), typeof(IELBlockMessage),
+                new(10u, RadiusOrdinaryHandler));
 
         /// <summary>
-        /// Выделенный цвет фона
+        /// Обработчик события изменения свойства <see cref="RadiusOrdinary"/>
         /// </summary>
-        public Color SelectBackground { get; set; }
+        private static void RadiusOrdinaryHandler(DependencyObject Element, DependencyPropertyChangedEventArgs e)
+        {
+            if (Element is IELBlockMessage Source && e.NewValue is uint SourceNewValue)
+            {
+                Source.BorderMessage.CornerRadius = UpdateVisualFromPositionMagnite(Source);
+            }
+        }
 
         /// <summary>
-        /// Выделенный цвет текста
+        /// Значение скруглённости независимой стороны панели сообщения от объекта
         /// </summary>
-        public Color SelectForeground { get; set; }
+        [Description("Значение скруглённости объекта независимой стороны от объекта")]
+        public uint RadiusOrdinary
+        {
+            get => (uint)GetValue(RadiusOrdinaryProperty);
+            set => SetValue(RadiusOrdinaryProperty, value);
+        }
         #endregion
+
+        #region Position
+        /// <summary>
+        /// Данные свойства <see cref="Position"/>
+        /// </summary>
+        public static readonly DependencyProperty PositionProperty =
+            DependencyProperty.Register(nameof(Position), typeof(EnumPositionMessage), typeof(IELBlockMessage),
+                new(EnumPositionMessage.LeftUp, PositionHandler));
+
+        /// <summary>
+        /// Обработчик события изменения свойства <see cref="Position"/>
+        /// </summary>
+        private static void PositionHandler(DependencyObject Element, DependencyPropertyChangedEventArgs e)
+        {
+            if (Element is IELBlockMessage Source && e.NewValue is EnumPositionMessage SourceNewValue)
+            {
+                if (Source.IsSwapActualPosition && Source.MagniteElement != null)
+                {
+                    Source.GetStartEndPointsAnimation(out Point _, out Point End);
+                    PositionMessageAnimate.EasingFunction = EaseSpecific;
+                    PositionMessageAnimate.From = null;
+                    PositionMessageAnimate.To = new(End.X, End.Y, 0, 0);
+
+                    OpacityMessageAnimate.To = 0.8d;
+
+                    ManagerAnimation.AnimateTakingZeroTo(Source.BorderMessage,
+                        Border.CornerRadiusProperty, UpdateVisualFromPositionMagnite(Source),
+                        TimeSpan.FromMilliseconds(550d));
+                    Source.BeginAnimation(MarginProperty, PositionMessageAnimate);
+                }
+                else Source.BorderMessage.CornerRadius = UpdateVisualFromPositionMagnite(Source);
+            }
+        }
+
+        /// <summary>
+        /// Значение позиции элемента относительно примагниченного элемента
+        /// </summary>
+        [Description("Позиция отображения сообщения относительно примагниченной стороны к объекту")]
+        public EnumPositionMessage Position
+        {
+            get => (EnumPositionMessage)GetValue(PositionProperty);
+            set => SetValue(PositionProperty, value);
+        }
         #endregion
+
+        #region IsSwapActualPosition
+        /// <summary>
+        /// Данные свойства <see cref="IsSwapActualPosition"/>
+        /// </summary>
+        public static readonly DependencyProperty IsSwapActualPositionProperty =
+            DependencyProperty.Register(nameof(IsSwapActualPosition), typeof(bool), typeof(IELBlockMessage),
+                new(false));
+
+        /// <summary>
+        /// Автоматическое смещение позиции объекта при изменении свойства <see cref="Position"/><br/>
+        /// и активном отображении сообщения
+        /// </summary>
+        [Description($"Значение отвечающее за автоматическое смещение позиции, " +
+            $"при изменении свойства \"{nameof(Position)}\" и активном отображении сообщения")]
+        public bool IsSwapActualPosition
+        {
+            get => (bool)GetValue(IsSwapActualPositionProperty);
+            set => SetValue(IsSwapActualPositionProperty, value);
+        }
+        #endregion
+
+        #region Offset
+        /// <summary>
+        /// Данные свойства <see cref="Offset"/>
+        /// </summary>
+        public static readonly DependencyProperty OffsetProperty =
+            DependencyProperty.Register(nameof(Offset), typeof(uint), typeof(IELBlockMessage),
+                new(3u));
+
+        /// <summary>
+        /// Значение позиции смещения элемента относительно примагниченного элемента
+        /// </summary>
+        [Description("Значение смещения объекта сообщения от примагниченного объекта, при отображении")]
+        public uint Offset
+        {
+            get => (uint)GetValue(OffsetProperty);
+            set => SetValue(OffsetProperty, value);
+        }
+        #endregion
+
+        #region BorderThickness
+        /// <summary>
+        /// Данные свойства <see cref="IELBlockMessage.BorderThickness"/>
+        /// </summary>
+        public static new readonly DependencyProperty BorderThicknessProperty = Border.BorderThicknessProperty;
+
+        /// <summary>
+        /// Толщина границ контейнера сообщения
+        /// </summary>
+        [Description("Толщина границ контейнера сообщения")]
+        public new Thickness BorderThickness
+        {
+            get => (Thickness)GetValue(BorderThicknessProperty);
+            set => SetValue(BorderThicknessProperty, value);
+        }
+        #endregion
+
+        #region FontFamily
+        /// <summary>
+        /// Данные свойства <see cref="IELBlockMessage.FontFamily"/>
+        /// </summary>
+        public static new readonly DependencyProperty FontFamilyProperty = Run.FontFamilyProperty;
+
+        /// <summary>
+        /// Шрифт отображаемого сообщения
+        /// </summary>
+        [Description("Шрифт, отображаемый в элементе сообщения")]
+        public new FontFamily FontFamily
+        {
+            get => (FontFamily)RunElementText.GetValue(FontFamilyProperty);
+            set => RunElementText.SetValue(FontFamilyProperty, value);
+        }
+        #endregion
+
+        #region Text
+        /// <summary>
+        /// Данные свойства <see cref="Text"/>
+        /// </summary>
+        public static readonly DependencyProperty TextProperty = Run.TextProperty;
+
+        /// <summary>
+        /// Текст отображаемого сообщения
+        /// </summary>
+        [Description("Текст, отображаемый в элементе сообщения")]
+        public string Text
+        {
+            get => (string)RunElementText.GetValue(TextProperty);
+            set => RunElementText.SetValue(TextProperty, value);
+        }
+        #endregion
+
+        #endregion
+
+        /// <summary>
+        /// Объект к которому при магничено сообщение
+        /// </summary>
+        public IIELObjectUsingMessage? MagniteElement { get; private set; }
 
         #region Animate Objects
         /// <summary>
+        /// Функция разсчёта анимирования по умолчанию
+        /// </summary>
+        private static IEasingFunction EaseDefault = new PowerEase() { EasingMode = EasingMode.EaseOut };
+
+        /// <summary>
+        /// Функция разсчёта анимирования для динамического обновления свойств
+        /// </summary>
+        private static IEasingFunction EaseSpecific = new BackEase() { EasingMode = EasingMode.EaseInOut, Amplitude = 1.2d };
+
+        /// <summary>
         /// Объект анимации для управления позицией
         /// </summary>
-        private static readonly ThicknessAnimation ThicknessAnimate = new(new Thickness(0), TimeSpan.FromMilliseconds(300d))
+        private static readonly ThicknessAnimation PositionMessageAnimate = new(new Thickness(0d), TimeSpan.FromMilliseconds(400d))
         {
             DecelerationRatio = 0.6d,
-            EasingFunction = new PowerEase() { EasingMode = EasingMode.EaseOut }
+            EasingFunction = EaseDefault,
         };
 
         /// <summary>
         /// Объект анимации для управления double значением
         /// </summary>
-        private static readonly DoubleAnimation DoubleAnimateObj = new(0, TimeSpan.FromMilliseconds(250d))
+        private static readonly DoubleAnimation OpacityMessageAnimate = new(0d, TimeSpan.FromMilliseconds(200d))
         {
-            DecelerationRatio = 0.2d,
-            EasingFunction = new QuinticEase() { EasingMode = EasingMode.EaseOut }
+            DecelerationRatio = 0.6d,
+            EasingFunction = EaseDefault,
         };
         #endregion
 
-        #region Values Object
-        #region Default
-        private uint _RadiusDefault;
-        /// <summary>
-        /// Радиус скруглённости обычной стороны панели сообщения
-        /// </summary>
-        public uint RadiusDefault
-        {
-            get => _RadiusDefault;
-            set
-            {
-                BorderMessage.Padding = new(value, 0, value, 0);
-                _RadiusDefault = value;
-            }
-        }
-
-        /// <summary>
-        /// Радиус скруглённости примагниченной стороны панели сообщения к объекту
-        /// </summary>
-        public uint RadiusMagnite { get; set; }
-
-        /// <summary>
-        /// Сдвиг позиции (Лево, Право) относительно отображения
-        /// </summary>
-        public uint OffsetLeftRight { get; set; }
-
-        /// <summary>
-        /// Сдвиг позиции (Верх, Низ) относительно отображения
-        /// </summary>
-        public uint OffsetUpDown { get; set; }
-
-        /// <summary>
-        /// Код контейнера привязки
-        /// </summary>
-        public int CodeParentObject { get; private set; }
-
-        #endregion
-
-        #region Constructor
-        //
-        private FrameworkElement? SourceMagniteElement;
-
-        //
-        private TextBlock TextBlockMessage;
-
-        /// <summary>
-        /// Шрифт использующийся в панели сообщения
-        /// </summary>
-        public new FontFamily FontFamily
-        {
-            get => TextBlockMessage.FontFamily;
-            set => TextBlockMessage.FontFamily = value;
-        }
-
-        /// <summary>
-        /// Текст отображаемый в панели сообщения
-        /// </summary>
-        public string Text
-        {
-            get => TextBlockMessage.Text;
-            set
-            {
-                TextBlockMessage.Text = value;
-                TextBlockMessage.UpdateLayout();
-            }
-        }
-        #endregion
-        #endregion
-
-        #region IVisualIELButton
-        /// <summary>
-        /// Скругление границ
-        /// </summary>
-        public CornerRadius CornerRadius
-        {
-            get => BorderMessage.CornerRadius;
-            set => BorderMessage.CornerRadius = value;
-        }
-
-        /// <summary>
-        /// Толщина границ
-        /// </summary>
-        public new Thickness BorderThickness
-        {
-            get => BorderMessage.BorderThickness;
-            set => BorderMessage.BorderThickness = value;
-        }
-
-        /// <summary>
-        /// Смещение контента в объекте
-        /// </summary>
-        public new Thickness Padding
-        {
-            get => BorderMessage.Padding;
-            set => BorderMessage.Padding = value;
-        }
-        #endregion
-
-        #region ** Inicialize Object **
         /// <summary>
         /// Инициализировать объект интерфейса отображения сообщения
         /// </summary>
         public IELBlockMessage()
         {
             InitializeComponent();
-            TextBlockMessage = new()
-            {
-                TextWrapping = TextWrapping.Wrap,
-                MaxWidth = 200d,
-                TextAlignment = TextAlignment.Left,
-                VerticalAlignment = VerticalAlignment.Top,
-                Foreground = SourceForeground.SourceBrush,
-                Margin = new(0, 0, 0, 5),
-            };
-            IELScrollMessage.Content = TextBlockMessage;
+            BorderMessage.BorderBrush = SourceBorderBrush.SourceBrush;
+            BorderMessage.Background = SourceBackground.SourceBrush;
+            RunElementText.Foreground = SourceForeground.SourceBrush;
 
-            #region Background
-            #endregion
-
-            #region BorderBrush
-            #endregion
-
-            #region Foreground
-            #endregion
-
-            #region Set Values Object
-            TextBlockMessage.Margin = new(0);
-            TextBlockMessage.UpdateLayout();
-            #region Values
-            RadiusDefault = 13u;
-            RadiusMagnite = 3u;
-
-            OffsetLeftRight = 3u;
-            OffsetUpDown = 3u;
-
-            CodeParentObject = int.MinValue;
-            #endregion
-
-            #region Colors
-            DefaultBackground = Colors.White;
-            DefaultBorderBrush = Colors.Black;
-            DefaultForeground = Colors.Black;
-
-            SelectBackground = Colors.White;
-            SelectBorderBrush = Colors.Black;
-            SelectForeground = Colors.Black;
-            #endregion
-            #endregion
+            UpdateVisualFromPositionMagnite(this);
         }
-        #endregion
 
         #region Manipulate Object
-        #region Using Object
+
         /// <summary>
         /// Активировать панель сообщения по привязке к объекту
         /// </summary>
         /// <param name="Element">Элемент к которому прикрепляется панель сообщения</param>
-        /// <param name="TextVisible">Текст который выводится панелью сообщения</param>
-        /// <param name="Orientation">Привязка к позиционированию панели</param>
-        public void UsingBorderInformation(FrameworkElement Element, string TextVisible, OrientationPositionCursor Orientation)
+        public void OpenFrom(IIELObjectUsingMessage Element)
         {
-            SourceMagniteElement = Element;
-            CodeParentObject = Element.GetHashCode();
-            TextBlockMessage.Text = TextVisible;
-            TextBlockMessage.UpdateLayout();
-            GridMessage.UpdateLayout();
-            Element.MouseWheel += IELScrollContent;
-            if (GridMessage.ActualHeight < TextBlockMessage.ActualHeight)
-            {
-                //IELScrollMessage.ActivateVerticalScrollBar();
-                //IELScrollMessage.UpdateHeightScrollBar();
-            }
-            IELScrollMessage.ScrollToVerticalOffset(0d);
-            #region Auto
-            if (Orientation == OrientationPositionCursor.Auto)
-            {
-                FrameworkElement ParentElement = VisualTreeHelper.GetParent(this) as FrameworkElement ??
-                    throw new Exception("У объекта нет родительского элемента");
-                Point LocationPointElement;
-                try
-                {
-                    LocationPointElement =
-                        Element.TransformToAncestor(ParentElement).TransformBounds(new Rect(ParentElement.RenderSize)).Location;
-                }
-                catch (InvalidOperationException) { return; }
-                Size SizeParentElement = ParentElement.RenderSize;
-                Point LeftRightOrientationLogic =
-                    new(Math.Abs(LocationPointElement.X - ActualWidth), SizeParentElement.Width - (LocationPointElement.X + ActualWidth));
-                double UpDownOrientationLogic = LocationPointElement.Y - ActualHeight;
-                if (LeftRightOrientationLogic.X >= LeftRightOrientationLogic.Y)
-                {
-                    Orientation = UpDownOrientationLogic >= 0 ? OrientationPositionCursor.LeftUp : OrientationPositionCursor.LeftDown;
-                }
-                else if (LeftRightOrientationLogic.X < LeftRightOrientationLogic.Y)
-                {
-                    Orientation = UpDownOrientationLogic >= 0 ? OrientationPositionCursor.RightUp : OrientationPositionCursor.RightDown;
-                }
-            }
-            #endregion
-            AnimateBorderInformation(SetPositionOrientation(Element, Orientation), Orientation);
+            MagniteElement = Element;
+            Palette = Element.Palette;
+            RunElementText.Text = Element.Message;
+            AnimateFromToPosition();
         }
 
-        /// <summary>
-        /// Функция события прокрутки в объекте относительно контента в сообщении
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void IELScrollContent(object sender, MouseWheelEventArgs e)
-        {
-            //if (IELScrollMessage.IsVisibleScrollBar(ScrollOrientation.Vertical))
-            //{
-            //    //if (e.Delta < 0) IELScrollMessage.ScrollToVerticalDown();
-            //    //else IELScrollMessage.ScrollToVerticalUp();
-            //}
-        }
-
-        /// <summary>
-        /// Активировать панель сообщения по позиции
-        /// </summary>
-        /// <param name="TextVisible">Текст который выводится панелью сообщения</param>
-        /// <param name="Orientation">Привязка к позиционированию панели</param>
-        public void UsingBorderInformationCursor(string TextVisible, OrientationPositionCursor Orientation)
-        {
-            CodeParentObject = 0;
-            Text = TextVisible;
-            AnimateBorderInformation(SetPositionOrientation(Orientation), Orientation);
-        }
-        #endregion
-
-        #region Close Object
         /// <summary>
         /// Закрыть панель сообщения
         /// </summary>
-        public void CloseBorderInformation()
+        public void Close()
         {
-            if (!FlagMessage || SourceMagniteElement == null) return;
-            FlagMessage = false;
-            SourceMagniteElement.MouseWheel -= IELScrollContent;
-            //if (IELScrollMessage.IsVisibleScrollBar(ScrollOrientation.Vertical))
-            //    IELScrollMessage.DiactivateVerticalScrollBar();
-            DoubleAnimation animation = DoubleAnimateObj.Clone();
+            if (MagniteElement == null) return;
+            MagniteElement = null;
+            DoubleAnimation animation = OpacityMessageAnimate.Clone();
             TextBlockMessage.BeginAnimation(MarginProperty, null);
             void SetZOne(object? sender, EventArgs e)
             {
-                if (FlagMessage) return;
+                if (MagniteElement != null) return;
                 Canvas.SetZIndex(this, -2);
                 animation.FillBehavior = FillBehavior.HoldEnd;
                 animation.Completed -= SetZOne;
@@ -361,76 +300,76 @@ namespace IEL.UserElementsControl
             animation.To = 0d;
             BeginAnimation(OpacityProperty, animation);
         }
-        #endregion
-
-        #region Set Position
-        /// <summary>
-        /// Узнать стартовое значение позиции
-        /// </summary>
-        /// <param name="Orientation">Привязка к позиционированию панели</param>
-        private Point SetPositionOrientation(OrientationPositionCursor Orientation)
-        {
-            Point CursorPos = Mouse.GetPosition((IInputElement)VisualParent);
-            return Orientation switch
-            {
-                OrientationPositionCursor.LeftDown => new(CursorPos.X - BorderMessage.ActualWidth, CursorPos.Y),
-                OrientationPositionCursor.LeftUp => new(CursorPos.X - BorderMessage.ActualWidth, CursorPos.Y - BorderMessage.ActualHeight),
-                OrientationPositionCursor.RightUp => new(CursorPos.X, CursorPos.Y - BorderMessage.ActualHeight),
-                OrientationPositionCursor.RightDown => new(CursorPos.X, CursorPos.Y),
-                _ => CursorPos
-            };
-        }
 
         /// <summary>
-        /// Узнать стартовое значение позиции относительно объекта
+        /// Анимировать панель сообщения от стартовой до конечной позиции
         /// </summary>
-        /// <param name="Element">Элемент к которому прикрепляется панель описания</param>
-        /// <param name="Orientation">Привязка к позиционированию панели</param>
-        private Point SetPositionOrientation(FrameworkElement Element, OrientationPositionCursor Orientation)
+        private void AnimateFromToPosition()
         {
-            Point ElementPos = Element.TransformToAncestor((Visual)VisualParent).TransformBounds(new Rect(Element.RenderSize)).Location;
-            return Orientation switch
-            {
-                OrientationPositionCursor.LeftDown => new(ElementPos.X - BorderMessage.ActualWidth, ElementPos.Y + Element.ActualHeight),
-                OrientationPositionCursor.LeftUp => new(ElementPos.X - BorderMessage.ActualWidth, ElementPos.Y - BorderMessage.ActualHeight),
-                OrientationPositionCursor.RightUp => new(ElementPos.X + Element.ActualWidth, ElementPos.Y - BorderMessage.ActualHeight),
-                OrientationPositionCursor.RightDown => new(ElementPos.X + Element.ActualWidth, ElementPos.Y + Element.ActualHeight),
-                _ => ElementPos
-            };
-        }
-        #endregion
-
-        /// <summary>
-        /// Анимировать панель сообщения по позиции
-        /// </summary>
-        /// <param name="Position">Позиция привязки</param>
-        /// <param name="Orientation">Привязка к позиционированию панели</param>
-        private void AnimateBorderInformation(Point Position, OrientationPositionCursor Orientation)
-        {
-            FlagMessage = true;
-
+            if (MagniteElement == null) return;
             Canvas.SetZIndex(this, 2);
-            DoubleAnimation animationD = DoubleAnimateObj.Clone();
-            animationD.To = 0.8d;
-            BeginAnimation(OpacityProperty, animationD);
+            GetStartEndPointsAnimation(out Point Start, out Point End);
+            PositionMessageAnimate.EasingFunction = EaseDefault;
+            PositionMessageAnimate.From = new(Start.X, Start.Y, 0, 0);
+            PositionMessageAnimate.To = new(End.X, End.Y, 0, 0);
 
-            BorderMessage.CornerRadius = Orientation switch
-            {
-                OrientationPositionCursor.LeftDown => new(RadiusDefault, RadiusMagnite, RadiusDefault, RadiusDefault),
-                OrientationPositionCursor.LeftUp => new(RadiusDefault, RadiusDefault, RadiusMagnite, RadiusDefault),
-                OrientationPositionCursor.RightUp => new(RadiusDefault, RadiusDefault, RadiusDefault, RadiusMagnite),
-                OrientationPositionCursor.RightDown => new(RadiusMagnite, RadiusDefault, RadiusDefault, RadiusDefault),
-                _ => new(RadiusDefault),
-            };
-            Point Offset = new(
-                Orientation == OrientationPositionCursor.LeftDown || Orientation == OrientationPositionCursor.LeftUp ? -OffsetLeftRight : OffsetLeftRight,
-                Orientation == OrientationPositionCursor.LeftUp || Orientation == OrientationPositionCursor.RightUp ? -OffsetUpDown : OffsetUpDown);
-            ThicknessAnimation animation = ThicknessAnimate.Clone();
-            animation.From = new(Position.X, Position.Y, 0, 0);
-            animation.To = new(Position.X + Offset.X, Position.Y + Offset.Y, 0, 0);
-            animation.Duration = TimeSpan.FromMilliseconds(400d);
-            BeginAnimation(MarginProperty, animation, HandoffBehavior.SnapshotAndReplace);
+            OpacityMessageAnimate.To = 0.8d;
+
+            BeginAnimation(OpacityProperty, OpacityMessageAnimate, HandoffBehavior.SnapshotAndReplace);
+            BeginAnimation(MarginProperty, PositionMessageAnimate, HandoffBehavior.SnapshotAndReplace);
         }
         #endregion
+
+        /// <summary>
+        /// Расчитать позиции анимирования относительно примагниченного элемента
+        /// </summary>
+        /// <param name="Start">Стартовая позиция анимирования</param>
+        /// <param name="End">Конечная позиция анимирования</param>
+        private void GetStartEndPointsAnimation(out Point Start, out Point End)
+        {
+            Start = default;
+            End = default;
+            if (MagniteElement == null) return;
+            Rect MagniteLocation = MagniteElement.GetRectFrom((UIElement)Parent);
+            Start = TranslatePoint(MagniteLocation.Location, this);
+
+            if (Position is EnumPositionMessage.LeftUp or EnumPositionMessage.CenterLeft or EnumPositionMessage.LeftDown)
+                Start.X -= ActualWidth;
+            else if (Position is EnumPositionMessage.CenterUp or EnumPositionMessage.CenterDown)
+                Start.X += MagniteLocation.Width / 2 - ActualWidth / 2;
+            else Start.X += MagniteLocation.Width;
+
+            if (Position is EnumPositionMessage.LeftUp or EnumPositionMessage.CenterUp or EnumPositionMessage.RightUp)
+                Start.Y -= ActualHeight;
+            else if (Position is EnumPositionMessage.CenterLeft or EnumPositionMessage.CenterRight)
+                Start.Y += MagniteLocation.Height / 2 - ActualHeight / 2;
+            else Start.Y += MagniteLocation.Height;
+
+            End = Start;
+            if (Position is EnumPositionMessage.LeftUp or EnumPositionMessage.CenterLeft or EnumPositionMessage.LeftDown)
+                End.X -= Offset;
+            else if (Position is EnumPositionMessage.RightUp or EnumPositionMessage.CenterRight or EnumPositionMessage.RightDown)
+                End.X += Offset;
+            if (Position is EnumPositionMessage.LeftUp or EnumPositionMessage.CenterUp or EnumPositionMessage.RightUp)
+                End.Y -= Offset;
+            else if (Position is EnumPositionMessage.LeftDown or EnumPositionMessage.CenterDown or EnumPositionMessage.RightDown)
+                End.Y += Offset;
+        }
+
+        /// <summary>
+        /// Обновить отображение примагриченного состояния
+        /// </summary>
+        /// <param name="Source">Обновляемый объект</param>
+        private static CornerRadius UpdateVisualFromPositionMagnite(in IELBlockMessage Source) =>
+            new(
+            Source.Position is EnumPositionMessage.RightDown or EnumPositionMessage.CenterDown or EnumPositionMessage.CenterRight ?
+                Source.RadiusMagnite : Source.RadiusOrdinary,
+            Source.Position is EnumPositionMessage.LeftDown or EnumPositionMessage.CenterDown or EnumPositionMessage.CenterLeft ?
+                Source.RadiusMagnite : Source.RadiusOrdinary,
+            Source.Position is EnumPositionMessage.LeftUp or EnumPositionMessage.CenterLeft or EnumPositionMessage.CenterUp ?
+                Source.RadiusMagnite : Source.RadiusOrdinary,
+            Source.Position is EnumPositionMessage.RightUp or EnumPositionMessage.CenterUp or EnumPositionMessage.CenterRight ?
+                Source.RadiusMagnite : Source.RadiusOrdinary
+            );
     }
 }

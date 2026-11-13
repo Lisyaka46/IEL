@@ -1,15 +1,20 @@
 ﻿<Base:IELObjectBase
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    x:Class="IEL.UserElementsControl.IELBlockMessage"
-    xmlns:Base="clr-namespace:IEL.UserElementsControl.Base"
-    xmlns:IEL="clr-namespace:IEL.UserElementsControl"
+    x:Class="LibraryIEL.UserElementsControl.IELBlockMessage"
+    xmlns:Base="clr-namespace:LibraryIEL.UserElementsControl.Base"
+    xmlns:IEL="clr-namespace:LibraryIEL.UserElementsControl"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
     mc:Ignorable="d">
-    <Border x:Name="BorderMessage" CornerRadius="3,13,13,13" BorderThickness="2,2,2,2" BorderBrush="Black" Background="#FFE4BDBD" HorizontalAlignment="Left">
-        <Grid x:Name="GridMessage" ClipToBounds="True">
-            <IEL:IELScrollViewer x:Name="IELScrollMessage" Margin="5,5,5,5"/>
+    <Border x:FieldModifier="private" x:Name="BorderMessage" CornerRadius="3,13,13,13" BorderThickness="2,2,2,2" BorderBrush="Black" Background="#FFE4BDBD" HorizontalAlignment="Left" Padding="2,2,2,2">
+        <Border.CacheMode>
+            <BitmapCache RenderAtScale="5" SnapsToDevicePixels="True"/>
+        </Border.CacheMode>
+        <Grid ClipToBounds="True">
+            <TextBlock x:FieldModifier="private" x:Name="TextBlockMessage" FontSize="15" FontFamily="Arial">
+                <Run x:FieldModifier="private" x:Name="RunElementText" Text="123"/>
+            </TextBlock>
         </Grid>
     </Border>
 </Base:IELObjectBase>

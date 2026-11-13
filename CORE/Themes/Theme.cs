@@ -1,10 +1,10 @@
-﻿using IEL.CORE.Classes;
+﻿using LibraryIEL.CORE.Classes;
 using System.IO;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace IEL.CORE.Themes
+namespace LibraryIEL.CORE.Themes
 {
     /// <summary>
     /// Главный класс управления темами

@@ -1,10 +1,10 @@
-﻿using IEL.UserElementsControl.Base;
+﻿using LibraryIEL.UserElementsControl.Base;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 
-namespace IEL.UserElementsControl
+namespace LibraryIEL.UserElementsControl
 {
     /// <summary>
     /// Логика взаимодействия для IELButtonImage.xaml

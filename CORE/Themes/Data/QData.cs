@@ -1,15 +1,15 @@
-﻿using IEL.CORE.Themes.Palettes;
+﻿using LibraryIEL.CORE.Themes.Palettes;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows.Media;
 using WnColor = System.Windows.Media.Color;
 
-namespace IEL.CORE.Themes.Data
+namespace LibraryIEL.CORE.Themes.Data
 {
     /// <summary>
     /// Класс управляемых данных цветовой палитры отображения объекта
     /// </summary>
-    public ref struct QData
+    public struct QData
     {
         /// <summary>
         /// Неизвестный спектр палитры для отображения фона
@@ -32,22 +32,22 @@ namespace IEL.CORE.Themes.Data
         /// <summary>
         /// Цвет покоя
         /// </summary>
-        public Color32 Default;
+        public Color32 Default { get; set; }
 
         /// <summary>
         /// Цвет выделенный
         /// </summary>
-        public Color32 Select;
+        public Color32 Select { get; set; }
 
         /// <summary>
         /// Цвет нажатый
         /// </summary>
-        public Color32 Used;
+        public Color32 Used { get; set; }
 
         /// <summary>
         /// Цвет отключённый
         /// </summary>
-        public Color32 NotEnabled;
+        public Color32 NotEnabled { get; set; }
 
         /// <summary>
         /// Количество состояний цветов
@@ -76,6 +76,17 @@ namespace IEL.CORE.Themes.Data
             Offset += Color32.CountBytes;
             Buffer.BlockCopy(NotEnabled, 0, result, Offset, Color32.CountBytes);
             return result;
+        }
+
+        /// <summary>
+        /// Инициализировать пустой объект цветовой палитры
+        /// </summary>
+        public QData()
+        {
+            Default = Colors.Black;
+            Select = Colors.Black;
+            Used = Colors.Black;
+            NotEnabled = Colors.Black;
         }
 
         /// <summary>

@@ -1,11 +1,11 @@
-﻿using IEL.CORE.Enums;
+﻿using LibraryIEL.CORE.Enums;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 
-namespace IEL.UserElementsControl
+namespace LibraryIEL.UserElementsControl
 {
     /// <summary>
     /// Базовый класс объекта отображения стековых данных
