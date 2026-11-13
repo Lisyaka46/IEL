@@ -1,6 +1,8 @@
-﻿using LibraryIEL.CORE.Animation;
-using LibraryIEL.CORE.Classes;
+﻿#if DEBUG
 using LibraryIEL.CORE.Debug;
+#endif
+using LibraryIEL.CORE.Animation;
+using LibraryIEL.CORE.Classes;
 using LibraryIEL.UserElementsControl.Base;
 using System.ComponentModel;
 using System.Diagnostics;
