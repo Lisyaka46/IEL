@@ -3,7 +3,7 @@
     /// <summary>
     /// Перечисление состояний отображения
     /// </summary>
-    public enum StateVisualGuide : byte
+    public enum EnumVisualGuide : byte
     {
         /// <summary>
         /// Обычное отображение
