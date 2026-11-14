@@ -15,6 +15,7 @@
 	<PackageIcon>IEL.png</PackageIcon>
 	<PackageTags>WPF;Library</PackageTags>
 	<EnableWindowsTargeting>true</EnableWindowsTargeting>
+	<PackageReadmeFile>README.md</PackageReadmeFile>
 
 	<!-- Атрибуты автора и компании -->
 	<Authors>Lisyaka46</Authors>
@@ -27,6 +28,7 @@
   </PropertyGroup>
   <ItemGroup>
     <None Remove="IEL.png" />
+	<None Include="README.md" Pack="true" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="IEL.png">
