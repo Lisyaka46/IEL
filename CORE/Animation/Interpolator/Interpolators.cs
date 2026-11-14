@@ -56,25 +56,17 @@ namespace LibraryIEL.CORE.Animation.Interpolator
     /// </summary>
     internal sealed class ColorInterpolator : InterpolatorValue<Color>
     {
-        private int p;
-        private unsafe byte* ptr;
-
         /// <summary>
         /// Типизированное преобразование
         /// </summary>
-        public override unsafe Color InterpolateTyped(Color From, Color To)
+        public override Color InterpolateTyped(Color From, Color To)
         {
-            p = (int)(ProgressAnimate * 255.0d + 0.5d);
-
-            Color result = default;
-            ptr = (byte*)&result;
-
-            ptr[0] = (byte)(From.A + ((To.A - From.A) * p) / 0xFF); // A
-            ptr[1] = (byte)(From.R + ((To.R - From.R) * p) / 0xFF); // R
-            ptr[2] = (byte)(From.G + ((To.G - From.G) * p) / 0xFF); // G
-            ptr[3] = (byte)(From.B + ((To.B - From.B) * p) / 0xFF); // B
-
-            return result;
+            return Color.FromArgb(
+                (byte)(From.A + (To.A - From.A) * ProgressAnimate),
+                (byte)(From.R + (To.R - From.R) * ProgressAnimate),
+                (byte)(From.G + (To.G - From.G) * ProgressAnimate),
+                (byte)(From.B + (To.B - From.B) * ProgressAnimate)
+                );
         }
     }
 

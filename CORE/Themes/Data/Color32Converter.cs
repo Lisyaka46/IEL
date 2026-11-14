@@ -8,7 +8,7 @@ using System.Windows.Media;
 namespace LibraryIEL.CORE.Themes.Data
 {
     /// <summary>
-    /// Конвертер значение к типу <see cref="Color32"/>
+    /// Конвертер значений к типу <see cref="Color32"/>
     /// </summary>
     public class Color32Converter : TypeConverter
     {
