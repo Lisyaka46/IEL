@@ -42,6 +42,7 @@ namespace LibraryIEL.UserElementsControl
         /// Значение скруглённости примагниченной стороны панели сообщения к объекту
         /// </summary>
         [Description("Значение скруглённости объекта с примагниченной стороны к объекту")]
+        [Category(Category_Visual)]
         public uint RadiusMagnite
         {
             get => (uint)GetValue(RadiusMagniteProperty);
@@ -72,6 +73,7 @@ namespace LibraryIEL.UserElementsControl
         /// Значение скруглённости независимой стороны панели сообщения от объекта
         /// </summary>
         [Description("Значение скруглённости объекта независимой стороны от объекта")]
+        [Category(Category_Visual)]
         public uint RadiusOrdinary
         {
             get => (uint)GetValue(RadiusOrdinaryProperty);
@@ -116,6 +118,7 @@ namespace LibraryIEL.UserElementsControl
         /// Значение позиции элемента относительно примагниченного элемента
         /// </summary>
         [Description("Позиция отображения сообщения относительно примагниченной стороны к объекту")]
+        [Category(Category_Visual)]
         public EnumPositionMessage Position
         {
             get => (EnumPositionMessage)GetValue(PositionProperty);
@@ -137,6 +140,7 @@ namespace LibraryIEL.UserElementsControl
         /// </summary>
         [Description($"Значение отвечающее за автоматическое смещение позиции, " +
             $"при изменении свойства \"{nameof(Position)}\" и активном отображении сообщения")]
+        [Category(Category_Main)]
         public bool IsSwapActualPosition
         {
             get => (bool)GetValue(IsSwapActualPositionProperty);
@@ -156,6 +160,7 @@ namespace LibraryIEL.UserElementsControl
         /// Значение позиции смещения элемента относительно примагниченного элемента
         /// </summary>
         [Description("Значение смещения объекта сообщения от примагниченного объекта, при отображении")]
+        [Category(Category_Main)]
         public uint Offset
         {
             get => (uint)GetValue(OffsetProperty);
@@ -173,6 +178,7 @@ namespace LibraryIEL.UserElementsControl
         /// Толщина границ контейнера сообщения
         /// </summary>
         [Description("Толщина границ контейнера сообщения")]
+        [Category(Category_Visual)]
         public new Thickness BorderThickness
         {
             get => (Thickness)GetValue(BorderThicknessProperty);
@@ -190,6 +196,7 @@ namespace LibraryIEL.UserElementsControl
         /// Шрифт отображаемого сообщения
         /// </summary>
         [Description("Шрифт, отображаемый в элементе сообщения")]
+        [Category(Category_Text)]
         public new FontFamily FontFamily
         {
             get => (FontFamily)RunElementText.GetValue(FontFamilyProperty);
@@ -207,6 +214,7 @@ namespace LibraryIEL.UserElementsControl
         /// Текст отображаемого сообщения
         /// </summary>
         [Description("Текст, отображаемый в элементе сообщения")]
+        [Category(Category_Text)]
         public string Text
         {
             get => (string)RunElementText.GetValue(TextProperty);

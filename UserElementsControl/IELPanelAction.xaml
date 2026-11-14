@@ -5,11 +5,6 @@
     xmlns:Base="clr-namespace:LibraryIEL.UserElementsControl.Base"
     xmlns:IEL="clr-namespace:LibraryIEL.UserElementsControl"
     Focusable="True" IsAnimatedSettingQ="False">
-    <!--<.FocusVisualStyle>
-        <Style>
-            <Setter Property="Control.Template" Value="{x:Null}"/>
-        </Style>
-    </B.FocusVisualStyle>-->
     <Grid x:Name="GridActionPanel" Focusable="True">
         <Viewbox VerticalAlignment="Top" HorizontalAlignment="Center">
             <IEL:IELContentController x:Name="MainPageController"/>

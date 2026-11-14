@@ -43,6 +43,8 @@ namespace LibraryIEL.UserElementsControl
         /// <summary>
         /// Прозрачность отображения загрузки
         /// </summary>
+        [Description("Прозрачность элемента загрузки, внутри текущего объекта")]
+        [Category(Category_Main)]
         public new double Opacity
         {
             get => (double)GetValue(OpacityProperty);
@@ -74,6 +76,7 @@ namespace LibraryIEL.UserElementsControl
         /// Состояние отображения загрузки
         /// </summary>
         [Description("Состояние отображения загрузки")]
+        [Category(Category_Main)]
         public bool IsLoading
         {
             get => (bool)GetValue(IsLoadingProperty);

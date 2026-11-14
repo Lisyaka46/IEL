@@ -13,6 +13,15 @@ namespace LibraryIEL.UserElementsControl.Base
     /// </summary>
     public class IELObjectBase : ContentControl
     {
+        #region Static Data
+        internal const string Category_Text = "Текст";
+        internal const string Category_Qdata = "Q-логика";
+        internal const string Category_Message = "Сводка";
+        internal const string Category_Management = "Управление";
+        internal const string Category_Visual = "Внешний вид";
+        internal const string Category_Main = "Общие";
+        #endregion
+
         #region Properties
 
         #region Palette
@@ -43,6 +52,7 @@ namespace LibraryIEL.UserElementsControl.Base
             "Реализует 3 состояния спектров цвета " +
             $"({nameof(Background)}, {nameof(BorderBrush)}, {nameof(Foreground)})\n" +
             "Спектры отвечают за наведение, нажатие и другие цветовые анимации.")]
+        [Category(Category_Qdata)]
         public PaletteData Palette
         {
             get => (PaletteData)GetValue(PaletteProperty);
@@ -61,6 +71,7 @@ namespace LibraryIEL.UserElementsControl.Base
         /// </summary>
         [Description("Объект цветовой настройки отображения фона объекта для Q-логики.\n" +
             "Реализует 4 спектра цветов, которые отвечают за наведение, нажатие и другие цветовые анимации.")]
+        [Category(Category_Qdata)]
         public virtual new QData Background
         {
             get => SourceBackground.GetData();
@@ -79,6 +90,7 @@ namespace LibraryIEL.UserElementsControl.Base
         /// </summary>
         [Description("Объект цветовой настройки отображения границ объекта для Q-логики.\n" +
             "Реализует 4 спектра цветов, которые отвечают за наведение, нажатие и другие цветовые анимации.")]
+        [Category(Category_Qdata)]
         public virtual new QData BorderBrush
         {
             get => SourceBorderBrush.GetData();
@@ -98,6 +110,7 @@ namespace LibraryIEL.UserElementsControl.Base
         /// </summary>
         [Description("Объект цветовой настройки отображения текста для Q-логики.\n" +
             "Реализует 4 спектра цветов, которые отвечают за наведение, нажатие и другие цветовые анимации.")]
+        [Category(Category_Qdata)]
         public virtual new QData Foreground
         {
             get => SourceForeground.GetData();
@@ -123,6 +136,7 @@ namespace LibraryIEL.UserElementsControl.Base
         [Description("Состояние активности Q-логики.\n" +
             "Отвечает за использование данной цветовой логики наведения, нажатия и других анимаций.\n" +
             "При отключённом состоянии объект продолжит функционировать, лишь будет отсутствовать визуальная цветовая анимация Q-логики.")]
+        [Category(Category_Qdata)]
         public bool IsEnabledSettingQ
         {
             get => (bool)GetValue(IsEnabledSettingQProperty);
@@ -147,6 +161,7 @@ namespace LibraryIEL.UserElementsControl.Base
         [Description("Состояние анимирования Q-логики.\n" +
             "Отвечает за плавтоне изменение цвета при наведении, нажатия и других визуальных цветовых анимаций.\n" +
             $"Этот параметр зависит от {nameof(IsEnabledSettingQ)}, который отвечает за активность данной настройки.")]
+        [Category(Category_Qdata)]
         public bool IsAnimatedSettingQ
         {
             get => (bool)GetValue(IsAnimatedSettingQProperty) && IsEnabledSettingQ;

@@ -1,4 +1,5 @@
 ﻿using LibraryIEL.UserElementsControl.Base;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -11,6 +12,8 @@ namespace LibraryIEL.UserElementsControl
     /// </summary>
     public partial class IELButtonImage : IELButtonBase
     {
+        #region Properties
+
         #region Source
         /// <summary>
         /// Данные конкретного свойства
@@ -26,11 +29,15 @@ namespace LibraryIEL.UserElementsControl
         /// <summary>
         /// Ссылка на элемент изображения
         /// </summary>
+        [Description("Изображение, отображаемое внутри объекта кнопки")]
+        [Category(Category_Main)]
         public ImageSource Source
         {
             get => (ImageSource)GetValue(SourceProperty);
             set => SetValue(SourceProperty, value);
         }
+        #endregion
+
         #endregion
 
         /// <summary>

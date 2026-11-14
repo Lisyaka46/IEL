@@ -223,6 +223,7 @@ namespace LibraryIEL.UserElementsControl.Base
         /// Состояние отвечающее за возможность активации кнопки с помощью мыши
         /// </summary>
         [Description("Состояние возможности активации кнопки с помощью мыши")]
+        [Category(Category_Management)]
         public bool IsEnabledActivateMouse
         {
             get => (bool)GetValue(IsEnabledActivateMouseProperty);
@@ -243,6 +244,7 @@ namespace LibraryIEL.UserElementsControl.Base
         /// </summary>
         [Description("Состояние возможности активации кнопки с помощью клавиатуры.\n" +
             DescriptionCommentActivateElementFocusKeyboard)]
+        [Category(Category_Management)]
         public bool IsEnabledActivateKeyboard
         {
             get => (bool)GetValue(IsEnabledActivateKeyboardProperty);
@@ -263,6 +265,7 @@ namespace LibraryIEL.UserElementsControl.Base
         /// </summary>
         [Description("Состояние возможности множественной активации кнопки с помощью клавиатуры.\n" +
             DescriptionCommentActivateElementFocusKeyboard)]
+        [Category(Category_Management)]
         public bool IsMultiActivateKeyboard
         {
             get => (bool)GetValue(IsMultiActivateKeyboardProperty);
@@ -326,6 +329,7 @@ namespace LibraryIEL.UserElementsControl.Base
         [Description("Интервал множественной активации кнопки с помощью клавиатуры.\n" +
             $"Множественная активация кнопки будет включена после того как пройдёт интервал для события {nameof(MouseHover)}.\n" +
             DescriptionCommentActivateElementFocusKeyboard)]
+        [Category(Category_Management)]
         public TimeSpan MultiActivateKeyboardInterval
         {
             get => (TimeSpan)GetValue(MultiActivateKeyboardIntervalProperty);
@@ -380,6 +384,7 @@ namespace LibraryIEL.UserElementsControl.Base
         /// Состояние отображения клавиши активации кнопки
         /// </summary>
         [Description("Состояние отображения названия клавиши для клавиши активации кнопки")]
+        [Category(Category_Main)]
         public bool IsVisibleActivateKey
         {
             get => (bool)GetValue(IsVisibleActivateKeyProperty);
@@ -410,6 +415,7 @@ namespace LibraryIEL.UserElementsControl.Base
         /// Размер текста названия кнопки отображения прикреплённой клавиши активации
         /// </summary>
         [Description("Размер названия клавиши прикреплённой для активации кнопки с помощью клавиатуры")]
+        [Category(Category_Text)]
         public double ActivateKeyFontSize
         {
             get => (double)GetValue(ActivateKeyFontSizeProperty);
@@ -441,6 +447,7 @@ namespace LibraryIEL.UserElementsControl.Base
         /// </summary>
         [Description("Прикреплённая клавиша для активации кнопки с помощью клавиатуры.\n" +
             $"Активация кнопки с помощью клавиатуры зависит от состояний параметров {nameof(IsEnabledActivateKeyboard)}")]
+        [Category(Category_Management)]
         public Key ActivateKey
         {
             get => (Key)GetValue(ActivateKeyProperty);
@@ -471,6 +478,7 @@ namespace LibraryIEL.UserElementsControl.Base
         /// Внутренний элемент объекта
         /// </summary>
         [Description("Контент элемента кнопки")]
+        [Category(Category_Main)]
         public new UIElement Content
         {
             get => (UIElement)GetValue(ContentProperty);
@@ -501,6 +509,7 @@ namespace LibraryIEL.UserElementsControl.Base
         /// Внутреннее смещение контента в кнопке
         /// </summary>
         [Description("Внутреннее смещение контента кнопки.")]
+        [Category(Category_Visual)]
         public Thickness PaddingButtonContent
         {
             get => (Thickness)GetValue(PaddingButtonContentProperty);
@@ -532,6 +541,7 @@ namespace LibraryIEL.UserElementsControl.Base
         /// Скругление границ объектов направляющих кнопки
         /// </summary>
         [Description("Скругление границ направляющих для кнопки.\n" + DescriptionCommentGuide)]
+        [Category(Category_Visual)]
         public CornerRadius GuidesCornerRadius
         {
             get => (CornerRadius)GetValue(GuidesCornerRadiusProperty);
@@ -563,6 +573,7 @@ namespace LibraryIEL.UserElementsControl.Base
         /// Толщина границ направляющих кнопки
         /// </summary>
         [Description("Толщина границ направляющих для кнопки.\n" + DescriptionCommentGuide)]
+        [Category(Category_Visual)]
         public Thickness GuidesBorderThickness
         {
             get => (Thickness)GetValue(GuidesBorderThicknessProperty);
@@ -597,6 +608,7 @@ namespace LibraryIEL.UserElementsControl.Base
         [Description("Смещение направляющих внутри кнопки.\n" +
             "Смещение присваивается для обоих направляющих сразу, отзеркаливая его для правой направляющей!\n" + 
             DescriptionCommentGuide)]
+        [Category(Category_Visual)]
         public Thickness GuidesMargin
         {
             get => (Thickness)GetValue(GuidesMarginProperty);
@@ -631,6 +643,7 @@ namespace LibraryIEL.UserElementsControl.Base
         [Description("Внутреннее смещение направляющих внутри собственного контейнера.\n" +
             "Смещение присваивается для обоих направляющих сразу, отзеркаливая его для правой направляющей!\n" +
             DescriptionCommentGuide)]
+        [Category(Category_Visual)]
         public Thickness GuidesPadding
         {
             get => (Thickness)GetValue(GuidesPaddingProperty);
@@ -665,6 +678,7 @@ namespace LibraryIEL.UserElementsControl.Base
         /// Толщина границ направляющих в кнопке
         /// </summary>
         [Description("Толщина границ направляющих внутри собственного контейнера.\n" + DescriptionCommentGuide)]
+        [Category(Category_Visual)]
         public double GuidesStrokeThickness
         {
             get => (double)GetValue(GuidesStrokeThicknessProperty);
@@ -697,6 +711,7 @@ namespace LibraryIEL.UserElementsControl.Base
         /// </summary>
         [Description("Смещение размера главной линии относительно пересечения лепестков у направляющих внутри собственного контейнера.\n" +
             DescriptionCommentGuideChangeDouble)]
+        [Category(Category_Visual)]
         public double GuidesOffsetMainLine
         {
             get => (double)GetValue(GuidesOffsetMainLineProperty);
@@ -729,6 +744,7 @@ namespace LibraryIEL.UserElementsControl.Base
         /// </summary>
         [Description("Смещение пересечения лепестков линий направляющих внутри собственного контейнера.\n" +
             DescriptionCommentGuideChangeDouble)]
+        [Category(Category_Visual)]
         public double GuidesOffsetPetalLines
         {
             get => (double)GetValue(GuidesOffsetPetalLinesProperty);
@@ -761,6 +777,7 @@ namespace LibraryIEL.UserElementsControl.Base
         /// </summary>
         [Description("Расстояние между леместками у направляющих, внутри собственного контейнера.\n" +
             DescriptionCommentGuideChangeDouble)]
+        [Category(Category_Visual)]
         public double GuidesDistanceBetweenPetalLines
         {
             get => (double)GetValue(GuidesDistanceBetweenPetalLinesProperty);
@@ -773,21 +790,21 @@ namespace LibraryIEL.UserElementsControl.Base
         /// Данные свойства <see cref="GuideVisual"/>
         /// </summary>
         public static readonly DependencyProperty GuideVisualProperty =
-            DependencyProperty.Register(nameof(GuideVisual), typeof(StateVisualGuide), typeof(IELButtonBase),
-                new(StateVisualGuide.Default, GuideVisualHandler));
+            DependencyProperty.Register(nameof(GuideVisual), typeof(EnumVisualGuide), typeof(IELButtonBase),
+                new(EnumVisualGuide.Default, GuideVisualHandler));
 
         /// <summary>
         /// Обработчик события изменения свойства <see cref="GuideVisual"/>
         /// </summary>
         private static void GuideVisualHandler(DependencyObject Element, DependencyPropertyChangedEventArgs e)
         {
-            if (Element is IELButtonBase Source && e.NewValue is StateVisualGuide SourceNewValue)
+            if (Element is IELButtonBase Source && e.NewValue is EnumVisualGuide SourceNewValue)
             {
                 Source.Base_HeadGridContentButton.ColumnDefinitions[0].Width = new(0d,
-                    SourceNewValue == StateVisualGuide.LeftArrow || SourceNewValue == StateVisualGuide.DuoArrow ?
+                    SourceNewValue == EnumVisualGuide.LeftArrow || SourceNewValue == EnumVisualGuide.DuoArrow ?
                     GridUnitType.Auto : GridUnitType.Pixel);
                 Source.Base_HeadGridContentButton.ColumnDefinitions[2].Width = new(0d,
-                    SourceNewValue == StateVisualGuide.RightArrow || SourceNewValue == StateVisualGuide.DuoArrow ?
+                    SourceNewValue == EnumVisualGuide.RightArrow || SourceNewValue == EnumVisualGuide.DuoArrow ?
                     GridUnitType.Auto : GridUnitType.Pixel);
                 Source.VisualGuideChanged?.Invoke(Source, SourceNewValue);
             }
@@ -797,9 +814,10 @@ namespace LibraryIEL.UserElementsControl.Base
         /// Состояние отображения направляющих кнопки
         /// </summary>
         [Description("Состояние отображения направляющих в элементе кнопки.\n" + DescriptionCommentGuide)]
-        public StateVisualGuide GuideVisual
+        [Category(Category_Visual)]
+        public EnumVisualGuide GuideVisual
         {
-            get => (StateVisualGuide)GetValue(GuideVisualProperty);
+            get => (EnumVisualGuide)GetValue(GuideVisualProperty);
             set => SetValue(GuideVisualProperty, value);
         }
 
@@ -807,7 +825,7 @@ namespace LibraryIEL.UserElementsControl.Base
         /// Событие изменения состояния отображения направляющих кнопки
         /// </summary>
         [Description("Событие изменение визуализации направляющих.\n" + DescriptionCommentGuide)]
-        protected event EventHandler<StateVisualGuide>? VisualGuideChanged;
+        protected event EventHandler<EnumVisualGuide>? VisualGuideChanged;
         #endregion
 
         #region BorderThickness

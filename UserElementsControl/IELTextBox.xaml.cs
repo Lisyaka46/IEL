@@ -12,6 +12,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
+using System.Windows.Media;
 
 namespace LibraryIEL.UserElementsControl
 {
@@ -35,6 +36,7 @@ namespace LibraryIEL.UserElementsControl
         /// </summary>
         [Description("Состояние отвечающее что последующая обработка будет производиться исключительно цифр.\n" +
             "Текст, который был введён до изменения состояния этого параметра не будет удалён")]
+        [Category(Category_Text)]
         public bool DigitOnly
         {
             get => (bool)GetValue(DigitOnlyProperty);
@@ -65,6 +67,7 @@ namespace LibraryIEL.UserElementsControl
         /// Отображаемый текст в элементе
         /// </summary>
         [Description("Отображаеммый вводимый текст в элементе")]
+        [Category(Category_Text)]
         public string Text
         {
             get => (string)GetValue(TextProperty);
@@ -83,20 +86,54 @@ namespace LibraryIEL.UserElementsControl
         /// <summary>
         /// Обработчик события изменения свойства <see cref="FontSize"/>
         /// </summary>
-        private static void FontSizeHandler(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        private static void FontSizeHandler(DependencyObject Element, DependencyPropertyChangedEventArgs e)
         {
-            IELTextBox Element = (IELTextBox)sender;
-            Element.TextBlockVisualText.FontSize = (double)e.NewValue;
+            if (Element is IELTextBox Source && e.NewValue is double SourceNewValue)
+            {
+                Source.TextBlockVisualText.FontSize = SourceNewValue;
+            }
         }
 
         /// <summary>
         /// Размер текста
         /// </summary>
         [Description("Размер вводимого текста в элементе")]
+        [Category(Category_Text)]
         public new double FontSize
         {
             get => (double)GetValue(FontSizeProperty);
             set => SetValue(FontSizeProperty, value);
+        }
+        #endregion
+
+        #region MaxLength
+        /// <summary>
+        /// Данные свойства <see cref="MaxLength"/>
+        /// </summary>
+        public static readonly DependencyProperty MaxLengthProperty =
+            DependencyProperty.Register(nameof(MaxLength), typeof(uint), typeof(IELTextBox),
+                new(32u, MaxLengthHandler));
+
+        /// <summary>
+        /// Обработчик события изменения свойства <see cref="MaxLength"/>
+        /// </summary>
+        private static void MaxLengthHandler(DependencyObject Element, DependencyPropertyChangedEventArgs e)
+        {
+            //if (Element is IELTextBox Source && e.NewValue is uint SourceNewValue)
+            //{
+            //    Source.TextBlockVisualText.FontSize = SourceNewValue;
+            //}
+        }
+
+        /// <summary>
+        /// Максимальный размер текста
+        /// </summary>
+        [Description("Максимальная поддерживаемая длинна вводимого текста")]
+        [Category(Category_Text)]
+        public uint MaxLength
+        {
+            get => (uint)GetValue(MaxLengthProperty);
+            set => SetValue(MaxLengthProperty, value);
         }
         #endregion
 
@@ -133,6 +170,11 @@ namespace LibraryIEL.UserElementsControl
         private bool SelectActivate = false;
 
         /// <summary>
+        /// Состояние указывающе на текущую активность отображения каретки
+        /// </summary>
+        private bool CaretActivate = false;
+
+        /// <summary>
         /// Объект анимации каретки
         /// </summary>
         private readonly DoubleAnimation DoubleAnimationCaret = new()
@@ -154,6 +196,7 @@ namespace LibraryIEL.UserElementsControl
         };
         #endregion
 
+        #region DebugContainer
 #if DEBUG
         /// <summary>
         /// Контейнер диагностической информации
@@ -171,6 +214,7 @@ namespace LibraryIEL.UserElementsControl
             Debug[nameof(SelectActivate)].Text = $"{nameof(SelectActivate)}: {SelectActivate.ToString().ToUpper()}";
         }
 #endif
+        #endregion
 
         /// <summary>
         /// Инициализировать объект интерфейса. Текстовый ввод
@@ -184,6 +228,7 @@ namespace LibraryIEL.UserElementsControl
             TextBlockVisualText.Foreground = SourceForeground.SourceBrush;
             CaretLine.Stroke = SourceBorderBrush.SourceBrush;
             RectangleSelect.Stroke = SourceBorderBrush.SourceBrush;
+            RectangleSelect.Fill = new SolidColorBrush(Color.FromArgb(0, 0, 0, 0));
             #endregion
 
 #if DEBUG
@@ -199,6 +244,7 @@ namespace LibraryIEL.UserElementsControl
 
             GotFocus += GotFocusHandler;
             LostFocus += LostFocusHandler;
+            PreviewKeyDown += PreviewKeyDownHandler;
             KeyDown += KeyDownHandler;
             MouseDown += (sender, e) =>
             {
@@ -209,7 +255,7 @@ namespace LibraryIEL.UserElementsControl
                     SourceBorderBrush.SetActiveSpecrum(CORE.Themes.Palettes.SpectrumColor.Used, true);
                     if (SelectActivate)
                     {
-                        OffAnimateSelect();
+                        OffAnimateSelect(false);
                         OnAnimateCaret();
                     }
                 }
@@ -241,20 +287,14 @@ namespace LibraryIEL.UserElementsControl
                 CaretLine.BeginAnimation(Line.MarginProperty, ThicknessAnimationCaret);
                 BackOffsetCaret = ThicknessAnimationCaret.To.Value.Left;
             };
-
-            //PreviewKeyDown += (sender, e) =>
-            //{
-            //    if (DigitOnly)
-            //        e.Handled = (int)e.Key < 34 || (int)e.Key > 43;
-            //};
         }
 
         /// <summary>
         /// Взять прямоугольник символа по индексу в тексте, относительно <see cref="Grid"/>
         /// </summary>
-        public Point GetCharacterRect(int index)
+        private Point GetCharacterRect(int index)
         {
-            if (index < 0 || index >= RunElementText.Text.Length) return default;
+            if (index < 0 || index >= RunElementText.Text.Length) return new(TextBlockVisualText.Margin.Left + TextBlockVisualText.Padding.Left, 0d);
             TextPointer? Pointer = RunElementText.ContentStart.GetPositionAtOffset(index + 1, LogicalDirection.Forward);
             if (Pointer == null) return default;
 
@@ -283,11 +323,80 @@ namespace LibraryIEL.UserElementsControl
             SourceBackground.UsedState = false;
             Keyboard.ClearFocus();
             if (SelectActivate)
-                OffAnimateSelect();
+                OffAnimateSelect(false);
             else 
                 OffAnimateCaret();
         }
         #endregion
+
+        #region KeyDown
+        /// <summary>
+        /// Обработчик события нажатия клавиши на элементе
+        /// </summary>
+        private void PreviewKeyDownHandler(object sender, KeyEventArgs e)
+        {
+            e.Handled = Keyboard.Modifiers == ModifierKeys.Control;
+            if (e.Handled && e.IsRepeat) return;
+            switch (e.Key)
+            {
+                case Key.A:
+                    if (Keyboard.Modifiers == ModifierKeys.Control &&
+                        (!SelectActivate || CaretSelectCount < RunElementText.Text.Length))
+                    {
+                        CaretIndex = -1;
+                        if (!SelectActivate)
+                        {
+                            OnAnimateSelect(true);
+                            OffAnimateCaret();
+                        }
+                        else if (CaretSelectCount < 0) SetAlginSelectAnimate(true); 
+                        CaretSelectStart = 0;
+                        CaretSelectCount = RunElementText.Text.Length + 1;
+                        UpdateSelect(Key.None);
+                    }
+                    break;
+                case Key.X:
+                case Key.C:
+                    if (!SelectActivate || Keyboard.Modifiers != ModifierKeys.Control) return;
+                    try
+                    {
+                        Clipboard.SetDataObject(RunElementText.Text.Substring(CaretSelectStart + (CaretSelectCount < 0 ? CaretSelectCount : 0),
+                            Math.Abs(CaretSelectCount)));
+                    } catch { }
+                    if (e.Key is Key.X)
+                    {
+                        DeleteSymbolsFromSelect();
+                        UpdatePositionFromCaretIndex(e.Key);
+                    }
+                    else
+                    {
+                        ManagerAnimation.AnimateTakingZeroFromTo(RectangleSelect.Fill, SolidColorBrush.ColorProperty,
+                            SourceBackground.GetData().Select, Color.FromArgb(0, 0, 0, 0),
+                            TimeSpan.FromMilliseconds(700d));
+                    }
+                    break;
+                case Key.V:
+                    if (Keyboard.Modifiers == ModifierKeys.Control && Clipboard.ContainsText())
+                    {
+                        if (SelectActivate) DeleteSymbolsFromSelect();
+
+                        string pasteText = Clipboard.GetText();
+                        int availableSpace = (int)MaxLength - RunElementText.Text.Length;
+
+                        if (availableSpace <= 0) return;
+                        else if (pasteText.Length > availableSpace)
+                            pasteText = pasteText[..availableSpace];
+
+                        RunElementText.Text = RunElementText.Text.Insert(CaretIndex + 1, pasteText);
+                        CaretIndex += pasteText.Length;
+                        UpdatePositionFromCaretIndex(e.Key);
+                    }
+                    break;
+                default:
+                    e.Handled = false;
+                    break;
+            }
+        }
 
         /// <summary>
         /// Обработчик события нажатия клавиши на элементе
@@ -295,16 +404,38 @@ namespace LibraryIEL.UserElementsControl
         private void KeyDownHandler(object sender, KeyEventArgs e)
         {
             e.Handled = true;
+            if (!(CaretActivate || SelectActivate) &&
+                e.Key is Key.Enter or Key.Space)
+            {
+                OnAnimateCaret();
+                return;
+            }
+            else if (e.Key is Key.LeftShift or Key.RightShift or
+                              Key.LeftCtrl  or Key.RightCtrl  or
+                              Key.LeftAlt   or Key.RightAlt   or
+                              Key.LWin      or Key.RWin       or
+                              Key.Enter     or
+                              (>= Key.F1 and <= Key.F12) ||
+                              !(CaretActivate || SelectActivate))
+            {
+                return; // Не обрабатываем
+            }
             string NewContent;
+
+            #region Switch
             switch (e.Key)
             {
+                case Key.Escape:
+                    OffAnimateCaret();
+                    if (SelectActivate) OffAnimateSelect(false);
+                    return;
                 case Key.Home:
                     CaretIndex = -1;
                     TextBlockVisualText.Margin = new(0d,
                         TextBlockVisualText.Margin.Top, TextBlockVisualText.Margin.Right, TextBlockVisualText.Margin.Bottom);
                     break;
                 case Key.End:
-                    CaretIndex = TextBlockVisualText.Text.Length - 1;
+                    CaretIndex = RunElementText.Text.Length - 1;
                     break;
                 case Key.Left:
                     UpdateSelect(e.Key);
@@ -314,21 +445,16 @@ namespace LibraryIEL.UserElementsControl
                 case Key.Right:
                     UpdateSelect(e.Key);
                     if (SelectActivate) break;
-                    else if (CaretIndex < TextBlockVisualText.Text.Length - 1) CaretIndex++;
+                    else if (CaretIndex < RunElementText.Text.Length - 1) CaretIndex++;
                     break;
                 case Key.Back:
                     if (SelectActivate)
                     {
-                        if (CaretSelectCount < 0)
-                            CaretIndex += CaretSelectCount;
-                        RunElementText.Text = RunElementText.Text.Remove(CaretSelectStart + (CaretSelectCount < 0 ? CaretSelectCount : 0),
-                            Math.Abs(CaretSelectCount));
-                        OffAnimateSelect();
-                        OnAnimateCaret();
+                        DeleteSymbolsFromSelect();
                         break;
                     }
                     if (CaretIndex == -1) return;
-                    else if (CaretIndex == TextBlockVisualText.Text.Length)
+                    else if (CaretIndex == RunElementText.Text.Length)
                     {
                         RunElementText.Text = CaretIndex > -1 ? RunElementText.Text.Remove(CaretIndex, 1) : string.Empty;
                     }
@@ -342,26 +468,19 @@ namespace LibraryIEL.UserElementsControl
                 case Key.Delete:
                     if (SelectActivate)
                     {
-                        if (CaretSelectCount < 0)
-                            CaretIndex += CaretSelectCount;
-                        RunElementText.Text = RunElementText.Text.Remove(CaretSelectStart + (CaretSelectCount < 0 ? CaretSelectCount : 0),
-                            Math.Abs(CaretSelectCount));
-                        OffAnimateSelect();
-                        OnAnimateCaret();
+                        DeleteSymbolsFromSelect();
                         break;
                     }
-                    if (CaretIndex == TextBlockVisualText.Text.Length - 1) return;
-                    else if (CaretIndex < TextBlockVisualText.Text.Length - 1)
+                    if (CaretIndex == RunElementText.Text.Length - 1) return;
+                    else if (CaretIndex < RunElementText.Text.Length - 1)
                     {
                         RunElementText.Text = RunElementText.Text.Remove(CaretIndex + 1, 1);
                     }
                     break;
                 default:
-                    if (SelectActivate)
-                    {
-                        OffAnimateSelect();
-                        OnAnimateCaret();
-                    }
+                    if (DigitOnly && (int)e.Key < 34 || (int)e.Key > 43) return;
+                    if (SelectActivate) DeleteSymbolsFromSelect();
+                    if (RunElementText.Text.Length == MaxLength) return;
                     NewContent = IELKeyConverter.GetStringFromKey(e.Key);
                     if (NewContent.Length == 0) return;
                     else if (CaretIndex < RunElementText.Text.Length - 1)
@@ -371,13 +490,13 @@ namespace LibraryIEL.UserElementsControl
                     CaretIndex++;
                     break;
             }
+            #endregion
 
             UpdatePositionFromCaretIndex(e.Key);
-#if DEBUG
-            DebugUpdateInfo();
-#endif
         }
-#endregion
+        #endregion
+
+        #endregion
 
         /// <summary>
         /// Обновить отображение позиции каретки по её текущему индексу
@@ -422,6 +541,9 @@ namespace LibraryIEL.UserElementsControl
                     CaretLine.Margin.Top, CaretLine.Margin.Right, CaretLine.Margin.Bottom);
             CaretLine.BeginAnimation(Line.MarginProperty, ThicknessAnimationCaret);
             BackOffsetCaret = ThicknessAnimationCaret.To.Value.Left;
+#if DEBUG
+            DebugUpdateInfo();
+#endif
         }
 
         /// <summary>
@@ -434,13 +556,24 @@ namespace LibraryIEL.UserElementsControl
         /// </param>
         private void UpdateSelect(Key SourceKey)
         {
-            if (Keyboard.Modifiers == ModifierKeys.Shift)
+            if (Keyboard.Modifiers is ModifierKeys.Shift || SourceKey is Key.None)
             {
-                if ((SourceKey == Key.Right && CaretIndex < TextBlockVisualText.Text.Length - 1) ||
-                    (SourceKey == Key.Left && CaretIndex >= 0))
+                if ((SourceKey is Key.Right && CaretIndex < RunElementText.Text.Length) ||
+                    SourceKey is Key.Left or Key.None)
                 {
-                    if (SelectActivate && ((SourceKey == Key.Right && CaretSelectStart + CaretSelectCount == RunElementText.Text.Length) ||
-                        (SourceKey == Key.Left && CaretSelectStart + CaretSelectCount == 0))) return;
+                    if (SelectActivate)
+                    {
+                        if (SourceKey is Key.Right)
+                        {
+                            if (CaretSelectStart + CaretSelectCount == RunElementText.Text.Length ||
+                                (CaretSelectCount < 0 && CaretSelectStart + CaretSelectCount >= RunElementText.Text.Length - 1)) return;
+                        }
+                        else if (SourceKey is Key.Left)
+                        {
+                            if (CaretSelectStart + CaretSelectCount == 0 ||
+                                (CaretSelectCount > 0 && CaretSelectStart + CaretSelectCount <= 1)) return;
+                        }
+                    }
 
                     Point PosCaretStart, PosCaretEnd;
                     if (!SelectActivate)
@@ -458,10 +591,10 @@ namespace LibraryIEL.UserElementsControl
                     }
                     else
                     {
-                        CaretSelectCount += SourceKey == Key.Right ? 1 : -1;
+                        CaretSelectCount += SourceKey is Key.Right ? 1 : -1;
                         if (CaretSelectCount == 0)
                         {
-                            CaretSelectCount = SourceKey == Key.Right ? 1 : -1;
+                            CaretSelectCount = SourceKey is Key.Right ? 1 : -1;
                             SetAlginSelectAnimate(CaretSelectCount > 0);
                         }
                         PosCaretStart = GetCharacterRect(CaretSelectStart - 1);
@@ -478,9 +611,32 @@ namespace LibraryIEL.UserElementsControl
             }
             else if (SelectActivate)
             {
-                OffAnimateSelect();
+                if (SourceKey is Key.Right && CaretSelectCount > 0 ||
+                    SourceKey is Key.Left && CaretSelectCount < 0)
+                    CaretIndex += SourceKey is Key.Right ? CaretSelectCount - 1 : CaretSelectCount + 1;
+                OffAnimateSelect(SourceKey is Key.Right);
                 OnAnimateCaret();
             }
+#if DEBUG
+            DebugUpdateInfo();
+#endif
+        }
+
+        /// <summary>
+        /// Удалить выделенные символы в поле ввода
+        /// </summary>
+        /// <remarks>
+        /// Также переключить видимость выделения и каретки
+        /// </remarks>
+        private void DeleteSymbolsFromSelect()
+        {
+            if (!SelectActivate) return;
+            else if (CaretSelectCount < 0)
+                CaretIndex += CaretSelectCount;
+            RunElementText.Text = RunElementText.Text.Remove(CaretSelectStart + (CaretSelectCount < 0 ? CaretSelectCount : 0),
+                Math.Abs(CaretSelectCount));
+            OffAnimateSelect(CaretSelectCount < 0);
+            OnAnimateCaret();
         }
 
         #region Animate
@@ -491,6 +647,7 @@ namespace LibraryIEL.UserElementsControl
         /// </summary>
         private void OnAnimateCaret()
         {
+            CaretActivate = true;
             if (ManagerAnimation.IsEnabled)
             {
                 DoubleAnimationCaret.AutoReverse = true;
@@ -506,6 +663,7 @@ namespace LibraryIEL.UserElementsControl
         /// </summary>
         private void OffAnimateCaret()
         {
+            CaretActivate = false;
             if (ManagerAnimation.IsEnabled)
                 CaretLine.BeginAnimation(OpacityProperty, null);
             CaretLine.Opacity = 0d;
@@ -524,6 +682,9 @@ namespace LibraryIEL.UserElementsControl
             CaretSelectCount = RightAlign ? 1 : -1;
             ManagerAnimation.AnimateTakingZeroTo(RectangleSelect, Rectangle.OpacityProperty,
                 1d, TimeSpan.FromMilliseconds(500d));
+            RectangleSelect.BeginAnimation(Rectangle.WidthProperty, null);
+            RectangleSelect.BeginAnimation(Rectangle.MarginProperty, null);
+
 
             SetAlginSelectAnimate(RightAlign);
         }
@@ -546,7 +707,8 @@ namespace LibraryIEL.UserElementsControl
         /// <summary>
         /// Закончить анимирование объекта выделения
         /// </summary>
-        private void OffAnimateSelect()
+        /// <param name="RightAlign">Состояние отвечающее за направленность анимирования границы выделения</param>
+        private void OffAnimateSelect(bool RightAlign)
         {
             SelectActivate = false;
             CaretSelectStart = 0;
@@ -556,6 +718,12 @@ namespace LibraryIEL.UserElementsControl
 
             ManagerAnimation.AnimateTakingZeroTo(RectangleSelect, Rectangle.WidthProperty,
                 0d, TimeSpan.FromMilliseconds(200d));
+
+            if (RightAlign)
+                ManagerAnimation.AnimateTakingZeroTo(RectangleSelect, Rectangle.MarginProperty,
+                    new Thickness(RectangleSelect.Margin.Left + RectangleSelect.Width,
+                    RectangleSelect.Margin.Top, RectangleSelect.Margin.Right, RectangleSelect.Margin.Bottom),
+                    TimeSpan.FromMilliseconds(200d));
 
             if (ManagerAnimation.IsEnabled)
             {

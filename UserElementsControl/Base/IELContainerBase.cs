@@ -60,6 +60,7 @@ namespace LibraryIEL.UserElementsControl.Base
         /// </summary>
         [Description("Временной промежуток, отвечающий за срабатывание события задержки курсора мыши на UI-объекте.\n" +
             $"Событие задержки курсора: {nameof(MouseHover)}")]
+        [Category(Category_Management)]
         public TimeSpan IntervalHover
         {
             get => (TimeSpan)GetValue(IntervalHoverProperty);
@@ -95,6 +96,7 @@ namespace LibraryIEL.UserElementsControl.Base
         /// Внутренний элемент объекта
         /// </summary>
         [Description("Контент элемента внутри границ барьера")]
+        [Category(Category_Main)]
         public new UIElement Content
         {
             get => (UIElement)GetValue(ContentProperty);
@@ -125,6 +127,7 @@ namespace LibraryIEL.UserElementsControl.Base
         /// Скругление границ объекта
         /// </summary>
         [Description("Скругление границ главного контейнера элемента")]
+        [Category(Category_Visual)]
         public CornerRadius CornerRadius
         {
             get => (CornerRadius)GetValue(CornerRadiusProperty);
@@ -148,6 +151,7 @@ namespace LibraryIEL.UserElementsControl.Base
         /// Толщина границ объекта
         /// </summary>
         [Description("Толщина границ главного контейнера элемента")]
+        [Category(Category_Visual)]
         public new Thickness BorderThickness
         {
             get => (Thickness)Base_BorderContainer.GetValue(BorderThicknessProperty);
@@ -171,6 +175,7 @@ namespace LibraryIEL.UserElementsControl.Base
         /// Внутреннее смещение в объекте
         /// </summary>
         [Description("Смещение контента внутри границ элемента")]
+        [Category(Category_Visual)]
         public new Thickness Padding
         {
             get => (Thickness)GetValue(PaddingProperty);
@@ -190,6 +195,7 @@ namespace LibraryIEL.UserElementsControl.Base
         /// Сообщение для отображения сводки об объекте через объект <see cref="IELBlockMessage"/>
         /// </summary>
         [Description($"Сообщение, отображаемое с помощью \"{nameof(IELBlockMessage)}\"")]
+        [Category(Category_Message)]
         public string Message
         {
             get => (string)GetValue(MessageProperty);
@@ -214,6 +220,7 @@ namespace LibraryIEL.UserElementsControl.Base
         /// </summary>
         [Description("Состояние активности элемента.\n" +
             $"Управляется Q-логикой ({nameof(Palette)})")]
+        [Category(Category_Main)]
         public new bool IsEnabled
         {
             get => (bool)GetValue(IsEnabledProperty);

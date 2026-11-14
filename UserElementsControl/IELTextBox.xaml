@@ -6,7 +6,7 @@
     Focusable="True" Cursor="IBeam" ClipToBounds="True" MinHeight="{Binding ActualHeight, ElementName=TextBlockVisualText, Mode=OneWay}">
     <Grid x:FieldModifier="private" x:Name="GridMain">
         <TextBlock x:FieldModifier="private" x:Name="TextBlockVisualText" FontSize="14" HorizontalAlignment="Left" Padding="2,1,2,2" VerticalAlignment="Center" Margin="0,3,0,3">
-            <Run x:FieldModifier="private" x:Name="RunElementText" Text="1"/>
+            <Run x:FieldModifier="private" x:Name="RunElementText"/>
         </TextBlock>
         <Rectangle x:Name="RectangleSelect" StrokeThickness="1.7" Stroke="Black" StrokeEndLineCap="Round" StrokeStartLineCap="Round" Panel.ZIndex="1" RadiusX="3" RadiusY="3" StrokeDashArray="1" Grid.Column="1" HorizontalAlignment="Left" Width="7" Margin="0,2,0,2"/>
         <Line x:FieldModifier="private" x:Name="CaretLine" Y1="0" Y2="1" Stroke="Black" StrokeThickness="1.5" Stretch="Uniform" Panel.ZIndex="1" StrokeEndLineCap="Triangle" StrokeStartLineCap="Triangle" HorizontalAlignment="Left" StrokeDashCap="Triangle" StrokeDashOffset="-0.5" Margin="1,0,0,0" VerticalAlignment="Center" Height="{Binding ActualHeight, ElementName=TextBlockVisualText, Mode=OneWay}"/>

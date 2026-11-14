@@ -30,6 +30,7 @@ namespace LibraryIEL.UserElementsControl
         /// Толщина границ контейнера индикатора объекта
         /// </summary>
         [Description("Толщина границ индикатора")]
+        [Category(Category_Visual)]
         public Thickness CheckBoxBorderThickness
         {
             get => (Thickness)GetValue(CheckBoxBorderThicknessProperty);
@@ -63,6 +64,7 @@ namespace LibraryIEL.UserElementsControl
         /// Скругление границ контейнера индикатора объекта
         /// </summary>
         [Description("Скругление границ индикатора, вместе с внутренним элементом")]
+        [Category(Category_Visual)]
         public double CheckBoxCornerRadius
         {
             get => (double)GetValue(CheckBoxCornerRadiusProperty);
@@ -91,6 +93,8 @@ namespace LibraryIEL.UserElementsControl
         /// <summary>
         /// Отображаемый текст в поле
         /// </summary>
+        [Description("Текст, отображаемый рядом с индикатором")]
+        [Category(Category_Text)]
         public string Text
         {
             get => (string)GetValue(TextProperty);
@@ -123,6 +127,8 @@ namespace LibraryIEL.UserElementsControl
         /// <summary>
         /// Текстура изображения используемая для индикатора выделения
         /// </summary>
+        [Description("Монохромная текстура индикатора, закрашиваемого Q-логикой")]
+        [Category(Category_Visual)]
         public ImageSource CheckedTexture
         {
             get => (ImageSource)GetValue(CheckedTextureProperty);
@@ -153,6 +159,8 @@ namespace LibraryIEL.UserElementsControl
         /// <summary>
         /// Состояние выделения
         /// </summary>
+        [Description("Состояние отображаемое активность элемента")]
+        [Category(Category_Main)]
         public bool IsChecked
         {
             get => (bool)GetValue(IsCheckedProperty);
